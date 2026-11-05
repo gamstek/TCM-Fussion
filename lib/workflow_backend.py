@@ -85,6 +85,51 @@ class WorkflowBackend:
             command(['-m','TCM_Fusion.cli.classify_worker','--context',f])
             if not (out/'classification.json').is_file():
                 raise IntegrationError('CLASSIFY_INCOMPLETE','分类阶段没有产出清单')
+            doc=read_json(out/'classification.json')
+            # required crop 再做一次 YOLO 复核：GLM 标框/裁剪后把 tight crop 交给训练后的 YOLO。
+            # 命中同类时按 YOLO:GLM=7:3 融合；未命中/YOLO 失败则完全保留 GLM 结论。
+            if target.get('identity_required'):
+                try:
+                    yconfig=session.config['yolo']
+                    settings={key:str(project_path(yconfig[key])) for key in
+                              ('weights','class_map','detector_config')}
+                    yctx=work/'yolo_crop.json'
+                    write_json(yctx,{**settings,'source':str(meta.png),
+                                     'output':str(work/'yolo_crop_boxes.json'),
+                                     'signature':session.yolo_signature})
+                    command(['-m','TCM_Fusion.cli.yolo_worker','--context',yctx],
+                            session.yolo_python,'yolo_crop.log')
+                    yolo=read_json(work/'yolo_crop_boxes.json')
+                    target_label=meta.object_label
+                    matches=[float(d.get('score') or 0) for d in yolo.get('dets',[])
+                             if d.get('label')==target_label]
+                    yscore=max(matches) if matches else None
+                    glm_score={'high':0.9,'medium':0.7,'low':0.5}.get(
+                        str(doc.get('confidence') or ''),0.5)
+                    doc['glm_confidence']=doc.get('confidence')
+                    doc['yolo_confidence']=yscore
+                    doc['yolo_checked']=True
+                    if yscore is not None:
+                        conflict=bool(doc.get('label') and doc.get('label')!=target_label)
+                        doc['yolo_conflict']=conflict
+                        if not conflict:
+                            fused=0.7*yscore+0.3*glm_score
+                            doc['label']=target_label
+                            doc['feature_id']=meta.feature_id
+                            doc['reject']=''
+                            doc['confidence_score']=round(fused,4)
+                            doc['confidence_source']='yolo_glm_7_3'
+                            doc['confidence']=('high' if fused>=0.75 else
+                                               'medium' if fused>=0.55 else 'low')
+                        else:
+                            doc['confidence_source']='glm'
+                    else:
+                        doc['confidence_source']='glm'
+                except Exception as exc:  # YOLO 不可用不拖垮 GLM 主结果
+                    doc['yolo_checked']=False
+                    doc['yolo_error']=str(exc)[:200]
+                    doc['confidence_source']='glm'
+                write_json(out/'classification.json',doc)
             return {'classification':str(out)}
         if tool=='segment_instance':
             src=Path(target['path']);meta=contracts.CropMeta.from_json(str(src))
@@ -101,6 +146,10 @@ class WorkflowBackend:
             # 局部阶段各自从inst01开始；先在新交付副本做确定性命名空间，
             # 使原measure输出的instance_id仍严格对应实际mask文件名。
             import csv
+            plan = getattr(session, 'review_measure_plan', lambda: None)()
+            diagnostic = bool(plan)
+            component_ids = set(plan.get('component_ids') or []) if plan else set()
+            component_policy = plan.get('component_policy') if plan else 'as_delivered'
             source=Path(target['masks']);delivery=work/'delivery';delivery.mkdir()
             rows=[];offset=int(digest(target['id'])[:8],16)*10000
             for f in source.glob('*__measure_manifest.csv'):
@@ -113,6 +162,30 @@ class WorkflowBackend:
                         src=(source/row.inst_mask).resolve()
                         if not src.is_relative_to(source.resolve()) or not src.is_file():
                             raise IntegrationError('MASK_SCOPE','mask越出交付目录或不存在')
+                        if diagnostic:
+                            # Decision LLM 选择 split/diagnostic 后，只测最大的单一连通域；
+                            # 原 review mask 保留，不改原证据，只在交付副本里做诊断隔离。
+                            import cv2
+                            import numpy as np
+                            image=cv2.imread(str(src), cv2.IMREAD_GRAYSCALE)
+                            if image is None:
+                                raise IntegrationError('MASK_INVALID','诊断测量无法读取mask')
+                            n,labels,stats,_=cv2.connectedComponentsWithStats((image>0).astype(np.uint8),8)
+                            if n>1 and component_ids:
+                                image=np.where(np.isin(labels,sorted(component_ids)),255,0).astype(np.uint8)
+                            elif n>1 and component_policy in {'largest'}:
+                                largest=1+int(np.argmax(stats[1:,cv2.CC_STAT_AREA]))
+                                image=np.where(labels==largest,255,0).astype(np.uint8)
+                            elif n>1 and component_policy in {'all','merge'}:
+                                image=np.where(labels>0,255,0).astype(np.uint8)
+                            elif n>1:
+                                largest=1+int(np.argmax(stats[1:,cv2.CC_STAT_AREA]))
+                                image=np.where(labels==largest,255,0).astype(np.uint8)
+                            destination=delivery/f"{Path(row.source_image_path).stem}__{row.feature_id}__inst{offset+row.instance_id}.png"
+                            ok,encoded=cv2.imencode('.png',image)
+                            if not ok:raise IntegrationError('MASK_ENCODE','诊断mask编码失败')
+                            destination.write_bytes(encoded.tobytes())
+                            raw['igm_status']='ok'
                         if session.purpose_quality():
                             qa=session.assessment(target)
                             if not qa or not qa['integrity']:raise IntegrationError('QUALITY_SCOPE','无受信用途资格')
@@ -121,7 +194,8 @@ class WorkflowBackend:
                             if file_hash(src)!=qa['bindings']['mask']:raise IntegrationError('QUALITY_SCOPE','关联mask变化')
                             if rows:raise IntegrationError('QUALITY_MULTIPLE_INSTANCES','单目标资格不能用于多实例重复测量')
                         iid=offset+row.instance_id;name=f"{Path(row.source_image_path).stem}__{row.feature_id}__inst{iid}.png"
-                        shutil.copy2(src,delivery/name)
+                        if not diagnostic:
+                            shutil.copy2(src,delivery/name)
                         rows.append({**raw,'instance_id':iid,'inst_mask':name,'herb':''})
                 with (delivery/f.name).open('w',encoding='utf-8-sig',newline='') as stream:
                     w=csv.DictWriter(stream,fieldnames=contracts.MANIFEST_COLUMNS);w.writeheader();w.writerows(rows)
@@ -132,5 +206,7 @@ class WorkflowBackend:
             f=out/'result_measurements.jsonl'
             rows=list(contracts.iter_measurement_records(str(f)))
             if not rows:raise IntegrationError('EMPTY_MEASUREMENT','测量没有实例')
-            return {'measurements':str(f),'delivery':str(delivery)}
+            return {'measurements':str(f),'delivery':str(delivery),'diagnostic_review':diagnostic,
+                    'component_selection':(f"ids:{sorted(component_ids)}" if component_ids else component_policy)
+                    if diagnostic else 'as_delivered'}
         raise IntegrationError('TOOL_UNIMPLEMENTED','没有真实阶段实现')

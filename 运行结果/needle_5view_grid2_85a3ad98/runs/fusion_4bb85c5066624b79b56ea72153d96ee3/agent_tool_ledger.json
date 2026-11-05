@@ -1,0 +1,267 @@
+{
+  "identity": "28fa2827bdbff6a20481b1a07c97659d51106f1351a8deccb7401aba1439f363",
+  "requests": 6,
+  "entries": {
+    "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876": {
+      "action_id": "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.65,
+        "reason": "视野中主要为平行排列的长条形纤维/薄壁细胞碎片及散在颗粒状杂质，未见直径14~25μm、呈分枝联结且含淡黄色颗粒状物的乳管特征结构。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "feature_id": "secretory_tissue",
+          "morph_hint": "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876",
+        "mandatory": false,
+        "priority": [
+          false,
+          1,
+          "secretory_tissue",
+          "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2411,
+        "completion_tokens": 772,
+        "total_tokens": 3183
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "2f97cf3e4bb16e670b1c108d7beaa00c88dea9cf95a0ac0869b8e05766e002ed": {
+      "action_id": "2f97cf3e4bb16e670b1c108d7beaa00c88dea9cf95a0ac0869b8e05766e002ed",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.72,
+        "reason": "视野中主要为无色透明、壁增厚的长条形细胞（似纤维/薄壁组织），未见含淡黄色颗粒状物的管状联结乳管结构。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8",
+          "feature_id": "secretory_tissue",
+          "morph_hint": "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "2f97cf3e4bb16e670b1c108d7beaa00c88dea9cf95a0ac0869b8e05766e002ed",
+        "mandatory": false,
+        "priority": [
+          false,
+          1,
+          "secretory_tissue",
+          "img_a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8",
+          "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2411,
+        "completion_tokens": 309,
+        "total_tokens": 2720
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "83ef61501259ca5e2d6f66b551344c943f953984e486fcae6ae24565ffcbe7b8": {
+      "action_id": "83ef61501259ca5e2d6f66b551344c943f953984e486fcae6ae24565ffcbe7b8",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.7,
+        "reason": "视野中主要见含大量针晶的黏液团块及散在的棕黑色类圆形团块，未见直径14～25μm、内含淡黄色颗粒状物的联结乳管结构。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+          "feature_id": "secretory_tissue",
+          "morph_hint": "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "83ef61501259ca5e2d6f66b551344c943f953984e486fcae6ae24565ffcbe7b8",
+        "mandatory": false,
+        "priority": [
+          false,
+          1,
+          "secretory_tissue",
+          "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+          "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2411,
+        "completion_tokens": 1178,
+        "total_tokens": 3589
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "cee76190621318724817f7c97f20502ae3a74666c93012740d7f9894900db676": {
+      "action_id": "cee76190621318724817f7c97f20502ae3a74666c93012740d7f9894900db676",
+      "accepted": true,
+      "result": {
+        "present": true,
+        "conf": 0.65,
+        "reason": "视野中纤维旁可见数条细长管状结构，内含黄棕色至淡黄色颗粒状内含物，端部圆钝并似有连结分支，符合联结乳管的特征。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+          "feature_id": "secretory_tissue",
+          "morph_hint": "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "cee76190621318724817f7c97f20502ae3a74666c93012740d7f9894900db676",
+        "mandatory": false,
+        "priority": [
+          false,
+          1,
+          "secretory_tissue",
+          "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+          "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2411,
+        "completion_tokens": 1005,
+        "total_tokens": 3416
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "fc2a2ec9bb6eeedf54bef5e0f9fe43d5007eb610182aebc7731cd3e1a25aa1fa": {
+      "action_id": "fc2a2ec9bb6eeedf54bef5e0f9fe43d5007eb610182aebc7731cd3e1a25aa1fa",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.75,
+        "reason": "视野中主要为成束的长条形纤维及少量深色导管/纤维碎片，未见长细胞与栓化细胞、硅质细胞交互排列且壁深波状弯曲的表皮细胞特征。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+          "feature_id": "epidermis_cell",
+          "morph_hint": "外表皮长细胞与2个短细胞（栓化细胞、硅质细胞）交互排列，长细胞壁厚深波状弯曲"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "fc2a2ec9bb6eeedf54bef5e0f9fe43d5007eb610182aebc7731cd3e1a25aa1fa",
+        "mandatory": false,
+        "priority": [
+          false,
+          4,
+          "epidermis_cell",
+          "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+          "外表皮长细胞与2个短细胞（栓化细胞、硅质细胞）交互排列，长细胞壁厚深波状弯曲"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2424,
+        "completion_tokens": 393,
+        "total_tokens": 2817
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "561ee5aee046bb925087ab12aac86be665983e1a7663aaf76f1055048d840564": {
+      "action_id": "561ee5aee046bb925087ab12aac86be665983e1a7663aaf76f1055048d840564",
+      "accepted": false,
+      "result": {
+        "ok": false,
+        "error_code": "UPSTREAM_NETWORK_FAILED"
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_a14f0020f94e1db981140c439f90a9e6660cc1ed183c6a3374c3a38d2d997290",
+          "feature_id": "sand_crystal",
+          "morph_hint": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "561ee5aee046bb925087ab12aac86be665983e1a7663aaf76f1055048d840564",
+        "mandatory": false,
+        "priority": [
+          false,
+          6,
+          "sand_crystal",
+          "img_a14f0020f94e1db981140c439f90a9e6660cc1ed183c6a3374c3a38d2d997290",
+          "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）"
+        ]
+      },
+      "status": "failed",
+      "cache_hit": false,
+      "new_requests": 1,
+      "error_type": "IntegrationError",
+      "error_code": "UPSTREAM_NETWORK_FAILED",
+      "diagnostics": {
+        "stage": "http_request",
+        "attempts": 1,
+        "error_type": "URLError",
+        "transport_error_type": "SSLEOFError",
+        "errno": 8
+      },
+      "usage": null
+    }
+  }
+}

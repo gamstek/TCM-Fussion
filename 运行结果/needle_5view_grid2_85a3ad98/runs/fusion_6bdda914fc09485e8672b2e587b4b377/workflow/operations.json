@@ -1,0 +1,260 @@
+{
+  "entries": {
+    "33e6c7e3129b067e63857134dbcb0afc8095cde5a2a21c47bdef6554e7372690": {
+      "action_id": "8ffe3af62817c79bf4852041311a193eec0abccab1cfb6db5cbb6b269bb44e57",
+      "tool": "detect_fov_initial",
+      "target_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "33e6c7e3129b067e63857134dbcb0afc8095cde5a2a21c47bdef6554e7372690",
+      "evidence_version": "bb004e4be1ce28ee16194b91e8bf8ef1295dc4bf54d28078f51661333a2ee160",
+      "dependency_fingerprint": "075c44459c847188e3a3ba94ee3dac7ae5265db4a8eda2ed5f0aa4d9d3ae3877",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\33e6c7e3129b067e",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops/epidermis_cell_view_01_01.json": "ff86e4b7b51ac8e94a241e905339ee49e80e3ffe8f75316a410fd1cd7db0834e",
+          "detection/crops/epidermis_cell_view_01_01.png": "aa115a4f8431660e409ecf190c9a23f4ef8d30b9455630a9cf435bd194f7f4ea",
+          "detection/crops.json": "d03e00aa7fba5c3685b8fa291bbafa416302864c10bf12db6633a6503710bfe9"
+        },
+        "quality": null
+      }
+    },
+    "2d7169adbecc3a1ab6032366ee6555730ef2bc14f351a7320c55b152a48b7aff": {
+      "action_id": "1e0544a40b0599af2975d32ae0fbf502fe53e7efd59a706d190deb0ad852cef2",
+      "tool": "detect_fov_initial",
+      "target_id": "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "2d7169adbecc3a1ab6032366ee6555730ef2bc14f351a7320c55b152a48b7aff",
+      "evidence_version": "0dc069f8d9803b6104b4b6cae612f81f391f8582119c1a7ff97bf5db05d16ff7",
+      "dependency_fingerprint": "13434bcef49f6e15759103b626125d7fac26fc7f2cd131d4cb835c88fc9c1ce7",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\2d7169adbecc3a1a",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops/epidermis_cell_view_02_02.json": "b19d464451a1f6c66a5136516d1b911904902c37bc3939074ab4725ba43f8683",
+          "detection/crops/epidermis_cell_view_02_02.png": "8731204b85f3c49540235d38fbfecc7dbfc65b3ac9e275d3c04ce9f7aac7ec09",
+          "detection/crops/secretory_tissue_view_02_01.json": "590929a26093c0ffdb50cbac02b944b116f85f57b55ec31e2252068abee2b2ed",
+          "detection/crops/secretory_tissue_view_02_01.png": "fe029b3c12730c953d8be1db3447016a7dbca45b32aa21d39ce2194d6017c290",
+          "detection/crops.json": "f81322130bc6c378d6cda02c10afa32d2bbdb730f08773a4e236b57438f21646"
+        },
+        "quality": null
+      }
+    },
+    "dda972093423f96deaa1c9e3fa0c6b14a2b6899563dbc973c365fd8cbd651063": {
+      "action_id": "4de1156300445df4bfad140e02d30ba92d4210b5e51999edb5f61d1382905711",
+      "tool": "detect_fov_initial",
+      "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "dda972093423f96deaa1c9e3fa0c6b14a2b6899563dbc973c365fd8cbd651063",
+      "evidence_version": "ed97a09c2b10ccfda691746b1e4c2766ab3a7987e45d5daafe0372fb39e0fe3a",
+      "dependency_fingerprint": "67a3a62130b098ceb54bba93837098c6814fe332ed3c3df891b1e39f7afad26a",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\dda972093423f96d",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops.json": "cf9bc5f89ced1fb419b08680acc8a38c7d149ed6453c424593130ff4d5558573"
+        },
+        "quality": null
+      }
+    },
+    "bfa82ca51b49595f46f926c7e8d98f77566d94d2c57268bb5213e1b51cab79c0": {
+      "action_id": "e289daec13c57f367b65c6cd68a7f67d5b9a3e24a1d364c67402f8643528c82c",
+      "tool": "detect_fov_initial",
+      "target_id": "img_a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "bfa82ca51b49595f46f926c7e8d98f77566d94d2c57268bb5213e1b51cab79c0",
+      "evidence_version": "d4c6143138c2bb10a6828107027440f8399a63bbfcc71cf56d4ffa67f56b55be",
+      "dependency_fingerprint": "620d2d76264c2faef5bbd798b56f585cd73fa236761c42b92ae0019b00930e4f",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\bfa82ca51b49595f",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops/secretory_tissue_view_04_01.json": "0fdb62ad04a0d11072bf127cbe45aece746a874ce2e1eb3e4f1ebeca601a5622",
+          "detection/crops/secretory_tissue_view_04_01.png": "f5ae051ad81b6115e2742d98a563f38909d436e0b916cdff4890c0f0620ea177",
+          "detection/crops.json": "82fe6b9fa967392e412a192b91ef91b3483261973995ab1c7d1fe6aba30d1c69"
+        },
+        "quality": null
+      }
+    },
+    "1eebb6bd7a519d59db33f819fe0c1071ddb3721961dfda7884c9fc0a705cf2ad": {
+      "action_id": "9fd67df9a70a5917dcca3f0eb0cf318bd79eb30a507a0af887c6d164f8e06c0b",
+      "tool": "detect_fov_initial",
+      "target_id": "img_a14f0020f94e1db981140c439f90a9e6660cc1ed183c6a3374c3a38d2d997290",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "1eebb6bd7a519d59db33f819fe0c1071ddb3721961dfda7884c9fc0a705cf2ad",
+      "evidence_version": "f744a46550a8a8ee55da561552418857d7e78f169d98910e43cf52560822d7ad",
+      "dependency_fingerprint": "ce9ae48343b6c4e243354c9dbd986f9523f972b63564bfc30d51afe7c90dc5eb",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\1eebb6bd7a519d59",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops.json": "33998eae3471b7768c9bf79f7c6417c87c0c63ba1c2f89a47a9f3196277af5d7"
+        },
+        "quality": null
+      }
+    },
+    "ed483fa2eff53465a140b126b1be6a6a0ceb1e8c192707b4b7e8421777ef53b0": {
+      "action_id": "79ea0bccc5e90d0d7a1a45db8ca38cad806d0222213314eab32fd3728623bb9b",
+      "tool": "propose_regions",
+      "target_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "ed483fa2eff53465a140b126b1be6a6a0ceb1e8c192707b4b7e8421777ef53b0",
+      "evidence_version": "7a6a55a39c1416302838bc590740a0805786cf31e0c3c43e8f4a576c73bb95b9",
+      "dependency_fingerprint": "35f429f0be88ec0efba9d3027cb856a3851e4f031a564b3101302e87490b1cf7",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\ed483fa2eff53465",
+        "paths": {
+          "regions": "detection/regions.json"
+        },
+        "files": {
+          "detection/regions.json": "ac46354db730a6a1c34663a896a984de25248c091ca1604fe01a5201443cfe5e"
+        },
+        "quality": null
+      }
+    },
+    "76474e4409affea9747de3dac69adda348a67e062a47b17f81b899c87b457a96": {
+      "action_id": "e242c837eaa865dae335700f7794a82f7b1389d8e5b02036671d1b493566ccb8",
+      "tool": "locate_feature",
+      "target_id": "locate:roi:recovery:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:0:needle_crystal",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "76474e4409affea9747de3dac69adda348a67e062a47b17f81b899c87b457a96",
+      "evidence_version": "6483de02f9db7924be02f1b590067f0440626a30e9c7394946a0ddc106bc5a6c",
+      "dependency_fingerprint": "60d027f52ed528584390de426c4c6c8399ad4d29bf36a20f682ecc9bc604ea51",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\76474e4409affea9",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/region_result.json"
+        },
+        "files": {
+          "detection/crops/needle_crystal_view_01_glme8ac6dc84c4b_01.json": "82ff4b22f1a015a42474bfc986aeb25530b41c1799f6191d00652e4acdbda11d",
+          "detection/crops/needle_crystal_view_01_glme8ac6dc84c4b_01.png": "64015dfa1b43ce3b9755c6b4649c362dce35861adc59ee32fc0379da2c0518e7",
+          "detection/region_result.json": "3e07f4a3665e603068efccb88db082673dfb86166024a1145587fbdff5cfa956"
+        },
+        "quality": null
+      }
+    },
+    "500763ede5d0205cff440a0226b4fd641444296bd6195e16d185fa203a809134": {
+      "action_id": "b92e0f6f815f87c76e9d51ac57282f1244de7e3359b7a96c0db7ca8c0b66c351",
+      "tool": "locate_feature",
+      "target_id": "locate:roi:recovery:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:1:needle_crystal",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "500763ede5d0205cff440a0226b4fd641444296bd6195e16d185fa203a809134",
+      "evidence_version": "5f8c800e24b71b8338e98f66d1e91f42467739e3e08c10a8258f7ff729926591",
+      "dependency_fingerprint": "016970b70e19ca2ad4db81d99a37e10499ea8e8e8a34408d4e7be315fd92299d",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\500763ede5d0205c",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/region_result.json"
+        },
+        "files": {
+          "detection/crops/needle_crystal_view_01_glm9963898c4126_01.json": "6ce72e674b47fd52202b212c3f000135e07f79c8eb0cfae262166129f7972836",
+          "detection/crops/needle_crystal_view_01_glm9963898c4126_01.png": "37bf3f1966a83c937980445d11c28a1a5095cef1db07210686c3d6514231e0f8",
+          "detection/region_result.json": "c505280a42ec64ce0960d063c553d27f843661316472d07ab9fe13a39a58ec23"
+        },
+        "quality": null
+      }
+    },
+    "5337e049138ed8a4c579015276b5cf6526dd35d2f55272259bff9c2153da27ee": {
+      "action_id": "e98ba32cddd0743a51afc82f6adb0b307550ed823a7d663533d6d14e4e56586a",
+      "tool": "locate_feature",
+      "target_id": "locate:roi:recovery:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:2:needle_crystal",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "5337e049138ed8a4c579015276b5cf6526dd35d2f55272259bff9c2153da27ee",
+      "evidence_version": "42cf395edc84f4561c9bf67f4563195115e7f04b81376f9bb53ebe0669661a63",
+      "dependency_fingerprint": "460a81003fb6fdc5d39da128270739fdc52a262b2c05e90ffa65f488121e0b21",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\5337e049138ed8a4",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/region_result.json"
+        },
+        "files": {
+          "detection/crops/needle_crystal_view_01_glm35239bc4a4ea_01.json": "cef10b3780135e424e405d4eaaca3861df27a9fd713ce09a5db42872fa6e2bad",
+          "detection/crops/needle_crystal_view_01_glm35239bc4a4ea_01.png": "8a965ce622a7b136d0cd9b60409910b8f885ab16a8ae755fde1f54ecf15638e6",
+          "detection/region_result.json": "ab41fa10e3af35ef9545ecf966e50161ece0e32e86d67a5e9cf7959f8ecdddcd"
+        },
+        "quality": null
+      }
+    },
+    "b31bea509aafc787ff6b92ed7cb31f7f4834deb5beb736e500eced78eeae5480": {
+      "action_id": "fdc475a56faba39e2f0c646774ec425c247842c6f440c148f15d0ad775a4002a",
+      "tool": "classify_target",
+      "target_id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:needle_crystal_view_01_glme8ac6dc84c4b_01",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "b31bea509aafc787ff6b92ed7cb31f7f4834deb5beb736e500eced78eeae5480",
+      "evidence_version": "67bb08ada141652e203d1f7a8c842e7c44e32b69586f5555ddec0f2be14d3863",
+      "dependency_fingerprint": "ca2dbacd3a4a3ca894b842455f12d1b42f6f44e78ded6283f39e0f1994a2af07",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\b31bea509aafc787",
+        "paths": {
+          "classification": "classification"
+        },
+        "files": {
+          "classification/classification.json": "2ac01978ea57bce03fc54df70d25b60873a55806cc37b1b955aa104a4daa54e4"
+        },
+        "quality": null
+      }
+    },
+    "3cf669a16404aa7ede633e300555b15e403a4dffb303395b4a91ae85fbfa9451": {
+      "action_id": "a40ea6a2342c6fd21fc330d43e1c1ffec2485a37e7081d758468f5a2bde7e6ec",
+      "tool": "locate_feature",
+      "target_id": "locate:roi:recovery:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:3:needle_crystal",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "3cf669a16404aa7ede633e300555b15e403a4dffb303395b4a91ae85fbfa9451",
+      "evidence_version": "902ef5b15e3bac27df65a6080f7f28937c5fe0f1ab14d073e6a06de7ef038c34",
+      "dependency_fingerprint": "062a37fce2a10eb6fee37e7937b4cbdd60c324bb2af097346af47dc2c002de58",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_6bdda914fc09485e8672b2e587b4b377\\workflow\\ops\\3cf669a16404aa7e",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/region_result.json"
+        },
+        "files": {
+          "detection/crops/needle_crystal_view_01_glm0fd8f16b35cd_01.json": "f161afa7c7a8f183a4157fe71a636b5dacdfd3192fb7f0fa55e71562115b5f2a",
+          "detection/crops/needle_crystal_view_01_glm0fd8f16b35cd_01.png": "848c9a6322894f630012b9d40120cd6ec2a1754db6a9c9db6f184d9ca81a63d0",
+          "detection/region_result.json": "2bb402ba0ad61d8a755270a6f472853d34e8faa45b9c5e72cce5f91c8178f085"
+        },
+        "quality": null
+      }
+    }
+  }
+}

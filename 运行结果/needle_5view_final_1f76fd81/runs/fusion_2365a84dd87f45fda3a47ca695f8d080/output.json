@@ -1,0 +1,192 @@
+{
+  "schema": "diagnosis-output/v1",
+  "sample_id": "needle_5view_final_1f76fd81",
+  "status": "tentative",
+  "top_candidate": {
+    "id": "荜茇",
+    "display": "荜茇",
+    "kind": "herb",
+    "score": 0.1913,
+    "confidence": 0.3825,
+    "support_count": 1
+  },
+  "alternatives": [
+    {
+      "id": "荆芥",
+      "display": "荆芥",
+      "score": 0.1913,
+      "confidence": 0.3825
+    },
+    {
+      "id": "麦芽",
+      "display": "麦芽",
+      "score": 0.1913,
+      "confidence": 0.3825
+    },
+    {
+      "id": "乌梅",
+      "display": "乌梅",
+      "score": 0.1817,
+      "confidence": 0.3634
+    },
+    {
+      "id": "使君子",
+      "display": "使君子",
+      "score": 0.1594,
+      "confidence": 0.3187
+    }
+  ],
+  "ambiguous_with": [
+    "荆芥",
+    "麦芽"
+  ],
+  "tie_break": {
+    "applied": false,
+    "a_majority": "龙胆",
+    "a_fold_top1": 16,
+    "total_folds": 25
+  },
+  "strong_observations": [],
+  "detections": [
+    {
+      "tool": "detect_fov_initial",
+      "label": "表皮细胞",
+      "score": 0.9073,
+      "box": [
+        262.8,
+        12.5,
+        1529.8,
+        1494.4
+      ],
+      "source_sha256": "f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "分泌组织",
+      "score": 0.4066,
+      "box": [
+        40.5,
+        24.4,
+        1949.4,
+        1534.8
+      ],
+      "source_sha256": "aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "表皮细胞",
+      "score": 0.4355,
+      "box": [
+        6.0,
+        19.9,
+        1886.1,
+        1534.2
+      ],
+      "source_sha256": "aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "其他",
+      "score": 0.7894,
+      "box": [
+        7.0,
+        0.0,
+        1853.4,
+        1411.5
+      ],
+      "source_sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "分泌组织",
+      "score": 0.5529,
+      "box": [
+        76.5,
+        15.3,
+        1807.0,
+        1530.7
+      ],
+      "source_sha256": "a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8"
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.65,
+      "box": [
+        1137,
+        676,
+        1362,
+        952
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.65,
+      "box": [
+        1184,
+        253,
+        1514,
+        707
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.65,
+      "box": [
+        604,
+        758,
+        819,
+        983
+      ],
+      "source_sha256": null
+    }
+  ],
+  "classifications": [
+    {
+      "crop_id": "needle_crystal_view_01_glme8ac6dc84c4b_01",
+      "label": "图像不可判",
+      "reject": "unreadable",
+      "confidence": "medium",
+      "feature_id": "",
+      "reason": "图像虚焦，无清晰壁、棱角或结晶形态",
+      "glm_confidence": "medium",
+      "yolo_confidence": null,
+      "confidence_source": "glm"
+    },
+    {
+      "crop_id": "needle_crystal_view_01_glm9963898c4126_01",
+      "label": "草酸钙簇晶",
+      "reject": "",
+      "confidence": "medium",
+      "feature_id": "cluster_crystal",
+      "reason": "类圆形簇状结晶，放射状棱角",
+      "glm_confidence": "medium",
+      "yolo_confidence": null,
+      "confidence_source": "glm"
+    },
+    {
+      "crop_id": "needle_crystal_view_01_glm35239bc4a4ea_01",
+      "label": "草酸钙针晶",
+      "reject": "",
+      "confidence": "medium",
+      "feature_id": "needle_crystal",
+      "reason": "多根细长尖刺成束，无壁无腔",
+      "glm_confidence": "medium",
+      "yolo_confidence": null,
+      "confidence_source": "glm"
+    }
+  ],
+  "missing_required": [],
+  "review_required": false,
+  "audit": {
+    "rule_verdict": "insufficient_evidence",
+    "internal_needs_review": true,
+    "status_note": null,
+    "policy": "always_output_tentative"
+  },
+  "note": "status=tentative 表示规则未达确认带；review_required=false 仅表示不阻塞交付，不等于 confirmed。"
+}

@@ -1,0 +1,12 @@
+[info] crop 1 个 | 源图 1 张 ['view_02'] | 药材 [''] | 输出 D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_0237e5c05dd447ed95f945f540e1854a\workflow\ops\fd593ed2427907fd\segmentation
+
+[1/1] epidermis_cell_view_02_02 | feature=epidermis_cell | px_per_um=11.65
+[结果] epidermis_cell_view_02_02: mask 1961x1536 | 占比 0.360 | 连通域 3 | 阈值 126.0 | invert=False | 状态 review  ⚠需人工确认 | 框先验: 丢邻粒 0 块, 裁 0px
+[输出] D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_0237e5c05dd447ed95f945f540e1854a\workflow\ops\fd593ed2427907fd\segmentation\igm\epidermis_cell_view_02_02
+  ⚠ IGM 状态 review → 需人工复核该 mask（极性冲突=False、中心块/框=0.376、框外占比=0.0266）
+
+[done] 实例 1 个 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_0237e5c05dd447ed95f945f540e1854a\workflow\ops\fd593ed2427907fd\segmentation\masks
+       IGM 原始产物 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_0237e5c05dd447ed95f945f540e1854a\workflow\ops\fd593ed2427907fd\segmentation\igm
+       实例清单 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_0237e5c05dd447ed95f945f540e1854a\workflow\ops\fd593ed2427907fd\segmentation\instances.json
+       （几何测量）--masks "D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_0237e5c05dd447ed95f945f540e1854a\workflow\ops\fd593ed2427907fd\segmentation\masks"
+[warn] 1 个 crop 的 mask 状态非 ok：这些实例在判药侧会被整条丢弃（不计证据），需人工复核：['epidermis_cell_view_02_02']

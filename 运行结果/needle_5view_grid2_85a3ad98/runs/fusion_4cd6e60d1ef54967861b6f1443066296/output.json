@@ -1,0 +1,178 @@
+{
+  "schema": "diagnosis-output/v1",
+  "sample_id": "needle_5view_grid2_85a3ad98",
+  "status": "tentative",
+  "top_candidate": {
+    "id": "辣蓼",
+    "display": "辣蓼",
+    "kind": "herb",
+    "score": 0.0,
+    "confidence": 0.0,
+    "support_count": 0
+  },
+  "alternatives": [
+    {
+      "id": "青黛",
+      "display": "青黛",
+      "score": 0.0,
+      "confidence": 0.0
+    },
+    {
+      "id": "槟榔",
+      "display": "槟榔",
+      "score": -0.009,
+      "confidence": 0.0
+    },
+    {
+      "id": "蝉蜕",
+      "display": "蝉蜕",
+      "score": -0.009,
+      "confidence": 0.0
+    },
+    {
+      "id": "穿心莲",
+      "display": "穿心莲",
+      "score": -0.009,
+      "confidence": 0.0
+    }
+  ],
+  "ambiguous_with": [
+    "青黛"
+  ],
+  "tie_break": {
+    "applied": false,
+    "a_majority": "龙胆",
+    "a_fold_top1": 16,
+    "total_folds": 25
+  },
+  "strong_observations": [],
+  "detections": [
+    {
+      "tool": "detect_fov_initial",
+      "label": "表皮细胞",
+      "score": 0.9073,
+      "box": [
+        262.8,
+        12.5,
+        1529.8,
+        1494.4
+      ],
+      "source_sha256": "f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "分泌组织",
+      "score": 0.4066,
+      "box": [
+        40.5,
+        24.4,
+        1949.4,
+        1534.8
+      ],
+      "source_sha256": "aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "表皮细胞",
+      "score": 0.4355,
+      "box": [
+        6.0,
+        19.9,
+        1886.1,
+        1534.2
+      ],
+      "source_sha256": "aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "其他",
+      "score": 0.7894,
+      "box": [
+        7.0,
+        0.0,
+        1853.4,
+        1411.5
+      ],
+      "source_sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "分泌组织",
+      "score": 0.5529,
+      "box": [
+        76.5,
+        15.3,
+        1807.0,
+        1530.7
+      ],
+      "source_sha256": "a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8"
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.65,
+      "box": [
+        1198,
+        502,
+        1454,
+        737
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.65,
+      "box": [
+        618,
+        797,
+        842,
+        950
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        594,
+        778,
+        922,
+        983
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        584,
+        707,
+        993,
+        1290
+      ],
+      "source_sha256": null
+    }
+  ],
+  "classifications": [
+    {
+      "crop_id": "needle_crystal_view_01_glm9963898c4126_01",
+      "label": "图像不可判",
+      "reject": "unreadable",
+      "confidence": "medium",
+      "feature_id": "",
+      "reason": "图糊无清晰壁或棱角"
+    }
+  ],
+  "missing_required": [],
+  "review_required": false,
+  "audit": {
+    "rule_verdict": "insufficient_evidence",
+    "internal_needs_review": true,
+    "status_note": null,
+    "policy": "always_output_tentative"
+  },
+  "note": "status=tentative 表示规则未达确认带；review_required=false 仅表示不阻塞交付，不等于 confirmed。"
+}

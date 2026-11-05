@@ -1,0 +1,293 @@
+{
+  "identity": "a1a6056559f5b6e1bf248a0d4c836974908e116a68154f89fe77f0a7ac4fb5fe",
+  "deadline": 1793849145.0629811,
+  "used": {
+    "planning": 17,
+    "network": 33,
+    "initialization": 2,
+    "recompute": 4,
+    "observation": 10
+  },
+  "entries": {
+    "planning:0:0": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:0:0": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "f2778ae75f5638ca734eb6028499ff4bd8f21f56d935eecb4c1d84e64bd03bfc": {
+      "pool": "initialization",
+      "status": "pending"
+    },
+    "82642be721476eef04424cc95cfa9bf19fc21144050f2b9a3bc3eedbb577ac15": {
+      "pool": "network",
+      "status": "pending",
+      "operation_key": "f2778ae75f5638ca734eb6028499ff4bd8f21f56d935eecb4c1d84e64bd03bfc"
+    },
+    "2d5521aa254a8cbfdc4ca0b698f534b38524df99c55e5e47892cd96bb1f3af7d": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "f2778ae75f5638ca734eb6028499ff4bd8f21f56d935eecb4c1d84e64bd03bfc",
+      "http_status": 200,
+      "error_type": null
+    },
+    "planning:1:1": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:1:1": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "b29a2234a737fa9f61825c7ddda13f6f52e44a8b886329cce017ef9d991fdaef": {
+      "pool": "initialization",
+      "status": "pending"
+    },
+    "c503cc84241028b866c50e6619a7d8020d26e28c495ec393efc1e2c526ff7790": {
+      "pool": "network",
+      "status": "pending",
+      "operation_key": "b29a2234a737fa9f61825c7ddda13f6f52e44a8b886329cce017ef9d991fdaef"
+    },
+    "planning:2:2": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:2:2": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "6781b7cc68baa5cc996ce57261ee3b5f7de8dfb8dd3dd4a08cb0f6cf96344482": {
+      "pool": "recompute",
+      "status": "pending"
+    },
+    "adb5575902581957de9db376193f455ed5d9aaaae3930f145a5bc2a9137c5d96": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "6781b7cc68baa5cc996ce57261ee3b5f7de8dfb8dd3dd4a08cb0f6cf96344482",
+      "http_status": 200,
+      "error_type": null
+    },
+    "da3a8027936ce50ab13557a04812d9f718736f1fd362409e1dc2e28fbf101a3d": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "6781b7cc68baa5cc996ce57261ee3b5f7de8dfb8dd3dd4a08cb0f6cf96344482",
+      "http_status": 200,
+      "error_type": null
+    },
+    "planning:3:3": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:3:3": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "8ec10a2c0f7d9800791c5ae7952328cfd8ce6304350ce56f9e152084bce9013e": {
+      "pool": "recompute",
+      "status": "pending"
+    },
+    "planning:4:4": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:4:4": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:782222733f6c0ecbbc51d388ce984748e3d5fe313f9a40db936fd132905c22bb": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:782222733f6c0ecbbc51d388ce984748e3d5fe313f9a40db936fd132905c22bb": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:5:5": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:5:5": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:651386c014ef70348f2ed70337bbe45754ef51fd6fbc35adaa14e6abf072a9fa": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:651386c014ef70348f2ed70337bbe45754ef51fd6fbc35adaa14e6abf072a9fa": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:6:6": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:6:6": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:2c1a08dff22d8b8ccb679e28bd48102247efa64203aa32205d664e7da67f7090": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:2c1a08dff22d8b8ccb679e28bd48102247efa64203aa32205d664e7da67f7090": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:7:7": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:7:7": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:64af983426c4564046173569d88f9c45def30695b03988e8d693292cf0b64229": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:64af983426c4564046173569d88f9c45def30695b03988e8d693292cf0b64229": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:8:8": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:8:8": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:5287ac5e173524f07e7f2b9c79e14eed03f99513bfda7d0bdcd7cc0b3c00585b": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:5287ac5e173524f07e7f2b9c79e14eed03f99513bfda7d0bdcd7cc0b3c00585b": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:9:9": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:9:9": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:c9ed2b7bba970dd32c451f8883bb01821c146c4fa7ee3b32efc58ca2f30cf613": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:c9ed2b7bba970dd32c451f8883bb01821c146c4fa7ee3b32efc58ca2f30cf613": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:10:10": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:10:10": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:dd7d90731d5358e7a22c54521d753f4c03b55778cf025f8b6c58ff74255b6084": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:dd7d90731d5358e7a22c54521d753f4c03b55778cf025f8b6c58ff74255b6084": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:11:11": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:11:11": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:652be233982fb8dfb7d6ffc60f6d2c74d4b762f87034cedb3f23506d0aa8de2a": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:652be233982fb8dfb7d6ffc60f6d2c74d4b762f87034cedb3f23506d0aa8de2a": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:12:12": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:12:12": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:0cbb3143728390b76fb63de873bd207ce545b39fa9c204fe99e7b5e2b415b8e2": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:0cbb3143728390b76fb63de873bd207ce545b39fa9c204fe99e7b5e2b415b8e2": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:13:13": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:13:13": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "1bd97e9b0f6afba79b8611234f1df577eda058b2f71ddf7b09a9e65b926051d0": {
+      "pool": "recompute",
+      "status": "pending"
+    },
+    "planning:14:14": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:14:14": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:f479546bffede8b059cecaf723c790a26a6d470cbc172c72f952754c21825122": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:f479546bffede8b059cecaf723c790a26a6d470cbc172c72f952754c21825122": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:15:15": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:15:15": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "6d2376f15c96da737449ea92449144b0cfc663dc2856e0dcd309d6c936f56652": {
+      "pool": "recompute",
+      "status": "pending"
+    },
+    "5865bb34617a9cfa6243105718e3f6f0ec172db9811297ab9aa7c117af65ab3d": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "6d2376f15c96da737449ea92449144b0cfc663dc2856e0dcd309d6c936f56652",
+      "http_status": 200,
+      "error_type": null
+    },
+    "planning:16:16": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:16:16": {
+      "pool": "network",
+      "status": "pending"
+    }
+  },
+  "closed": true,
+  "stop_reason": "planner_request_review"
+}

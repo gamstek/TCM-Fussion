@@ -1,0 +1,140 @@
+{
+  "image": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_0237e5c05dd447ed95f945f540e1854a\\workflow\\ops\\fd593ed2427907fd\\crops\\epidermis_cell_view_02_02.png",
+  "image_hw": [
+    1536,
+    1961
+  ],
+  "stem": "epidermis_cell_view_02_02",
+  "prompt": "请完成图像的二值分割任务（只有一个前景和一个背景的图像分割），图中的前景是表皮细胞：表面观呈多角形或类长方形的细胞，排列紧密成片，壁平直、波状弯曲或连珠状增厚；种皮来源者多呈红棕色或黄棕色。\n只分割位于画面中央的那一个目标：画面边缘、四角出现的其他同类实体属于背景，不要分割、不要补全、不要描出轮廓。\n请严格按图中所见该实体的实际轮廓，把它从背景中完整分割出来，保留原本形状，不要简化和复杂化，不要凭空生成图中不存在的实体。\n输出二值掩码图：前景为纯白色，背景为纯黑色，不做灰度渐变、不画轮廓线。\n背景必须整幅均匀纯黑：不允许出现半幅灰/白背景，也不允许出现对角或渐变的明暗分界。\n不要添加任何文字、数字、水印、标识、logo、边框或装饰元素。",
+  "prompt_source": "模板+本体表(epidermis_cell)",
+  "feature": "epidermis_cell",
+  "feature_desc": "表皮细胞：表面观呈多角形或类长方形的细胞，排列紧密成片，壁平直、波状弯曲或连珠状增厚；种皮来源者多呈红棕色或黄棕色",
+  "model": "doubao-seedream-5-0-flash-260915",
+  "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+  "size_requested": "1984x1536",
+  "size_mode": "auto",
+  "size_note": null,
+  "pad_ratio": 0.0116,
+  "input_sent": "input_sent.jpg",
+  "input_sent_hw": [
+    1536,
+    1984
+  ],
+  "gen_hw": [
+    1536,
+    1984
+  ],
+  "letterbox": {
+    "out_w": 1984,
+    "out_h": 1536,
+    "content_w": 1961,
+    "content_h": 1536,
+    "top_ratio": 0.0,
+    "left_ratio": 0.005544354838709678,
+    "cw_ratio": 0.9884072580645161,
+    "ch_ratio": 1.0,
+    "scale": 1.0
+  },
+  "key_source": "igm.api_key",
+  "threshold": 126.0,
+  "invert": false,
+  "polarity_note": "极性探针取亮侧；四角平坦块 0/4 亮（角块 31px，相对 Otsu 126；4/4 块可信）→ invert=False",
+  "mask_source": "gray",
+  "polarity_hint": false,
+  "polarity_conflict": false,
+  "box": [
+    6,
+    20,
+    1886,
+    1534
+  ],
+  "box_margin_ratio": 0.1,
+  "box_keep_overlap": 0.5,
+  "box_iou": 0.3672,
+  "fg_outside_box_ratio": 0.0266,
+  "center_comp_ratio": 0.376,
+  "box_association": "region_component",
+  "association_version": "association-policy-v1-trial",
+  "center_region_box": [
+    476,
+    398,
+    1416,
+    1155
+  ],
+  "center_region_hit": true,
+  "association_candidates": 3,
+  "association_method": "ambiguous",
+  "associated_bbox_ratio": 0.0,
+  "associated_comp_ratio": 0.0,
+  "associated_touches_border": false,
+  "association_valid": false,
+  "association_status": "review",
+  "association_reasons": [
+    "ASSOCIATION_AMBIGUOUS"
+  ],
+  "association_trace": [
+    {
+      "rule": "unique",
+      "matched": false,
+      "reasons": [
+        "NOT_SINGLE_COMPONENT"
+      ]
+    },
+    {
+      "rule": "multipart",
+      "matched": false,
+      "reasons": [
+        "NOT_MULTIPART"
+      ]
+    },
+    {
+      "rule": "dominant",
+      "matched": false,
+      "reasons": [
+        "FEATURE_NOT_ELIGIBLE",
+        "SHAPE_NOT_ELIGIBLE"
+      ]
+    },
+    {
+      "rule": "ambiguous",
+      "matched": true,
+      "reasons": []
+    }
+  ],
+  "dominance": {
+    "components": 3,
+    "total_area": 1084605,
+    "selected_area": 1084605,
+    "dropped_area": 0,
+    "dropped_area_ratio": 0.0,
+    "largest_share": 0.9871409407111345,
+    "second_share": 0.012812037562061765,
+    "dropped_components": 0,
+    "center_hit": true,
+    "tight_overlap": 0.9730315376151861
+  },
+  "width_only": false,
+  "association_dropped_components": 0,
+  "association_dropped_px": 0,
+  "review_reason_codes": [
+    "TARGET_ASSOCIATION_AMBIGUOUS_OR_TOO_SMALL",
+    "POSSIBLE_TRUNCATION",
+    "ASSOCIATION_AMBIGUOUS"
+  ],
+  "dropped_components": 0,
+  "dropped_px": 0,
+  "clipped_px": 0,
+  "max_hole_ratio": 0.0,
+  "hole_fill": "all",
+  "area_ratio": 0.360083,
+  "n_components": 3,
+  "status": "review",
+  "mask_hw": [
+    1536,
+    1961
+  ],
+  "size_match": true,
+  "revised_prompt": null,
+  "elapsed_s": 11.2,
+  "note": "IGM 是现役图像分割通路的产物（非预标注件）；status!=ok 的实例在判药侧被整条丢弃，尺寸量值仅在 status==ok 时可用"
+}

@@ -1,0 +1,340 @@
+{
+  "identity": "08800f79bf6ad2b44cd60999eda826debce3bad777dbe4e0a6be6a6225c32d05",
+  "requests": 8,
+  "entries": {
+    "83ef61501259ca5e2d6f66b551344c943f953984e486fcae6ae24565ffcbe7b8": {
+      "action_id": "83ef61501259ca5e2d6f66b551344c943f953984e486fcae6ae24565ffcbe7b8",
+      "accepted": false,
+      "result": {
+        "ok": false,
+        "error_code": "UPSTREAM_HTTP_TIMEOUT"
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+          "feature_id": "secretory_tissue",
+          "morph_hint": "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "83ef61501259ca5e2d6f66b551344c943f953984e486fcae6ae24565ffcbe7b8",
+        "mandatory": false,
+        "priority": [
+          false,
+          4,
+          "secretory_tissue",
+          "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+          "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        ]
+      },
+      "status": "failed",
+      "cache_hit": false,
+      "new_requests": 1,
+      "error_type": "IntegrationError",
+      "error_code": "UPSTREAM_HTTP_TIMEOUT",
+      "diagnostics": {
+        "stage": "http_request",
+        "attempts": 1
+      },
+      "usage": null
+    },
+    "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876": {
+      "action_id": "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876",
+      "accepted": true,
+      "result": {
+        "present": true,
+        "conf": 0.65,
+        "reason": "视野中可见相互联结的分支管状结构，直径约15~25μm，管腔内充满淡黄色颗粒状内含物，与联结乳管（如桔梗）特征相符。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "feature_id": "secretory_tissue",
+          "morph_hint": "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876",
+        "mandatory": false,
+        "priority": [
+          false,
+          4,
+          "secretory_tissue",
+          "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2411,
+        "completion_tokens": 904,
+        "total_tokens": 3315
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "a8cd7ffd1d4491e7009e57e7fc32a6a7066b2ce9df565307b3f3368e9f9ba115": {
+      "action_id": "a8cd7ffd1d4491e7009e57e7fc32a6a7066b2ce9df565307b3f3368e9f9ba115",
+      "accepted": true,
+      "result": {
+        "crystal_location": "intracellular",
+        "crystal_location_raw": "intracellular",
+        "cell_wall_visible": true,
+        "guarded": false,
+        "arrangement": "scattered",
+        "abundance": "few",
+        "conf": 0.6,
+        "reason": "可见成片排列的细胞轮廓，结晶散布于细胞区域内，数量少",
+        "ok": true
+      },
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+        },
+        "skill": "scene_context",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "a8cd7ffd1d4491e7009e57e7fc32a6a7066b2ce9df565307b3f3368e9f9ba115",
+        "mandatory": true,
+        "priority": []
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2699,
+        "completion_tokens": 63,
+        "total_tokens": 2762
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "f968612f74160f6e202720a941ea257fe41dab08c13f4c67d92c7c59b561cc58": {
+      "action_id": "f968612f74160f6e202720a941ea257fe41dab08c13f4c67d92c7c59b561cc58",
+      "accepted": true,
+      "result": {
+        "crystal_location": "intracellular",
+        "crystal_location_raw": "intracellular",
+        "cell_wall_visible": true,
+        "guarded": false,
+        "arrangement": "rows",
+        "abundance": "many",
+        "conf": 0.7,
+        "reason": "成片长条形细胞壁轮廓可见，其内沿纵向排列的方晶状折光结构成行分布",
+        "ok": true
+      },
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_a14f0020f94e1db981140c439f90a9e6660cc1ed183c6a3374c3a38d2d997290"
+        },
+        "skill": "scene_context",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "f968612f74160f6e202720a941ea257fe41dab08c13f4c67d92c7c59b561cc58",
+        "mandatory": true,
+        "priority": []
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2699,
+        "completion_tokens": 70,
+        "total_tokens": 2769
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "4e9cea0afaedff5cefa93fcc76907a53ca605e4110a895f6c9d94e627d85be44": {
+      "action_id": "4e9cea0afaedff5cefa93fcc76907a53ca605e4110a895f6c9d94e627d85be44",
+      "accepted": true,
+      "result": {
+        "crystal_location": "intracellular",
+        "crystal_location_raw": "intracellular",
+        "cell_wall_visible": true,
+        "guarded": false,
+        "arrangement": "scattered",
+        "abundance": "few",
+        "conf": 0.6,
+        "reason": "画面可见成片排列的细胞壁轮廓，少量黄色小结晶散布于细胞区域内。",
+        "ok": true
+      },
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8"
+        },
+        "skill": "scene_context",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "4e9cea0afaedff5cefa93fcc76907a53ca605e4110a895f6c9d94e627d85be44",
+        "mandatory": true,
+        "priority": []
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2699,
+        "completion_tokens": 66,
+        "total_tokens": 2765
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "17be2f25d6ba94a627ce0bfd971ac1a23d8f96f762704edcce4797feb1290c54": {
+      "action_id": "17be2f25d6ba94a627ce0bfd971ac1a23d8f96f762704edcce4797feb1290c54",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.65,
+        "reason": "视野中主要为含大量深褐色球状色素/油滴的团块及散在的长条形纤维或晶体碎片，未见长细胞与栓化细胞、硅质细胞成对交互排列且壁厚深波状弯曲的表皮细胞特征。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+          "feature_id": "epidermis_cell",
+          "morph_hint": "外表皮长细胞与2个短细胞（栓化细胞、硅质细胞）交互排列，长细胞壁厚深波状弯曲"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "17be2f25d6ba94a627ce0bfd971ac1a23d8f96f762704edcce4797feb1290c54",
+        "mandatory": false,
+        "priority": [
+          false,
+          5,
+          "epidermis_cell",
+          "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+          "外表皮长细胞与2个短细胞（栓化细胞、硅质细胞）交互排列，长细胞壁厚深波状弯曲"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2424,
+        "completion_tokens": 825,
+        "total_tokens": 3249
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "94561b9e06b961646a7e949954facc6c418a40354349c674977a9b58d17e2a1d": {
+      "action_id": "94561b9e06b961646a7e949954facc6c418a40354349c674977a9b58d17e2a1d",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.72,
+        "reason": "图中可见多个直径约15-30μm的深色球形团块，部分具放射状亮心（似簇晶）或均匀深色内容物，更符合油滴/深色填充细胞或簇晶类结构，未见充满薄壁细胞的极细小砂晶颗粒。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+          "feature_id": "sand_crystal",
+          "morph_hint": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "94561b9e06b961646a7e949954facc6c418a40354349c674977a9b58d17e2a1d",
+        "mandatory": false,
+        "priority": [
+          false,
+          7,
+          "sand_crystal",
+          "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+          "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2401,
+        "completion_tokens": 1943,
+        "total_tokens": 4344
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    "9174f7219f2c0593b1e18635584c95e13792404a127633494b601b6f71f15ce7": {
+      "action_id": "9174f7219f2c0593b1e18635584c95e13792404a127633494b601b6f71f15ce7",
+      "accepted": true,
+      "result": {
+        "crystal_location": "intracellular",
+        "crystal_location_raw": "intracellular",
+        "cell_wall_visible": true,
+        "guarded": false,
+        "arrangement": "scattered",
+        "abundance": "few",
+        "conf": 0.7,
+        "reason": "视野中可见成片纤维状长条细胞壁结构，暗绿色长梭形晶体散布于该细胞区域内，数量少且无规则排列。",
+        "ok": true
+      },
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263"
+        },
+        "skill": "scene_context",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "9174f7219f2c0593b1e18635584c95e13792404a127633494b601b6f71f15ce7",
+        "mandatory": true,
+        "priority": []
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2699,
+        "completion_tokens": 79,
+        "total_tokens": 2778
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    }
+  }
+}

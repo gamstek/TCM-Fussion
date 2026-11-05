@@ -93,7 +93,10 @@ def _classifications(operations):
             continue
         rows.append({"crop_id": doc.get("crop_id"), "label": doc.get("label"),
                      "reject": doc.get("reject"), "confidence": doc.get("confidence"),
-                     "feature_id": doc.get("feature_id"), "reason": doc.get("reason")})
+                     "feature_id": doc.get("feature_id"), "reason": doc.get("reason"),
+                     "glm_confidence": doc.get("glm_confidence"),
+                     "yolo_confidence": doc.get("yolo_confidence"),
+                     "confidence_source": doc.get("confidence_source")})
     return rows
 
 
@@ -152,6 +155,10 @@ def project_output(sample_id, verdict, result, a):
     if status == "confirmed" and verdict.get("needs_review"):
         status = "tentative"
         status_note = "identity/policy review required; not promoted to confirmed"
+    admission = verdict.get("candidate_admission") or {}
+    if status in {"confirmed", "probable"} and admission.get("decision") in {"verify", "suppress"}:
+        status = "tentative"
+        status_note = "candidate admission not passed; not promoted"
     views = _view_map(a)
     observations = _observations(result, views)
     for row in observations:
@@ -175,7 +182,12 @@ def project_output(sample_id, verdict, result, a):
             "id": top.get("id"), "display": top.get("display"), "kind": top.get("kind"),
             "score": top.get("score"), "confidence": top.get("confidence"),
             "support_count": top.get("support_count"),
+            "a_probability": top.get("a_probability"),
+            "b_confidence": top.get("b_confidence"),
+            "fused_score": top.get("fused_score"),
+            "admission": verdict.get("candidate_admission", {}).get("decision"),
         },
+        "candidate_admission": verdict.get("candidate_admission"),
         "alternatives": [{"id": r.get("id"), "display": r.get("display"),
                           "score": r.get("score"), "confidence": r.get("confidence")}
                          for r in ranking[1:5]],
@@ -190,6 +202,9 @@ def project_output(sample_id, verdict, result, a):
             "rule_verdict": verdict.get("verdict"),
             "internal_needs_review": bool(verdict.get("needs_review")),
             "status_note": status_note,
+            "candidate_scope": verdict.get("candidate_scope"),
+            "fusion_weights": verdict.get("fusion_weights"),
+            "fusion_policy": verdict.get("fusion_policy"),
             "policy": "always_output_tentative",
         },
         "note": "status=tentative 表示规则未达确认带；review_required=false 仅表示不阻塞交付，不等于 confirmed。",

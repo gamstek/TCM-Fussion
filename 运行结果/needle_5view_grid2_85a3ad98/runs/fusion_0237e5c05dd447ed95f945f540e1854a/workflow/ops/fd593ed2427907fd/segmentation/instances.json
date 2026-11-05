@@ -1,0 +1,34 @@
+{
+  "n_crops": 1,
+  "n_instances": 1,
+  "instances": [
+    {
+      "crop_id": "epidermis_cell_view_02_02",
+      "stem": "view_02",
+      "feature_id": "epidermis_cell",
+      "object_label": "表皮细胞",
+      "herb": "",
+      "px_per_um": "11.65",
+      "mask_file": "masks/view_02__epidermis_cell__inst01.png",
+      "igm_dir": "igm/epidermis_cell_view_02_02",
+      "igm_status": "review",
+      "igm_area_ratio": 0.360083,
+      "granularity": "instance",
+      "n_components": 3,
+      "igm_polarity_conflict": false,
+      "igm_box": [
+        6,
+        20,
+        1886,
+        1534
+      ],
+      "igm_dropped_components": 0,
+      "igm_dropped_px": 0,
+      "igm_clipped_px": 0,
+      "igm_fg_outside_box_ratio": 0.0266,
+      "igm_touches_border": "",
+      "igm_border_contact_ratio": "",
+      "igm_center_comp_ratio": 0.376
+    }
+  ]
+}

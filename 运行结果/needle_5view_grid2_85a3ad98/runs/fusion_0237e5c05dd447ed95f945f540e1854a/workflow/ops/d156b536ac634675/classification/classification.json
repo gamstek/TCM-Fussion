@@ -1,0 +1,18 @@
+{
+  "label": "草酸钙针晶",
+  "reject": "",
+  "raw_label": "草酸钙针晶",
+  "feature_id": "needle_crystal",
+  "second": "疑似待定",
+  "confidence": "medium",
+  "reason": "多根细长两端尖的透明晶体成束",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\view_01.jpg",
+  "focus": 780.0,
+  "sent_hw": [
+    669,
+    768
+  ],
+  "granularity": "bundle",
+  "crop_id": "needle_crystal_view_01_glm35239bc4a4ea_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_0237e5c05dd447ed95f945f540e1854a\\workflow\\ops\\efa0d37bd7de7314\\detection\\crops\\needle_crystal_view_01_glm35239bc4a4ea_01.png"
+}

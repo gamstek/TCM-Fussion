@@ -1,0 +1,18 @@
+{
+  "label": "草酸钙簇晶",
+  "reject": "",
+  "raw_label": "草酸钙簇晶",
+  "feature_id": "cluster_crystal",
+  "second": "分泌组织",
+  "confidence": "medium",
+  "reason": "多角形簇状晶体，放射状排列",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\view_01.jpg",
+  "focus": 2549.4,
+  "sent_hw": [
+    358,
+    768
+  ],
+  "granularity": "instance",
+  "crop_id": "needle_crystal_view_01_glmdcbee2309f30_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_2326733f138b47a4969d5268c15323ef\\workflow\\ops\\b4f2838803980dc6\\detection\\crops\\needle_crystal_view_01_glmdcbee2309f30_01.png"
+}

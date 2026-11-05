@@ -1,0 +1,13 @@
+{
+  "operation_key": "e82172964717af8482b730132529a28b90a47697eaeac27e156a5da04ade1fe7",
+  "budget_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_4bb85c5066624b79b56ea72153d96ee3\\workflow\\resources.json",
+  "limits": {
+    "initialization": 5,
+    "recompute": 30,
+    "network": 60,
+    "planning": 24,
+    "observation": 10,
+    "total": 200
+  },
+  "identity": "28fa2827bdbff6a20481b1a07c97659d51106f1351a8deccb7401aba1439f363"
+}

@@ -1,0 +1,18 @@
+{
+  "label": "图像不可判",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "",
+  "confidence": "medium",
+  "reason": "图像虚焦模糊，无清晰结构",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\view_01.jpg",
+  "focus": 1074.5,
+  "sent_hw": [
+    768,
+    608
+  ],
+  "granularity": "instance",
+  "crop_id": "needle_crystal_view_01_glm9963898c4126_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_0237e5c05dd447ed95f945f540e1854a\\workflow\\ops\\746b6c150d815d69\\detection\\crops\\needle_crystal_view_01_glm9963898c4126_01.png"
+}

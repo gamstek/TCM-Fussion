@@ -1,0 +1,12 @@
+[info] crop 1 个 | 源图 1 张 ['view_01'] | 药材 [''] | 输出 D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_4bb85c5066624b79b56ea72153d96ee3\workflow\ops\0b0494ec722c496b\segmentation
+
+[1/1] needle_crystal_view_01_glm9963898c4126_01 | feature=needle_crystal | px_per_um=5.825
+[结果] needle_crystal_view_01_glm9963898c4126_01: mask 191x258 | 占比 0.068 | 连通域 1 | 阈值 126.0 | invert=False | 状态 review  ⚠需人工确认 | 框先验: 丢邻粒 0 块, 裁 0px
+[输出] D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_4bb85c5066624b79b56ea72153d96ee3\workflow\ops\0b0494ec722c496b\segmentation\igm\needle_crystal_view_01_glm9963898c4126_01
+  ⚠ IGM 状态 review → 需人工复核该 mask（极性冲突=False、中心块/框=0.0、框外占比=0.0）
+
+[done] 实例 1 个 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_4bb85c5066624b79b56ea72153d96ee3\workflow\ops\0b0494ec722c496b\segmentation\masks
+       IGM 原始产物 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_4bb85c5066624b79b56ea72153d96ee3\workflow\ops\0b0494ec722c496b\segmentation\igm
+       实例清单 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_4bb85c5066624b79b56ea72153d96ee3\workflow\ops\0b0494ec722c496b\segmentation\instances.json
+       （几何测量）--masks "D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\runs\fusion_4bb85c5066624b79b56ea72153d96ee3\workflow\ops\0b0494ec722c496b\segmentation\masks"
+[warn] 1 个 crop 的 mask 状态非 ok：这些实例在判药侧会被整条丢弃（不计证据），需人工复核：['needle_crystal_view_01_glm9963898c4126_01']

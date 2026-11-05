@@ -1,0 +1,47 @@
+{
+  "source_sha256": "aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+  "image_size": [
+    2048,
+    1536
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "分泌组织",
+      "tight_bbox": [
+        40.5,
+        24.4,
+        1949.4,
+        1534.8
+      ],
+      "confidence": "medium",
+      "score": 0.4066,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "表皮细胞",
+      "tight_bbox": [
+        6.0,
+        19.9,
+        1886.1,
+        1534.2
+      ],
+      "confidence": "medium",
+      "score": 0.4355,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ],
+  "engine": "yolo",
+  "count": 2,
+  "coordinate_system": "original_pixels"
+}

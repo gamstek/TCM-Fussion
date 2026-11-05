@@ -1,0 +1,40 @@
+﻿{
+    "herb":  "龙胆",
+    "feature_id":  "needle_crystal",
+    "group_keys":  [
+                       "龙胆-seq",
+                       "龙胆-B2016"
+                   ],
+    "views":  [
+                  {
+                      "view":  "view_01.jpg",
+                      "original":  "1_9f463f.jpg",
+                      "label":  "dataset\\目标检测标注\\草酸钙针晶\\labels\\1_9f463f.txt",
+                      "sha256":  "f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed"
+                  },
+                  {
+                      "view":  "view_02.jpg",
+                      "original":  "2_6a81e5.jpg",
+                      "label":  "dataset\\目标检测标注\\草酸钙针晶\\labels\\2_6a81e5.txt",
+                      "sha256":  "aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263"
+                  },
+                  {
+                      "view":  "view_03.jpg",
+                      "original":  "3_64a87d.jpg",
+                      "label":  "dataset\\目标检测标注\\草酸钙针晶\\labels\\3_64a87d.txt",
+                      "sha256":  "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+                  },
+                  {
+                      "view":  "view_04.jpg",
+                      "original":  "B20164955(3).jpg",
+                      "label":  "dataset\\目标检测标注\\草酸钙针晶\\labels\\B20164955(3).txt",
+                      "sha256":  "a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8"
+                  },
+                  {
+                      "view":  "view_05.jpg",
+                      "original":  "B20164956(3).jpg",
+                      "label":  "dataset\\目标检测标注\\草酸钙针晶\\labels\\B20164956(3).txt",
+                      "sha256":  "a14f0020f94e1db981140c439f90a9e6660cc1ed183c6a3374c3a38d2d997290"
+                  }
+              ]
+}

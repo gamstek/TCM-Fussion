@@ -26,6 +26,9 @@ class _Workflow:
         self.store = _Store()
         self.operations = operations
 
+    def segmentation_reviews(self):
+        return []
+
 
 class _Runtime:
     pass
@@ -62,10 +65,13 @@ class P0PriorityTest(unittest.TestCase):
             self.assertEqual(focus["status"], "no_crop")
             self.assertFalse(focus["attempted"])
 
-    def test_present_feature_clears_focus(self):
+    def test_present_feature_then_supporting_review(self):
         with tempfile.TemporaryDirectory() as root:
             runtime = self._runtime(root, present=["needle_crystal"])
-            self.assertIsNone(WorkflowRuntime.p0_focus(runtime))
+            focus = WorkflowRuntime.p0_focus(runtime)
+            self.assertIsNotNone(focus)
+            self.assertEqual(focus["status"], "supporting_review")
+            self.assertEqual(focus["feature_id"], "epidermis_cell")
 
     def _runtime_with_crop(self, root, *, seg_quality=None, measured=False, identity=True,
                            det_score=None, identity_required=False, classify=True):
@@ -113,12 +119,16 @@ class P0PriorityTest(unittest.TestCase):
             self.assertEqual(focus["status"], "crop_segmented_unmeasured")
             self.assertFalse(focus["attempted"])
 
-    def test_review_segmentation_or_measurement_releases_gate(self):
+    def test_review_segmentation_opens_review_gate(self):
         with tempfile.TemporaryDirectory() as root:
-            self.assertIsNone(WorkflowRuntime.p0_focus(
-                self._runtime_with_crop(root, seg_quality="review")))
-            self.assertIsNone(WorkflowRuntime.p0_focus(
-                self._runtime_with_crop(root, seg_quality="valid", measured=True)))
+            review_focus = WorkflowRuntime.p0_focus(
+                self._runtime_with_crop(root, seg_quality="review"))
+            self.assertIsNotNone(review_focus)
+            self.assertEqual(review_focus["status"], "crop_segmentation_review")
+            self.assertFalse(review_focus["attempted"])
+            measured_focus = WorkflowRuntime.p0_focus(
+                self._runtime_with_crop(root, seg_quality="valid", measured=True))
+            self.assertNotEqual((measured_focus or {}).get("status"), "crop_segmentation_review")
 
     def test_all_grid_locate_attempts_required(self):
         with tempfile.TemporaryDirectory() as root:

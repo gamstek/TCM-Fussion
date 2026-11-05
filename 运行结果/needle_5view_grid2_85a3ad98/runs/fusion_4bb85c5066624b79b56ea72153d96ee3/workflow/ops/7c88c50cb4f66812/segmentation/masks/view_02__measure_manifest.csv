@@ -1,0 +1,2 @@
+﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity
+1,view_02__secretory_tissue__inst01.png,secretory_tissue_view_02_01,D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_grid2_85a3ad98\view_02.jpg,secretory_tissue,分泌组织,,"[40, 24, 1949, 1535]",11.65,review,0.394328,instance

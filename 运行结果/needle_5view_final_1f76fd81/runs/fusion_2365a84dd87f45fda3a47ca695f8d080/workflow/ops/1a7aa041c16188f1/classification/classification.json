@@ -1,0 +1,22 @@
+{
+  "label": "草酸钙簇晶",
+  "reject": "",
+  "raw_label": "草酸钙簇晶",
+  "feature_id": "cluster_crystal",
+  "second": "",
+  "confidence": "medium",
+  "reason": "类圆形簇状结晶，放射状棱角",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_final_1f76fd81\\view_01.jpg",
+  "focus": 2276.9,
+  "sent_hw": [
+    768,
+    558
+  ],
+  "granularity": "instance",
+  "crop_id": "needle_crystal_view_01_glm9963898c4126_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_final_1f76fd81\\runs\\fusion_2365a84dd87f45fda3a47ca695f8d080\\workflow\\ops\\58767ab163606be2\\detection\\crops\\needle_crystal_view_01_glm9963898c4126_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm"
+}

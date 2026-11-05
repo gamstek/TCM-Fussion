@@ -1,0 +1,5 @@
+{
+  "tool": "propose_regions",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\view_05.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_2326733f138b47a4969d5268c15323ef\\workflow\\ops\\45730bc9b787f4c0\\detection"
+}

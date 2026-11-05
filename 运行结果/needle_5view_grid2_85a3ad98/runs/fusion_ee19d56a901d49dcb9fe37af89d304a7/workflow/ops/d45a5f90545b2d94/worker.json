@@ -1,0 +1,20 @@
+{
+  "tool": "classify_target",
+  "crop_id": "needle_crystal_view_01_glm40fe81009f5d_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_ee19d56a901d49dcb9fe37af89d304a7\\workflow\\ops\\a8b6f9dd6435c691\\detection\\crops\\needle_crystal_view_01_glm40fe81009f5d_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_ee19d56a901d49dcb9fe37af89d304a7\\workflow\\ops\\a8b6f9dd6435c691\\detection\\crops\\needle_crystal_view_01_glm40fe81009f5d_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\view_01.jpg",
+  "tight_box": [
+    614,
+    778,
+    809,
+    922
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\runs\\fusion_ee19d56a901d49dcb9fe37af89d304a7\\workflow\\ops\\d45a5f90545b2d94\\classification",
+  "tight_box_local": [
+    24,
+    24,
+    219,
+    168
+  ]
+}

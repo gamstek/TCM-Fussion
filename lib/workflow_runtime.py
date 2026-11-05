@@ -12,6 +12,11 @@ class WorkflowRuntime(EvidenceRuntime):
     def __init__(self, images, *, root, workflow_config, sample_id, a=None, aliases=None,
                  allow_network=False, simulation=False, backend=None, source_run=None):
         self.workflow=None
+        self._observed_features=set()
+        self.allow_network=allow_network
+        self.decision_llm=None
+        self._review_decisions={}
+        self._admission_decisions={}
         config_file=Path(paths.DETECTION_CONFIG_DIR)/'vlm_config.json'
         identity=file_hash(config_file) if config_file.exists() else 'unconfigured'
         super().__init__([],images,sample_id=sample_id,a=a,aliases=aliases,simulation=simulation,
@@ -33,6 +38,12 @@ class WorkflowRuntime(EvidenceRuntime):
                 default_allow=tool in workflow_config.get('enabled_tools',TOOLS)))
 
     def score(self, observations):
+        # 支持性特征只要被 GLM 审查过（无论 present/absent）就记入 observed，
+        # 避免 supporting_review 门在同一特征上无限循环。
+        for obs in observations or []:
+            fid=(obs or {}).get('feature_id') or (obs or {}).get('feature')
+            if fid:
+                self._observed_features.add(str(fid))
         if self.workflow is not None:self.records=self.workflow.store.verified_records()
         if self.workflow is not None and self.workflow.purpose_quality():
             from .purpose_evidence import project
@@ -43,6 +54,63 @@ class WorkflowRuntime(EvidenceRuntime):
             scored=super().score(observations)
         self.present_features={fid for fid,c in scored['cards'].items() if c.present}
         return scored
+
+    def _decision_client(self):
+        if not getattr(self, 'allow_network', False):
+            return None
+        if self.decision_llm is None:
+            try:
+                from .decision_llm import DecisionLLM
+                self.decision_llm=DecisionLLM()
+            except Exception:
+                return None
+        return self.decision_llm
+
+    def review_decision(self, focus):
+        review=focus.get('review') or {}
+        key=digest(review)
+        if not hasattr(self, '_review_decisions'):
+            self._review_decisions={}
+        if key not in self._review_decisions:
+            llm=self._decision_client()
+            if llm is None:
+                value={'available':False,'repair':'abandon',
+                       'reason':'decision LLM unavailable; default abandon','fallback':True}
+            else:
+                value=llm.review(review,{'candidate_id':focus.get('candidate_id'),
+                                         'feature_id':focus.get('feature_id')})
+            self._review_decisions[key]=value
+        return self._review_decisions[key]
+
+    def admission_decision(self, decision):
+        ranking=decision.get('ranking') or []
+        top=ranking[0] if ranking else {}
+        key=digest({'top':top.get('id'),'checks':top.get('checks')})
+        if key in self._admission_decisions:
+            return self._admission_decisions[key]
+        try:
+            from .candidate_policy import candidates as a_candidates
+            a_ids=list(a_candidates(self.a,self.kb,self.aliases,self.candidate_policy).get('ids') or [])
+        except Exception:
+            a_ids=[]
+        candidate={'id':top.get('id'),'display':top.get('display'),
+                   'score':top.get('score'),'confidence':top.get('confidence'),
+                   'support_count':top.get('support_count'),'checks':top.get('checks') or []}
+        llm=self._decision_client()
+        if llm is None:
+            checks=candidate['checks']
+            specific=[c for c in checks if c.get('present') and c.get('role')=='required'
+                      and c.get('feature_id') not in {'epidermis_cell','secretory_tissue'}]
+            value={'available':False,
+                   'decision':'admit' if (candidate['id'] in a_ids or specific) else 'verify',
+                   'reason':'decision LLM unavailable; deterministic candidate gate',
+                   'fallback':True}
+        else:
+            value=llm.admission(candidate,{'a_candidate_ids':a_ids,
+                                           'checks':candidate['checks'],
+                                           'outside_a':candidate['id'] not in a_ids},a_ids)
+        self._admission_decisions[key]=value
+        return value
 
     def p0_focus(self):
         """A 前列候选的 required P0 特征缺口；用于强制先做定向检索。"""
@@ -155,7 +223,27 @@ class WorkflowRuntime(EvidenceRuntime):
                                 'attempted': False,
                                 'directive': 'P0 crop 已完成有效分割；先 measure_instances，再查 P1/C。'}
                     if seg and seg.get('valid') and seg.get('quality') != 'valid':
-                        continue
+                        measured=arts.get('measurement:seg:'+art_id)
+                        if measured and measured.get('valid') and measured.get('diagnostic_review'):
+                            continue
+                        reviews = getattr(workflow, 'segmentation_reviews', None)
+                        if reviews is None:
+                            continue
+                        review = next((r for r in reviews()
+                                       if r.get('crop_id') == meta.crop_id), {})
+                        focus={'candidate_id': cid, 'candidate_display': row.get('display') or cid,
+                               'feature_id': fid, 'feature_zh': next(
+                                   (label for label, value in FEATURE_ID.items() if value == fid), fid),
+                               'tier': 'P0', 'quant': crit.get('quant'), 'morph': crit.get('morph'),
+                               'status': 'crop_segmentation_review', 'crop_id': meta.crop_id,
+                               'review': review, 'attempted': False,
+                               'directive': '先 read_quality 读取 review_reason_codes/n_components/fg_outside_box_ratio；'
+                                            '由 planner 判断重新定位、拆分分量、诊断测量或放弃，不得直接跳到别的候选。'}
+                        decider=getattr(self, 'review_decision', None)
+                        focus['review_decision']=(decider(focus) if decider else
+                                                  {'available':False,'repair':'abandon',
+                                                   'reason':'review decision unavailable','fallback':True})
+                        return focus
                     seg_failed = any(
                         op.get('tool') == 'segment_instance'
                         and op.get('target_id') == art_id
@@ -178,6 +266,25 @@ class WorkflowRuntime(EvidenceRuntime):
                         'status': 'no_crop' if fid not in crop_features else 'no_measurement',
                         'attempted': attempted,
                         'directive': '先执行 propose_regions/locate_feature（或分块检测）；完成或失败前不得查 P1/C。'}
+        # P0 物理证据完成后，按判据库的 supporting 列表补一轮 GLM 存在性审查。
+        # 不把 supporting 写死为 epidermis_cell：哪个候选/哪条判据需要，就查哪条。
+        for cid in interest.get('ids') or []:
+            row = rows.get(cid)
+            if not row:
+                continue
+            for crit in row.get('criteria') or []:
+                if crit.get('role') != 'supporting':
+                    continue
+                fid = crit.get('feature')
+                if not fid or fid in present or fid in getattr(self, '_observed_features', set()):
+                    continue
+                zh = next((label for label, value in FEATURE_ID.items() if value == fid), fid)
+                return {'candidate_id': cid, 'candidate_display': row.get('display') or cid,
+                        'feature_id': fid, 'feature_zh': zh, 'tier': 'supporting',
+                        'quant': crit.get('quant'), 'morph': crit.get('morph'),
+                        'status': 'supporting_review', 'attempted': False,
+                        'directive': 'P0 物理证据已完成；先对该 supporting 特征做一次 GLM 存在性审查，'
+                                     '记录 present/absent 后再结束。'}
         return None
 
     def legal_actions(self,state):
@@ -198,6 +305,20 @@ class WorkflowRuntime(EvidenceRuntime):
                 and not focus['attempted']):
             filtered=[a for a in actions
                       if a['tool'] not in {'presence_check','locate_feature','propose_regions'}]
+            if filtered:return filtered
+        if focus and focus.get('status')=='crop_segmentation_review' and not focus['attempted']:
+            allowed={'read_quality','read_artifact_status','list_artifacts','query_criteria','list_features'}
+            repair=(focus.get('review_decision') or {}).get('repair')
+            if repair=='relocate':
+                allowed.update({'locate_feature','propose_regions'})
+            if repair in {'split_component','diagnostic_measure'}:
+                allowed.add('measure_instances')
+            filtered=[a for a in actions if a['tool'] in allowed]
+            if filtered:return filtered
+        if focus and focus.get('status')=='supporting_review' and not focus['attempted']:
+            fid=focus.get('feature_id')
+            filtered=[a for a in actions if a['tool']=='presence_check'
+                      and (a.get('args') or {}).get('feature_id')==fid]
             if filtered:return filtered
         if focus and not focus['attempted']:
             filtered=[a for a in actions if a['tool']!='presence_check']
@@ -222,6 +343,7 @@ class WorkflowRuntime(EvidenceRuntime):
                             'unresolved':self.workflow.unresolved()}
         result['workflow']['quality_assessments']=[self.workflow.assessment(v) for v in
             self.workflow.store.current()['artifacts'].values() if v['valid'] and v['kind']=='segmentation' and v.get('assessment_id')]
+        result['workflow']['segmentation_reviews']=self.workflow.segmentation_reviews()
         # 类别复核结论单独列出：规划器据此决定是否重分割/重检，规则分不受其直接改写。
         result['workflow']['classifications']=[{'crop_id':v.get('crop_id'),'feature_id':v.get('feature_id'),
                                                  'label':v.get('label'),

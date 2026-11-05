@@ -1,0 +1,1741 @@
+{
+  "schema": "dataset-split/v1",
+  "seed": 20261104,
+  "ratios": {
+    "training": 0.7,
+    "development": 0.15,
+    "test": 0.15
+  },
+  "groups": {
+    "半夏-0001": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\0001.tif"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-0002": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\0002.tif"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-B2012": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121620.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121620.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121621.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121622.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121622.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121622.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121622.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121713.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121713.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121713.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121713.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121714.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121715.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121715.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20121715.jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-B2013": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20131358.jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-B2015": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20150815.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20150815.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20150815.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20150815.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20150815.jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-B2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160575.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160575.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160575.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160575.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160575.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160575.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20161069.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20161069.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20161069.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20161069.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20161069.jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-B2017": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171685(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171686(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171686(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171686(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171686(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171686(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171687(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171687(3).jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-B2018": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180335(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180335(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180335(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180335(3).jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-B2023": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20232508_19f557.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20232509_cd6f02.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20232510_0a37d1.jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-D2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20160588(3).jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-D2017": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170154(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170154(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170154(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170154(3).jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-D2019": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190270(3).jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "半夏-W2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20162093(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20162093(3).jpg"
+      ],
+      "herbs": [
+        "半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "姜半夏-2023": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230003.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230127.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230461.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230631.tif"
+      ],
+      "herbs": [
+        "姜半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "姜半夏-2024": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240050.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240347.tif"
+      ],
+      "herbs": [
+        "姜半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "姜半夏-B2019": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190093(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190093(3).jpg"
+      ],
+      "herbs": [
+        "姜半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "姜半夏-B2025": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250454.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250455.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250455.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250455.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250456.jpg"
+      ],
+      "herbs": [
+        "姜半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "姜半夏-W2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160125.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160953(4).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161018(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161018(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161019(3).jpg"
+      ],
+      "herbs": [
+        "姜半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "姜半夏-seq": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_7889ca.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_e4fa12.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\220.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_f0e442.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_f0e442.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_f0e442.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_f0e442.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_f0e442.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_f0e442.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_2b43f8.tif"
+      ],
+      "herbs": [
+        "姜半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "射干-2024": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240077.tif"
+      ],
+      "herbs": [
+        "射干"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "射干-B2013": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20132460.jpg"
+      ],
+      "herbs": [
+        "射干"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "射干-B2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160569.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160570.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20160571.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20161079.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20161080.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20161081.jpg"
+      ],
+      "herbs": [
+        "射干"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "射干-B2018": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180335.jpg"
+      ],
+      "herbs": [
+        "射干"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "射干-D2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20160487.jpg"
+      ],
+      "herbs": [
+        "射干"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "射干-W2015": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150792.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150793.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150794.jpg"
+      ],
+      "herbs": [
+        "射干"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "射干-seq": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_d07f1c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\11_d1f5a5.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\12_b61a51.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\13_9784cf.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\14.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\15.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_184d72.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_88b02f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_3a6f4e.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_0557d7.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_688762.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_dab584.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_fc10ba.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\8_c6069e.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\9_30001e.jpg"
+      ],
+      "herbs": [
+        "射干"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "常山-seq": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4.tif"
+      ],
+      "herbs": [
+        "常山"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "法半夏-2024": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240526.tif"
+      ],
+      "herbs": [
+        "法半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "法半夏-2026": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260293.tif"
+      ],
+      "herbs": [
+        "法半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "法半夏-D2017": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170010.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170028.jpg"
+      ],
+      "herbs": [
+        "法半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "法半夏-seq": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_d07089.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_0801fe.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_5a7223.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_e71b8f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_a3a51f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_432e68.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_4f903a.jpg"
+      ],
+      "herbs": [
+        "法半夏"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "白术-0001": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\0001_82fda3.tif"
+      ],
+      "herbs": [
+        "白术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "白术-2024": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069_a5e43d.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240526_0babf9.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240526_0babf9.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240526_0babf9.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240526_0babf9.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240526_0babf9.tif"
+      ],
+      "herbs": [
+        "白术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "白术-B2020": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200341.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200341.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200341.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200341.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200341.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200419.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200419.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200462.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200462.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200462.jpg"
+      ],
+      "herbs": [
+        "白术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "白术-B2023": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230823.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230823.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230823.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230823.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230823.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230823.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230824.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230824.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230824.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230824.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230824.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230825.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230825.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230825.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230825.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230825.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230868.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230868.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230868.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230869.jpg"
+      ],
+      "herbs": [
+        "白术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "白术-B2024": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240986.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240987.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240987.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240987.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240987.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240987.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240987.jpg"
+      ],
+      "herbs": [
+        "白术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "白术-B2026": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260076.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260077.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260077.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260078.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260078.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260078.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260364.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260365.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366_01b883.jpg"
+      ],
+      "herbs": [
+        "白术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "白术-D2020": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200256.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200256.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200256.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200256.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200256.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200256.jpg"
+      ],
+      "herbs": [
+        "白术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "白术-seq": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_465290.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_465290.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_465290.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_465290.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_465290.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_465290.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_465290.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_465290.tif"
+      ],
+      "herbs": [
+        "白术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-2023": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230068.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230143.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230149.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230511.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230511.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230621.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20230662.tif"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-2024": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240069.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240077_ec2627.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240130.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240605.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240705.tif"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-2025": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20250027.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20250073.tif"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-2026": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260225.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260255.tif"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-B2017": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171674.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20171675.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173873.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-B2018": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180321.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180321.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180321.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180541.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-B2019": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190056.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190120.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190120.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190503(3).jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-B2020": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20200528(2).jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-B2022": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20220196.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20220196.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20220196.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20220196.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20220196.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-B2023": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20231566.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20231567.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20231568.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20231568.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20231568.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20232508.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20232509.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20232510.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-B2024": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-B2026": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20260366.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-D2017": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170164.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170325.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170579.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-D2018": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180013.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180168.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180170.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180270.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180435.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-D2019": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190433.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190433.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190433.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190433.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190697.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-D2020": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200037.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200081.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200081.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200713.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200714.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200714.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200714.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200714.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200714.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200714.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-D2021": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20210216.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-W2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161027.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161028.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161029.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161526.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161526.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161527.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20161528.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20162180.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20162181.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20162313.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-W2017": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20170256.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20170348.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "知母-seq": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\11.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\12.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\13.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\14_261fe7.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\15_3acc9f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\16.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\16.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\17.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\18.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\192.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\194.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\194.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_eb1a9e.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\221.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_5b9da4.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_dc23f3.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_36cc1e.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_36cc1e.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_36cc1e.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_ee31d8.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_4ca598.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_7251e7.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_64eea2.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_f2fe1a.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_f2fe1a.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\669.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_98eec7.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_98eec7.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\798.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\7_3dc6bf.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\807.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\8_b86c55.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\9_725fe0.jpg"
+      ],
+      "herbs": [
+        "知母"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-2024": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240051.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240051.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240051.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241230.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241230.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241230.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241230.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241230.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241230.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241230.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241230.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241231.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241232.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241232.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241232.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241232.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241232.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241232.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20241232.tif"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-2026": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260325.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260325.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260325.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260325.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260325.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20260325.tif"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-B2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163097(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163097(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163097(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163097(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163097(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163097(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163097(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163097(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163098(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163099(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163099(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163099(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163100(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163100(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163100(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163100(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163100(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163101(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163101(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163101(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163101(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163102(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163102(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163102(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163850(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163850(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163850(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20163850(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164191(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164359(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164359(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164359(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164359(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164359(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164359(3).jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-B2017": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170304(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170304(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170304(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170304(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170305(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170306(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170306(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170306(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20170306(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173665(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173799（3）.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173799（3）.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173799（3）.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173799（3）.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20173799（3）.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-B2018": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180076(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180076(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180076(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180076(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180076(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180185.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180185.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180185.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180185.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180185.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180185.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180245(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180245(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180245(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180245(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180245(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180245(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180354(3.).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180365(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180365(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180365(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180365(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180365(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180365(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20180365(3).jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-B2019": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190072(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190072(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190072(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20190072(3).jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-B2023": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230870.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230871.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230872.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230872.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230872.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230872.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230872.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230872.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20230872.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-B2024": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240871_b65c29.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240871_b65c29.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240871_b65c29.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240871_b65c29.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240871_b65c29.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240871_b65c29.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240872_ed0f19.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873_d5230a.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873_d5230a.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873_d5230a.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873_d5230a.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873_d5230a.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873_d5230a.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20240873_d5230a.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-B2025": {
+      "split": "development",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250143.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250143.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250143.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250143.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250143.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250143.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250143.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250144.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250144.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250144.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20250144.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-D2017": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170293.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170294(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170294(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170294(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170294(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170294(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170294(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170295(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170588.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170588.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170588.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20170588.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-D2018": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180005.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180083.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180083.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180083.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180083.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180083.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20180083.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-D2019": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190229.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190229.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190229.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190229.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190229.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190748.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190748.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190748.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190748.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190748.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20190748.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-W2015": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20150646.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-W2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160113(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160113(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160113(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160113(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160113(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160113(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160113(2).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160894(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160894(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160894(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160895(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160895(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160895(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160895(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20160896(3).jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-W2017": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20170170(4).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20170170(4).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20170170(4).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20170170(4).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\W20170170(4).jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "苍术-seq": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\10_002f2c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\11_c6face.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\11_c6face.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\11_c6face.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\12_012aba.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\12_012aba.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\12_012aba.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\12_012aba.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\12_012aba.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\13_fec93e.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\13_fec93e.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\14_9fb196.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\14_9fb196.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_5f0cdd.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_7dc178.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_7dc178.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_7dc178.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_7dc178.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_7dc178.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_7dc178.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_7dc178.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_b9254f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_b9254f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_b9254f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_4b1c2d.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_4b1c2d.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_edf109.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_edf109.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_edf109.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_edf109.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_edf109.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_ede32c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_ede32c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_ede32c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5_ede32c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_866b6c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_866b6c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_866b6c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_866b6c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_866b6c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_866b6c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_866b6c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6_866b6c.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\7_f24be8.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\7_f24be8.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\7_f24be8.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\7_f24be8.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\7_f24be8.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\7_f24be8.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\8_78ba34.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\8_78ba34.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\8_78ba34.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\9_7d2ed2.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\9_7d2ed2.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\9_7d2ed2.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\9_7d2ed2.jpg"
+      ],
+      "herbs": [
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "麦冬-2024": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240044.tif",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\20240044.tif"
+      ],
+      "herbs": [
+        "麦冬"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "麦冬-B2013": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20130506.jpg"
+      ],
+      "herbs": [
+        "麦冬"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "麦冬-B2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20162833.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20162833.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20162833.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20162833.jpg"
+      ],
+      "herbs": [
+        "麦冬"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "麦冬-B2024": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20241228.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20241228.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20241229.jpg"
+      ],
+      "herbs": [
+        "麦冬"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "麦冬-D2020": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\D20200163.jpg"
+      ],
+      "herbs": [
+        "麦冬"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "麦冬-seq": {
+      "split": "test",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_2aed53.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_cd10db.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_7f628e.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_7f628e.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_7f628e.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_686abe.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_686abe.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_686abe.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\4_686abe.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\5.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\6.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\7.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\8.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\9.jpg"
+      ],
+      "herbs": [
+        "麦冬"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "龙胆-B2016": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164955(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164955(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164956(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164956(3).jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\B20164956(3).jpg"
+      ],
+      "herbs": [
+        "龙胆"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "龙胆-seq": {
+      "split": "training",
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_9f463f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\1_9f463f.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_6a81e5.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_6a81e5.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\2_6a81e5.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_64a87d.jpg"
+      ],
+      "herbs": [
+        "龙胆"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    }
+  },
+  "summary": {
+    "training": {
+      "groups": 56,
+      "images": 464,
+      "herbs": [
+        "半夏",
+        "姜半夏",
+        "射干",
+        "常山",
+        "法半夏",
+        "白术",
+        "知母",
+        "苍术",
+        "麦冬",
+        "龙胆"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "development": {
+      "groups": 16,
+      "images": 173,
+      "herbs": [
+        "半夏",
+        "姜半夏",
+        "射干",
+        "法半夏",
+        "白术",
+        "知母",
+        "苍术"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    },
+    "test": {
+      "groups": 11,
+      "images": 126,
+      "herbs": [
+        "射干",
+        "知母",
+        "苍术",
+        "麦冬"
+      ],
+      "features": [
+        "needle_crystal"
+      ]
+    }
+  },
+  "source_files": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\attributes.csv"
+  ],
+  "note": "group_key 级别隔离；训练/开发用于调参，测试集只做最终评估，不得回流调参"
+}

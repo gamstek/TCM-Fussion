@@ -1,0 +1,145 @@
+{
+  "schema": "diagnosis-output/v1",
+  "sample_id": "needle_5view_zhiMu_9e4ef1ca",
+  "status": "tentative",
+  "top_candidate": {
+    "id": "知母",
+    "display": "知母",
+    "kind": "herb",
+    "score": 0.4,
+    "confidence": 0.4,
+    "support_count": 1
+  },
+  "alternatives": [
+    {
+      "id": "射干",
+      "display": "射干",
+      "score": 0.4,
+      "confidence": 0.4
+    },
+    {
+      "id": "G2",
+      "display": "半夏 / 法半夏 / 姜半夏",
+      "score": 0.4,
+      "confidence": 0.4
+    },
+    {
+      "id": "龙胆",
+      "display": "龙胆",
+      "score": 0.24,
+      "confidence": 0.24
+    },
+    {
+      "id": "淫羊藿",
+      "display": "淫羊藿",
+      "score": 0.24,
+      "confidence": 0.24
+    }
+  ],
+  "ambiguous_with": [
+    "射干",
+    "G2"
+  ],
+  "tie_break": {
+    "applied": true,
+    "a_majority": "知母",
+    "a_fold_top1": 25,
+    "total_folds": 25
+  },
+  "strong_observations": [
+    {
+      "view": "view_03",
+      "tool": "presence_check",
+      "feature_id": "fiber",
+      "present": false,
+      "confidence": 0.88,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_04",
+      "tool": "presence_check",
+      "feature_id": "fiber",
+      "present": false,
+      "confidence": 0.88,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "scene_check",
+      "feature_id": "scene_check",
+      "present": null,
+      "confidence": 0.7,
+      "source": "glm_scene",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_05",
+      "tool": "scene_check",
+      "feature_id": "scene_check",
+      "present": null,
+      "confidence": 0.85,
+      "source": "glm_scene",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_02",
+      "tool": "presence_check",
+      "feature_id": "fiber",
+      "present": false,
+      "confidence": 0.95,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "fiber",
+      "present": false,
+      "confidence": 0.9,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_03",
+      "tool": "presence_check",
+      "feature_id": "crystal_fiber",
+      "present": false,
+      "confidence": 0.92,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "crystal_fiber",
+      "present": false,
+      "confidence": 0.9,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    }
+  ],
+  "detections": [
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.9396,
+      "box": [
+        615.9,
+        277.6,
+        1218.3,
+        1273.2
+      ],
+      "source_sha256": "fc854c9729fcf0496b951ff762e87299db37e12cf8c5cde897e58cf775e476bf"
+    }
+  ],
+  "missing_required": [],
+  "review_required": false,
+  "audit": {
+    "rule_verdict": "insufficient_evidence",
+    "internal_needs_review": true,
+    "policy": "always_output_tentative"
+  },
+  "note": "status=tentative 表示规则未达确认带；review_required=false 仅表示不阻塞交付，不等于 confirmed。"
+}

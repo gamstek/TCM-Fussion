@@ -24,6 +24,9 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'execution':{'enum':['shadow','active']},
     'p0_priority':{'type':'boolean'},
     'identity_min_confidence':{'enum':['high','medium','low']},
+    'candidate_scope':{'enum':['a_topk','open_strict']},
+    'a_weight':{'type':'number','minimum':0,'maximum':1},
+    'b_weight':{'type':'number','minimum':0,'maximum':1},
     'quality_policy':{'enum':['strict','diagnostic_review']},
     'box_association':{'enum':['center_point','region_component']},
     'agent_policy':{'enum':['legacy','adaptive_v1','adaptive_v2']},
@@ -124,8 +127,22 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
              'source_images':[str(v['path']) for v in runtime.images.values()],
              'agent':{'mode':'workflow_react','vlm_calls':result['observation_requests'],
                       'planning_calls':result['planning_requests'],'identity_review':identity_review}}
-    contracts.Verdict.from_obj(verdict);write_json(directory/'agent_verdict.json',verdict)
-    fusion=fuse(a,verdict,knowledge_base(),config.get('aliases'));fusion['needs_review']=result['needs_review'] or fusion['needs_review']
+    contracts.Verdict.from_obj(verdict)
+    from .candidate_scope import apply_candidate_scope
+    verdict=apply_candidate_scope(verdict,a,knowledge_base(),config.get('aliases'),
+                                  runtime.candidate_policy,
+                                  runtime.workflow.config.get('candidate_scope','open_strict'))
+    from .ab_fusion import apply_ab_fusion
+    verdict=apply_ab_fusion(verdict,a,knowledge_base(),config.get('aliases'),
+                            runtime.workflow.config.get('a_weight',0.5),
+                            runtime.workflow.config.get('b_weight',0.5))
+    admission=runtime.admission_decision(verdict)
+    result['candidate_admission']=admission
+    if admission.get('decision') in {'verify','suppress'}:
+        result['needs_review']=True
+    verdict['needs_review']=result['needs_review']
+    verdict['candidate_admission']=admission;write_json(directory/'agent_verdict.json',verdict)
+    fusion=fuse(a,verdict,knowledge_base(),config.get('aliases'));fusion['needs_review']=result['needs_review'] or fusion['needs_review'];fusion['candidate_admission']=admission
     output=project_output(runtime.sample_id,verdict,result,a)
     write_json(directory/'output.json',output)
     value={'schema':'ab-fusion/v2','route':'workflow_agent','simulation':False,'real_model_validation':None,

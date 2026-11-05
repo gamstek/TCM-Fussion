@@ -322,11 +322,47 @@ class WorkflowSession:
         return digest({'tool':tool,'identity':self.identity,'target':target['id'],
             'roi':target.get('roi'),'deps':self._dependency_rows(tool,target)})
 
+    def review_measure_allowed(self):
+        """外部 review 决策选择 split/diagnostic 时，允许一次诊断测量绕过 review 门。"""
+        return self.review_measure_plan() is not None
+
+    def review_measure_plan(self):
+        getter=getattr(self.runtime,'p0_focus',None)
+        if getter is None:
+            return None
+        try:
+            focus=getter()
+        except Exception:
+            return None
+        if not focus or focus.get('status')!='crop_segmentation_review':
+            return None
+        decision=focus.get('review_decision') or {}
+        repair=decision.get('repair')
+        if repair not in {'split_component','diagnostic_measure'}:
+            return None
+        review=focus.get('review') or {}
+        valid={int(c.get('id')) for c in (review.get('components') or []) if c.get('id') is not None}
+        ids=[]
+        for value in decision.get('component_ids') or []:
+            try:
+                cid=int(value)
+            except (TypeError, ValueError):
+                continue
+            if cid in valid and cid not in ids:
+                ids.append(cid)
+        policy=str(decision.get('component_policy') or '')
+        if policy not in {'largest','selected','all','merge'}:
+            policy='selected' if ids else 'largest'
+        if ids:
+            policy='selected'
+        return {'repair':repair,'component_ids':ids,'component_policy':policy}
+
     def propose(self, *, include_offline=False):
         snap=self.store.current();arts=snap['artifacts'];done=read_json(self.operations)['entries'];out=[]
         blocked=self.blocked_tools()
         recovery = self.config.get('targeted_recovery', False)
         gaps = self.recovery_features() if recovery else []
+        review_measure = self.review_measure_allowed()
         locate_attempts = sum(row['tool'] == 'locate_feature' for row in done.values())
         max_locate = int(self.config.get('max_locate_attempts', 4))
         def offer(tool,t,priority):
@@ -358,12 +394,12 @@ class WorkflowSession:
                     continue
                 scale=arts.get('scale:'+image,{})
                 seg=arts.get('seg:'+tid,{})
-                usable=seg.get('quality')=='valid' or (self.diagnostic_quality() and seg.get('quality')=='review')
+                usable=seg.get('quality')=='valid' or (self.diagnostic_quality() and seg.get('quality')=='review') or review_measure
                 if self.purpose_quality() and seg.get('assessment_id'):usable=True
                 if scale.get('valid') and (not seg.get('valid') or not usable):
                     tool='segment_instance'
             elif t['kind']=='segmentation' and (t.get('quality')=='valid' or
-                    (self.diagnostic_quality() and t.get('quality')=='review')):
+                    (self.diagnostic_quality() and t.get('quality')=='review') or review_measure):
                 if not arts.get('measurement:'+tid,{}).get('valid'):tool='measure_instances'
             if t.get('kind')=='segmentation' and self.purpose_quality():
                 assessment=self.assessment(t)
@@ -414,6 +450,72 @@ class WorkflowSession:
         if not mask.is_file() or file_hash(mask)!=value['bindings'].get('mask'):
             raise IntegrationError('QUALITY_SCOPE','关联mask与用途评估不符')
         return value
+
+    def segmentation_reviews(self):
+        """把 IGM review 的原始原因整理成 planner 可读的结构化字段。
+
+        这些字段只读，不改变证据版本；planner 据此决定重新定位、拆分量、诊断测量或放弃。
+        """
+        rows = []
+        for v in self.store.current()['artifacts'].values():
+            if not v.get('valid') or v.get('kind') != 'segmentation':
+                continue
+            try:
+                root = Path(v['path'])
+                doc = read_json(root)
+            except (OSError, ValueError):
+                continue
+            for inst in doc.get('instances') or []:
+                meta = {}
+                igm_dir = root.parent / str(inst.get('igm_dir') or '')
+                if igm_dir.is_dir():
+                    try:
+                        meta = read_json(igm_dir / 'meta.json')
+                    except (OSError, ValueError):
+                        meta = {}
+                components = []
+                mask_path = igm_dir / 'mask.png'
+                if mask_path.is_file():
+                    try:
+                        import cv2
+                        import numpy as np
+                        arr = cv2.imdecode(np.fromfile(str(mask_path), dtype=np.uint8),
+                                           cv2.IMREAD_GRAYSCALE)
+                        if arr is not None:
+                            n, labels, stats, centroids = cv2.connectedComponentsWithStats(
+                                (arr > 0).astype(np.uint8), 8)
+                            for cid in range(1, n):
+                                x, y, w, h, area = [int(v) for v in stats[cid]]
+                                comp = labels == cid
+                                components.append({
+                                    'id': cid, 'area_px': area,
+                                    'area_ratio': round(area / float(arr.size), 6),
+                                    'bbox': [x, y, w, h],
+                                    'centroid': [round(float(centroids[cid][0]), 1),
+                                                 round(float(centroids[cid][1]), 1)],
+                                    'touches_border': bool(comp[0].any() or comp[-1].any()
+                                                           or comp[:, 0].any() or comp[:, -1].any()),
+                                })
+                    except Exception:
+                        components = []
+                rows.append({
+                    'crop_id': inst.get('crop_id'),
+                    'feature_id': inst.get('feature_id'),
+                    'quality': v.get('quality'),
+                    'igm_status': inst.get('igm_status'),
+                    'n_components': inst.get('n_components'),
+                    'area_ratio': inst.get('igm_area_ratio'),
+                    'fg_outside_box_ratio': inst.get('igm_fg_outside_box_ratio'),
+                    'center_comp_ratio': inst.get('igm_center_comp_ratio'),
+                    'touches_border': meta.get('touches_border', inst.get('igm_touches_border')),
+                    'border_contact_ratio': meta.get('border_contact_ratio', inst.get('igm_border_contact_ratio')),
+                    'review_reason_codes': list(meta.get('review_reason_codes') or []),
+                    'components': components,
+                    'mask': str(mask_path) if mask_path.is_file() else None,
+                    'instances_json': str(root),
+                    'overlay': str(igm_dir / 'overlay.jpg') if (igm_dir / 'overlay.jpg').is_file() else None,
+                })
+        return rows
 
     def confirm_identity(self,action,result):
         """独立合法存在性观察只能确认对应目标类别；重新评估资格，不编造尺寸。"""
@@ -589,7 +691,11 @@ class WorkflowSession:
             cid='classification:'+target['id']
             items.append(self._art(cid,'classification',root/'classification.json',[target['id']],
                                    image_id=image,crop_id=target.get('crop_id') or target['id'],
-                                   feature_id=fid,label=label))
+                                   feature_id=fid,label=label,
+                                   glm_confidence=doc.get('glm_confidence'),
+                                   yolo_confidence=doc.get('yolo_confidence'),
+                                   confidence_source=doc.get('confidence_source'),
+                                   confidence_score=doc.get('confidence_score')))
             meta=contracts.CropMeta.from_json(target['path'])
             if target.get('identity_required'):
                 min_conf=self.config.get('identity_min_confidence','high')
@@ -618,7 +724,9 @@ class WorkflowSession:
                     if p.is_file():
                         aid='measurement_input:'+target['id']+':'+p.relative_to(result['delivery']).as_posix()
                         items.append(self._art(aid,'measurement_input',p,[target['id']],image_id=image));parents.append(aid)
-            items.append(self._art(mid,'measurement',path,parents,image_id=image))
+            items.append(self._art(mid,'measurement',path,parents,image_id=image,
+                                   diagnostic_review=bool(result.get('diagnostic_review')),
+                                   component_selection=result.get('component_selection')))
             for rec in parsed:
                 import math
                 scale=self.store.current()['artifacts'].get('scale:'+image,{})
@@ -628,6 +736,13 @@ class WorkflowSession:
                     raise IntegrationError('MEASUREMENT_SCOPE','测量视野或尺度不合法')
                 raw=copy.deepcopy(rec.raw);raw.pop('herb',None)
                 raw.pop('quality_assessment',None)  # 外来字段不能赋予用途资格。
+                if result.get('diagnostic_review'):
+                    raw['diagnostic_review']=True
+                    raw['component_selection']=result.get('component_selection','largest_component')
+                    flags=list(raw.get('flags') or [])
+                    if 'igm_review' not in flags:flags.append('igm_review')
+                    if 'diagnostic_review' not in flags:flags.append('diagnostic_review')
+                    raw['flags']=flags
                 iid=raw.get('instance_id')
                 if type(iid) is not int or iid<0:raise IntegrationError('INSTANCE_ID','实例编号非法')
                 rows.append({'scope':target['id'],'depends_on':[mid],'data':raw})

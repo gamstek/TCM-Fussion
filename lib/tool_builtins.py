@@ -12,6 +12,7 @@ def read_builtin(runtime, name, args, state):
         if workflow is not None:
             result['assessments']=[{'target_id':k,'assessment':workflow.assessment(v)} for k,v in
                 workflow.store.current()['artifacts'].items() if v['valid'] and v['kind']=='segmentation' and v.get('assessment_id')]
+            result['segmentation_reviews']=workflow.segmentation_reviews()
     elif name == 'read_evidence':
         offset, limit = args['offset'], args['limit']
         # records在runtime构造时已去除真值herb；不读取attributes或labels。

@@ -1,0 +1,31 @@
+{
+  "crop_id": "epidermis_cell_view_01_roi9963898c4126_01",
+  "png": "epidermis_cell_view_01_roi9963898c4126_01.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_grid2_85a3ad98\\view_01.jpg",
+  "stem": "view_01",
+  "feature_id": "epidermis_cell",
+  "object_label": "表皮细胞",
+  "herb": "",
+  "px_per_um": 5.825,
+  "tight_box": [
+    1024.0,
+    84.8,
+    1514.9,
+    1024.0
+  ],
+  "tight_box_local": [
+    25.0,
+    24.799999999999997,
+    515.9000000000001,
+    964.0
+  ],
+  "loose_box": [
+    999,
+    60,
+    1539,
+    1048
+  ],
+  "crop_size": "540x988",
+  "pad_info": "",
+  "granularity": "instance"
+}
