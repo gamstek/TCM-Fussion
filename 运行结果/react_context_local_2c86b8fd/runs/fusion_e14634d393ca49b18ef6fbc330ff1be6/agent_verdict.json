@@ -1,0 +1,526 @@
+{
+  "sample_id": "react_context_local_2c86b8fd",
+  "verdict": "insufficient_evidence",
+  "conclusion": null,
+  "alternatives": [
+    {
+      "id": "桔梗",
+      "kind": "herb",
+      "display": "桔梗",
+      "score": 0.167496,
+      "score_max": 0.5,
+      "confidence": 0.167496,
+      "checks": [
+        {
+          "feature_id": "secretory_tissue",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "联结乳管直径14～25μm，含淡黄色颗粒状物",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 14,
+            "max": 25,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "secretory_tissue",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.27916,
+      "b_confidence": 0.0,
+      "fused_score": 0.167496,
+      "b_score": -0.06
+    }
+  ],
+  "ranking": [
+    {
+      "id": "秦皮",
+      "kind": "herb",
+      "display": "秦皮",
+      "score": 0.5946,
+      "score_max": 0.3,
+      "confidence": 0.5946,
+      "checks": [
+        {
+          "feature_id": "sand_crystal",
+          "role": "required",
+          "tier": "C",
+          "present": true,
+          "state": "NO_REF",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.3,
+          "q_state": 0.6,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.1377,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 1,
+      "conf_required_num": 0.1377,
+      "conf_denom": 0.3,
+      "sup_net": 0.0,
+      "conf_raw": 0.459,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.685,
+      "b_confidence": 0.459,
+      "fused_score": 0.5946,
+      "b_score": 0.1377
+    },
+    {
+      "id": "桔梗",
+      "kind": "herb",
+      "display": "桔梗",
+      "score": 0.167496,
+      "score_max": 0.5,
+      "confidence": 0.167496,
+      "checks": [
+        {
+          "feature_id": "secretory_tissue",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "联结乳管直径14～25μm，含淡黄色颗粒状物",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 14,
+            "max": 25,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "secretory_tissue",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.27916,
+      "b_confidence": 0.0,
+      "fused_score": 0.167496,
+      "b_score": -0.06
+    }
+  ],
+  "notes": [
+    "候选池为空或最高分候选无有效支持分（<0.50）"
+  ],
+  "support_feature_count": 1,
+  "needs_review": true,
+  "source_images": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\input.jpg"
+  ],
+  "agent": {
+    "mode": "workflow_react",
+    "vlm_calls": 3,
+    "planning_calls": 12,
+    "identity_review": false
+  },
+  "candidate_scope": {
+    "scope": "a_topk",
+    "a_topk_ids": [
+      "秦皮",
+      "桔梗"
+    ],
+    "kept_ids": [
+      "秦皮",
+      "桔梗"
+    ],
+    "dropped": [
+      {
+        "id": "蝉蜕",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "牡蛎",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "郁金",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "当归",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "薄荷",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "防风",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "莱菔子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "牵牛子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "乌梅",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "白头翁",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "辣蓼",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "青黛",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "槟榔",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "穿心莲",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大青叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "地黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "滑石",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "石膏",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "水牛角",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "雄黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "泽泻",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "艾叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "板蓝根",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "荜茇",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "柴胡",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "川楝子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "甘草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "广藿香",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "诃子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "红花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄柏",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄连",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄芩",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "金银花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "荆芥",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "菊花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "苦参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "连翘",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麻黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麦芽",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "使君子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "葶苈子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "菟丝子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "王不留行",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "香附",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "益母草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "茵陈",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "鱼腥草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄芪",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "茯苓",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大腹皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "淡竹叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "木香",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G1",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G3",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G4",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桂枝",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "厚朴",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "苦杏仁",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "龙胆",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "马齿苋",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "肉桂",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "山楂",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "射干",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "五味子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "玄参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "淫羊藿",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "知母",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "栀子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "党参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "猪苓",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麦冬",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桑白皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G2",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "白芍",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "虎杖",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大黄",
+        "reason": "not_in_a_topk"
+      }
+    ],
+    "policy": "A Top-K 为 Plan B 重点；非 A 仅在 open_strict 且 required+supporting 全部符合时保留"
+  },
+  "fusion_weights": {
+    "a": 0.6,
+    "b": 0.4,
+    "a_folds": 5
+  },
+  "fusion_policy": "A 先验 + B 证据加权；B verdict/证据状态不由 A 改写",
+  "candidate_admission": {
+    "available": false,
+    "decision": "admit",
+    "reason": "decision LLM unavailable or invalid; deterministic fallback",
+    "fallback": true
+  }
+}

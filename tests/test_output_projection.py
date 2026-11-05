@@ -58,7 +58,7 @@ class OutputProjectionTest(unittest.TestCase):
         self.assertTrue(out["tie_break"]["applied"])
         self.assertEqual(out["tie_break"]["a_fold_top1"], 25)
         self.assertEqual(out["ambiguous_with"], ["射干", "G2"])
-        self.assertFalse(out["review_required"])
+        self.assertTrue(out["review_required"])
         self.assertTrue(out["audit"]["internal_needs_review"])
         self.assertEqual(len(out["strong_observations"]), 2)
         self.assertEqual(out["strong_observations"][0]["view"], "view_01")

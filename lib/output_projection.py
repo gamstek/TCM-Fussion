@@ -3,8 +3,7 @@
 
 **为什么存在**：规则引擎在证据不足时会返回 `insufficient_evidence` + `needs_review`，
 但交付层仍需要给出 top 候选、备选、强观察和缺口。本模块只做投影，不修改
-`decide`/阈值/证据卡；`review_required=false` 只表示不再把结果阻塞在人工审核队列，
-`audit.internal_needs_review` 仍保留规则层的复核标记。
+`decide`/阈值/证据卡；交付结果同时保留真实复核状态。
 
 设计边界：
   * `status` 只取 confirmed/probable/group_level/tentative，不把 tentative 写成 confirmed；
@@ -40,6 +39,10 @@ def _a_majority(a):
         for fold in view.get("fold_rankings") or []:
             if fold:
                 counts[fold[0].get("label")] += 1
+    if not counts:
+        for fold in a.get('fold_rankings') or []:
+            if fold:
+                counts[fold[0].get('label')] += 1
     if not counts:
         ranking = a.get("ranking") or []
         if ranking:
@@ -152,11 +155,18 @@ def project_output(sample_id, verdict, result, a):
     status = {"confirmed": "confirmed", "probable": "probable",
               "group_level": "group_level"}.get(verdict.get("verdict"), "tentative")
     status_note = None
-    if status == "confirmed" and verdict.get("needs_review"):
+    needs_review = bool(verdict.get('needs_review') or result.get('needs_review')
+                        or status == 'tentative')
+    conclusion = verdict.get('conclusion')
+    conclusion_id = conclusion.get('id') if isinstance(conclusion, dict) else conclusion
+    if conclusion_id and top and conclusion_id != top.get('id'):
+        needs_review = True
+    if status in {'confirmed','probable','group_level'} and needs_review:
         status = "tentative"
         status_note = "identity/policy review required; not promoted to confirmed"
     admission = verdict.get("candidate_admission") or {}
     if status in {"confirmed", "probable"} and admission.get("decision") in {"verify", "suppress"}:
+        needs_review = True
         status = "tentative"
         status_note = "candidate admission not passed; not promoted"
     views = _view_map(a)
@@ -197,7 +207,7 @@ def project_output(sample_id, verdict, result, a):
         "detections": detections,
         "classifications": classifications,
         "missing_required": missing,
-        "review_required": False,
+        "review_required": needs_review,
         "audit": {
             "rule_verdict": verdict.get("verdict"),
             "internal_needs_review": bool(verdict.get("needs_review")),
@@ -207,5 +217,5 @@ def project_output(sample_id, verdict, result, a):
             "fusion_policy": verdict.get("fusion_policy"),
             "policy": "always_output_tentative",
         },
-        "note": "status=tentative 表示规则未达确认带；review_required=false 仅表示不阻塞交付，不等于 confirmed。",
+        "note": "tentative 是未确认候选；review_required 如实表示复核需要，不阻止报告交付。",
     }

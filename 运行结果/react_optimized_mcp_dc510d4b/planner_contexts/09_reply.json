@@ -1,0 +1,24 @@
+{
+  "reply": {
+    "action_id": "5a40978633401874a93b0ac31077f88a57ff58dc485058ce040621cc7e586ed1",
+    "decision_summary": "p0_focus指向G1的草酸钙簇晶且尚未完成定向核验，须先执行其指向的locate_feature。ROI0已尝试无进展，按行分选未尝试的最高分区域ROI1(0.738)核查簇晶，同时覆盖stop_advisory(no_gain_streak)——p0_focus义务未完成前不停止。scene_check提示细胞内散在多角形簇晶状结晶，与砂晶形态存在混淆可能，需局部核验区分。",
+    "override_reason": "p0_focus(G1簇晶)存在且attempted=false，指令要求先完成propose_regions/locate_feature；连续无收益应换区域核验区分性特征而非直接停止",
+    "investigate_candidates": [
+      "G1",
+      "桔梗"
+    ],
+    "investigation_reason": "G1需核验簇晶P0存在性；桔梗的secretory_tissue已present但未定量(14-25μm)，在簇晶核验后可查其乳管宽度以区分秦皮/桔梗/赤芍牡丹皮",
+    "parallel_observation_id": null
+  },
+  "usage": {
+    "completion_tokens": 363,
+    "completion_tokens_details": {
+      "reasoning_tokens": 124
+    },
+    "prompt_tokens": 23229,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 23592
+  }
+}

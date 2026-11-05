@@ -1,0 +1,24 @@
+{
+  "reply": {
+    "action_id": "196f302ba46aec3e6231284f8d5e7d16226ac5ae67c9c5cd4dddca334746f768",
+    "decision_summary": "秦皮与桔梗的关键区分在secretory_tissue是否满足14～25μm定量判据与sand_crystal定性，二者均为UNCAL/NO_REF状态；scene_check提示簇晶状结晶与砂晶形态存疑。先只读read_scale确认是否存在可信标定，决定定量核验（如乳管宽度测量）是否可行，再定向调查secretory_tissue与cluster_crystal假设。",
+    "override_reason": null,
+    "investigate_candidates": [
+      "桔梗",
+      "G1"
+    ],
+    "investigation_reason": "桔梗联结乳管宽度是当前最有区分性的定量判据；scene_check描述多角形簇晶，与秦皮砂晶形态不符，需核查cluster_crystal假设以排除赤芍/牡丹皮/白芍等",
+    "parallel_observation_id": null
+  },
+  "usage": {
+    "completion_tokens": 324,
+    "completion_tokens_details": {
+      "reasoning_tokens": 146
+    },
+    "prompt_tokens": 18121,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 18445
+  }
+}

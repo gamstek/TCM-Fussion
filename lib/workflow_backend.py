@@ -146,7 +146,7 @@ class WorkflowBackend:
             # 局部阶段各自从inst01开始；先在新交付副本做确定性命名空间，
             # 使原measure输出的instance_id仍严格对应实际mask文件名。
             import csv
-            plan = getattr(session, 'review_measure_plan', lambda: None)()
+            plan = getattr(session, 'review_measure_plan', lambda target=None: None)(target)
             diagnostic = bool(plan)
             component_ids = set(plan.get('component_ids') or []) if plan else set()
             component_policy = plan.get('component_policy') if plan else 'as_delivered'

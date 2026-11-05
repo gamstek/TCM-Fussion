@@ -1,0 +1,17 @@
+{
+  "identity": "ca5b9adf8748d567f83de86e61c03218c7704a87fab51495c7469d0cacf40414",
+  "parent": "6603e282600f6045463d0d1d2bd49c2b083c940dcd4f8c9c201eb29612e18bd1",
+  "artifacts": {
+    "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e": {
+      "id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\results\\ui_out\\fusion\\react_context_live_b531ebf2\\input.jpg",
+      "sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "parents": [],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "03dbae580aaaec910a2932e0c6fe5f3f4a218a6910548a394fd5f43a58a51f95"
+}

@@ -82,6 +82,11 @@ class LLMPlanner:
                         '{"action_id":"A1","decision_summary":"简短说明为何选择该动作","override_reason":null}。'
                         "A1只是格式示例，必须按证据选择本轮actions中的实际编号。"
                         "工具参数由运行时绑定。"
+                        "A的Top-K可能遗漏真类；不要把A的分数或一次阴性当成排他证据。"
+                        "可选investigate_candidates（evidence.hypothesis_catalog中最多3个ID）和investigation_reason，"
+                        "用于下一轮扩展调查，不等于证据或确认。扩展时本轮宜选择只读动作核查判据。"
+                        "收到反思后，应说明维持或修正哪个假设、下一动作预期解决什么；"
+                        "换ROI本身不等于增益，连续无增益应考虑其他假设、视野或停止。"
                         "偏离stop_advisory时，将override_reason填为具体理由；也可在decision_summary中说明该理由。"
                         "若同时有独立原图核验，可选填parallel_observation_id，从parallel_observations中选"
                         "与所选初检同一视野的O编号；YOLO单独负责出框。") +
@@ -218,7 +223,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         adaptive=workflow is not None and workflow.config.get('agent_policy')=='adaptive_v1'
         failed_action = bool(state['events'] and state['events'][-1].get('accepted') is False)
         if (adaptive or autonomous) and (state.get('no_gain',0)>=no_gain_limit or
-                                        (autonomous and failed_action)) and not state.get('reflection_applied'):
+                                        (autonomous and failed_action)) and (autonomous or not state.get('reflection_applied')):
             from .action_feedback import reflection_card
             state={**state,'reflection':reflection_card(state['events']),'reflection_applied':True}
             if not autonomous:
@@ -391,6 +396,14 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     override_reason = "模型申请人工复核，未提供理由"
                 else:
                     error = "override_reason_required"
+            investigation = reply.get('investigate_candidates') if isinstance(reply, dict) else None
+            expanded = None
+            if not error and investigation:
+                try:
+                    expanded = runtime.investigate(investigation, reply.get('investigation_reason'),
+                                                   state['evidence_digest'])
+                except IntegrationError as exc:
+                    error = exc.code
             if error:
                 rejected.append(error)
                 detail = {"reason": error, **(detail or {})}
@@ -410,6 +423,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                            "overrode_advisory": override,
                            "override_reason": override_reason[:240] if override else None,
                            "parallel_observation_id": companion["action_id"] if companion else None})
+            if expanded is not None:
+                events.append({'phase':'investigation_expanded','decision_source':planner_source,
+                               'candidate_ids':expanded,'is_evidence':False,
+                               'reason':reply['investigation_reason'][:480]})
             update = {"selected": chosen, "events": events, "requests": requests, "planning_requests": planning,
                       "parallel_observation": companion,
                       "override_streak": state.get("override_streak", 0) + 1 if override and not is_stop else 0}

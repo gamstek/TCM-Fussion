@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\.venv\\yolo\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "TCM_Fusion.cli.yolo_worker",
+    "--context",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_final_1f76fd81\\runs\\fusion_af343178c21346dbbf45f0e0f7f76c7e\\workflow\\ops\\fb47e0fc8deb84fc\\yolo_crop.json"
+  ],
+  "timeout_seconds": 1623.6744556427002
+}

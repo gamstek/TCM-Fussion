@@ -1,0 +1,14 @@
+{
+  "identity": "bf68b60d7309369314251da74b4c0b4fbcdfe44167c5fbf3b53aafcc16d7c471",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "桔梗",
+    "G1",
+    "秦皮",
+    "柴胡"
+  ],
+  "reason": "若YOLO检出簇晶则支持G1路线并削弱秦皮；若仅见砂晶与联结乳管，则需查桔梗/柴胡的分泌组织形态差异（乳管直径需可信标定，未标定前只能做存在性与形态判断）。",
+  "evidence_digest": "500f83b2b4de23e2ae158c94fb3e7c4dd1e2ffae077682044ef591e695773faa",
+  "decision_source": "model",
+  "is_evidence": false
+}

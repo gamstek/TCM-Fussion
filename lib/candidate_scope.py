@@ -14,7 +14,8 @@ def _strict_non_a(row):
     supporting = [c for c in checks if c.get('role') == 'supporting']
     if not required:
         return False
-    if any(not c.get('present') or c.get('state') == 'NOT_DETECTED' for c in required + supporting):
+    if any(not c.get('present') or c.get('state') not in {'IN_RANGE','EXTREME','NO_REF'}
+           for c in required + supporting):
         return False
     return any(c.get('feature_id') not in GENERIC_FEATURES for c in required)
 
@@ -29,6 +30,7 @@ def apply_candidate_scope(verdict, a, kb, aliases=None, policy=None, scope='a_to
         a_ids = []
     a_set = set(a_ids)
     ranking = list(verdict.get('ranking') or [])
+    original_top = ranking[0].get('id') if ranking else None
     kept, dropped = [], []
     for row in ranking:
         identifier = row.get('id')
@@ -57,7 +59,11 @@ def apply_candidate_scope(verdict, a, kb, aliases=None, policy=None, scope='a_to
         'policy': 'A Top-K 为 Plan B 重点；非 A 仅在 open_strict 且 required+supporting 全部符合时保留',
     }
     # 范围改变后，原 top 的 conclusion 不再可信；结论由规则 verdict/ranking 重新呈现。
-    verdict['conclusion'] = None if kept and kept[0].get('id') not in a_set else verdict.get('conclusion')
-    if kept and verdict.get('verdict') in {'confirmed', 'probable', 'group_level'}:
+    conclusion = verdict.get('conclusion')
+    conclusion_id = conclusion.get('id') if isinstance(conclusion, dict) else conclusion
+    top = kept[0].get('id') if kept else None
+    if top is None or top != original_top or (conclusion_id and conclusion_id != top):
+        verdict['conclusion'] = None
         verdict['verdict'] = 'insufficient_evidence'
+        verdict['needs_review'] = True
     return verdict

@@ -7,10 +7,26 @@ A 是候选先验（Plan A），B 是显微证据（Plan B）。这里只重排�
 from __future__ import annotations
 
 
+def _group_map(kb):
+    if hasattr(kb, 'group_of'):
+        return kb.group_of
+    mapping = {}
+    groups = kb.get('groups') if isinstance(kb, dict) else {}
+    if isinstance(groups, dict):
+        for gid, group in groups.items():
+            for herb in (group or {}).get('members') or []:
+                mapping[herb] = gid
+    for row in (kb.get('herbs') if isinstance(kb, dict) else []) or []:
+        herb = row.get('herb')
+        if herb:
+            mapping.setdefault(herb, row.get('group_id') or herb)
+    return mapping
+
+
 def _candidate_id(label, kb, aliases):
     label = str(label or '')
     herb = (aliases or {}).get(label, label)
-    return kb.group_of.get(herb, herb)
+    return _group_map(kb).get(herb, herb)
 
 
 def a_probabilities(a, kb, aliases=None):
@@ -45,6 +61,7 @@ def apply_ab_fusion(verdict, a, kb, aliases=None, a_weight=0.5, b_weight=0.5):
     aw, bw = aw / total, bw / total
     probs, fold_count = a_probabilities(a, kb, aliases)
     ranking = list(verdict.get('ranking') or [])
+    original_top = ranking[0].get('id') if ranking else None
     for row in ranking:
         identifier = row.get('id')
         a_prob = probs.get(identifier, 0.0)
@@ -58,11 +75,15 @@ def apply_ab_fusion(verdict, a, kb, aliases=None, a_weight=0.5, b_weight=0.5):
         row['fused_score'] = round(fused, 6)
         row['b_score'] = row.get('score')
         row['score'] = round(fused, 6)
-        row['confidence'] = round(fused, 6)
-    ranking.sort(key=lambda row: ((row.get('confidence') or 0), (row.get('a_probability') or 0),
+        # Keep rule confidence distinct from this uncalibrated ranking score.
+    ranking.sort(key=lambda row: ((row.get('fused_score') or 0), (row.get('a_probability') or 0),
                                   (row.get('support_count') or 0)), reverse=True)
     verdict['ranking'] = ranking
     verdict['alternatives'] = ranking[1:5]
+    if ranking and ranking[0].get('id') != original_top:
+        verdict['conclusion'] = None
+        verdict['verdict'] = 'insufficient_evidence'
+        verdict['needs_review'] = True
     verdict['fusion_weights'] = {'a': round(aw, 4), 'b': round(bw, 4), 'a_folds': fold_count}
     verdict['fusion_policy'] = 'A 先验 + B 证据加权；B verdict/证据状态不由 A 改写'
     return verdict

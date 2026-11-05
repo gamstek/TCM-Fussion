@@ -1,0 +1,18 @@
+{
+  "reply": {
+    "action_id": "cc12527be9ebd8e5c33f8d4434604ede6259e32c3894d0f9f10a98603468e1d5",
+    "decision_summary": "秦皮砂晶已有阳性C证据，桔梗P1判据（联结乳管）尚未发现；区域1已核验为无，选择下一最高纹理分且未核验的区域2做GLM定向定位，是当前最能区分秦皮/桔梗的合法观察",
+    "override_reason": "stop_advisory建议复核（no_gain_streak），但观察预算尚余5次，且区域2（line_score 0.668）尚未核验，仍有一次有区分价值的定向定位机会；若仍为阴性再转复核"
+  },
+  "usage": {
+    "completion_tokens": 283,
+    "completion_tokens_details": {
+      "reasoning_tokens": 154
+    },
+    "prompt_tokens": 15779,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 16062
+  }
+}

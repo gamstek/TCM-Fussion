@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "84a6bffb1a798bb3bb22b3c89e936e4a3ac5f3481222ed02b781ea8bbb34ff40",
+    "decision_summary": "p0_focus 指向 G1(赤芍/牡丹皮) 的 cluster_crystal(P0) 且尚未尝试，必须优先在其所在ROI执行 locate_feature 定向核验；选择A3对应最高评分区域(roi:0, line_score 0.96)。scene_check 提示视野内散在少量簇晶状结晶，但需独立定位核验后方可作为证据；A3 预期解决 G1 是否存在簇晶的关键缺口，从而区分秦皮(sand_crystal)与簇晶类候选。",
+    "override_reason": null,
+    "investigate_candidates": [
+      "G1",
+      "桔梗"
+    ],
+    "investigation_reason": "G1 为当前 P0 强制缺口；桔梗为次高候选，其联结乳管已初检阳性但需定量与独立核验。"
+  },
+  "usage": {
+    "completion_tokens": 203,
+    "completion_tokens_details": {
+      "reasoning_tokens": 22
+    },
+    "prompt_tokens": 22442,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 22645
+  }
+}

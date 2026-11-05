@@ -44,4 +44,8 @@ def reflection_card(events):
     return {'schema':'task-reflection/v1','facts':failures[-3:],
             'hypothesis':'当前路线未产生已验证进展' if failures else '未发现需反思的失败',
             'avoid_problem_ids':list(dict.fromkeys(r['problem_id'] for r in failures)),
+            'questions':['哪些观察支持/反驳当前假设，哪些只是unknown？',
+                         '重复调查同一特征是否仍有新的可验证依据？',
+                         '是否应查知识库中A候选外的假设、换视野，或停止？'],
+            'next_plan_requires':'说明假设、剩余缺口、预期增益和停止依据；建议不是强制路线',
             'scope':'task_policy_only','changes_evidence':False,'uses_reference_label':False}

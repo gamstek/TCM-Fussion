@@ -61,7 +61,7 @@ LangGraph `StateGraph` 执行 `assess → think → act → assess`。Assess 以
 
 - 实测主路径是 `adaptive_v2 + llm + mcp + active`。模型看到预算内全部合法动作及停止选项，从当轮短编号选择。候选 Top-3 与动作数量是不同的限制。参数由运行时绑定，记录简短 `decision_summary`。
 - 规划、观察、重算和首次检测分池，并受全局网络、总资源和时间限制。覆盖软停止建议时给理由；证据不足、强制场景或待修依赖可否决确认。超过步数、时间或重提边界时保留复核。
-- 任务内 Reflection 在连续无有效进展达到阈值或动作执行失败时，最多生成一次结构化卡供后续规划。离线 Reflection 与 LangMem 单独验证和发布，真实链路没有自动读取参考真值或发布策略。
+- 任务内 Reflection 在连续无有效进展达到阈值或动作执行失败时生成结构化卡；adaptive_v2 会根据新失败刷新卡，提示质疑当前假设，而不是强制换区域。离线 Reflection 与 LangMem 单独验证和发布，真实链路没有自动读取参考真值或发布策略。
 
 详见[决策协议](融合链路文档/05_决策协议.md)和[验收入口](融合链路文档/07_验收与运行.md)。
 
@@ -77,7 +77,7 @@ LangGraph `StateGraph` 执行 `assess → think → act → assess`。Assess 以
 
 技能由 [registry.json](skills/registry.json) 注册，内容被实际加载进规划上下文，哈希进入技能元信息。它们是本项目的领域技能卡，不是自动安装到Codex的插件；Markdown不能自行扩大代码权限。
 
-MCP服务器真实暴露4个工具：`list_skills()`、`get_skill(skill_id)`、`read_evidence()`、`observe(action)`，并提供 `microscope://skills` resource 与 `collect_evidence` prompt。服务一次绑定一个样品，不接受任意路径。观察服务自己校验合法集合、必查顺序、预算和持久去重；不是给普通函数换MCP名字。
+MCP服务器真实暴露7个工具：`list_skills()`、`get_skill(skill_id)`、`read_evidence()`、`observe(action)`、`list_tools_registry()`、`read_tool(name, arguments)`、`recompute_tool(action)`，并提供 `microscope://skills` resource 与 `collect_evidence` prompt。服务一次绑定一个样品，不接受任意路径。观察服务自己校验合法集合、必查顺序、预算和持久去重；不是给普通函数换MCP名字。
 
 ```powershell
 # 项目根启动；context由一次active运行或MCP演示生成
@@ -281,3 +281,12 @@ observations必须是先前真实录制或明确模拟的{action,accepted,result
 
 同一鉴别任务有多个视野时，配置 `a.images` 为原图路径列表（代替 `a.image`），并让 `agent.image_roots` 指向同一组图。使用主动工作流并省略 `routing`。每张图分别运行五折；Agent 收到按视野、折分组的 Top-K。知识库候选按 ID 合并去重，只用于规划；原规则引擎依据多视野显微证据裁决。多视野任务没有合成 A 单榜。将 `workflow.max_initializations` 和时间预算设为适合该样品视野数的上限；具体执行哪些动作由 Agent 在权限和预算内选择。
 
+
+
+## 2026-11-05｜上下文调查改进
+
+模型回复可以附加 `investigate_candidates`（每轮最多3个知识库ID）与 `investigation_reason`。任务总计最多6个额外候选，写入 `workflow/investigation.json` 并由 MCP 读取。这里只扩大调查兴趣，不增加显微证据、不改变 A 的五折 Top-K，也不授予新工具权限。最终候选外采信仍需要 `open_strict` 的合法证据；不能把参考标签作为扩展依据。
+
+MCP 服务接收请求前在主线程预加载已有数值/图像依赖，避免工作线程冷导入阻塞。有效阴性按视野回写，失败仍是 unknown。任务反思提供失败事实与质疑假设的问题，不强制下一工具；自进化效果仍需独立评测。
+
+交付可始终生成报告，同时必须如实保留 `review_required`。`confidence` 保留 B 规则分，`fused_score` 是未校准排序分；重排不能继承另一候选的确认结论。D8 默认2类，单类放宽实验须显式配置 `agent.workflow.min_support_features=1`。决策审查共享规划/网络预算，任务关闭后不得再发请求。

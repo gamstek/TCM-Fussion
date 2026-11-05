@@ -389,6 +389,25 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(selected_indices), 3)
         self.assertTrue(all(i >= 3 for i in selected_indices[1:]))
 
+    async def test_v2_model_expansion_changes_next_round_scope_not_evidence(self):
+        r=self.runtime(agent_policy='adaptive_v2',max_planning=4)
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        r.a={'status':'ok','fold_rankings':[[{'label':'秦皮','probability':1.0}]]*5}
+        contexts=[]
+        class Planner:
+            def choose(self,context):
+                contexts.append(copy.deepcopy(context))
+                if len(contexts)==1:
+                    action=next(a for a in context['actions'] if a['tool']=='read_evidence')
+                    return {'action_id':action['action_id'],'investigate_candidates':['龙胆'],
+                            'investigation_reason':'核对A候选外假设的判据差异'},None
+                return {'action_id':'review','decision_summary':'测试终止'},None
+        trace=await run_react(r,LocalToolbox(r,ledger_path=self.root/'ledger.json',backend=FixtureBackend()),
+                              planner=Planner(),planner_mode='scripted',max_steps=4)
+        self.assertIn('龙胆',contexts[1]['evidence']['candidate_interest']['ids'])
+        self.assertTrue(any(e['phase']=='investigation_expanded' for e in trace['events']))
+        self.assertNotIn('needle_crystal',r.present_features)
+
     async def test_adaptive_has_legal_presence_without_measurement(self):
         r=self.runtime();r.a={'status':'ok','ranking':[{'label':'广藿香','probability':.6},{'label':'淫羊藿','probability':.4}]}
         actions=r.legal_actions({'observations':[],'attempted':[]})

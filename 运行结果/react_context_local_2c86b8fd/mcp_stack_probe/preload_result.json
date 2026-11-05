@@ -1,0 +1,15 @@
+{
+  "elapsed_seconds": 1.015999999945052,
+  "is_error": false,
+  "response": [
+    {
+      "action_id": "b874acbf6d0f18255c0831ae59a21e046dda8b74c9296bacf8650c2df5925173",
+      "accepted": false,
+      "status": "failed",
+      "repair_completed": false,
+      "error_code": "ACTION_DENIED"
+    }
+  ],
+  "preload_cv2_on_main_thread": true,
+  "network_disabled": true
+}

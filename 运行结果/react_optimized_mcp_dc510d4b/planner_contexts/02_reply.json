@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "57299b7fc71378a37ea76c880a995f859150bf2078800c6eb8e49909f7f01ee2",
+    "decision_summary": "当前候选为秦皮与桔梗，差异特征为sand_crystal（秦皮必需C级）与secretory_tissue（桔梗必需P1级）。本轮无任何有效观察，先核验榜首候选秦皮的必需特征sand_crystal，以获得区分性存在性证据；后续再核验secretory_tissue。",
+    "override_reason": null,
+    "investigation_candidates": [
+      "桔梗"
+    ],
+    "investigation_reason": "若sand_crystal阴性或不确定，下一轮核验桔梗必需的secretory_tissue（联结乳管14～25μm含淡黄色颗粒状物）以完成两候选区分。",
+    "parallel_observation_id": null
+  },
+  "usage": {
+    "completion_tokens": 227,
+    "completion_tokens_details": {
+      "reasoning_tokens": 77
+    },
+    "prompt_tokens": 10189,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 10416
+  }
+}

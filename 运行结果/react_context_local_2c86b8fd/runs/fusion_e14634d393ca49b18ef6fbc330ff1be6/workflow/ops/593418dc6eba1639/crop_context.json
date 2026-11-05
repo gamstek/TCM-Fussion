@@ -1,0 +1,15 @@
+{
+  "tool": "detect_region",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\input.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\ops\\593418dc6eba1639\\detection",
+  "boxes": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\ops\\593418dc6eba1639\\boxes.json",
+  "roi": [
+    1024,
+    512,
+    2048,
+    1536
+  ],
+  "px_per_um": null,
+  "existing_boxes": [],
+  "replace_id": null
+}

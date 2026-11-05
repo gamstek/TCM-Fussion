@@ -71,6 +71,84 @@ class WorkflowTests(unittest.TestCase):
             with self.assertRaises(IntegrationError):validate_arguments(schema,obj)
         with self.assertRaises(IntegrationError):validate_arguments({'$ref':'https://example.com/schema'}, {})
 
+    def test_valid_absence_is_observed_but_failure_stays_unknown(self):
+        r=self.runtime();image=next(iter(r.images))
+        obs={'accepted':True,'action':{'tool':'presence_check','args':{
+            'image_id':image,'feature_id':'epidermis_cell'}},
+            'result':{'ok':True,'present':False,'conf':.9}}
+        scored=r.score([obs])
+        self.assertIn((image,'epidermis_cell'),r._observed_fovs)
+        self.assertEqual(scored['observation_states'][0]['state'],'absent')
+        self.assertNotIn('epidermis_cell',r.present_features)
+        r.score([{**obs,'accepted':False}])
+        self.assertEqual(r._observed_features,set())
+
+    def test_model_investigation_extends_tools_without_adding_evidence(self):
+        r=self.runtime(targeted_recovery=True)
+        r.a={'status':'ok','fold_rankings':[[{'label':'秦皮','probability':1.0}]]*5}
+        before=r.workflow.store.current()['version']
+        self.assertNotIn('龙胆',r.candidate_interest()['ids'])
+        r.investigate(['龙胆'],'检查A候选外针晶假设',r.score([])['evidence_digest'])
+        self.assertIn('龙胆',r.candidate_interest()['ids'])
+        self.assertIn('needle_crystal',r.workflow.recovery_features())
+        self.assertEqual(r.workflow.store.current()['version'],before)
+        self.assertFalse(r.present_features)
+        self.assertFalse(read_json(r.workflow.root/'investigation.json')['is_evidence'])
+        self.assertIn('龙胆',self.runtime(targeted_recovery=True).candidate_interest()['ids'])
+        with self.assertRaises(IntegrationError):r.investigate(['arbitrary_shell'],'bad','hash')
+        r.workflow.close('test')
+        with self.assertRaises(IntegrationError):r.investigate(['桔梗'],'late','hash')
+
+    def test_admission_does_not_call_model_for_insufficient_evidence(self):
+        r=self.runtime()
+        with patch.object(r,'_decision_client',side_effect=AssertionError('must not call')):
+            result=r.admission_decision({'verdict':'insufficient_evidence','needs_review':True})
+        self.assertEqual(result['decision'],'verify')
+
+    def test_review_component_plan_is_bound_to_one_segmentation(self):
+        r=self.runtime()
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='segment_instance'))
+        target=next(t for t in r.workflow.targets().values() if t['kind']=='segmentation')
+        focus={'status':'crop_segmentation_review','segmentation_id':target['id'],
+               'review':{'components':[{'id':1}]},
+               'review_decision':{'repair':'diagnostic_measure','component_ids':[1]}}
+        with patch.object(r,'p0_focus',return_value=focus):
+            self.assertEqual(r.workflow.review_measure_plan(target)['target_sha256'],target['sha256'])
+            self.assertIsNone(r.workflow.review_measure_plan({**target,'id':'different_mask'}))
+            self.assertIsNone(r.workflow.review_measure_plan({**target,'sha256':'changed'}))
+
+    def test_decision_model_shares_budget_and_does_not_call_after_close(self):
+        from types import SimpleNamespace
+        from TCM_Fusion.lib.decision_llm import DecisionLLM
+        r=self.runtime(max_planning=2,max_api_calls=2)
+        llm=DecisionLLM.__new__(DecisionLLM)
+        llm.cache={};llm.workflow=r.workflow;llm.config={}
+        llm.client=SimpleNamespace(timeout_s=60,model='fixture')
+        body={'choices':[{'message':{'content':'{"decision":"verify","reason":"missing"}'}}],
+              'usage':{'total_tokens':10}}
+        with patch('TCM_Fusion.lib.hard_calls.post',return_value=body) as call:
+            result=llm.admission({'id':'x'},{},[])
+            self.assertEqual(result['decision'],'verify')
+            self.assertEqual(call.call_count,1)
+            self.assertEqual(read_json(r.workflow.budget_path)['used']['planning'],1)
+            self.assertTrue(read_json(r.workflow.root/'decision_calls.json')['calls'])
+            r.workflow.close('test')
+            result=llm.admission({'id':'different'},{},[])
+            self.assertFalse(result['available'])
+            self.assertEqual(call.call_count,1)
+
+    def test_relaxed_support_policy_is_explicit_and_does_not_mutate_baseline(self):
+        from rule_engine import MIN_SUPPORT_FEATURES,decide,pool_evidence
+        self.assertEqual(MIN_SUPPORT_FEATURES,2)
+        records=[{'feature':'cluster_crystal','image_stem':'fov','instance_id':1,
+                  'calibration_status':'ok','calibration_px_per_um':2,'conf':.9,
+                  'primary_dimension':'feret_max_um','primary_value_um':18}]
+        cards=pool_evidence(records);r=self.runtime()
+        baseline=decide(r.kb,cards)
+        decide(r.kb,cards,min_support_features=1)
+        self.assertEqual(decide(r.kb,cards),baseline)
+
     def test_independent_handler_precondition_and_output(self):
         r=self.runtime();reg=r.tools
         reg.register_handler('trusted_test',lambda r,a,s:{'value':a['n']*2})

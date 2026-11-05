@@ -1,0 +1,18 @@
+{
+  "reply": {
+    "action_id": "review",
+    "decision_summary": "已确认的视野内证据相互冲突且均未量化：砂晶(C级)支持秦皮，分泌组织支持桔梗/柴胡，G1的P0簇晶多次定位/核验均无已验证进展（no_gain_streak=2，复核建议）。继续对剩余ROI做重复YOLO重检预期无增益，且剩余观察预算有限。维持假设：秦皮（砂晶present，唯一有C级支持）；分泌组织的存在不足以在桔梗/柴胡间区分且需量化测量，当前无尺度无法测量。应转入人工复核以解决候选冲突，而非继续换ROI。",
+    "override_reason": "遵循stop_advisory的review建议：连续两轮无收益，剩余动作（ROI 2/3/4/5重检）与已失败的路线同质，且无标定尺度下量化判据无法解决；request_review是当前唯一可推进裁决的合法动作。"
+  },
+  "usage": {
+    "completion_tokens": 327,
+    "completion_tokens_details": {
+      "reasoning_tokens": 119
+    },
+    "prompt_tokens": 22443,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 22770
+  }
+}

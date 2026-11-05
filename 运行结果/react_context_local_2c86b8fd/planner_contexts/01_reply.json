@@ -1,0 +1,18 @@
+{
+  "reply": {
+    "action_id": "48a6e899488b84abf476299d67a925266459caef5f04e6b98928073e36272b80",
+    "decision_summary": "当前无任何观察，判据差异显示秦皮需砂晶(required)、桔梗需联结乳管(required)，证据严重不足且stop_advisory为continue。先对目标视野做初始检测以恢复/生成有效证据，再据此进行区分性存在性核验。",
+    "override_reason": null
+  },
+  "usage": {
+    "completion_tokens": 88,
+    "completion_tokens_details": {
+      "reasoning_tokens": 11
+    },
+    "prompt_tokens": 3654,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 3742
+  }
+}

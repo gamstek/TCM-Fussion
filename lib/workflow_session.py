@@ -273,7 +273,7 @@ class WorkflowSession:
         from prompts import CLASSIFY_HINTS
         from .candidate_policy import candidates, criteria_diff
         r = self.runtime
-        interest = candidates(r.a, r.kb, r.aliases, r.candidate_policy)
+        interest = r.candidate_interest()
         supported = {fid for label, fid in FEATURE_ID.items() if label in CLASSIFY_HINTS}
         measured = {record.get('feature_id') or record.get('feature')
                     for record in self.store.verified_records()
@@ -326,7 +326,7 @@ class WorkflowSession:
         """外部 review 决策选择 split/diagnostic 时，允许一次诊断测量绕过 review 门。"""
         return self.review_measure_plan() is not None
 
-    def review_measure_plan(self):
+    def review_measure_plan(self, target=None):
         getter=getattr(self.runtime,'p0_focus',None)
         if getter is None:
             return None
@@ -335,6 +335,14 @@ class WorkflowSession:
         except Exception:
             return None
         if not focus or focus.get('status')!='crop_segmentation_review':
+            return None
+        snapshot=self.store.current()
+        segmentation_id=focus.get('segmentation_id')
+        segmentation=snapshot['artifacts'].get(segmentation_id,{})
+        if not segmentation.get('valid'):
+            return None
+        if target is not None and (target.get('id') != segmentation_id or
+                                   target.get('sha256') != segmentation.get('sha256')):
             return None
         decision=focus.get('review_decision') or {}
         repair=decision.get('repair')
@@ -355,14 +363,16 @@ class WorkflowSession:
             policy='selected' if ids else 'largest'
         if ids:
             policy='selected'
-        return {'repair':repair,'component_ids':ids,'component_policy':policy}
+        return {'repair':repair,'component_ids':ids,'component_policy':policy,
+                'target_id':segmentation_id,'target_sha256':segmentation['sha256'],
+                'evidence_version':snapshot['version']}
 
     def propose(self, *, include_offline=False):
         snap=self.store.current();arts=snap['artifacts'];done=read_json(self.operations)['entries'];out=[]
         blocked=self.blocked_tools()
         recovery = self.config.get('targeted_recovery', False)
         gaps = self.recovery_features() if recovery else []
-        review_measure = self.review_measure_allowed()
+        review_plan = self.review_measure_plan()
         locate_attempts = sum(row['tool'] == 'locate_feature' for row in done.values())
         max_locate = int(self.config.get('max_locate_attempts', 4))
         def offer(tool,t,priority):
@@ -394,12 +404,14 @@ class WorkflowSession:
                     continue
                 scale=arts.get('scale:'+image,{})
                 seg=arts.get('seg:'+tid,{})
+                review_measure=bool(review_plan and review_plan['target_id']=='seg:'+tid)
                 usable=seg.get('quality')=='valid' or (self.diagnostic_quality() and seg.get('quality')=='review') or review_measure
                 if self.purpose_quality() and seg.get('assessment_id'):usable=True
                 if scale.get('valid') and (not seg.get('valid') or not usable):
                     tool='segment_instance'
             elif t['kind']=='segmentation' and (t.get('quality')=='valid' or
-                    (self.diagnostic_quality() and t.get('quality')=='review') or review_measure):
+                    (self.diagnostic_quality() and t.get('quality')=='review') or
+                    (review_plan and review_plan['target_id']==tid)):
                 if not arts.get('measurement:'+tid,{}).get('valid'):tool='measure_instances'
             if t.get('kind')=='segmentation' and self.purpose_quality():
                 assessment=self.assessment(t)

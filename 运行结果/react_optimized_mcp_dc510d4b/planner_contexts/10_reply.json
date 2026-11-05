@@ -1,0 +1,18 @@
+{
+  "reply": {
+    "action_id": "466ac791c0cfdce37fdc2859ad632f1778e5859a98883198cf389b58d1b235af",
+    "decision_summary": "p0_focus 指向 G1 的草酸钙簇晶 crop（det_score 0.65）尚未分类，指令要求先完成该 crop 的 classify_target，未完成前不得继续 locate 或查 P1/C。该分类将判定簇晶是否成立，直接区分 G1（赤芍/牡丹皮）与秦皮/桔梗假设。",
+    "override_reason": null
+  },
+  "usage": {
+    "completion_tokens": 106,
+    "completion_tokens_details": {
+      "reasoning_tokens": 11
+    },
+    "prompt_tokens": 20104,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "total_tokens": 20210
+  }
+}

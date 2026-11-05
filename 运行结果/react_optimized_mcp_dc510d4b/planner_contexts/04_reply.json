@@ -1,0 +1,24 @@
+{
+  "reply": {
+    "action_id": "a8cd7ffd1d4491e7009e57e7fc32a6a7066b2ce9df565307b3f3368e9f9ba115",
+    "decision_summary": "秦皮与桔梗的required特征均在当前视野呈阳性，证据不足以区分且强制场景检查未完成（finish_veto含mandatory_context_incomplete）。先完成scene_check以解除强制阻塞，其结晶位置、排列与丰度信息也可协助区分砂晶与乳管场景；下一轮再对secretory_tissue做宽度测量以核验桔梗14～25μm判据。",
+    "override_reason": null,
+    "investigation_candidates": [
+      "秦皮",
+      "桔梗"
+    ],
+    "investigation_reason": "两候选required特征均阳性且conf仅0.65，需进一步区分：桔梗联结乳管宽度定量核验与砂晶形态/丰度场景核验。",
+    "parallel_observation_id": null
+  },
+  "usage": {
+    "completion_tokens": 263,
+    "completion_tokens_details": {
+      "reasoning_tokens": 101
+    },
+    "prompt_tokens": 11239,
+    "prompt_tokens_details": {
+      "cached_tokens": 832
+    },
+    "total_tokens": 11502
+  }
+}

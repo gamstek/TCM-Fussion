@@ -19,6 +19,16 @@ def _a_dragon():
 
 
 class ABFusionTest(unittest.TestCase):
+    def test_reranking_cannot_keep_stale_confirmed_conclusion(self):
+        kb=KnowledgeBase(Path(paths.JUDGE_DIR)/'data/herb_criteria.json')
+        v={'verdict':'confirmed','needs_review':False,'conclusion':{'id':'党参'},
+           'ranking':[{'id':'党参','confidence':.9,'score':.9},
+                      {'id':'龙胆','confidence':.2,'score':.2}]}
+        out=apply_ab_fusion(v,_a_dragon(),kb,{},.9,.1)
+        self.assertEqual(out['ranking'][0]['id'],'龙胆')
+        self.assertEqual(out['ranking'][0]['confidence'],.2)
+        self.assertEqual(out['verdict'],'insufficient_evidence')
+        self.assertIsNone(out['conclusion']);self.assertTrue(out['needs_review'])
     def test_a_prior_lifts_dragon_above_zero_b(self):
         kb = KnowledgeBase(Path(paths.JUDGE_DIR) / "data/herb_criteria.json")
         verdict = {"verdict": "insufficient_evidence", "conclusion": None,

@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 
 import paths
-from .storage import IntegrationError, digest, read_json
+from .storage import IntegrationError, digest, read_json, write_json
 
 
 REVIEW_ACTIONS = {'relocate', 'split_component', 'diagnostic_measure', 'abandon'}
@@ -31,6 +31,7 @@ class DecisionLLM:
         if not self.client.api_key:
             raise IntegrationError('CONFIG_MISSING', '缺决策 LLM 凭据')
         self.cache = {}
+        self.workflow = None
 
     def _ask(self, kind, payload):
         key = digest({'kind': kind, 'payload': payload})
@@ -48,17 +49,23 @@ class DecisionLLM:
                        '"component_ids":[整数,...],"component_policy":"largest|selected|all|merge",'
                        '"reason":"..."}。component_ids 只能取 input.review.components 中的 id；'
                        '只有 split_component/diagnostic_measure 需要 components。')
+        else:
+            prompt += (' 必须返回 {"decision":"admit|verify|suppress","reason":"具体证据理由"}。'
+                       'admit只表示候选准入，不能替代规则确认。')
         user = json.dumps({'task': kind, 'input': payload}, ensure_ascii=False)
         body = None
         try:
             from .hard_calls import post
-            self.client.timeout_s = min(float(self.client.timeout_s), 60.0)
+            timeout = min(float(self.client.timeout_s), 60.0)
+            if self.workflow is not None:
+                timeout = min(timeout, self.workflow.remaining_seconds())
+                self.workflow.charge('planning', 'decision:'+key)
             body = post({'model': self.client.model, 'temperature': 0,
                          'max_tokens': min(int(self.config.get('max_tokens', 1024)), 1024),
                          'response_format': {'type': 'json_object'},
                          'messages': [{'role': 'system', 'content': prompt},
                                       {'role': 'user', 'content': user}]},
-                        self.client.timeout_s)
+                        timeout)
             text = body['choices'][0]['message']['content'].strip()
             if text.startswith('```'):
                 text = '\n'.join(text.splitlines()[1:-1])
@@ -71,6 +78,18 @@ class DecisionLLM:
         value['available'] = bool(value.get('available', True))
         value['cache_key'] = key
         self.cache[key] = value
+        if self.workflow is not None:
+            from .ledger_lock import acquire, release
+            path = self.workflow.root/'decision_calls.json'
+            handle = acquire(path)
+            try:
+                calls = read_json(path) if path.exists() else {'calls':{}}
+                calls['calls'][key]={'task':kind,'available':value['available'],
+                                     'usage':body.get('usage') if isinstance(body,dict) else None,
+                                     'error_type':value.get('error')}
+                write_json(path,calls)
+            finally:
+                release(handle)
         return value
 
     def review(self, review, candidate=None):
@@ -107,7 +126,6 @@ class DecisionLLM:
         checks = candidate.get('checks') or []
         specific = [c for c in checks if c.get('present') and c.get('role') == 'required'
                     and c.get('feature_id') not in {'epidermis_cell', 'secretory_tissue'}]
-        decision = 'admit' if (candidate.get('id') in a_ids or specific) else 'verify'
-        return {'available': False, 'decision': decision,
+        return {'available': False, 'decision': 'verify',
                 'reason': 'decision LLM unavailable or invalid; deterministic fallback',
                 'fallback': True}

@@ -1,0 +1,19 @@
+{
+  "reply": {
+    "action_id": "bb6c42c01ab3dc91369ce6ddc30996675a76d3e618da7ae3d9bfbdd3ce3a0910",
+    "decision_summary": "当前唯一分歧是桔梗required的secretory_tissue：整视野GLM判absent(conf 0.65)，但这是阴性而非模型证明不存在。选择line_score最高的恢复区域roi:0做局部YOLO重检，最可能给出存在性区分证据；若仍无结果则倾向复核/停止。",
+    "override_reason": null,
+    "parallel_observation_id": null
+  },
+  "usage": {
+    "completion_tokens": 199,
+    "completion_tokens_details": {
+      "reasoning_tokens": 106
+    },
+    "prompt_tokens": 14967,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 15166
+  }
+}

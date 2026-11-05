@@ -1,0 +1,7 @@
+{
+  "actor": "test_supervisor",
+  "reason": "cold native import stall reproduced independently; terminate own test process tree",
+  "time": "2026-11-05T18:36:42",
+  "agent_decision": false,
+  "not_workflow_deadline": true
+}

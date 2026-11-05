@@ -1,0 +1,18 @@
+{
+  "reply": {
+    "action_id": "a8cd7ffd1d4491e7009e57e7fc32a6a7066b2ce9df565307b3f3368e9f9ba115",
+    "decision_summary": "秦皮所需砂晶已present、桔梗所需联结乳管已核验为absent，两候选的required差异证据已覆盖且置信度足够；但scene_check为强制场景检查，未完成前无法finish，且可对结晶场景提供独立确认。故本轮执行A3解除强制阻塞，随后可收尾。",
+    "override_reason": null
+  },
+  "usage": {
+    "completion_tokens": 230,
+    "completion_tokens_details": {
+      "reasoning_tokens": 140
+    },
+    "prompt_tokens": 8257,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 8487
+  }
+}

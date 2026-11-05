@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\.venv\\vision\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\几何测量\\measure.py",
+    "--masks",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_final_1f76fd81\\runs\\fusion_af343178c21346dbbf45f0e0f7f76c7e\\workflow\\ops\\bdc581ef5b997d9e\\delivery",
+    "--out-prefix",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\needle_5view_final_1f76fd81\\runs\\fusion_af343178c21346dbbf45f0e0f7f76c7e\\workflow\\ops\\bdc581ef5b997d9e\\measurement\\result",
+    "--split-policy",
+    "all"
+  ],
+  "timeout_seconds": 1573.1687760353088
+}

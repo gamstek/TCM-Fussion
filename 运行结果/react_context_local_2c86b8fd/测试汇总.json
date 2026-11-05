@@ -1,0 +1,382 @@
+{
+  "schema": "react-context-audit/v1",
+  "date": "2026-11-05",
+  "source": "dataset/目标检测标注/草酸钙针晶/images/3_64a87d.jpg",
+  "reference_after_run": {
+    "herb": "龙胆",
+    "feature": "needle_crystal",
+    "source": "attributes.csv",
+    "scope": "dataset_reference_not_independent_expert_validation"
+  },
+  "production_code_changed": false,
+  "tests": {
+    "total": 118,
+    "passed": 117,
+    "failed": 1,
+    "failure": "test_graph_actually_changes_evidence_and_rule_verdict: expected insufficient_evidence, got probable"
+  },
+  "live_local": {
+    "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6",
+    "elapsed_seconds": 270.9551143000135,
+    "planning_calls": 12,
+    "observation_calls": 3,
+    "steps": 12,
+    "stop_reason": "override_exhausted",
+    "model_decisions": 12,
+    "reflection_contexts": [
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "verdict": "insufficient_evidence",
+    "needs_review": true,
+    "output_top": {
+      "id": "秦皮",
+      "display": "秦皮",
+      "kind": "herb",
+      "score": 0.5946,
+      "confidence": 0.5946,
+      "support_count": 1,
+      "a_probability": 0.685,
+      "b_confidence": 0.459,
+      "fused_score": 0.5946,
+      "admission": "admit"
+    },
+    "output_review_required": false,
+    "operations": [
+      [
+        "detect_fov_initial",
+        "done"
+      ],
+      [
+        "propose_regions",
+        "done"
+      ],
+      [
+        "detect_region",
+        "done"
+      ],
+      [
+        "locate_feature",
+        "done"
+      ],
+      [
+        "locate_feature",
+        "done"
+      ],
+      [
+        "classify_target",
+        "done"
+      ],
+      [
+        "locate_feature",
+        "done"
+      ],
+      [
+        "locate_feature",
+        "done"
+      ],
+      [
+        "locate_feature",
+        "done"
+      ]
+    ]
+  },
+  "mcp": {
+    "online_attempt": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\mcp_online_attempt",
+    "completed": false,
+    "cancelled_by_test_supervisor": true,
+    "isolated_cold_recompute_timeout_seconds": 12,
+    "main_thread_preload_probe": {
+      "elapsed_seconds": 1.015999999945052,
+      "is_error": false,
+      "response": [
+        {
+          "action_id": "b874acbf6d0f18255c0831ae59a21e046dda8b74c9296bacf8650c2df5925173",
+          "accepted": false,
+          "status": "failed",
+          "repair_completed": false,
+          "error_code": "ACTION_DENIED"
+        }
+      ],
+      "preload_cv2_on_main_thread": true,
+      "network_disabled": true
+    }
+  },
+  "steps": [
+    {
+      "step": 1,
+      "tool": "detect_fov_initial",
+      "args": {
+        "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "evidence_version": "476027ad963fda2bcf9c0a9bb0a720624ec914a13e01b673ebf919beb564754b"
+      },
+      "summary": "当前无任何观察，判据差异显示秦皮需砂晶(required)、桔梗需联结乳管(required)，证据严重不足且stop_advisory为continue。先对目标视野做初始检测以恢复/生成有效证据，再据此进行区分性存在性核验。",
+      "prior_observations": 0,
+      "reflection_received": false,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.0,
+          "gap": 0.0,
+          "no_gain_streak": 0
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 2,
+      "tool": "presence_check",
+      "args": {
+        "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "feature_id": "sand_crystal",
+        "morph_hint": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）"
+      },
+      "summary": "五折榜首多为秦皮，其required特征为草酸钙砂晶（A3）；该特征与桔梗required的乳管（A4）互为区分。无任何显微观察记录，先核验榜首必检特征，present与否都能显著改变裁决，区分度最高。",
+      "prior_observations": 0,
+      "reflection_received": false,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.0,
+          "gap": 0.0,
+          "no_gain_streak": 1
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 3,
+      "tool": "presence_check",
+      "args": {
+        "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "feature_id": "secretory_tissue",
+        "morph_hint": "联结乳管直径14～25μm，含淡黄色颗粒状物"
+      },
+      "summary": "砂晶已present支持秦皮，但桔梗的required特征secretory_tissue（P1/C级，联结乳管14~25μm含淡黄色颗粒物）尚未核验；做其存在性检查可在两候选间形成最有区分性的证据，且不依赖尺寸标定。",
+      "prior_observations": 1,
+      "reflection_received": false,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 0
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 4,
+      "tool": "scene_check",
+      "args": {
+        "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+      },
+      "summary": "秦皮所需砂晶已present、桔梗所需联结乳管已核验为absent，两候选的required差异证据已覆盖且置信度足够；但scene_check为强制场景检查，未完成前无法finish，且可对结晶场景提供独立确认。故本轮执行A3解除强制阻塞，随后可收尾。",
+      "prior_observations": 2,
+      "reflection_received": false,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 0
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 5,
+      "tool": "propose_regions",
+      "args": {
+        "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "evidence_version": "f46324bf14cfb02ecf5839195631e66a21437973779ca601253e48ef70189f35"
+      },
+      "summary": "秦皮的required特征sand_crystal已初检present(conf0.72)但置信偏低且当前裁决仍为insufficient_evidence，桔梗的secretory_tissue为阴性。选择A1对原图含砂晶薄壁组织区域提议局部核验，可最有区分性地增强秦皮的C层证据、同时进一步排除桔梗；读证据类工具（A3-A11）只读不增证据，暂无必要。",
+      "prior_observations": 3,
+      "reflection_received": false,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 0
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 6,
+      "tool": "detect_region",
+      "args": {
+        "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0",
+        "evidence_version": "cfa0fe7351659509f7900f8a3574c8362d9c7561df15258ed952ff3ff531def3"
+      },
+      "summary": "当前唯一分歧是桔梗required的secretory_tissue：整视野GLM判absent(conf 0.65)，但这是阴性而非模型证明不存在。选择line_score最高的恢复区域roi:0做局部YOLO重检，最可能给出存在性区分证据；若仍无结果则倾向复核/停止。",
+      "prior_observations": 3,
+      "reflection_received": false,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 0
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 7,
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1:secretory_tissue",
+        "evidence_version": "12a547f5157450795f7bbd65ea718c398fa56fec8c8cfe93717153450667f9de"
+      },
+      "summary": "秦皮（砂晶present已核）与桔梗的区分缺口在secretory_tissue。已有全视野negative，需对高分区ROI1（line_score=0.738）做GLM定向核验，与秦皮的阳性证据形成最有区分性的对比",
+      "prior_observations": 3,
+      "reflection_received": false,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 1
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 8,
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:2:secretory_tissue",
+        "evidence_version": "5c274c3f2da372ea2a718beb230db0f2b66bbd67473a9438297330dd2f1fc75d"
+      },
+      "summary": "秦皮砂晶已有阳性C证据，桔梗P1判据（联结乳管）尚未发现；区域1已核验为无，选择下一最高纹理分且未核验的区域2做GLM定向定位，是当前最能区分秦皮/桔梗的合法观察",
+      "prior_observations": 3,
+      "reflection_received": true,
+      "advisory": {
+        "recommend": "review",
+        "why": "no_gain_streak",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 2
+        }
+      },
+      "override_reason": "stop_advisory建议复核（no_gain_streak），但观察预算尚余5次，且区域2（line_score 0.668）尚未核验，仍有一次有区分价值的定向定位机会；若仍为阴性再转复核"
+    },
+    {
+      "step": 9,
+      "tool": "classify_target",
+      "args": {
+        "target_id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glm9963898c4126_01",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "summary": "已有证据：秦皮所需砂晶在该视野present(conf0.72)，桔梗所需分泌组织(联结乳管)在当前视野未见。现有一个GLM提出的secretory_tissue候选crop待身份核验，优先用classify_target对该crop做独立分类核验：若确认为分泌组织则支持桔梗，若非则进一步支持秦皮，是当前对两候选最有区分性且成本最低的一步。",
+      "prior_observations": 3,
+      "reflection_received": true,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 0
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 10,
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3:secretory_tissue",
+        "evidence_version": "ebf55fee5adab3f1aa582c55a6ab6eb496a86459fadd4f49f9f86ebe330e1780"
+      },
+      "summary": "秦皮已有砂晶阳性支持，桔梗关键差异特征secretory_tissue尚未在新区域核验；ROI0-2的GLM定位与分类均未产出有效证据（其中一个crop判为图像不可判）。换未尝试过的ROI3做GLM定向定位，是当前最有区分性的合法观察，可检验联结乳管是否在其他视野区域存在。",
+      "prior_observations": 3,
+      "reflection_received": true,
+      "advisory": {
+        "recommend": "continue",
+        "why": "evidence_gap",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 1
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 11,
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0:secretory_tissue",
+        "evidence_version": "c9228c6eae94f458be4288d585c4e1b41e55634540b3121c2bddc501e21a2375"
+      },
+      "summary": "秦皮与桔梗的区分关键在secretory_tissue是否存在：现有阴性核验conf仅0.65，未定。最高分区域roi:0（line_score 0.96）尚未做过secretory_tissue定位核验，是该候选间最有区分性的下一个观察。",
+      "prior_observations": 3,
+      "reflection_received": true,
+      "advisory": {
+        "recommend": "review",
+        "why": "no_gain_streak",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 2
+        }
+      },
+      "override_reason": null
+    },
+    {
+      "step": 12,
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4:secretory_tissue",
+        "evidence_version": "51a00cb5ce05fe1559d8323e09e49add71aaf2c80d5cf04aac8fb6474ccbbdd6"
+      },
+      "summary": "秦皮已有砂晶阳性支持，裁决关键在桔梗的required P1特征secretory_tissue是否缺失。ROI4尚未做定向定位检查，且当前视野仅覆盖部分区域，选择A6对ROI4做secretory_tissue的GLM定向核验，能最有效地区分秦皮与桔梗；若仍为阴性可进一步检查ROI5。",
+      "prior_observations": 3,
+      "reflection_received": true,
+      "advisory": {
+        "recommend": "review",
+        "why": "no_gain_streak",
+        "strength": "medium",
+        "evidence": {
+          "top_conf": 0.459,
+          "gap": 0.459,
+          "no_gain_streak": 3
+        }
+      },
+      "override_reason": null
+    }
+  ],
+  "limits": [
+    "one sample does not establish classification gain",
+    "reference missing from all fold Top-3",
+    "local executor is not MCP transport",
+    "reflection card is code-generated task feedback, not validated self-evolution",
+    "preload probe validates protocol denial response only, not a full repaired online MCP run"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "label": "图像不可判",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "",
+  "confidence": "medium",
+  "reason": "图像虚焦过曝，仅见亮斑无结构",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\input.jpg",
+  "focus": 106.8,
+  "sent_hw": [
+    768,
+    724
+  ],
+  "granularity": "instance",
+  "crop_id": "secretory_tissue_input_glm9963898c4126_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\ops\\8c4d3051c2d2a133\\detection\\crops\\secretory_tissue_input_glm9963898c4126_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm"
+}

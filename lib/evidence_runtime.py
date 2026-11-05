@@ -92,7 +92,9 @@ class EvidenceRuntime:
                 card.conf_assumed = True  # 不创建dims/px_per_um/尺寸
         if answers:
             scene = scene_attributes.merge_vlm_scene(scene, answers)
-        decision = decide(self.kb, cards, scene=scene)
+        workflow = getattr(self, 'workflow', None)
+        threshold = workflow.config.get('min_support_features') if workflow is not None else None
+        decision = decide(self.kb, cards, scene=scene, min_support_features=threshold)
         observation_states=[]
         for observation in observations:
             action=observation['action'];result=observation.get('result',{})
@@ -113,6 +115,10 @@ class EvidenceRuntime:
     def legal_actions(self, state):
         return self.tools.propose(self,state)
 
+    def candidate_interest(self):
+        """Investigation scope only; never rule evidence or confirmation."""
+        return a_candidates(self.a, self.kb, self.aliases, self.candidate_policy)
+
     def _legacy_proposals(self, state):
         scored = self.score(state.get("observations", []))
         cards, decision = scored["cards"], scored["decision"]
@@ -132,7 +138,7 @@ class EvidenceRuntime:
         selected_ids = [r["id"] for r in decision.get("ranking", [])
                         if r.get("support_count", 0) > 0 and r.get("confidence", 0) > 0][:3]
         # A仅扩大补查兴趣集合；不筛掉B候选、不把类别名传给观察工具。
-        interest = a_candidates(self.a, self.kb, self.aliases, self.candidate_policy)
+        interest = self.candidate_interest()
         for aid in interest["ids"]:
             if aid in candidates and aid not in selected_ids:
                 selected_ids.append(aid)
@@ -200,7 +206,7 @@ class EvidenceRuntime:
 
     def summary(self, state):
         scored = self.score(state.get("observations", []))
-        interest = a_candidates(self.a, self.kb, self.aliases, self.candidate_policy)
+        interest = self.candidate_interest()
         d = scored["decision"]
         compact = {"verdict": d["verdict"], "conclusion": d.get("conclusion"),
                    "needs_review": d.get("needs_review", False),

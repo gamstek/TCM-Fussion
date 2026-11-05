@@ -5,7 +5,7 @@ import paths
 from .evidence_runtime import EvidenceRuntime
 from .workflow_session import WorkflowSession, TOOLS
 from .tool_registry import ToolSpec, object_schema
-from .storage import IntegrationError, project_path, file_hash, digest, read_json
+from .storage import IntegrationError, project_path, file_hash, digest, read_json, write_json
 
 
 class WorkflowRuntime(EvidenceRuntime):
@@ -40,10 +40,6 @@ class WorkflowRuntime(EvidenceRuntime):
     def score(self, observations):
         # 支持性特征只要被 GLM 审查过（无论 present/absent）就记入 observed，
         # 避免 supporting_review 门在同一特征上无限循环。
-        for obs in observations or []:
-            fid=(obs or {}).get('feature_id') or (obs or {}).get('feature')
-            if fid:
-                self._observed_features.add(str(fid))
         if self.workflow is not None:self.records=self.workflow.store.verified_records()
         if self.workflow is not None and self.workflow.purpose_quality():
             from .purpose_evidence import project
@@ -53,15 +49,64 @@ class WorkflowRuntime(EvidenceRuntime):
         else:
             scored=super().score(observations)
         self.present_features={fid for fid,c in scored['cards'].items() if c.present}
+        self._observed_fovs={(row['image_id'], row['feature_id'])
+                             for row in scored.get('observation_states', [])
+                             if row['state'] in {'present', 'absent'}}
+        self._observed_features={fid for _, fid in self._observed_fovs}
         return scored
+
+    def candidate_interest(self):
+        interest = super().candidate_interest()
+        workflow = getattr(self, 'workflow', None)
+        if workflow is None:
+            return interest
+        path = workflow.root/'investigation.json'
+        if not path.exists():
+            return interest
+        doc = read_json(path)
+        known = {row['id'] for row in self.kb.candidates()}
+        if doc.get('identity') != workflow.identity or doc.get('kb_sha256') != self.kb_sha256:
+            raise IntegrationError('INVESTIGATION_SCOPE', '调查范围与任务/知识库不符')
+        ids = doc.get('ids', [])
+        if not isinstance(ids, list) or len(ids) > 6 or any(not isinstance(x, str) or x not in known for x in ids):
+            raise IntegrationError('INVESTIGATION_SCOPE', '调查候选非法')
+        return {**interest, 'ids': list(dict.fromkeys(interest['ids']+ids)),
+                'investigation_ids': ids, 'investigation_is_evidence': False}
+
+    def investigate(self, ids, reason, evidence_digest):
+        """Persist model-selected KB candidates for parent and MCP; not evidence."""
+        if (not isinstance(ids, list) or not 1 <= len(ids) <= 3 or
+                any(not isinstance(x, str) for x in ids) or
+                not isinstance(reason, str) or not reason.strip()):
+            raise IntegrationError('INVESTIGATION_SCOPE', '扩展候选需要1至3个知识库ID和具体理由')
+        known = {row['id'] for row in self.kb.candidates()}
+        if any(x not in known for x in ids):
+            raise IntegrationError('INVESTIGATION_SCOPE', '禁止未知候选')
+        workflow = self.workflow
+        if workflow.remaining_seconds() <= .1 or read_json(workflow.budget_path).get('closed'):
+            raise IntegrationError('WORKFLOW_CLOSED', '结束后不能扩大调查范围')
+        current = self.candidate_interest().get('investigation_ids', [])
+        combined = list(dict.fromkeys(current+ids))
+        if len(combined) > 6:
+            raise IntegrationError('INVESTIGATION_SCOPE', '本任务额外调查候选上限为6')
+        write_json(workflow.root/'investigation.json', {
+            'identity': workflow.identity, 'kb_sha256': self.kb_sha256,
+            'ids': combined, 'reason': reason[:480], 'evidence_digest': evidence_digest,
+            'decision_source': 'model', 'is_evidence': False})
+        return combined
 
     def _decision_client(self):
         if not getattr(self, 'allow_network', False):
+            return None
+        workflow = getattr(self, 'workflow', None)
+        if workflow is not None and (workflow.remaining_seconds() <= .1 or
+                                    read_json(workflow.budget_path).get('closed')):
             return None
         if self.decision_llm is None:
             try:
                 from .decision_llm import DecisionLLM
                 self.decision_llm=DecisionLLM()
+                self.decision_llm.workflow=workflow
             except Exception:
                 return None
         return self.decision_llm
@@ -83,6 +128,10 @@ class WorkflowRuntime(EvidenceRuntime):
         return self._review_decisions[key]
 
     def admission_decision(self, decision):
+        if decision.get('needs_review') or decision.get('verdict') == 'insufficient_evidence':
+            return {'available':False,'decision':'verify','fallback':True,
+                    'reason':'rule evidence requires review; no model admission requested',
+                    'decision_source':'runtime_precondition'}
         ranking=decision.get('ranking') or []
         top=ranking[0] if ranking else {}
         key=digest({'top':top.get('id'),'checks':top.get('checks')})
@@ -102,8 +151,8 @@ class WorkflowRuntime(EvidenceRuntime):
             specific=[c for c in checks if c.get('present') and c.get('role')=='required'
                       and c.get('feature_id') not in {'epidermis_cell','secretory_tissue'}]
             value={'available':False,
-                   'decision':'admit' if (candidate['id'] in a_ids or specific) else 'verify',
-                   'reason':'decision LLM unavailable; deterministic candidate gate',
+                   'decision':'verify',
+                   'reason':'decision LLM unavailable; fail closed for confirmation',
                    'fallback':True}
         else:
             value=llm.admission(candidate,{'a_candidate_ids':a_ids,
@@ -122,7 +171,8 @@ class WorkflowRuntime(EvidenceRuntime):
         from .candidate_policy import candidates as a_candidates
         from detect_core import FEATURE_ID
         try:
-            interest = a_candidates(self.a, self.kb, self.aliases, self.candidate_policy)
+            interest = (self.candidate_interest() if hasattr(self, 'candidate_interest') else
+                        a_candidates(self.a, self.kb, self.aliases, self.candidate_policy))
         except IntegrationError:
             return None
         rows = {row['id']: row for row in self.kb.candidates()}
@@ -236,6 +286,7 @@ class WorkflowRuntime(EvidenceRuntime):
                                    (label for label, value in FEATURE_ID.items() if value == fid), fid),
                                'tier': 'P0', 'quant': crit.get('quant'), 'morph': crit.get('morph'),
                                'status': 'crop_segmentation_review', 'crop_id': meta.crop_id,
+                               'segmentation_id': 'seg:'+art_id,
                                'review': review, 'attempted': False,
                                'directive': '先 read_quality 读取 review_reason_codes/n_components/fg_outside_box_ratio；'
                                             '由 planner 判断重新定位、拆分分量、诊断测量或放弃，不得直接跳到别的候选。'}
@@ -276,7 +327,10 @@ class WorkflowRuntime(EvidenceRuntime):
                 if crit.get('role') != 'supporting':
                     continue
                 fid = crit.get('feature')
-                if not fid or fid in present or fid in getattr(self, '_observed_features', set()):
+                checked = getattr(self, '_observed_fovs', set())
+                observed_all = bool(getattr(self, 'images', {})) and all(
+                    (image, fid) in checked for image in self.images)
+                if not fid or fid in present or observed_all:
                     continue
                 zh = next((label for label, value in FEATURE_ID.items() if value == fid), fid)
                 return {'candidate_id': cid, 'candidate_display': row.get('display') or cid,
@@ -335,6 +389,11 @@ class WorkflowRuntime(EvidenceRuntime):
         from .storage import read_json
         focus=self.p0_focus()
         result['p0_focus']=focus
+        result['hypothesis_catalog']=[{
+            'id': row['id'], 'display': row.get('display', row['id']),
+            'required': [{'feature': c['feature'], 'tier': self.kb.tier(c['feature'])}
+                         for c in row['criteria'] if c['role']=='required']}
+            for row in self.kb.candidates()]
         result['workflow']={'evidence_version':self.workflow.store.current()['version'],
                             'resources':read_json(self.workflow.budget_path)['used'],
                             'operations':list(read_json(self.workflow.operations)['entries'].values()),

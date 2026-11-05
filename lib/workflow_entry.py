@@ -1,5 +1,6 @@
 """融合路由后的自主B工具入口；无需B完成清单，产物位于独立fusion任务。"""
 import time
+import copy
 from .code_guard import CodeSignatureGuard
 from .output_projection import project_output
 from .storage import write_json, IntegrationError
@@ -23,6 +24,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
                           'confidence':{'type':'number','exclusiveMinimum':0,'maximum':1}}},
     'execution':{'enum':['shadow','active']},
     'p0_priority':{'type':'boolean'},
+    'min_support_features':{'type':'integer','enum':[1,2]},
     'identity_min_confidence':{'enum':['high','medium','low']},
     'candidate_scope':{'enum':['a_topk','open_strict']},
     'a_weight':{'type':'number','minimum':0,'maximum':1},
@@ -104,7 +106,6 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
     finally:
         guard.stop()
     from .storage import read_json
-    runtime.workflow.close(result['stop_reason'])
     runtime.score(result['observations'])
     guard.check('before_fusion')
     if runtime.workflow.purpose_quality():
@@ -123,23 +124,26 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
                   blocked_tools=runtime.workflow.blocked_tools(),
                   operations=read_json(runtime.workflow.operations)['entries'])
     import contracts
-    verdict={'sample_id':runtime.sample_id,**result['decision'],'needs_review':result['needs_review'],
+    verdict={'sample_id':runtime.sample_id,**copy.deepcopy(result['decision']),'needs_review':result['needs_review'],
              'source_images':[str(v['path']) for v in runtime.images.values()],
              'agent':{'mode':'workflow_react','vlm_calls':result['observation_requests'],
                       'planning_calls':result['planning_requests'],'identity_review':identity_review}}
     contracts.Verdict.from_obj(verdict)
     from .candidate_scope import apply_candidate_scope
-    verdict=apply_candidate_scope(verdict,a,knowledge_base(),config.get('aliases'),
+    verdict=apply_candidate_scope(verdict,a,runtime.kb,config.get('aliases'),
                                   runtime.candidate_policy,
                                   runtime.workflow.config.get('candidate_scope','open_strict'))
     from .ab_fusion import apply_ab_fusion
-    verdict=apply_ab_fusion(verdict,a,knowledge_base(),config.get('aliases'),
+    verdict=apply_ab_fusion(verdict,a,runtime.kb,config.get('aliases'),
                             runtime.workflow.config.get('a_weight',0.5),
                             runtime.workflow.config.get('b_weight',0.5))
     admission=runtime.admission_decision(verdict)
+    runtime.workflow.close(result['stop_reason'])
+    result['resources']=read_json(runtime.workflow.budget_path)
     result['candidate_admission']=admission
     if admission.get('decision') in {'verify','suppress'}:
         result['needs_review']=True
+    result['needs_review'] = bool(result['needs_review'] or verdict.get('needs_review'))
     verdict['needs_review']=result['needs_review']
     verdict['candidate_admission']=admission;write_json(directory/'agent_verdict.json',verdict)
     fusion=fuse(a,verdict,knowledge_base(),config.get('aliases'));fusion['needs_review']=result['needs_review'] or fusion['needs_review'];fusion['candidate_admission']=admission

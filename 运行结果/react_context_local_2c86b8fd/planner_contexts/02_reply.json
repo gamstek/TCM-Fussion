@@ -1,0 +1,19 @@
+{
+  "reply": {
+    "action_id": "57299b7fc71378a37ea76c880a995f859150bf2078800c6eb8e49909f7f01ee2",
+    "decision_summary": "五折榜首多为秦皮，其required特征为草酸钙砂晶（A3）；该特征与桔梗required的乳管（A4）互为区分。无任何显微观察记录，先核验榜首必检特征，present与否都能显著改变裁决，区分度最高。",
+    "override_reason": null,
+    "parallel_observation_id": null
+  },
+  "usage": {
+    "completion_tokens": 147,
+    "completion_tokens_details": {
+      "reasoning_tokens": 60
+    },
+    "prompt_tokens": 7276,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 7423
+  }
+}

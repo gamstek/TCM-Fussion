@@ -231,6 +231,31 @@ class ReactTests(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises(IntegrationError):
                 await tools.call("get_skill", {"skill_id": "../README"})
 
+    async def test_cold_workflow_mcp_returns_denial_without_native_import_stall(self):
+        import sys
+        from TCM_Fusion.lib.workflow_runtime import from_task
+        weights=Path(paths.PROJECT_ROOT)/'TCM_Fusion/yolo-results/detection/yolo_runs/v1_yolov10s_1024/weights/best.pt'
+        if not weights.exists():
+            self.skipTest('real workflow asset not installed')
+        config={'sample_id':'cold_native_probe','allow_network':False,'b':{'input_mode':'images'},
+                'agent':{'image_roots':[str(self.image)],'workflow':{
+                    'python':sys.executable,'execution':'active','agent_policy':'adaptive_v2',
+                    'targeted_recovery':True,'max_seconds':30}}}
+        directory=self.root/'cold';directory.mkdir()
+        a={'status':'disabled','ranking':[]};write_json(directory/'a.json',a)
+        runtime=from_task(config,a,directory)
+        action=runtime.action('detect_fov_initial',{'target_id':next(iter(runtime.images)),
+            'evidence_version':runtime.workflow.store.current()['version']},'workflow_repair')
+        context=directory/'context.json';write_json(context,{'workflow_config':config,
+            'a_prediction':str(directory/'a.json'),'directory':str(directory),'allow_network':False})
+        async def check():
+            async with connect_stdio(context) as tools:
+                return await tools.recompute(action)
+        result=await asyncio.wait_for(check(),20)
+        self.assertFalse(result['accepted'])
+        self.assertIn(result['error_code'],{'ACTION_DENIED','NETWORK_DISABLED'})
+        self.assertEqual(read_json(runtime.workflow.operations)['entries'],{})
+
     async def test_from_b_binding_and_live_backend_paths(self):
         """覆盖真实run manifest读取分支；只替换模型返回，不替换规则/契约。"""
         from TCM_Fusion.lib.evidence_runtime import from_b_artifacts

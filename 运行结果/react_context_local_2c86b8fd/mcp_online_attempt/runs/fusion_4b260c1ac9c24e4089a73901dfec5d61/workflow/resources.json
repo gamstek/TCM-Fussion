@@ -1,0 +1,18 @@
+{
+  "identity": "ca5b9adf8748d567f83de86e61c03218c7704a87fab51495c7469d0cacf40414",
+  "deadline": 1793875175.7349365,
+  "used": {
+    "planning": 1,
+    "network": 1
+  },
+  "entries": {
+    "planning:0:0": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:0:0": {
+      "pool": "network",
+      "status": "pending"
+    }
+  }
+}

@@ -51,6 +51,19 @@ class CandidateScopeTest(unittest.TestCase):
         out = apply_candidate_scope(_verdict(), self.a, self.kb, {}, self.policy, "open_strict")
         self.assertNotIn("荜茇", [r["id"] for r in out["ranking"]])
 
+    def test_preserves_confirmed_candidate_when_scope_does_not_change_top(self):
+        v=_verdict();v['ranking']=[v['ranking'][1]]
+        v.update(verdict='confirmed',conclusion={'id':'龙胆'},needs_review=False)
+        out=apply_candidate_scope(v,self.a,self.kb,{},self.policy,'a_topk')
+        self.assertEqual(out['verdict'],'confirmed')
+        self.assertEqual(out['conclusion']['id'],'龙胆')
+
+    def test_out_of_range_non_a_is_not_strict_evidence(self):
+        v=_verdict();v['ranking'][0]['checks']=[{'feature_id':'needle_crystal',
+            'role':'required','present':True,'state':'OUT_OF_RANGE'}]
+        out=apply_candidate_scope(v,self.a,self.kb,{},self.policy,'open_strict')
+        self.assertNotIn('荜茇',[r['id'] for r in out['ranking']])
+
 
 if __name__ == "__main__":
     unittest.main()

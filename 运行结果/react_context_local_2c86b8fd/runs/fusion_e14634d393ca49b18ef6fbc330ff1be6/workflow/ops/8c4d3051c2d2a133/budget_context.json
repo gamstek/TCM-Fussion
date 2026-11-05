@@ -1,0 +1,13 @@
+{
+  "operation_key": "8c4d3051c2d2a133e4ea61ce1688c4e5bda453da166efb73927d34f5c9300c64",
+  "budget_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\resources.json",
+  "limits": {
+    "initialization": 1,
+    "recompute": 16,
+    "network": 40,
+    "planning": 18,
+    "observation": 8,
+    "total": 120
+  },
+  "identity": "739b11b21fafd37b9d6e87d2b4882d36067e373fedf0c8963423e891247631cb"
+}

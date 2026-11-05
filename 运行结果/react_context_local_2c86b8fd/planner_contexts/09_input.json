@@ -1,0 +1,1276 @@
+{
+  "actions": [
+    {
+      "tool": "calibrate_fov",
+      "args": {
+        "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "ccdd4567d0592e9d08b0b6e7f4593d76bd8b4a3a8f35474189635d441a09c7be",
+      "mandatory": false,
+      "priority": [
+        0,
+        "calibrate_fov",
+        "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+      ]
+    },
+    {
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0:secretory_tissue",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "3c4394a457b316a58de1dfbf5c9455dde887ede466d809a7bef4e6214afa7655",
+      "mandatory": false,
+      "priority": [
+        0,
+        "locate_feature",
+        "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0:secretory_tissue"
+      ]
+    },
+    {
+      "tool": "detect_region",
+      "args": {
+        "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "ea0929dce6e94f4ec6aebd332a6d96a83ab17c882a6fcce4c2b8904d0a756e3e",
+      "mandatory": false,
+      "priority": [
+        0,
+        "detect_region",
+        "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1"
+      ]
+    },
+    {
+      "tool": "detect_region",
+      "args": {
+        "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:2",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "398fc9e883d1a4fc24090feac26fb42f0fed0cc45d21f4e1eeece54c3abb5479",
+      "mandatory": false,
+      "priority": [
+        0,
+        "detect_region",
+        "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:2"
+      ]
+    },
+    {
+      "tool": "detect_region",
+      "args": {
+        "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "3234778ee11a1cd80595d33b7df61af4b64af288433c4510841361fa2926968a",
+      "mandatory": false,
+      "priority": [
+        0,
+        "detect_region",
+        "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3"
+      ]
+    },
+    {
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3:secretory_tissue",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "cddaf8c624eed01a3c005e3aeb5730399e3b1fa53764ce65b9d2920ce3e88def",
+      "mandatory": false,
+      "priority": [
+        0,
+        "locate_feature",
+        "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3:secretory_tissue"
+      ]
+    },
+    {
+      "tool": "detect_region",
+      "args": {
+        "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "13ea7d9693a316ac99ce00cabb36bd011f988ca2af253ff02b428b541d0c35f5",
+      "mandatory": false,
+      "priority": [
+        0,
+        "detect_region",
+        "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4"
+      ]
+    },
+    {
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4:secretory_tissue",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "5d9942803eec9e86289fdbe8512ed35897b9831f70bcb754a0b5f550504e11e6",
+      "mandatory": false,
+      "priority": [
+        0,
+        "locate_feature",
+        "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4:secretory_tissue"
+      ]
+    },
+    {
+      "tool": "detect_region",
+      "args": {
+        "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:5",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "9d92ced44af714feeb2ed2120990416cad3b879b887ebfb06ff2f27e278d5e27",
+      "mandatory": false,
+      "priority": [
+        0,
+        "detect_region",
+        "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:5"
+      ]
+    },
+    {
+      "tool": "locate_feature",
+      "args": {
+        "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:5:secretory_tissue",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "f7767138920a8204aa4916813809cd6d9c4387626341435502c161331e9348cb",
+      "mandatory": false,
+      "priority": [
+        0,
+        "locate_feature",
+        "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:5:secretory_tissue"
+      ]
+    },
+    {
+      "tool": "classify_target",
+      "args": {
+        "target_id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glm9963898c4126_01",
+        "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a"
+      },
+      "skill": "workflow_repair",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "1b81e6de50811ec761a16251a435e8186ead41f08ac70b8b92daa5c0254ae26d",
+      "mandatory": false,
+      "priority": [
+        1,
+        "classify_target",
+        "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glm9963898c4126_01"
+      ]
+    },
+    {
+      "tool": "read_evidence",
+      "args": {
+        "offset": 0,
+        "limit": 20
+      },
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "17eb1a7389334d2b7952ee4d1d908cef017336e7158122f565d993febac2c365",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "tool": "list_features",
+      "args": {},
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "11c9ef7473d1d229eaeaae6c9a2abff73df6a367aad4210ca20e222b411e762a",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "tool": "read_scale",
+      "args": {},
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "fe682af49d18675b808f3fa5383d4260a3bffaa05e838327f41ee8b370c13fc3",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "tool": "list_fovs",
+      "args": {},
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "a5b96528e6b47d02c26281da7b50214cb9b674034f6964e2263818010fa55005",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "tool": "criteria_diff",
+      "args": {},
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "04d7fceb486c0b6f66d6258ec4ee8ee291f86ca8ef9b833ba437c31d196f0859",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "tool": "list_artifacts",
+      "args": {},
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "04db8b4360109d6c31e5e05bef2c1b4cb354c0351c6d568f1b204812236ae17e",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "tool": "read_artifact_status",
+      "args": {},
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "f46d141f7a776c748c12ce726aed5fc6437154b71d776d2da39bd4f497015ff4",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "tool": "query_criteria",
+      "args": {
+        "candidate_id": "秦皮"
+      },
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "fa15aec1f9f5dea84ada621060b035f5dd071f81409104ae16c15dde854ed93a",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "tool": "query_criteria",
+      "args": {
+        "candidate_id": "桔梗"
+      },
+      "skill": "evidence_inspection",
+      "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "action_id": "92280523b0d1432d957a4452fc9747eed2f2d28ae854795a619d07a39661a9e4",
+      "mandatory": false,
+      "priority": []
+    },
+    {
+      "action_id": "finish",
+      "tool": "finish"
+    },
+    {
+      "action_id": "review",
+      "tool": "request_review"
+    }
+  ],
+  "evidence": {
+    "sample_id": "react_context_local_2c86b8fd",
+    "decision": {
+      "verdict": "insufficient_evidence",
+      "conclusion": null,
+      "needs_review": false,
+      "ranking": [
+        {
+          "id": "秦皮",
+          "confidence": 0.459,
+          "support_count": 1,
+          "checks": [
+            {
+              "feature_id": "sand_crystal",
+              "state": "NO_REF",
+              "role": "required"
+            }
+          ]
+        },
+        {
+          "id": "蝉蜕",
+          "confidence": 0.0,
+          "support_count": 0,
+          "checks": [
+            {
+              "feature_id": "animal_feature",
+              "state": "NOT_DETECTED",
+              "role": "required"
+            }
+          ]
+        },
+        {
+          "id": "牡蛎",
+          "confidence": 0.0,
+          "support_count": 0,
+          "checks": [
+            {
+              "feature_id": "mineral_feature",
+              "state": "NOT_DETECTED",
+              "role": "required"
+            }
+          ]
+        }
+      ]
+    },
+    "observation_states": [
+      {
+        "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "feature_id": "sand_crystal",
+        "state": "present",
+        "scope": "observed_fov_only"
+      },
+      {
+        "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "feature_id": "secretory_tissue",
+        "state": "absent",
+        "scope": "observed_fov_only"
+      }
+    ],
+    "unobserved_state": "unknown",
+    "evidence_digest": "8f0e15a6bc09a630f4d58bb8994194e62cb6edcd5bd75967b9f87320e2c67711",
+    "cards": {
+      "sand_crystal": {
+        "present": true,
+        "n_measured": 0,
+        "n_seen": 1
+      }
+    },
+    "skills": [
+      {
+        "id": "scene_context",
+        "tools": [
+          "scene_check"
+        ],
+        "purpose": "结晶场景强制检查，独立于药材候选",
+        "sha256": "e99f65f021a6069773d0e19c60df0d7efcc5fc066ffdc01963a32ef8293e6fa7"
+      },
+      {
+        "id": "differential_presence",
+        "tools": [
+          "presence_check"
+        ],
+        "purpose": "优先区分候选的缺失P1/C存在性证据",
+        "sha256": "e79ea0ddf6401d460d669f71944b728c44b768862061eb3abfc8d8368ab663d7"
+      },
+      {
+        "id": "evidence_stop",
+        "tools": [
+          "finish",
+          "request_review"
+        ],
+        "purpose": "证据足够停止或预算/尺度不足转复核",
+        "sha256": "a3afc165a2e10814eaff537a1a82e86c3bccf4a70b0d1f917bcaa911d413de98"
+      },
+      {
+        "id": "evidence_inspection",
+        "tools": [
+          "read_evidence",
+          "list_features",
+          "query_criteria",
+          "read_scale",
+          "list_fovs",
+          "criteria_diff",
+          "list_artifacts",
+          "read_artifact_status",
+          "read_quality"
+        ],
+        "purpose": "只读完整证据与候选判据；不能扩权或生成新观察",
+        "sha256": "4411292f4a6ac7f3e4e4cc6b60d3637207ba6e0105f4b299583aa52cfa431b84"
+      },
+      {
+        "id": "workflow_repair",
+        "tools": [
+          "detect_fov_initial",
+          "calibrate_fov",
+          "segment_instance",
+          "measure_instances",
+          "detect_region",
+          "classify_target",
+          "propose_regions",
+          "locate_feature"
+        ],
+        "purpose": "按前置条件修复已绑定样品工件；不产生模型自报尺寸",
+        "sha256": "ea9fccdf9a3e1c18c224225fb03d35e1e46b4202d263c3f43c16e127d4b53665"
+      }
+    ],
+    "candidate_interest": {
+      "source": "fold_top_k",
+      "ids": [
+        "秦皮",
+        "桔梗"
+      ],
+      "unmapped": [
+        "党参联结乳管"
+      ],
+      "fold_top_k": [
+        {
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "秦皮",
+              "probability": 0.9452691078186035,
+              "candidate_id": "秦皮"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.03555696830153465,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.019008170813322067,
+              "candidate_id": null
+            }
+          ]
+        },
+        {
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "秦皮",
+              "probability": 0.9958584904670715,
+              "candidate_id": "秦皮"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.0038446011021733284,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.0002955446543637663,
+              "candidate_id": null
+            }
+          ]
+        },
+        {
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "秦皮",
+              "probability": 0.505316436290741,
+              "candidate_id": "秦皮"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.4082615375518799,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.08631282299757004,
+              "candidate_id": null
+            }
+          ]
+        },
+        {
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "桔梗",
+              "probability": 0.5409645438194275,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 2,
+              "label": "秦皮",
+              "probability": 0.4268588721752167,
+              "candidate_id": "秦皮"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.03216228261590004,
+              "candidate_id": null
+            }
+          ]
+        },
+        {
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "秦皮",
+              "probability": 0.551694929599762,
+              "candidate_id": "秦皮"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.4071704149246216,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.0406082458794117,
+              "candidate_id": null
+            }
+          ]
+        }
+      ],
+      "mapping_version": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "candidate_incomplete": true,
+      "policy": {
+        "top_k": 3
+      },
+      "interpretation": "逐折分数未经校准。各折训练数据重叠，候选仅供查证，不能作为显微证据。"
+    },
+    "criteria_diff": [
+      {
+        "candidate_id": "秦皮",
+        "criteria": [
+          {
+            "feature": "sand_crystal",
+            "role": "required",
+            "quant": null,
+            "morph": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）",
+            "abundance": null,
+            "tier": "C",
+            "observed_present": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "桔梗",
+        "criteria": [
+          {
+            "feature": "secretory_tissue",
+            "role": "required",
+            "quant": {
+              "dim": "mean_width",
+              "min": 14,
+              "max": 25,
+              "extreme": null
+            },
+            "morph": "联结乳管直径14～25μm，含淡黄色颗粒状物",
+            "abundance": null,
+            "tier": "P1",
+            "observed_present": false
+          }
+        ]
+      }
+    ],
+    "p0_focus": null,
+    "workflow": {
+      "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a",
+      "resources": {
+        "planning": 9,
+        "network": 16,
+        "initialization": 1,
+        "observation": 3,
+        "recompute": 4
+      },
+      "operations": [
+        {
+          "action_id": "48a6e899488b84abf476299d67a925266459caef5f04e6b98928073e36272b80",
+          "tool": "detect_fov_initial",
+          "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "status": "done",
+          "accepted": true,
+          "repair_completed": false,
+          "operation_key": "3ffc4e6d004458daca705806d6a44636d982bc5ffc5389c0b804169e406549a7",
+          "evidence_version": "f46324bf14cfb02ecf5839195631e66a21437973779ca601253e48ef70189f35",
+          "dependency_fingerprint": "dcb01503273a581d72fd4e26e113645ac5d53727ad4f6c805e90f3eed323b6ca",
+          "bundle": {
+            "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\ops\\3ffc4e6d004458da",
+            "paths": {
+              "crops_dir": "detection/crops",
+              "completion": "detection/crops.json"
+            },
+            "files": {
+              "detection/crops.json": "cf9bc5f89ced1fb419b08680acc8a38c7d149ed6453c424593130ff4d5558573"
+            },
+            "quality": null
+          }
+        },
+        {
+          "action_id": "8fa76f6b4a24720927c6a9725181c5f35ab07aee9a4f1474d896500421d14c38",
+          "tool": "propose_regions",
+          "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "status": "done",
+          "accepted": true,
+          "repair_completed": false,
+          "operation_key": "0dd7f6c10bf251565dd8e6e5d139dec39999b8f0dccdf10e69f1ef6bc08703bd",
+          "evidence_version": "cfa0fe7351659509f7900f8a3574c8362d9c7561df15258ed952ff3ff531def3",
+          "dependency_fingerprint": "08302ec2906c6e8a2b9ce9e4092895d7b803af996abc70b26426b9dec919a0ee",
+          "bundle": {
+            "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\ops\\0dd7f6c10bf25156",
+            "paths": {
+              "regions": "detection/regions.json"
+            },
+            "files": {
+              "detection/regions.json": "627b9aa16ef40dcecf0ce43af1176b095788db454bc9b27e9ef2ecd53ad207df"
+            },
+            "quality": null
+          }
+        },
+        {
+          "action_id": "bb6c42c01ab3dc91369ce6ddc30996675a76d3e618da7ae3d9bfbdd3ce3a0910",
+          "tool": "detect_region",
+          "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0",
+          "status": "done",
+          "accepted": true,
+          "repair_completed": false,
+          "operation_key": "593418dc6eba16398e012a3a9a735631d2e614aba5c46646e2a416a98dbaf1b9",
+          "evidence_version": "12a547f5157450795f7bbd65ea718c398fa56fec8c8cfe93717153450667f9de",
+          "dependency_fingerprint": "1622f13a28a62f15e6d5b7a659907d43bb8501df6cf9742774fab645a71f9324",
+          "bundle": {
+            "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\ops\\593418dc6eba1639",
+            "paths": {
+              "crops_dir": "detection/crops",
+              "completion": "detection/region_result.json"
+            },
+            "files": {
+              "detection/region_result.json": "da9f3ae0e62d4cf115ca6e583473f7cfced51977077346b47427ff9518a23625"
+            },
+            "quality": null
+          }
+        },
+        {
+          "action_id": "6268b4aad71926f6a16a3a16789fb61a7eea19e5007d01a06fd0c7575c122fd8",
+          "tool": "locate_feature",
+          "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1:secretory_tissue",
+          "status": "done",
+          "accepted": true,
+          "repair_completed": false,
+          "operation_key": "12205f844f5aa138e04181884e411220c21da9e0e39eec2422953dbfd3312058",
+          "evidence_version": "5c274c3f2da372ea2a718beb230db0f2b66bbd67473a9438297330dd2f1fc75d",
+          "dependency_fingerprint": "0d36cf33aa59415ce81e83f63fd53f56bd67440877a924ee9a8fa9cc429140c2",
+          "bundle": {
+            "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\ops\\12205f844f5aa138",
+            "paths": {
+              "crops_dir": "detection/crops",
+              "completion": "detection/region_result.json"
+            },
+            "files": {
+              "detection/region_result.json": "cafa203f8d6de156a11f1f6ea1cc2ab78b96899cf7adbfa669719f9c40ba2087"
+            },
+            "quality": null
+          }
+        },
+        {
+          "action_id": "cc12527be9ebd8e5c33f8d4434604ede6259e32c3894d0f9f10a98603468e1d5",
+          "tool": "locate_feature",
+          "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:2:secretory_tissue",
+          "status": "done",
+          "accepted": true,
+          "repair_completed": true,
+          "operation_key": "8c4d3051c2d2a133e4ea61ce1688c4e5bda453da166efb73927d34f5c9300c64",
+          "evidence_version": "a040a030ad5e31583d0d9171995f6352947b8fbf57cce454af0b7f09c247148a",
+          "dependency_fingerprint": "30aea794f26edd2ed515c09b76da251d2b4c0b250a324ae6defa97c5a89cb976",
+          "bundle": {
+            "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_context_local_2c86b8fd\\runs\\fusion_e14634d393ca49b18ef6fbc330ff1be6\\workflow\\ops\\8c4d3051c2d2a133",
+            "paths": {
+              "crops_dir": "detection/crops",
+              "completion": "detection/region_result.json"
+            },
+            "files": {
+              "detection/crops/secretory_tissue_input_glm9963898c4126_01.json": "f2c625654246bb53c5c69c95410a0bdb03495825a7abb9faba8c625752a71df1",
+              "detection/crops/secretory_tissue_input_glm9963898c4126_01.png": "6ce77415b55919680b7dfdfce41ae0273cb0f8439b7ae7b89659fc432d4eecee",
+              "detection/region_result.json": "b6385724add18570633d63e0d311680b8eb116df92135df420ddb89cc6a67f54"
+            },
+            "quality": null
+          }
+        }
+      ],
+      "blocked_tools": {},
+      "p0_focus": null,
+      "unresolved": true,
+      "quality_assessments": [],
+      "segmentation_reviews": [],
+      "classifications": [],
+      "recovery_regions": [
+        {
+          "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0",
+          "image_stem": "input",
+          "box": [
+            1024,
+            512,
+            2048,
+            1536
+          ],
+          "line_score": 0.96,
+          "feature_id": null
+        },
+        {
+          "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0:secretory_tissue",
+          "image_stem": "input",
+          "box": [
+            1024,
+            512,
+            2048,
+            1536
+          ],
+          "line_score": 0.96,
+          "feature_id": "secretory_tissue"
+        },
+        {
+          "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1",
+          "image_stem": "input",
+          "box": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "line_score": 0.738,
+          "feature_id": null
+        },
+        {
+          "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1:secretory_tissue",
+          "image_stem": "input",
+          "box": [
+            0,
+            0,
+            1024,
+            1024
+          ],
+          "line_score": 0.738,
+          "feature_id": "secretory_tissue"
+        },
+        {
+          "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:2",
+          "image_stem": "input",
+          "box": [
+            1024,
+            0,
+            2048,
+            1024
+          ],
+          "line_score": 0.668,
+          "feature_id": null
+        },
+        {
+          "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:2:secretory_tissue",
+          "image_stem": "input",
+          "box": [
+            1024,
+            0,
+            2048,
+            1024
+          ],
+          "line_score": 0.668,
+          "feature_id": "secretory_tissue"
+        },
+        {
+          "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3",
+          "image_stem": "input",
+          "box": [
+            0,
+            512,
+            1024,
+            1536
+          ],
+          "line_score": 0.445,
+          "feature_id": null
+        },
+        {
+          "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3:secretory_tissue",
+          "image_stem": "input",
+          "box": [
+            0,
+            512,
+            1024,
+            1536
+          ],
+          "line_score": 0.445,
+          "feature_id": "secretory_tissue"
+        },
+        {
+          "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4",
+          "image_stem": "input",
+          "box": [
+            512,
+            0,
+            1536,
+            1024
+          ],
+          "line_score": 0.371,
+          "feature_id": null
+        },
+        {
+          "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4:secretory_tissue",
+          "image_stem": "input",
+          "box": [
+            512,
+            0,
+            1536,
+            1024
+          ],
+          "line_score": 0.371,
+          "feature_id": "secretory_tissue"
+        },
+        {
+          "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:5",
+          "image_stem": "input",
+          "box": [
+            512,
+            512,
+            1536,
+            1536
+          ],
+          "line_score": 0.283,
+          "feature_id": null
+        },
+        {
+          "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:5:secretory_tissue",
+          "image_stem": "input",
+          "box": [
+            512,
+            512,
+            1536,
+            1536
+          ],
+          "line_score": 0.283,
+          "feature_id": "secretory_tissue"
+        }
+      ]
+    }
+  },
+  "parallel_observations": [],
+  "planning_instruction": "优先选择当前候选间最有区分性的合法观察；仅在已有证据足够或继续观察没有价值时停止或复核。",
+  "previous_observations": [
+    {
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "feature_id": "sand_crystal",
+          "morph_hint": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "57299b7fc71378a37ea76c880a995f859150bf2078800c6eb8e49909f7f01ee2",
+        "mandatory": false,
+        "priority": [
+          false,
+          0,
+          "sand_crystal",
+          "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）"
+        ]
+      },
+      "result": {
+        "present": true,
+        "conf": 0.72,
+        "reason": "视野中可见长条形薄壁组织碎片，其细胞内充满大量极细小的颗粒状闪光结晶，散在分布且几乎充塞细胞，符合草酸钙砂晶的典型形态特征。",
+        "ok": true
+      },
+      "accepted": true,
+      "usage": {
+        "prompt_tokens": 2401,
+        "completion_tokens": 661,
+        "total_tokens": 3062
+      },
+      "cache_hit": false,
+      "new_requests": 1,
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "feature_id": "secretory_tissue",
+          "morph_hint": "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        },
+        "skill": "differential_presence",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876",
+        "mandatory": false,
+        "priority": [
+          false,
+          1,
+          "secretory_tissue",
+          "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+          "联结乳管直径14～25μm，含淡黄色颗粒状物"
+        ]
+      },
+      "result": {
+        "present": false,
+        "conf": 0.65,
+        "reason": "图中主要显示含颗粒状内含物的长条状组织碎片，呈平行排列的纤维/薄壁细胞样结构，未见明显的管状联结乳管形态（分支管道、节状连接）及典型淡黄色颗粒状乳汁内含物。",
+        "ok": true
+      },
+      "accepted": true,
+      "usage": {
+        "prompt_tokens": 2411,
+        "completion_tokens": 1078,
+        "total_tokens": 3489
+      },
+      "cache_hit": false,
+      "new_requests": 1,
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    },
+    {
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+        },
+        "skill": "scene_context",
+        "config_identity": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "a8cd7ffd1d4491e7009e57e7fc32a6a7066b2ce9df565307b3f3368e9f9ba115",
+        "mandatory": true,
+        "priority": []
+      },
+      "result": {
+        "crystal_location": "intracellular",
+        "crystal_location_raw": "intracellular",
+        "cell_wall_visible": true,
+        "guarded": false,
+        "arrangement": "scattered",
+        "abundance": "few",
+        "conf": 0.6,
+        "reason": "视野中可见成片细胞壁轮廓的纤维/薄壁组织区域，右上方有一个具折光性的星状结晶团块位于该组织区域内。",
+        "ok": true
+      },
+      "accepted": true,
+      "usage": {
+        "prompt_tokens": 2699,
+        "completion_tokens": 79,
+        "total_tokens": 2778
+      },
+      "cache_hit": false,
+      "new_requests": 1,
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "finish_reason": "stop"
+      }
+    }
+  ],
+  "read_results": [],
+  "action_objectives": {
+    "ccdd4567d0592e9d08b0b6e7f4593d76bd8b4a3a8f35474189635d441a09c7be": {
+      "problem_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "3c4394a457b316a58de1dfbf5c9455dde887ede466d809a7bef4e6214afa7655": {
+      "problem_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0:secretory_tissue",
+      "objective": "用 GLM 核验选定局部并提出待验证框",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "ea0929dce6e94f4ec6aebd332a6d96a83ab17c882a6fcce4c2b8904d0a756e3e": {
+      "problem_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1",
+      "objective": "局部 YOLO 重检",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "398fc9e883d1a4fc24090feac26fb42f0fed0cc45d21f4e1eeece54c3abb5479": {
+      "problem_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:2",
+      "objective": "局部 YOLO 重检",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "3234778ee11a1cd80595d33b7df61af4b64af288433c4510841361fa2926968a": {
+      "problem_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3",
+      "objective": "局部 YOLO 重检",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "cddaf8c624eed01a3c005e3aeb5730399e3b1fa53764ce65b9d2920ce3e88def": {
+      "problem_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:3:secretory_tissue",
+      "objective": "用 GLM 核验选定局部并提出待验证框",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "13ea7d9693a316ac99ce00cabb36bd011f988ca2af253ff02b428b541d0c35f5": {
+      "problem_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4",
+      "objective": "局部 YOLO 重检",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "5d9942803eec9e86289fdbe8512ed35897b9831f70bcb754a0b5f550504e11e6": {
+      "problem_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:4:secretory_tissue",
+      "objective": "用 GLM 核验选定局部并提出待验证框",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "9d92ced44af714feeb2ed2120990416cad3b879b887ebfb06ff2f27e278d5e27": {
+      "problem_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:5",
+      "objective": "局部 YOLO 重检",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "f7767138920a8204aa4916813809cd6d9c4387626341435502c161331e9348cb": {
+      "problem_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:5:secretory_tissue",
+      "objective": "用 GLM 核验选定局部并提出待验证框",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "1b81e6de50811ec761a16251a435e8186ead41f08ac70b8b92daa5c0254ae26d": {
+      "problem_id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glm9963898c4126_01",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "17eb1a7389334d2b7952ee4d1d908cef017336e7158122f565d993febac2c365": {
+      "problem_id": "read_evidence",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "11c9ef7473d1d229eaeaae6c9a2abff73df6a367aad4210ca20e222b411e762a": {
+      "problem_id": "list_features",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "fe682af49d18675b808f3fa5383d4260a3bffaa05e838327f41ee8b370c13fc3": {
+      "problem_id": "read_scale",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "a5b96528e6b47d02c26281da7b50214cb9b674034f6964e2263818010fa55005": {
+      "problem_id": "list_fovs",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "04d7fceb486c0b6f66d6258ec4ee8ee291f86ca8ef9b833ba437c31d196f0859": {
+      "problem_id": "criteria_diff",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "04db8b4360109d6c31e5e05bef2c1b4cb354c0351c6d568f1b204812236ae17e": {
+      "problem_id": "list_artifacts",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "f46d141f7a776c748c12ce726aed5fc6437154b71d776d2da39bd4f497015ff4": {
+      "problem_id": "read_artifact_status",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "fa15aec1f9f5dea84ada621060b035f5dd071f81409104ae16c15dde854ed93a": {
+      "problem_id": "query_criteria",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    },
+    "92280523b0d1432d957a4452fc9747eed2f2d28ae854795a619d07a39661a9e4": {
+      "problem_id": "query_criteria",
+      "objective": "读取或恢复有效证据",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功"
+    }
+  },
+  "stop_advisory": {
+    "recommend": "continue",
+    "why": "evidence_gap",
+    "strength": "medium",
+    "evidence": {
+      "top_conf": 0.459,
+      "gap": 0.459,
+      "no_gain_streak": 0
+    }
+  },
+  "finish_veto": [
+    "pending_repair",
+    "evidence_requires_review"
+  ],
+  "remaining_budget": {
+    "initialization": 0,
+    "recompute": 12,
+    "network": 24,
+    "planning": 9,
+    "observation": 5,
+    "total": 87
+  },
+  "rejected_proposals": [],
+  "rejection_details": [],
+  "task_reflection": {
+    "schema": "task-reflection/v1",
+    "facts": [
+      {
+        "problem_id": "scene_check",
+        "objective": "完成强制场景上下文",
+        "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+        "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功",
+        "accepted": true,
+        "new_features": [],
+        "new_counterevidence": [],
+        "resolved_criteria": [],
+        "candidate_order_changed": true,
+        "capability_progress": false,
+        "useful": false,
+        "latency_ms": 6407.0,
+        "failure_code": null,
+        "continue_reason": "无已验证进展；换路线或停止"
+      },
+      {
+        "problem_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0",
+        "objective": "局部 YOLO 重检",
+        "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+        "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功",
+        "accepted": true,
+        "new_features": [],
+        "new_counterevidence": [],
+        "resolved_criteria": [],
+        "candidate_order_changed": false,
+        "capability_progress": false,
+        "useful": false,
+        "latency_ms": 5515.0,
+        "failure_code": null,
+        "continue_reason": "无已验证进展；换路线或停止"
+      },
+      {
+        "problem_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1:secretory_tissue",
+        "objective": "用 GLM 核验选定局部并提出待验证框",
+        "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+        "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功",
+        "accepted": true,
+        "new_features": [],
+        "new_counterevidence": [],
+        "resolved_criteria": [],
+        "candidate_order_changed": false,
+        "capability_progress": false,
+        "useful": false,
+        "latency_ms": 7485.0,
+        "failure_code": null,
+        "continue_reason": "无已验证进展；换路线或停止"
+      }
+    ],
+    "hypothesis": "当前路线未产生已验证进展",
+    "avoid_problem_ids": [
+      "scene_check",
+      "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0",
+      "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1:secretory_tissue"
+    ],
+    "scope": "task_policy_only",
+    "changes_evidence": false,
+    "uses_reference_label": false
+  },
+  "recent_action_feedback": [
+    {
+      "problem_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "objective": "从原图纹理提议局部核验区域",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功",
+      "accepted": true,
+      "new_features": [],
+      "new_counterevidence": [],
+      "resolved_criteria": [],
+      "candidate_order_changed": false,
+      "capability_progress": true,
+      "useful": true,
+      "latency_ms": 735.0,
+      "failure_code": null,
+      "continue_reason": "有效证据或能力进展"
+    },
+    {
+      "problem_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0",
+      "objective": "局部 YOLO 重检",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功",
+      "accepted": true,
+      "new_features": [],
+      "new_counterevidence": [],
+      "resolved_criteria": [],
+      "candidate_order_changed": false,
+      "capability_progress": false,
+      "useful": false,
+      "latency_ms": 5515.0,
+      "failure_code": null,
+      "continue_reason": "无已验证进展；换路线或停止"
+    },
+    {
+      "problem_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1:secretory_tissue",
+      "objective": "用 GLM 核验选定局部并提出待验证框",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功",
+      "accepted": true,
+      "new_features": [],
+      "new_counterevidence": [],
+      "resolved_criteria": [],
+      "candidate_order_changed": false,
+      "capability_progress": false,
+      "useful": false,
+      "latency_ms": 7485.0,
+      "failure_code": null,
+      "continue_reason": "无已验证进展；换路线或停止"
+    },
+    {
+      "problem_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:2:secretory_tissue",
+      "objective": "用 GLM 核验选定局部并提出待验证框",
+      "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+      "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功",
+      "accepted": true,
+      "new_features": [],
+      "new_counterevidence": [],
+      "resolved_criteria": [],
+      "candidate_order_changed": false,
+      "capability_progress": true,
+      "useful": true,
+      "latency_ms": 6250.0,
+      "failure_code": null,
+      "continue_reason": "有效证据或能力进展"
+    }
+  ],
+  "skills": {
+    "scene_context": "# scene_context\n\n触发：当前有效卡池检出结晶。逐个注册视野检查；旧策略优先执行场景动作。adaptive_v2 可在合法动作中安排时机，但强制场景未完成时运行时否决确认。\n工具：scene_check(image_id)。只答画面细胞结构、结晶位置、排列与丰度；不得收到A标签或候选药材名。\n验证：复用原VLMClient场景提示与细胞壁守卫；失败/缺视野/预算不足必须转复核，不伪装完成。\n产物：有图像哈希与action_id引用的观察，经原merge_vlm_scene和decide重评分；不计入D8特征数。\n",
+    "differential_presence": "# differential_presence\n\n触发：仍有冲突、probable、insufficient或needs_review。候选来自有正支持的 B 前三及 A 逐折 Top-K（默认每折 3）映射去重后的兴趣集合；不缩小B规则候选池。\n工具：presence_check(image_id, feature_id, morph_hint)。仅注册知识库中的required P1/C；禁止P0。\n选法：候选required集合的差集优先，再按固定稳定顺序；adaptive_v2 的 LLM 从当轮预算内合法动作选短编号，由运行时校验和绑定参数。\n有效观察：严格present布尔、conf有限且0～1。positive且conf≥0.5只添加uncal_refs/conf_assumed；禁止产生微米尺寸、标定或药材结论。\nnegative不视为模型证明不存在，不写阴性卡；失败与低置信均计预算并去重。合格的新负观察可记为当前视野的动作进展。连续无收益可触发反思和停止建议。\n",
+    "evidence_stop": "# evidence_stop\n\n工具：finish、request_review。强制场景检查未完成时不得finish。\nadaptive_v2：按原规则证据和未完成义务给出停止建议；逐折模式不以平均榜首决定停止。覆盖建议填 override_reason。步数、预算、时间和合法动作受运行时硬约束。无收益可触发任务反思及复核建议。\n最后裁决来自原decide，不来自LLM的结论文字。冲突、强制检查缺失、未知观察和工具失败都保留复核标记。\n日志仅写简短decision_summary、action、observation、规则快照与请求统计；不要求或保存模型内部思维链。\n",
+    "evidence_inspection": "# 证据检查\n\n先查已有证据、尺度与视野，再决定是否需要新观察。只读结果不是新证据；缺失不等于不存在。可调用注册的read_evidence、list_features、query_criteria、read_scale、list_fovs、criteria_diff；最终裁决仍由原规则产生。\n\nread_quality可读取受信评估的原因码与存在性/形态/长度/宽度/面积资格。没有评估时为未知，不把旧工件自动升级。原始记录和诊断测量与规则实际采用的证据要区分，不能把文件哈希变化称为新证据或正确性收益。\n\n判据差异可参考五折各自 Top-K 的映射候选及 B 已有支持。候选分数只用于规划查证，不能补写证据。\n",
+    "workflow_repair": "# 工作流修复\n\n先查询原图、crop、mask、尺度和失败状态。优先修复阻塞依赖，再做鉴别观察；只选当前合法目标。检测归检测侧，尺寸只来自真实mask和可信标定。无尺度时不采信尺寸，仍可选择不依赖尺度的合法工具；预算耗尽按当前状态收尾；不把A猜测或人工真值送入视觉提示。\n\nadaptive_v1 / adaptive_v2 下逐工具检查前置条件：缺测量不阻止独立合法P1/C核验；需要尺寸的判据仍等待可信测量。明确本轮问题、预期解决项和停止条件。若启用并发，只并发独立观察与物理阶段，不并发同目标的分割与测量。服务失败不靠换ROI重试。\n\npurpose_v1用read_quality区分完整性、诊断、用途资格。中心点未命中不是自动判错；身份未知、触边、极性及粘连疑点不能忽略。review mask不自动提供阳性存在性或尺寸，资格由程序生成。反思仅调整动作策略，不改工件、尺度、判据、权限或资格。\n\n启用定向补救时，依据实际证据缺口决定是否提议区域。区域线索是纹理评分，不能当作特征存在证据。对所选区域可用局部 YOLO 或 GLM 定向定位，也可以换视野、改查其他合法证据或停止。优先检查能影响裁决的缺口。GLM 提出的框必须经过单独身份核验，才允许分割。GLM 定位无结果表示未知。\n"
+  }
+}

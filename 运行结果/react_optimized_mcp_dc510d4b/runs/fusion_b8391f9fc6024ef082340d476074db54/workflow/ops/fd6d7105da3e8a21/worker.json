@@ -1,0 +1,20 @@
+{
+  "tool": "classify_target",
+  "crop_id": "cluster_crystal_input_glm40fe81009f5d_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_optimized_mcp_dc510d4b\\runs\\fusion_b8391f9fc6024ef082340d476074db54\\workflow\\ops\\55523bb016301878\\detection\\crops\\cluster_crystal_input_glm40fe81009f5d_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_optimized_mcp_dc510d4b\\runs\\fusion_b8391f9fc6024ef082340d476074db54\\workflow\\ops\\55523bb016301878\\detection\\crops\\cluster_crystal_input_glm40fe81009f5d_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_optimized_mcp_dc510d4b\\input.jpg",
+  "tight_box": [
+    195,
+    481,
+    481,
+    717
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_optimized_mcp_dc510d4b\\runs\\fusion_b8391f9fc6024ef082340d476074db54\\workflow\\ops\\fd6d7105da3e8a21\\classification",
+  "tight_box_local": [
+    24,
+    24,
+    310,
+    260
+  ]
+}
