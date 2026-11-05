@@ -25,6 +25,7 @@ class AgentState(TypedDict, total=False):
     attempted: list
     actions: list
     selected: dict
+    parallel_observation: dict | None
     events: list
     requests: int
     planning_requests: int
@@ -61,10 +62,15 @@ class LLMPlanner:
         if adaptive:
             option_ids = {f"A{i}": action["action_id"]
                           for i, action in enumerate(context["actions"], 1)}
+            option_ids.update({f"O{i}": action["action_id"] for i, action in
+                               enumerate(context.get("parallel_observations", []), 1)})
             aliases = {identifier: option for option, identifier in option_ids.items()}
             context = {**context,
                        "actions": [{**action, "action_id": aliases[action["action_id"]]}
                                    for action in context["actions"]],
+                       "parallel_observations": [
+                           {**action, "action_id": aliases[action["action_id"]]}
+                           for action in context.get("parallel_observations", [])],
                        "action_objectives": {aliases[key]: value for key, value in
                                              context.get("action_objectives", {}).items()}}
         payload = {"model": self.client.model, "temperature": 0,
@@ -76,7 +82,9 @@ class LLMPlanner:
                         '{"action_id":"A1","decision_summary":"简短说明为何选择该动作","override_reason":null}。'
                         "A1只是格式示例，必须按证据选择本轮actions中的实际编号。"
                         "工具参数由运行时绑定。"
-                        "偏离stop_advisory时，将override_reason填为具体理由；也可在decision_summary中说明该理由。") +
+                        "偏离stop_advisory时，将override_reason填为具体理由；也可在decision_summary中说明该理由。"
+                        "若同时有独立原图核验，可选填parallel_observation_id，从parallel_observations中选"
+                        "与所选初检同一视野的O编号；YOLO单独负责出框。") +
                        "\n调度建议：" + context.get("planning_instruction", DEFAULT_INSTRUCTION)},
                        {"role": "user", "content": json.dumps(context, ensure_ascii=False)}]}
         if adaptive:
@@ -93,6 +101,9 @@ class LLMPlanner:
             option = reply.get("action_id")
             if isinstance(option, str) and option in option_ids:
                 reply["action_id"] = option_ids[option]
+            companion = reply.get("parallel_observation_id")
+            if isinstance(companion, str) and companion.startswith("O") and companion in option_ids:
+                reply["parallel_observation_id"] = option_ids[companion]
         return reply, body.get("usage")
 
 
@@ -125,7 +136,8 @@ def _resolve_planner_action(reply, choices, eligible):
         return None, {"kind": "unknown_action_id", "action_id_sha256": digest(identifier)}
     proposal = reply.get("proposal")
     if not isinstance(proposal, dict) or not isinstance(proposal.get("tool"), str):
-        known = {"decision_summary", "override_reason", "proposal", "tool", "args", "action", "choice", "reason"}
+        known = {"decision_summary", "override_reason", "parallel_observation_id",
+                 "proposal", "tool", "args", "action", "choice", "reason"}
         return None, {"kind": "missing_action_selector",
                       "recognized_fields": sorted(known & reply.keys()),
                       "other_field_count": len(reply.keys() - known)}
@@ -282,7 +294,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 return (remaining["observation"] > 0 and remaining["network"] > 0
                         and remaining["total"] >= 2)
             pool = "initialization" if tool == "detect_fov_initial" else "recompute"
-            network = tool != "measure_instances" and not runtime.simulation
+            network = tool not in {"measure_instances", "propose_regions", "detect_region"} and not runtime.simulation
             return (remaining[pool] > 0 and remaining["total"] >= 1 + int(network)
                     and (not network or remaining["network"] > 0))
         return True
@@ -294,10 +306,12 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         rejected = []
         rejection_details = []
         fallback_reason = "planning_attempt_limit"
-        # 多视野先对每个仍可执行初检的视野尝试一次，再选择补查或终止。
+        # 原图先走 YOLO 初检，随后才向模型开放视觉复核和补救。
         coverage = [action for action in eligible
                     if action["tool"] == "detect_fov_initial"
-                    and affordable(action, remaining_budget())] if len(runtime.images) > 1 else []
+                    and affordable(action, remaining_budget())]
+        observations = [a for a in eligible if a["tool"] in {"presence_check", "scene_check"}
+                        and any(a["args"]["image_id"] == c["args"]["target_id"] for c in coverage)]
         if coverage:
             eligible, stop = coverage, []
         for _ in range(2):
@@ -317,9 +331,15 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             requests += 1
             current_budget = remaining_budget()
             choices = [a for a in eligible if affordable(a, current_budget)] + stop
+            parallel = []
+            if (coverage and workflow.config.get("max_parallel", 2) == 2 and state["steps"]+2 <= max_steps
+                    and current_budget["total"] >= 4 and current_budget["network"] >= 2):
+                parallel = [a for a in observations if affordable(a, current_budget)
+                            and any(a["args"]["image_id"] == c.get("args", {}).get("target_id") for c in choices)]
             from .action_feedback import objective
             context = {
                 "actions": choices, "evidence": runtime.summary(state),
+                "parallel_observations": parallel,
                 "planning_instruction": planning_instruction,
                 "previous_observations": state["observations"], "read_results": state.get("read_results", []),
                 "action_objectives": {a["action_id"]: objective(a) for a in choices if "args" in a},
@@ -373,13 +393,18 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                "rejection_detail": detail, "remaining_budget": current_budget,
                                "finish_veto": state["finish_veto"] if error == "finish_veto" else []})
                 continue
+            parallel_id = reply.get("parallel_observation_id")
+            companion = next((a for a in parallel if a["action_id"] == parallel_id
+                              and a["args"]["image_id"] == chosen.get("args", {}).get("target_id")), None)
             events.append({"phase": "thought", "decision_source": planner_source,
                            "action_id": chosen["action_id"], "usage": usage,
                            "stop_advisory": state["stop_advisory"],
                            "decision_summary": str(reply.get("decision_summary", ""))[:240],
                            "overrode_advisory": override,
-                           "override_reason": override_reason[:240] if override else None})
+                           "override_reason": override_reason[:240] if override else None,
+                           "parallel_observation_id": companion["action_id"] if companion else None})
             update = {"selected": chosen, "events": events, "requests": requests, "planning_requests": planning,
+                      "parallel_observation": companion,
                       "override_streak": state.get("override_streak", 0) + 1 if override and not is_stop else 0}
             if is_stop:
                 update.update(done=True, stop_reason="planner_" + chosen["tool"],
@@ -393,7 +418,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                            "action_id": fallback["action_id"], "reason": fallback_reason,
                            "decision_summary": "规划不可用，继续初检尚未覆盖的视野", "usage": None})
             return {"selected": fallback, "events": events, "requests": requests,
-                    "planning_requests": planning, "planner_degraded": True, "override_streak": 0}
+                    "planning_requests": planning, "planner_degraded": True, "override_streak": 0,
+                    "parallel_observation": None}
         events.append({"phase": "stop", "decision_source": "runtime_fallback",
                        "reason": fallback_reason, "last_rejection": rejection_details[-1] if rejected else None,
                        "remaining_budget": remaining_budget(), "usage": None})
@@ -502,27 +528,31 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         before_feedback=snapshot(runtime.score(state['observations']));started=time.monotonic()
         adaptive=getattr(runtime,'workflow',None) is not None and runtime.workflow.config.get('agent_policy')=='adaptive_v1'
         capabilities={a['tool'] for a in runtime.legal_actions(state)}
+        companion = None
+        if autonomous and not state.get('_parallel_child'):
+            companion = state.get('parallel_observation')
         if adaptive and runtime.workflow.config.get('max_parallel',1)==2 and not state.get('_parallel_child') and state['steps']+2<=max_steps and state['requests']<max_requests:
             layer=runtime.tools.get(action['tool']).budget_class
             other_layer='observation' if layer=='recompute' else 'recompute' if layer=='observation' else None
             companion=next((a for a in state['actions'] if not a.get('mandatory') and
                 runtime.tools.get(a['tool']).budget_class==other_layer and
                 (other_layer!='recompute' or a['tool']=='measure_instances')),None)
-            if companion:
-                # 只并行独立观察与一个物理阶段；同crop分割→测量仍由前置条件串行。
-                children=await asyncio.gather(act({**state,'_parallel_child':True,'selected':action}),
-                                              act({**state,'_parallel_child':True,'selected':companion}))
-                merged=dict(state)
-                for field in ('events','observations','attempted'):
-                    merged[field]=state[field]+[x for c in children for x in c[field][len(state[field]):]]
-                for field in ('steps','requests','observation_requests'):
-                    merged[field]=state[field]+sum(c[field]-state[field] for c in children)
-                scored=runtime.score(merged['observations'])
-                merged.update(decision=scored['decision'],evidence_digest=scored['evidence_digest'],
-                    no_gain=0 if any(c['no_gain']==0 for c in children) else state['no_gain']+1)
-                merged['events'].append({'phase':'parallel_join','actions':[action['action_id'],companion['action_id']],
-                    'policy':'independent_observation_and_physical_stage','max_parallel':2})
-                persist(merged);return merged
+        if companion:
+            children=await asyncio.gather(act({**state,'_parallel_child':True,'selected':action}),
+                                          act({**state,'_parallel_child':True,'selected':companion}))
+            merged={**state,'parallel_observation':None}
+            for field in ('events','observations','attempted'):
+                merged[field]=state[field]+[x for c in children for x in c[field][len(state[field]):]]
+            for field in ('steps','requests','observation_requests'):
+                merged[field]=state[field]+sum(c[field]-state[field] for c in children)
+            scored=runtime.score(merged['observations'])
+            merged.update(decision=scored['decision'],evidence_digest=scored['evidence_digest'],
+                no_gain=0 if any(c['no_gain']==0 for c in children) else state['no_gain']+1,
+                override_streak=min(c.get('override_streak',0) for c in children))
+            merged['events'].append({'phase':'parallel_join','actions':[action['action_id'],companion['action_id']],
+                'policy':'yolo_initial_and_raw_observation' if autonomous else 'independent_observation_and_physical_stage',
+                'max_parallel':2})
+            persist(merged);return merged
         if runtime.tools.get(action["tool"]).budget_class == "recompute":
             state = {**state, "steps": state["steps"]+1,
                      "attempted": state["attempted"]+[action["action_id"]]}
@@ -541,6 +571,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             if adaptive:progress=feedback['useful']
             if autonomous:
                 progress = bool(feedback["new_features"] or feedback["resolved_criteria"])
+                if action['tool'] in {'propose_regions','locate_feature','classify_target'}:
+                    progress = progress or feedback['capability_progress'] and result.get('accepted') is True
                 if progress:
                     state["override_streak"] = 0
             state.update(no_gain=0 if progress else state["no_gain"]+1,

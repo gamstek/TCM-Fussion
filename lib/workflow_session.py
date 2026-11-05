@@ -3,16 +3,18 @@ import copy
 import time
 from pathlib import Path
 import contracts
+import paths
 from .adapters import interpreter
 from .evidence_store import EvidenceStore
 from .ledger_lock import acquire, release
 from .resource_budget import reserve
-from .storage import IntegrationError, digest, file_hash, read_json, write_json, finite_number
+from .storage import IntegrationError, digest, file_hash, project_path, read_json, write_json, finite_number
 from .workflow_backend import WorkflowBackend
 from .service_errors import stage_error_kind
 
 
-TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region')
+TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
+       'propose_regions','locate_feature')
 
 
 class WorkflowSession:
@@ -22,13 +24,35 @@ class WorkflowSession:
         self.cancel_event=threading.Event()
         self.config=copy.deepcopy(config);self.sample_id=runtime.sample_id
         self.python=interpreter(config.get('python'));self.allow_network=allow_network
+        self.yolo_signature = {}
+        if config.get('detector', 'yolo') != 'yolo':
+            raise IntegrationError('CONFIG_INVALID', '出框后端仅支持 YOLO')
+        if not runtime.simulation:
+            assets = Path(paths.PROJECT_ROOT) / 'TCM_Fusion' / 'yolo-results' / 'detection' / 'yolo_runs'
+            yolo = {
+                'weights': str(assets / 'v1_yolov10s_1024' / 'weights' / 'best.pt'),
+                'class_map': str(assets / 'data_local.yaml'),
+                'detector_config': str(Path(paths.PROJECT_ROOT) / 'TCM_Fusion' / 'config' / 'detector.json'),
+                'python': str(Path(paths.VENV_PY).parent.parent / 'yolo' / 'Scripts' / 'python.exe'),
+                **config.get('yolo', {}),
+            }
+            self.config['yolo'] = yolo
+            for key in ('weights', 'class_map', 'detector_config'):
+                path = project_path(yolo[key])
+                if not path.is_file():
+                    raise IntegrationError('YOLO_ASSET_MISSING', f'YOLO 文件缺失：{path}')
+                self.yolo_signature[key] = file_hash(path)
+            self.yolo_python = interpreter(yolo['python'])
+            self.yolo_signature['python'] = file_hash(self.yolo_python)
+            self.yolo_signature['taxonomy_config'] = runtime.config_identity
         self.code_signature=WorkflowBackend.code_signature()
         self.backend=backend or WorkflowBackend()
         if backend is not None and not runtime.simulation:
             raise IntegrationError('SIMULATION_SCOPE','真实运行禁止替身后端')
         self.identity=digest({'sample':self.sample_id,'images':sorted(runtime.images),
                               'config':config,'simulation':runtime.simulation,'vlm':runtime.config_identity,
-                              'backend':self.code_signature,'python':file_hash(self.python)})
+                              'backend':self.code_signature,'python':file_hash(self.python),
+                              **({'yolo': self.yolo_signature} if self.yolo_signature else {})})
         self.store=EvidenceStore(self.root/'evidence',self.identity)
         self.budget_path=self.root/'resources.json';self.operations=self.root/'operations.json'
         self.limits={'initialization':config.get('max_initializations',len(runtime.images)),
@@ -213,13 +237,48 @@ class WorkflowSession:
             key,v=matches[0];scale=arts.get('scale:'+key,{})
             targets['roi:'+str(i)]={'id':'roi:'+str(i),'image_id':key,'source':str(v['path']),
                 'roi':region['box'],'parents':[key],'px_per_um':scale.get('px_per_um')}
+        if self.config.get('targeted_recovery', False):
+            gaps = self.recovery_features()
+            for item in arts.values():
+                if not item['valid'] or item['kind'] != 'region_proposals':
+                    continue
+                image = item['image_id']
+                if file_hash(item['path']) != item['sha256']:
+                    raise IntegrationError('ARTIFACT_CHANGED', '区域提议已变化')
+                for index, region in enumerate(read_json(item['path'])['regions']):
+                    identifier = f"roi:recovery:{image}:{index}"
+                    region_target = {'id': identifier, 'image_id': image,
+                                     'source': self.runtime.images[image]['path'],
+                                     'roi': region['box'], 'line_score': region['line_score'],
+                                     'parents': [image, item['id']],
+                                     'px_per_um': arts.get('scale:'+image, {}).get('px_per_um')}
+                    targets[identifier] = region_target
+                    for feature in gaps:
+                        key = f'locate:{identifier}:{feature}'
+                        targets[key] = {**region_target, 'id': key, 'feature_id': feature}
         return targets
+
+    def recovery_features(self):
+        from detect_core import FEATURE_ID
+        from prompts import CLASSIFY_HINTS
+        from .candidate_policy import candidates, criteria_diff
+        r = self.runtime
+        interest = candidates(r.a, r.kb, r.aliases, r.candidate_policy)
+        supported = {fid for label, fid in FEATURE_ID.items() if label in CLASSIFY_HINTS}
+        measured = {record.get('feature_id') or record.get('feature')
+                    for record in self.store.verified_records()
+                    if finite_number(record.get('primary_value_um'), minimum=1e-12)}
+        return list(dict.fromkeys(c['feature'] for row in criteria_diff(r.kb, interest['ids'], {})
+                                  for c in row['criteria'] if c['role'] == 'required'
+                                  and c['feature'] in supported and c['feature'] not in measured))
 
     def dependencies(self, tool, target):
         arts=self.store.current()['artifacts'];ids=[target['id']] if target['id'] in arts else target['parents']
-        if tool in {'segment_instance','detect_region'}:
+        if tool in {'segment_instance','detect_region','locate_feature'}:
             scale='scale:'+target['image_id']
             if scale in arts and arts[scale]['valid']:ids+=[scale]
+        if tool == 'segment_instance' and target.get('identity_required'):
+            ids.append('classification:'+target['id'])
         return sorted(set(ids))
 
     def _dependency_rows(self,tool,target,*,semantic=False):
@@ -256,10 +315,13 @@ class WorkflowSession:
     def propose(self, *, include_offline=False):
         snap=self.store.current();arts=snap['artifacts'];done=read_json(self.operations)['entries'];out=[]
         blocked=self.blocked_tools()
+        recovery = self.config.get('targeted_recovery', False)
+        gaps = self.recovery_features() if recovery else []
+        locate_attempts = sum(row['tool'] == 'locate_feature' for row in done.values())
         def offer(tool,t,priority):
             if tool in blocked:return
             if tool not in self.config.get('enabled_tools',TOOLS) and not include_offline:return
-            if (tool!='measure_instances' and not self.allow_network and not self.runtime.simulation
+            if (tool not in {'measure_instances','propose_regions','detect_region'} and not self.allow_network and not self.runtime.simulation
                 and not include_offline and self.config.get('execution')!='shadow'):return
             key=self.operation_key(tool,t)
             if key not in done:
@@ -268,13 +330,21 @@ class WorkflowSession:
         crops=[]
         for tid,t in self.targets().items():
             tool=None;image=t['image_id']
-            if tid.startswith('roi:'):
+            if tid.startswith('locate:'):
+                if locate_attempts < 2:
+                    tool = 'locate_feature'
+            elif tid.startswith('roi:'):
                 if 'detected:'+image in arts:tool='detect_region'
             elif t['kind']=='image':
                 if 'detected:'+image not in arts:tool='detect_fov_initial'
-                elif not arts.get('scale:'+image,{}).get('valid'):tool='calibrate_fov'
+                else:
+                    if gaps:
+                        offer('propose_regions', t, (1, 'propose_regions', tid))
+                    if not arts.get('scale:'+image,{}).get('valid'):tool='calibrate_fov'
             elif t['kind']=='crop':
                 crops.append(t)
+                if t.get('identity_required') and not arts.get('classification:'+tid,{}).get('identity_verified'):
+                    continue
                 scale=arts.get('scale:'+image,{})
                 seg=arts.get('seg:'+tid,{})
                 usable=seg.get('quality')=='valid' or (self.diagnostic_quality() and seg.get('quality')=='review')
@@ -293,7 +363,7 @@ class WorkflowSession:
         # 复核类别是“修复”而非主路径：排在物理阶段之后，只在观察到的存在特征与crop类别相左时出现。
         for t in crops:
             if arts.get('classification:'+t['id'],{}).get('valid'):continue
-            if not self.label_conflict(t):continue
+            if not t.get('identity_required') and not self.label_conflict(t):continue
             offer('classify_target',t,(1,'classify_target',t['id']))
         return out
 
@@ -384,7 +454,7 @@ class WorkflowSession:
                 raise IntegrationError('ACTION_DENIED','阶段不在当前合法集合')
             if any(r['status']=='pending' for r in doc['entries'].values()):
                 raise IntegrationError('WORKFLOW_BUSY','已有阶段正在执行')
-            if tool!='measure_instances' and not self.runtime.simulation and not self.allow_network:
+            if tool not in {'measure_instances','propose_regions','detect_region'} and not self.runtime.simulation and not self.allow_network:
                 raise IntegrationError('NETWORK_DISABLED','视觉重算须显式允许网络')
             # 类别复核是一次受控视觉观察：只占观察/网络预算，不挤占测量所需的重算额度；
             # 其网络请求由同一worker内的HTTP守卫按请求键记账，这里不重复预约。
@@ -425,9 +495,14 @@ class WorkflowSession:
 
     def accept(self,tool,target,result,parent):
         image=target['image_id'];items=[];rows=[];replace=[]
-        if tool in {'detect_fov_initial','detect_region'}:
+        if tool == 'propose_regions':
+            items.append(self._art('regions:'+image, 'region_proposals', result['regions'],
+                                   [image], image_id=image))
+        elif tool in {'detect_fov_initial','detect_region','locate_feature'}:
             folder=Path(result['crops_dir']);metas=contracts.load_crop_metas(str(folder))
             completion=result['completion'];parents=[image]
+            if tool == 'locate_feature':
+                parents = target['parents']
             replacements=read_json(completion).get('replacements',{}) if tool=='detect_region' else {}
             for m in metas:
                 if file_hash(m.source_image_path)!=self.runtime.images[image]['sha256']:
@@ -439,7 +514,8 @@ class WorkflowSession:
                     cid=replacements[m.crop_id]
                 image_item=self._art(cid+':pixels','crop_pixels',m.png,parents,image_id=image)
                 items.append(image_item)
-                items.append(self._art(cid,'crop',m.json_path,[image,image_item['id']],image_id=image))
+                items.append(self._art(cid,'crop',m.json_path,[image,image_item['id']],image_id=image,
+                                       **({'identity_required':True} if tool == 'locate_feature' else {})))
             marker='detected:'+image if tool=='detect_fov_initial' else 'detected:'+target['id']
             items.append(self._art(marker,'detection',completion,parents,image_id=image))
             scales={m.px_per_um for m in metas if finite_number(m.px_per_um,minimum=1e-12)}
@@ -464,7 +540,8 @@ class WorkflowSession:
                         m.feature_id,m.object_label,'',value['px_per_um'],m.tight_box,m.tight_box_local,m.loose_box,
                         m.crop_size,m.pad_info,m.granularity)
                     p=Path(result['scale']).parent/(m.crop_id+'.json');write_json(p,side)
-                    items.append(self._art(cid,'crop',p,v['parents'],image_id=image))
+                    items.append(self._art(cid,'crop',p,v['parents'],image_id=image,
+                                           identity_required=v.get('identity_required', False)))
         elif tool=='segment_instance':
             root=Path(result['segmentation']);doc=read_json(root/'instances.json')
             if not doc.get('instances'):raise IntegrationError('EMPTY_MASK','无分割实例')
@@ -499,9 +576,12 @@ class WorkflowSession:
                                    image_id=image,crop_id=target.get('crop_id') or target['id'],
                                    feature_id=fid,label=label))
             meta=contracts.CropMeta.from_json(target['path'])
+            if target.get('identity_required'):
+                items[-1]['identity_verified'] = (fid == meta.feature_id
+                    and doc.get('confidence') == 'high' and not doc.get('reject'))
             # 复核出的类别与crop不同：写一份**同像素、只改类别**的侧车，作为可重新分割的新目标。
             # 原crop与其掩码一律保留，失败/冲突仍可回溯；不是原地改写契约。
-            if fid and fid!=meta.feature_id:
+            if not target.get('identity_required') and fid and fid!=meta.feature_id:
                 new_id=f"{meta.crop_id}__as_{fid}"
                 side=contracts.crop_sidecar(new_id,str(Path(meta.png).resolve()),meta.source_image_path,
                     meta.stem,fid,label,'',meta.px_per_um,meta.tight_box,meta.tight_box_local,
@@ -544,5 +624,7 @@ class WorkflowSession:
         # 即使网络关闭、动作不被允许，也不能把未处理视野认作已完成。
         unqualified=any(v['valid'] and v['kind']=='segmentation' and v.get('quality')!='valid' and
             (not self.purpose_quality() or not self.assessment(v) or not any(u['allowed'] for u in self.assessment(v)['uses'].values())) for v in arts.values())
-        return (not snap['records'] or bool(self.propose(include_offline=True)) or unqualified or
+        return (not snap['records'] or any(a['tool'] not in {'propose_regions','locate_feature'}
+                                           and not a['args']['target_id'].startswith('roi:recovery:')
+                                           for a in self.propose(include_offline=True)) or unqualified or
                 any(v['status'] in {'pending','failed'} for v in read_json(self.operations)['entries'].values()))

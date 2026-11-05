@@ -4,7 +4,9 @@ def objective(action):
     return {'problem_id':args.get('feature_id') or args.get('target_id') or tool,
             'objective':{'presence_check':'核验合法候选差异特征','scene_check':'完成强制场景上下文',
                 'measure_instances':'获取具有用途资格的真实量化证据','segment_instance':'恢复可用目标掩码',
-                'detect_region':'修复有依据的目标定位'}.get(tool,'读取或恢复有效证据'),
+                'detect_region':'局部 YOLO 重检',
+                'propose_regions':'从原图纹理提议局部核验区域',
+                'locate_feature':'用 GLM 核验选定局部并提出待验证框'}.get(tool,'读取或恢复有效证据'),
             'expected_resolution':'增加有效证据/反证或解除实际前置阻塞',
             'stop_condition':'同依赖重复动作、服务失败、预算或截止，不以生成过门为成功'}
 

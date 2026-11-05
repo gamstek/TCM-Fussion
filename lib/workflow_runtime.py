@@ -67,9 +67,15 @@ class WorkflowRuntime(EvidenceRuntime):
             self.workflow.store.current()['artifacts'].values() if v['valid'] and v['kind']=='segmentation' and v.get('assessment_id')]
         # 类别复核结论单独列出：规划器据此决定是否重分割/重检，规则分不受其直接改写。
         result['workflow']['classifications']=[{'crop_id':v.get('crop_id'),'feature_id':v.get('feature_id'),
-                                                 'label':v.get('label')}
+                                                 'label':v.get('label'),
+                                                 'identity_verified':v.get('identity_verified')}
             for v in self.workflow.store.current()['artifacts'].values()
             if v['valid'] and v['kind']=='classification']
+        if self.workflow.config.get('targeted_recovery', False):
+            result['workflow']['recovery_regions'] = [
+                {'target_id': t['id'], 'image_stem': Path(t['source']).stem,
+                 'box': t['roi'], 'line_score': t['line_score'], 'feature_id': t.get('feature_id')}
+                for t in self.workflow.targets().values() if 'line_score' in t]
         return result
 
 

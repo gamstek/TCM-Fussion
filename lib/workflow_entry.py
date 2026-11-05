@@ -10,6 +10,14 @@ from .collaboration import fuse, knowledge_base
 
 WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'python':{'type':'string'},
+    'detector':{'enum':['yolo']},
+    'targeted_recovery':{'type':'boolean'},
+    'yolo':{'type':'object','additionalProperties':False,
+            'properties':{'weights':{'type':'string','minLength':1},
+                          'class_map':{'type':'string','minLength':1},
+                          'detector_config':{'type':'string','minLength':1},
+                          'python':{'type':'string','minLength':1},
+                          'confidence':{'type':'number','exclusiveMinimum':0,'maximum':1}}},
     'execution':{'enum':['shadow','active']},
     'quality_policy':{'enum':['strict','diagnostic_review']},
     'box_association':{'enum':['center_point','region_component']},
@@ -17,7 +25,8 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'quality_evaluation':{'enum':['legacy','purpose_v1']},
     'max_parallel':{'type':'integer','minimum':1,'maximum':2},
     'enabled_tools':{'type':'array','uniqueItems':True,'items':{'enum':[
-        'detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region']}},
+        'detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
+        'propose_regions','locate_feature']}},
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
     'max_seconds':{'type':'number','exclusiveMinimum':0,'maximum':86400},

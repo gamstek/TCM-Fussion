@@ -35,6 +35,12 @@ def main(argv=None):
     crop = imread_cn(ctx['crop_png'])
     if crop is None:
         raise IntegrationError('CROP_INVALID', '无法读取绑定crop')
+    if 'tight_box_local' in ctx:
+        x1, y1, x2, y2 = map(int, ctx['tight_box_local'])
+        h, w = crop.shape[:2]
+        if not (0 <= x1 < x2 <= w and 0 <= y1 < y2 <= h):
+            raise IntegrationError('CROP_INVALID', '身份核验框越出裁图')
+        crop = crop[y1:y2, x1:x2]
     from PIL import Image
     with Image.open(ctx['source']) as handle:
         width, height = handle.size

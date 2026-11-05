@@ -234,8 +234,51 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         return WorkflowRuntime([self.image],root=self.root/'task',sample_id='s',a={},simulation=True,
             workflow_config={'agent_policy':'adaptive_v1',**cfg},backend=StageFixture())
 
+    async def test_v2_single_view_starts_with_yolo_action(self):
+        runtime = self.runtime(agent_policy='adaptive_v2', targeted_recovery=True)
+        runtime.a = {'status':'ok','ranking':[{'label':'广藿香','probability':.6},
+                                             {'label':'淫羊藿','probability':.4}]}
+        menus = []
+        intervals = {}
+
+        class SlowDetection(StageFixture):
+            def execute(self, *args):
+                intervals['yolo_start'] = time.monotonic()
+                time.sleep(.2)
+                result = super().execute(*args)
+                intervals['yolo_end'] = time.monotonic()
+                return result
+
+        class SlowObservation(FixtureBackend):
+            def call(self, *args):
+                intervals['glm_start'] = time.monotonic()
+                time.sleep(.15)
+                result = super().call(*args)
+                intervals['glm_end'] = time.monotonic()
+                return result
+
+        class Planner:
+            def choose(self, context):
+                menus.append([a['tool'] for a in context['actions']])
+                if len(menus) == 1:
+                    observation = next(a for a in context['parallel_observations'] if a['tool']=='presence_check')
+                    return {'action_id': context['actions'][0]['action_id'],
+                            'parallel_observation_id': observation['action_id']}, None
+                return {'action_id': 'review'}, None
+
+        runtime.workflow.backend = SlowDetection()
+        toolbox = LocalToolbox(runtime, ledger_path=self.root/'ledger.json', backend=SlowObservation())
+        trace = await run_react(runtime, toolbox, planner=Planner(), planner_mode='scripted')
+        self.assertEqual(menus[0], ['detect_fov_initial'])
+        self.assertLess(max(intervals['yolo_start'], intervals['glm_start']),
+                        min(intervals['yolo_end'], intervals['glm_end']))
+        self.assertEqual(trace['observation_requests'], 1)
+        self.assertTrue(any(e.get('policy')=='yolo_initial_and_raw_observation' for e in trace['events']))
+        self.assertEqual(trace['stop_reason'], 'planner_request_review')
+
     async def test_v2_veto_replans_with_one_observation_and_carries_failure(self):
         r = self.runtime(agent_policy="adaptive_v2", max_observations=1)
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
         r.a = {"status": "ok", "ranking": [{"label": "广藿香", "probability": .6},
                                            {"label": "淫羊藿", "probability": .4}]}
         contexts = []
@@ -285,13 +328,14 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_v2_records_argument_mismatch_and_retries_by_action_id(self):
         r = self.runtime(agent_policy="adaptive_v2", max_planning=2)
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
         contexts = []
 
         class Planner:
             def choose(self, context):
                 contexts.append(copy.deepcopy(context))
                 if len(contexts) == 1:
-                    action = next(a for a in context["actions"] if a["tool"] == "detect_fov_initial")
+                    action = next(a for a in context["actions"] if a["tool"] == "segment_instance")
                     return {"proposal": {"tool": action["tool"],
                                          "args": {**action["args"], "unexpected": "private-value"}}}, None
                 return {"action_id": "stale-or-invalid"}, None
@@ -300,7 +344,7 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         trace = await run_react(r, toolbox, planner=Planner(), planner_mode="scripted")
         detail = contexts[1]["rejection_details"][0]
         self.assertEqual(detail["kind"], "argument_mismatch")
-        self.assertEqual(detail["tool"], "detect_fov_initial")
+        self.assertEqual(detail["tool"], "segment_instance")
         self.assertEqual(detail["variants"][0]["unexpected_field_count"], 1)
         self.assertNotIn("private-value", str(detail))
         self.assertEqual(trace["stop_reason"], "runtime_request_review")
@@ -309,6 +353,7 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_v2_selects_action_beyond_first_three_and_bounds_advisory_overrides(self):
         r = self.runtime(agent_policy="adaptive_v2", max_observations=1)
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
         r.a = {"status": "ok", "ranking": [{"label": "广藿香", "probability": .6},
                                            {"label": "淫羊藿", "probability": .4}]}
         selected_indices = []

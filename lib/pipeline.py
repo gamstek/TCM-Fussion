@@ -83,6 +83,10 @@ def validate_config(config):
         from .workflow_entry import WORKFLOW_SCHEMA
         from .tool_registry import validate_arguments
         validate_arguments(WORKFLOW_SCHEMA,agent["workflow"])
+        if agent["workflow"].get("targeted_recovery") and (
+                agent.get("planner", "llm") != "llm"
+                or agent["workflow"].get("agent_policy", "adaptive_v2") != "adaptive_v2"):
+            raise IntegrationError("CONFIG_INVALID", "定向补救需要 adaptive_v2 模型规划")
         if agent.get("mode") != "active":
             raise IntegrationError("CONFIG_INVALID", "workflow需要active模式")
         if a.get('mode')=='recorded':
@@ -165,7 +169,10 @@ def run_pipeline(config, *, base=None):
             return asyncio.run(execute_workflow(cfg,a,directory,routing=routing,start=start,job=job,status_path=status_path))
         job.update(stage="b")
         write_json(status_path, job)
-        b = execute_b(cfg.get("b", {}), job["sample_id"], identifier,
+        b_cfg = cfg.get("b", {})
+        if b_cfg.get("mode", "run") == "run" and b_cfg.get("input_mode", "images") == "images":
+            raise IntegrationError("CONFIG_INVALID", "从原图运行 B 须配置 agent.workflow，由 YOLO 出框")
+        b = execute_b(b_cfg, job["sample_id"], identifier,
                       allow_network=cfg.get("allow_network", False))
         write_json(directory/"b_snapshot.json", b)
         job.update(stage="fusion_and_shadow")

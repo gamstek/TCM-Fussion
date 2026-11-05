@@ -100,6 +100,53 @@ class WorkflowTests(unittest.TestCase):
         self.assertTrue(r.workflow.store.current()['records']);self.assertTrue(any(e['phase']=='recompute' for e in result['events']))
         self.assertEqual(self.image.read_bytes(),b'simulation-fov')
 
+    def test_targeted_location_is_optional_and_requires_crop_identity(self):
+        class RecoveryFixture(StageFixture):
+            confidence = 'medium'
+
+            def execute(self, session, tool, target, work, context):
+                if tool == 'propose_regions':
+                    out = work/'regions.json'
+                    write_json(out, {'regions': [{'box':[0,0,20,20], 'line_score':.5}]})
+                    return {'regions': str(out)}
+                if tool == 'locate_feature':
+                    result = super().execute(session, 'detect_region', target, work, context)
+                    path = Path(result['crops_dir'])/'crop.json'
+                    meta = read_json(path)
+                    meta.update(crop_id='located', feature_id='needle_crystal', object_label='草酸钙针晶')
+                    write_json(path, meta)
+                    path.rename(path.with_name('located.json'))
+                    return result
+                if tool == 'classify_target':
+                    out = work/'classification'
+                    write_json(out/'classification.json', {'label':'草酸钙针晶',
+                        'feature_id':'needle_crystal', 'confidence':self.confidence})
+                    return {'classification':str(out)}
+                return super().execute(session, tool, target, work, context)
+
+        for confidence in ('medium', 'high'):
+            with self.subTest(confidence=confidence):
+                backend = RecoveryFixture()
+                backend.confidence = confidence
+                runtime = WorkflowRuntime([self.image], root=self.root/confidence, sample_id='s',
+                    a={'status':'ok','ranking':[{'label':'龙胆','probability':.8}]},
+                    workflow_config={'targeted_recovery':True,'agent_policy':'adaptive_v2'},
+                    simulation=True, backend=backend)
+                def options(tool):
+                    return [a for a in runtime.legal_actions({'observations':[]}) if a['tool']==tool]
+                def execute(action):
+                    self.assertTrue(runtime.tools.invoke(runtime, action, {'action':action})['accepted'])
+                execute(options('detect_fov_initial')[0])
+                self.assertEqual(options('locate_feature'), [])
+                execute(options('propose_regions')[0])
+                locate = next(a for a in options('locate_feature') if a['args']['target_id'].endswith(':needle_crystal'))
+                execute(locate)
+                def can_segment():
+                    return any(a['args']['target_id'].endswith(':located') for a in options('segment_instance'))
+                self.assertFalse(can_segment())
+                execute(next(a for a in options('classify_target') if a['args']['target_id'].endswith(':located')))
+                self.assertEqual(can_segment(), confidence=='high')
+
     def test_label_conflict_offers_classification_and_relabels_crop(self):
         """观察到fiber与crop类别single_crystal相左：应提供复核，并把结论落成可重分割的新crop。"""
         backend=StageFixture();r=self.runtime(backend)

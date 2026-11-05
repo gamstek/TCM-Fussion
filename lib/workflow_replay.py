@@ -6,7 +6,7 @@ from .storage import IntegrationError, file_hash, read_json
 
 def bundle(result,work):
     root=Path(work).resolve();paths={};files={}
-    for key in ('crops_dir','completion','scale','segmentation','classification','measurements','delivery'):
+    for key in ('crops_dir','completion','regions','scale','segmentation','classification','measurements','delivery'):
         if key not in result:continue
         p=Path(result[key]).resolve()
         if not p.is_relative_to(root):raise IntegrationError('STAGE_OUTPUT_SCOPE','后端产物越出独立工作区')

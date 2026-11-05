@@ -4,7 +4,7 @@ from pathlib import Path
 import contracts
 import paths
 from .controlled_process import run
-from .storage import IntegrationError, read_json, write_json, file_hash, digest
+from .storage import IntegrationError, read_json, write_json, file_hash, digest, project_path
 
 
 class WorkflowBackend:
@@ -22,23 +22,55 @@ class WorkflowBackend:
         return digest([(p.relative_to(root).as_posix(),file_hash(p)) for p in sorted(files)])
 
     def execute(self, session, tool, target, work, context):
-        py=session.python;common=[py,'-X','utf8']
-        def command(args):
-            run(common+list(map(str,args)),context_path=context,timeout=session.remaining_seconds(),log_path=work/'stage.log',cancel_event=session.cancel_event)
-        if tool=='detect_fov_initial':
-            out=work/'detection'
-            command([Path(paths.DETECTION_CLI_DIR)/'detect_sample.py','--images',target['path'],
-                     '--sample',session.sample_id,'--herb','unknown','--out-dir',out])
-            if not (out/'crops.json').is_file():raise IntegrationError('DETECTION_INCOMPLETE','检测没有完成清单')
-            return {'crops_dir':str(out/'crops'),'completion':str(out/'crops.json')}
-        if tool in {'detect_region','calibrate_fov'}:
-            out=work/'detection';ctx={'tool':tool,'source':target['source'],'output':str(out)}
-            if tool=='detect_region':
-                ctx.update(roi=target['roi'],px_per_um=target.get('px_per_um'),existing_boxes=session.existing_boxes(target['image_id']),replace_id=target.get('replace_id'))
-            f=work/'worker.json';write_json(f,ctx)
-            command(['-m','TCM_Fusion.cli.workflow_worker','--context',f])
-            return {'scale':str(out/'scale.json')} if tool=='calibrate_fov' else {
-                'crops_dir':str(out/'crops'),'completion':str(out/'region_result.json')}
+        def command(args, python=session.python, log='stage.log'):
+            run([str(python),'-X','utf8',*map(str,args)],context_path=context,timeout=session.remaining_seconds(),log_path=work/log,cancel_event=session.cancel_event)
+        if tool in {'propose_regions', 'locate_feature'}:
+            out = work / 'detection'
+            ctx = work / 'recovery.json'
+            data = {'tool': tool, 'source': str(target['source']), 'output': str(out)}
+            if tool == 'locate_feature':
+                data.update(roi=target['roi'], feature_id=target['feature_id'],
+                            px_per_um=target.get('px_per_um'),
+                            existing_boxes=session.existing_boxes(target['image_id']))
+            write_json(ctx, data)
+            command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
+            if tool == 'propose_regions':
+                return {'regions': str(out / 'regions.json')}
+            return {'crops_dir': str(out / 'crops'), 'completion': str(out / 'region_result.json')}
+        if tool in {'detect_fov_initial', 'detect_region'}:
+            initial = tool == 'detect_fov_initial'
+            out = work / 'detection'
+            config = session.config['yolo']
+            settings = {key: str(project_path(config[key]))
+                        for key in ('weights', 'class_map', 'detector_config')}
+            if 'confidence' in config:
+                settings['confidence'] = config['confidence']
+            source = str(target['path'] if initial else target['source'])
+            ctx = work / 'yolo.json'
+            roi = {} if initial else {'roi': target['roi']}
+            write_json(ctx, {**settings, **roi,
+                             'source': source, 'output': str(work / 'boxes.json'),
+                             'signature': session.yolo_signature})
+            command(['-m', 'TCM_Fusion.cli.yolo_worker', '--context', ctx], session.yolo_python, 'yolo.log')
+            crop_context = {'tool': tool, 'source': source, 'output': str(out),
+                            'boxes': str(work / 'boxes.json'), **roi}
+            if not initial:
+                crop_context.update(px_per_um=target.get('px_per_um'),
+                                    existing_boxes=session.existing_boxes(target['image_id']),
+                                    replace_id=target.get('replace_id'))
+            ctx = work / 'crop_context.json'
+            write_json(ctx, crop_context)
+            command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
+            completion = out / ('crops.json' if initial else 'region_result.json')
+            if not completion.is_file():
+                raise IntegrationError('DETECTION_INCOMPLETE', '检测没有完成清单')
+            return {'crops_dir': str(out / 'crops'), 'completion': str(completion)}
+        if tool == 'calibrate_fov':
+            out = work / 'detection'
+            ctx = work / 'worker.json'
+            write_json(ctx, {'tool': tool, 'source': target['source'], 'output': str(out)})
+            command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
+            return {'scale': str(out / 'scale.json')}
         if tool=='classify_target':
             # 单crop类别复核：复用检测侧 classify_crop（提示词/解析/白名单只此一份），
             # 在子进程内跑，网络请求由 worker_bootstrap 的HTTP守卫按请求键记账。
@@ -46,6 +78,8 @@ class WorkflowBackend:
             ctx={'tool':tool,'crop_id':meta.crop_id,'crop_json':str(target['path']),
                  'crop_png':str(meta.png),'source':meta.source_image_path,
                  'tight_box':meta.tight_box,'output':str(work/'classification')}
+            if target.get('identity_required'):
+                ctx['tight_box_local'] = meta.tight_box_local
             f=work/'worker.json';write_json(f,ctx)
             out=work/'classification'
             command(['-m','TCM_Fusion.cli.classify_worker','--context',f])

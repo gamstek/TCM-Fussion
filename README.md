@@ -254,6 +254,29 @@ observations必须是先前真实录制或明确模拟的{action,accepted,result
 - 验证：新增 15 项定向回归通过；分割离线自检 56/56、批入口 13/13、新增断言 26/26 通过；全量聚合受沙箱临时目录/MCP 命名管道限制，未完成部分不冒充通过。
 # 多视野主动测试
 
+主动工作流的整图检测由 YOLO 出显微特征框。GLM 用于存在性、局部重检、场景及类别核验。双引擎比例尺标定单独运行，其视觉引擎仍参与读取比例尺。分割、测量和五折 ResNet50 沿用原接口。
+
+`adaptive_v2` 从原图启动时，首轮出框由 YOLO 负责。预算允许时，Agent 可同时为同一视野选择一个已有权限的 GLM 原图存在性或场景核验。选择结果与工具返回分开记账，观察不会产出检测框。设置 `agent.workflow.max_parallel: 1` 可关闭首轮并行。启用定向补救后，GLM 只能对 YOLO 初检后的已绑定局部提出候选框。
+
+```json
+{
+  "detector": "yolo",
+  "yolo": {
+    "weights": "TCM_Fusion/yolo-results/detection/yolo_runs/v1_yolov10s_1024/weights/best.pt",
+    "class_map": "TCM_Fusion/yolo-results/detection/yolo_runs/data_local.yaml",
+    "detector_config": "TCM_Fusion/config/detector.json",
+    "python": ".venv/yolo/Scripts/python.exe",
+    "confidence": 0.25
+  }
+}
+```
+
+上述字段可在 `agent.workflow` 中覆盖，省略时使用示例默认值。旧配置若显式指定 `detector: "glm"`，请改为 `yolo` 或删除该字段。从原图运行 B 须配置 `agent.workflow`。YOLO 解释器需要 PyTorch、TorchVision、Ultralytics 和 PyYAML，当前使用 CPU 和 1024 推理尺寸。现有 `agent.workflow.python` 执行裁图、标定和下游工具。
+
+融合 worker 调用本包 `lib/detector_yolo.py` 中的原作者适配器。推理参数由 `config/detector.json` 管理，任务里的 `yolo.confidence` 可覆盖其 `conf`。默认 `tile=0` 整图推理，设为正像素值可启用重叠滑窗。类别顺序由项目 `vlm_config.json` 的检测类别派生，训练导出的 YAML 用于核对顺序。“其他”框记录到 `other_detections.json`，不生成分割裁图。框的 `score` 是未经校准的模型置信度。
+
+设置 `agent.workflow.targeted_recovery: true` 可在 `adaptive_v2` 中启用可选定位补救。候选知识库有尚无测量支持的必需特征时，Agent 可在初检后的任一视野请求 `propose_regions`。它从原图纹理提议最多三个重叠窗口中的高分局部；Agent 看到窗口坐标和线段评分后，可选择局部 YOLO、对指定特征调用一次 `locate_feature`、换视野或停止。GLM 定位全任务最多两次，只允许使用已绑定的局部区域。定位提示由 Agent 选择的特征和项目的形态描述构成。定位框只生成候选裁图，须另做同类高置信身份复核，并通过尺度和分割质量检查后才可测量。旧配置默认关闭这一补救分支。
+
 在 `adaptive_v2` 中，多个视野先各尝试一次可执行的初检。Agent 选择初检顺序，规划失败时由运行时接管并记录。初检结束后，Agent 再选择补查、分割、测量或申请复核。初检仍受工具开关、调用额度和总截止时间约束。四视野复测使用 `max_initializations=4`、`max_seconds=1200`、`max_observation_seconds=150`。
 
 同一鉴别任务有多个视野时，配置 `a.images` 为原图路径列表（代替 `a.image`），并让 `agent.image_roots` 指向同一组图。使用主动工作流并省略 `routing`。每张图分别运行五折；Agent 收到按视野、折分组的 Top-K。知识库候选按 ID 合并去重，只用于规划；原规则引擎依据多视野显微证据裁决。多视野任务没有合成 A 单榜。将 `workflow.max_initializations` 和时间预算设为适合该样品视野数的上限；具体执行哪些动作由 Agent 在权限和预算内选择。
