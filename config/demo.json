@@ -1,0 +1,8 @@
+{
+  "sample_id": "demo",
+  "allow_recorded": true,
+  "allow_network": false,
+  "a": {"mode": "recorded", "record": "TCM_Fusion/tests/fixtures/a_prediction.json"},
+  "b": {"mode": "recorded", "record": "TCM_Fusion/tests/fixtures/b_verdict.json"},
+  "agent": {"mode": "deterministic_shadow", "judgement_request_budget": 6}
+}

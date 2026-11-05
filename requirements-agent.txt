@@ -1,0 +1,11 @@
+# New orchestration only. Original A/B dependency files are unchanged.
+# User-authorized LangGraph; Pydantic arrives transitively, no B schema rewrite.
+langgraph==1.2.19
+mcp==1.30.0
+langmem==0.0.30
+langchain-openai==1.7.3
+
+jsonschema==4.26.0
+numpy==2.4.6
+opencv-python-headless==4.14.0.94
+pillow==12.3.0

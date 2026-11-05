@@ -1,0 +1,12 @@
+{
+  "sample_id": "react_demo",
+  "simulation": true,
+  "records": [
+    {"image_stem":"fov","instance_id":1,"feature":"single_crystal","calibration_status":"ok","calibration_px_per_um":2,"primary_dimension":"feret_max_um","primary_value_um":55,"conf":0.9,"flags":[]}
+  ],
+  "a": {"status":"ok","provenance":"recorded_simulation","ranking":[{"label":"猪苓","probability":0.8},{"label":"茯苓","probability":0.2}]},
+  "replies": {
+    "hypha": {"ok":true,"present":true,"conf":0.95,"reason":"模拟观察：可见分枝菌丝，仅存在性"}
+  },
+  "notice": "人工构造的工具响应，用于验证主动观察与规则重评分；不是实际显微模型效果"
+}

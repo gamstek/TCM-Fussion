@@ -1,0 +1,28 @@
+{
+  "sample_id": "demo",
+  "allow_recorded": true,
+  "allow_network": false,
+  "a": {
+    "mode": "recorded",
+    "record": "TCM_Fusion/tests/fixtures/a_prediction.json"
+  },
+  "b": {
+    "mode": "recorded",
+    "record": "TCM_Fusion/tests/fixtures/b_verdict.json"
+  },
+  "agent": {
+    "mode": "deterministic_shadow",
+    "judgement_request_budget": 6,
+    "candidate_policy": {
+      "top_k": 3,
+      "cumulative_mass": 0.95
+    }
+  },
+  "routing": {
+    "mode": "shadow",
+    "min_score": 0.99,
+    "min_margin": 0.9,
+    "buffer": 0.0001,
+    "top_k": 3
+  }
+}

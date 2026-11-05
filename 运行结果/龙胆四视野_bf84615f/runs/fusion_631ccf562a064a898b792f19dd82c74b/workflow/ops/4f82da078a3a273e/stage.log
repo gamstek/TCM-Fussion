@@ -1,0 +1,12 @@
+[info] crop 1 个 | 源图 1 张 ['view_04'] | 药材 ['unknown'] | 输出 D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\龙胆四视野复测_501cc87e\runs\fusion_631ccf562a064a898b792f19dd82c74b\workflow\ops\4f82da078a3a273e\segmentation
+
+[1/1] fiber_view_04_01 | feature=fiber | px_per_um=5.825
+[结果] fiber_view_04_01: mask 1654x1536 | 占比 0.324 | 连通域 1 | 阈值 126.0 | invert=False | 状态 review  ⚠需人工确认 | 框先验: 丢邻粒 0 块, 裁 0px
+[输出] D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\龙胆四视野复测_501cc87e\runs\fusion_631ccf562a064a898b792f19dd82c74b\workflow\ops\4f82da078a3a273e\segmentation\igm\fiber_view_04_01
+  ⚠ IGM 状态 review → 需人工复核该 mask（极性冲突=False、中心块/框=0.581、框外占比=0.0072）
+
+[done] 实例 1 个 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\龙胆四视野复测_501cc87e\runs\fusion_631ccf562a064a898b792f19dd82c74b\workflow\ops\4f82da078a3a273e\segmentation\masks
+       IGM 原始产物 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\龙胆四视野复测_501cc87e\runs\fusion_631ccf562a064a898b792f19dd82c74b\workflow\ops\4f82da078a3a273e\segmentation\igm
+       实例清单 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\龙胆四视野复测_501cc87e\runs\fusion_631ccf562a064a898b792f19dd82c74b\workflow\ops\4f82da078a3a273e\segmentation\instances.json
+       （几何测量）--masks "D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\龙胆四视野复测_501cc87e\runs\fusion_631ccf562a064a898b792f19dd82c74b\workflow\ops\4f82da078a3a273e\segmentation\masks"
+[warn] 1 个 crop 的 mask 状态非 ok：这些实例在判药侧会被整条丢弃（不计证据），需人工复核：['fiber_view_04_01']

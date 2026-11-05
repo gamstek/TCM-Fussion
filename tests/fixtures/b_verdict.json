@@ -1,0 +1,12 @@
+{
+  "schema": "agent-judgement/v1",
+  "sample_id": "demo",
+  "verdict": "confirmed",
+  "conclusion": {"id": "白芍", "display": "白芍", "confidence": 0.8},
+  "support_feature_count": 2,
+  "needs_review": false,
+  "source_images": [],
+  "agent": {"mode": "rule_only", "vlm_calls": 0},
+  "fixture": true,
+  "note": "模拟裁决：专测A/B冲突，不是药材鉴别实验结果"
+}

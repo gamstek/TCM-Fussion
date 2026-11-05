@@ -1,0 +1,50 @@
+[
+  {
+    "id": "scene_context",
+    "tools": [
+      "scene_check"
+    ],
+    "purpose": "结晶场景强制检查，独立于药材候选"
+  },
+  {
+    "id": "differential_presence",
+    "tools": [
+      "presence_check"
+    ],
+    "purpose": "优先区分候选的缺失P1/C存在性证据"
+  },
+  {
+    "id": "evidence_stop",
+    "tools": [
+      "finish",
+      "request_review"
+    ],
+    "purpose": "证据足够停止或预算/尺度不足转复核"
+  },
+  {
+    "id": "evidence_inspection",
+    "tools": [
+      "read_evidence",
+      "list_features",
+      "query_criteria",
+      "read_scale",
+      "list_fovs",
+      "criteria_diff",
+      "list_artifacts",
+      "read_artifact_status",
+      "read_quality"
+    ],
+    "purpose": "只读完整证据与候选判据；不能扩权或生成新观察"
+  },
+  {
+    "id": "workflow_repair",
+    "tools": [
+      "detect_fov_initial",
+      "calibrate_fov",
+      "segment_instance",
+      "measure_instances",
+      "detect_region"
+    ],
+    "purpose": "按前置条件修复已绑定样品工件；不产生模型自报尺寸"
+  }
+]

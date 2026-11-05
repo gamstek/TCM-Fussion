@@ -1,0 +1,22 @@
+{
+  "sample_id": "sample001",
+  "allow_network": false,
+  "allow_recorded": false,
+  "a": {
+    "mode": "cli",
+    "required": true,
+    "checkpoint_dir": "MICROSCOPE-main/runs/v3_resnet50_full",
+    "image": "MICROSCOPE-main/显微镜像/甘草/样品001/example.jpg"
+  },
+  "b": {
+    "mode": "run",
+    "input_mode": "images",
+    "input": "MICROSCOPE-main/显微镜像/甘草/样品001",
+    "enable_vlm": true
+  },
+  "agent": {
+    "mode": "deterministic_shadow",
+    "judgement_request_budget": 6
+  },
+  "aliases": {}
+}

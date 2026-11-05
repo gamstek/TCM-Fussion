@@ -1,0 +1,13 @@
+{
+  "operation_key": "b1a7a0847ec9aaac52fa0bd1a482a3c45cb76683f641e9b13aa89eb5060fd8c3",
+  "budget_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆四视野复测_501cc87e\\runs\\fusion_631ccf562a064a898b792f19dd82c74b\\workflow\\resources.json",
+  "limits": {
+    "initialization": 4,
+    "recompute": 10,
+    "network": 38,
+    "planning": 20,
+    "observation": 12,
+    "total": 100
+  },
+  "identity": "6c89abc12eb4118ff9d6a1f112704b2a151320e9f623a7e7be3e0ab9dac75e15"
+}

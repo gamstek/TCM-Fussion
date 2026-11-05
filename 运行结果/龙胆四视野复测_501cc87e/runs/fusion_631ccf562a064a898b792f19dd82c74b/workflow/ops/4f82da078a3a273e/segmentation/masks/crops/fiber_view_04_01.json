@@ -1,0 +1,31 @@
+{
+  "crop_id": "fiber_view_04_01",
+  "png": "fiber_view_04_01.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆四视野复测_501cc87e\\inputs\\view_04.jpg",
+  "stem": "view_04",
+  "feature_id": "fiber",
+  "object_label": "纤维",
+  "herb": "unknown",
+  "px_per_um": 5.825,
+  "tight_box": [
+    399.4,
+    0.0,
+    1433.6,
+    1367.0
+  ],
+  "tight_box_local": [
+    310.4,
+    0.0,
+    1344.6,
+    1367.0
+  ],
+  "loose_box": [
+    89,
+    0,
+    1743,
+    1536
+  ],
+  "crop_size": "1654x1536",
+  "pad_info": "",
+  "granularity": "instance"
+}

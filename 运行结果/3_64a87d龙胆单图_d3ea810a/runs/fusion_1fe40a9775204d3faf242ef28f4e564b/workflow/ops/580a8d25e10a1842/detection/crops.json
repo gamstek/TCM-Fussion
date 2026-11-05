@@ -1,0 +1,89 @@
+{
+  "sample": "3_64a87d_d3ea810a",
+  "n_images": 1,
+  "n_crops": 3,
+  "herb": "unknown",
+  "crops": [
+    {
+      "crop_id": "fiber_input_01",
+      "feature_id": "fiber",
+      "object_label": "纤维",
+      "tight_box_crop": [
+        0.0,
+        0.0,
+        1781.8,
+        1443.8
+      ],
+      "tight_box_source": [
+        0.0,
+        0.0,
+        1781.8,
+        1443.8
+      ],
+      "crop_size": [
+        2048,
+        1536
+      ],
+      "px_per_um": 11.65,
+      "scale_status": "OK",
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "成束平行长梭形厚壁细胞，胞腔细狭",
+      "source_image": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\3_64a87d_d3ea810a\\input.jpg"
+    },
+    {
+      "crop_id": "fiber_input_02",
+      "feature_id": "fiber",
+      "object_label": "纤维",
+      "tight_box_crop": [
+        24.0,
+        24.9,
+        25.0,
+        240.0
+      ],
+      "tight_box_source": [
+        2047.0,
+        1297.9,
+        2048.0,
+        1513.0
+      ],
+      "crop_size": [
+        25,
+        263
+      ],
+      "px_per_um": 11.65,
+      "scale_status": "OK",
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "散离短小纤维碎段，壁厚色深",
+      "source_image": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\3_64a87d_d3ea810a\\input.jpg"
+    },
+    {
+      "crop_id": "fiber_input_03",
+      "feature_id": "fiber",
+      "object_label": "纤维",
+      "tight_box_crop": [
+        30.6,
+        30.2,
+        624.5,
+        130.0
+      ],
+      "tight_box_source": [
+        1433.6,
+        1436.2,
+        2027.5,
+        1536.0
+      ],
+      "crop_size": [
+        645,
+        130
+      ],
+      "px_per_um": 11.65,
+      "scale_status": "OK",
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "散离纤维碎段，断碎平截",
+      "source_image": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\3_64a87d_d3ea810a\\input.jpg"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "source": "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\中药分类数据\\input\\龙胆\\images\\1.jpg",
+    "input": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆四视野复测_501cc87e\\inputs\\view_01.jpg",
+    "sha256": "f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed"
+  },
+  {
+    "source": "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\中药分类数据\\input\\龙胆\\images\\3_64a87d.jpg",
+    "input": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆四视野复测_501cc87e\\inputs\\view_02.jpg",
+    "sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+  },
+  {
+    "source": "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\中药分类数据\\input\\龙胆\\images\\B20240852.jpg",
+    "input": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆四视野复测_501cc87e\\inputs\\view_03.jpg",
+    "sha256": "e402ca7675613539633d10dc0094633d92c0c9795c8deff15d66216bb4cee1fe"
+  },
+  {
+    "source": "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\中药分类数据\\input\\龙胆\\images\\B20250257.jpg",
+    "input": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆四视野复测_501cc87e\\inputs\\view_04.jpg",
+    "sha256": "1bdb2425a7e250c2cf5b59a32da118dac29a1bd31bd7fd96e7450ed93ead4dc9"
+  }
+]

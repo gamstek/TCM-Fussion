@@ -1,0 +1,8 @@
+{
+  "fixture": true,
+  "note": "模拟概率，仅验证集成分流，不是真实ResNet输出",
+  "ranking": [
+    {"label": "甘草", "probability": 0.8},
+    {"label": "白芍", "probability": 0.2}
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "crop_id": "cluster_crystal_view_01_10",
+  "png": "cluster_crystal_view_01_10.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆四视野复测_501cc87e\\inputs\\view_01.jpg",
+  "stem": "view_01",
+  "feature_id": "cluster_crystal",
+  "object_label": "草酸钙簇晶",
+  "herb": "unknown",
+  "px_per_um": 5.825,
+  "tight_box": [
+    788.5,
+    1198.1,
+    938.0,
+    1339.4
+  ],
+  "tight_box_local": [
+    42.5,
+    43.1,
+    192.0,
+    184.4
+  ],
+  "loose_box": [
+    746,
+    1155,
+    980,
+    1381
+  ],
+  "crop_size": "234x226",
+  "pad_info": "",
+  "granularity": "instance"
+}

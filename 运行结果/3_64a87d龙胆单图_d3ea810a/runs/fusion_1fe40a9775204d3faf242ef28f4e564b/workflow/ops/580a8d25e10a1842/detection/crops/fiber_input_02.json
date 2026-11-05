@@ -1,0 +1,31 @@
+{
+  "crop_id": "fiber_input_02",
+  "png": "fiber_input_02.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\3_64a87d_d3ea810a\\input.jpg",
+  "stem": "input",
+  "feature_id": "fiber",
+  "object_label": "纤维",
+  "herb": "unknown",
+  "px_per_um": 11.65,
+  "tight_box": [
+    2047.0,
+    1297.9,
+    2048.0,
+    1513.0
+  ],
+  "tight_box_local": [
+    24.0,
+    24.9,
+    25.0,
+    240.0
+  ],
+  "loose_box": [
+    2023,
+    1273,
+    2048,
+    1536
+  ],
+  "crop_size": "25x263",
+  "pad_info": "",
+  "granularity": "instance"
+}

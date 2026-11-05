@@ -1,0 +1,11 @@
+{
+  "job_id": "fusion_1fe40a9775204d3faf242ef28f4e564b",
+  "sample_id": "3_64a87d_d3ea810a",
+  "status": "completed",
+  "stage": "done",
+  "config_sha256": "52bef1a2589f802b3502fb132c0a648c06d822dfa77c239e807d019fa5014c03",
+  "result": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\3_64a87d_d3ea810a\\runs\\fusion_1fe40a9775204d3faf242ef28f4e564b\\fusion.json",
+  "needs_review": true,
+  "route": "workflow_agent",
+  "elapsed_seconds": 160.97838530002628
+}
