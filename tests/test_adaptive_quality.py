@@ -235,7 +235,7 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
             workflow_config={'agent_policy':'adaptive_v1',**cfg},backend=StageFixture())
 
     async def test_v2_single_view_starts_with_yolo_action(self):
-        runtime = self.runtime(agent_policy='adaptive_v2', targeted_recovery=True)
+        runtime = self.runtime(agent_policy='adaptive_v2', targeted_recovery=True, p0_priority=False)
         runtime.a = {'status':'ok','ranking':[{'label':'广藿香','probability':.6},
                                              {'label':'淫羊藿','probability':.4}]}
         menus = []
@@ -275,6 +275,19 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(trace['observation_requests'], 1)
         self.assertTrue(any(e.get('policy')=='yolo_initial_and_raw_observation' for e in trace['events']))
         self.assertEqual(trace['stop_reason'], 'planner_request_review')
+
+    async def test_v2_p0_focus_blocks_presence_checks_until_targeted_search(self):
+        runtime = self.runtime(agent_policy='adaptive_v2', targeted_recovery=True)
+        runtime.a = {'status': 'ok', 'ranking': [{'label': '龙胆', 'probability': .99},
+                                                  {'label': '桔梗', 'probability': .01}]}
+        runtime.score([])
+        focus = runtime.p0_focus()
+        self.assertIsNotNone(focus)
+        self.assertEqual(focus['candidate_id'], '龙胆')
+        self.assertEqual(focus['feature_id'], 'needle_crystal')
+        tools = [a['tool'] for a in runtime.legal_actions({'observations': [], 'attempted': []})]
+        self.assertIn('detect_fov_initial', tools)
+        self.assertNotIn('presence_check', tools)
 
     async def test_v2_veto_replans_with_one_observation_and_carries_failure(self):
         r = self.runtime(agent_policy="adaptive_v2", max_observations=1)

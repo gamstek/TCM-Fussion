@@ -1,10 +1,11 @@
 """可从原图/部分B启动的领域运行时；物理证据仅由可信阶段提交，仍交原decide。"""
 from pathlib import Path
+import contracts
 import paths
 from .evidence_runtime import EvidenceRuntime
 from .workflow_session import WorkflowSession, TOOLS
 from .tool_registry import ToolSpec, object_schema
-from .storage import IntegrationError, project_path, file_hash, digest
+from .storage import IntegrationError, project_path, file_hash, digest, read_json
 
 
 class WorkflowRuntime(EvidenceRuntime):
@@ -43,12 +44,165 @@ class WorkflowRuntime(EvidenceRuntime):
         self.present_features={fid for fid,c in scored['cards'].items() if c.present}
         return scored
 
+    def p0_focus(self):
+        """A 前列候选的 required P0 特征缺口；用于强制先做定向检索。"""
+        workflow = self.workflow
+        if workflow is None or not workflow.config.get('p0_priority', True):
+            return None
+        if not workflow.config.get('targeted_recovery', False):
+            return None
+        from .candidate_policy import candidates as a_candidates
+        from detect_core import FEATURE_ID
+        try:
+            interest = a_candidates(self.a, self.kb, self.aliases, self.candidate_policy)
+        except IntegrationError:
+            return None
+        rows = {row['id']: row for row in self.kb.candidates()}
+        snap = workflow.store.current()
+        arts = snap.get('artifacts') or {}
+        crop_features = set()
+        crops = []
+        for art_id, art in arts.items():
+            if not art.get('valid') or art.get('kind') != 'crop':
+                continue
+            try:
+                meta = contracts.CropMeta.from_json(art['path'])
+            except (OSError, ValueError, contracts.ContractError):
+                continue
+            crop_features.add(meta.feature_id)
+            crops.append((art_id, meta, art))
+        path = Path(workflow.operations)
+        entries = read_json(path).get('entries', {}) if path.is_file() else {}
+        propose_done = [v for v in entries.values()
+                        if v.get('tool') == 'propose_regions' and v.get('status') == 'done']
+        propose_failed = any(v.get('tool') == 'propose_regions'
+                             and v.get('status') == 'failed' for v in entries.values())
+        locate_count = sum(1 for v in entries.values()
+                           if v.get('tool') == 'locate_feature'
+                           and v.get('status') in {'done', 'failed'})
+        region_count = 0
+        for entry in propose_done:
+            bundle = entry.get('bundle') or {}
+            for name in (bundle.get('files') or {}):
+                if name.endswith('regions.json'):
+                    try:
+                        region_count = len(read_json(Path(bundle['root']) / name).get('regions') or [])
+                    except (OSError, ValueError, KeyError):
+                        region_count = 0
+                    break
+        max_locate = int(workflow.config.get('max_locate_attempts', 4))
+        required_locate = min(region_count, max_locate) if region_count else 1
+        attempted = bool(propose_failed or (propose_done and locate_count >= required_locate)
+                         or (propose_done and region_count == 0))
+        present = getattr(self, 'present_features', set()) or set()
+        for cid in interest.get('ids') or []:
+            row = rows.get(cid)
+            if not row:
+                continue
+            for crit in row.get('criteria') or []:
+                if crit.get('role') != 'required':
+                    continue
+                fid = crit.get('feature')
+                if self.kb.tier(fid) != 'P0':
+                    continue
+                if fid in present:
+                    continue
+                pending = []
+                for art_id, meta, art in crops:
+                    if meta.feature_id != fid or not art.get('identity_required'):
+                        continue
+                    cls = arts.get('classification:' + art_id)
+                    if cls and cls.get('valid'):
+                        continue
+                    if any(op.get('tool') == 'classify_target'
+                           and op.get('target_id') == art_id
+                           and op.get('status') == 'failed' for op in entries.values()):
+                        continue
+                    pending.append((float(art.get('det_score') or 0), art_id, meta))
+                if pending:
+                    score, art_id, meta = max(pending, key=lambda row: (row[0], row[1]))
+                    return {'candidate_id': cid, 'candidate_display': row.get('display') or cid,
+                            'feature_id': fid, 'feature_zh': next(
+                                (label for label, value in FEATURE_ID.items() if value == fid), fid),
+                            'tier': 'P0', 'quant': crit.get('quant'), 'morph': crit.get('morph'),
+                            'status': 'crop_pending_classification', 'crop_id': meta.crop_id,
+                            'crop_artifact_id': art_id, 'det_score': score, 'attempted': False,
+                            'directive': '先 classify_target 最高分 P0 crop；未完成前不得继续 locate 或查 P1/C。'}
+                verified_crop = False
+                for art_id, meta, art in crops:
+                    if meta.feature_id != fid:
+                        continue
+                    cls = arts.get('classification:' + art_id)
+                    if not (cls and cls.get('identity_verified')):
+                        continue
+                    verified_crop = True
+                    seg = arts.get('seg:' + art_id)
+                    meas = arts.get('measurement:seg:' + art_id)
+                    if meas and meas.get('valid'):
+                        continue
+                    if seg and seg.get('valid') and seg.get('quality') == 'valid':
+                        measure_failed = any(
+                            op.get('tool') == 'measure_instances'
+                            and op.get('target_id') == 'seg:' + art_id
+                            and op.get('status') == 'failed' for op in entries.values())
+                        if measure_failed:
+                            continue
+                        return {'candidate_id': cid, 'candidate_display': row.get('display') or cid,
+                                'feature_id': fid, 'feature_zh': next(
+                                    (label for label, value in FEATURE_ID.items() if value == fid), fid),
+                                'tier': 'P0', 'quant': crit.get('quant'), 'morph': crit.get('morph'),
+                                'status': 'crop_segmented_unmeasured', 'crop_id': meta.crop_id,
+                                'attempted': False,
+                                'directive': 'P0 crop 已完成有效分割；先 measure_instances，再查 P1/C。'}
+                    if seg and seg.get('valid') and seg.get('quality') != 'valid':
+                        continue
+                    seg_failed = any(
+                        op.get('tool') == 'segment_instance'
+                        and op.get('target_id') == art_id
+                        and op.get('status') == 'failed' for op in entries.values())
+                    if seg_failed:
+                        continue
+                    return {'candidate_id': cid, 'candidate_display': row.get('display') or cid,
+                            'feature_id': fid, 'feature_zh': next(
+                                (label for label, value in FEATURE_ID.items() if value == fid), fid),
+                            'tier': 'P0', 'quant': crit.get('quant'), 'morph': crit.get('morph'),
+                            'status': 'crop_found_unsegmented', 'crop_id': meta.crop_id,
+                            'attempted': False,
+                            'directive': 'P0 crop 已 identity 通过；先 segment_instance、再 measure_instances，完成前不得查 P1/C。'}
+                if verified_crop:
+                    continue
+                zh = next((label for label, value in FEATURE_ID.items() if value == fid), fid)
+                return {'candidate_id': cid, 'candidate_display': row.get('display') or cid,
+                        'feature_id': fid, 'feature_zh': zh, 'tier': 'P0',
+                        'quant': crit.get('quant'), 'morph': crit.get('morph'),
+                        'status': 'no_crop' if fid not in crop_features else 'no_measurement',
+                        'attempted': attempted,
+                        'directive': '先执行 propose_regions/locate_feature（或分块检测）；完成或失败前不得查 P1/C。'}
+        return None
+
     def legal_actions(self,state):
         base=super().legal_actions(state)
         if base and base[0]['mandatory'] and self.workflow.config.get('agent_policy') != 'adaptive_v2':return base
         repair=[a for a in base if self.tools.get(a['tool']).budget_class=='recompute']
         rest=[a for a in base if self.tools.get(a['tool']).budget_class!='recompute']
-        return repair+rest if self.records or self.workflow.diagnostic_quality() or self.workflow.config.get('agent_policy') in {'adaptive_v1','adaptive_v2'} else repair
+        actions=repair+rest if self.records or self.workflow.diagnostic_quality() or self.workflow.config.get('agent_policy') in {'adaptive_v1','adaptive_v2'} else repair
+        focus=self.p0_focus()
+        if focus and focus.get('status')=='crop_pending_classification' and not focus['attempted']:
+            target=focus.get('crop_artifact_id')
+            filtered=[a for a in actions
+                      if a['tool'] not in {'presence_check','locate_feature','propose_regions'}
+                      and (a['tool']!='classify_target'
+                           or (a.get('args') or {}).get('target_id')==target)]
+            if filtered:return filtered
+        if (focus and focus.get('status') in {'crop_found_unsegmented','crop_segmented_unmeasured'}
+                and not focus['attempted']):
+            filtered=[a for a in actions
+                      if a['tool'] not in {'presence_check','locate_feature','propose_regions'}]
+            if filtered:return filtered
+        if focus and not focus['attempted']:
+            filtered=[a for a in actions if a['tool']!='presence_check']
+            if filtered:return filtered
+        return actions
 
     def validate_action(self,action):
         if self.tools.get(action.get('tool')).budget_class=='recompute':
@@ -58,10 +212,13 @@ class WorkflowRuntime(EvidenceRuntime):
     def summary(self,state):
         result=super().summary(state)
         from .storage import read_json
+        focus=self.p0_focus()
+        result['p0_focus']=focus
         result['workflow']={'evidence_version':self.workflow.store.current()['version'],
                             'resources':read_json(self.workflow.budget_path)['used'],
                             'operations':list(read_json(self.workflow.operations)['entries'].values()),
                             'blocked_tools':self.workflow.blocked_tools(),
+                            'p0_focus':focus,
                             'unresolved':self.workflow.unresolved()}
         result['workflow']['quality_assessments']=[self.workflow.assessment(v) for v in
             self.workflow.store.current()['artifacts'].values() if v['valid'] and v['kind']=='segmentation' and v.get('assessment_id')]

@@ -14,7 +14,7 @@ def main(argv=None):
     out=Path(ctx['output']);out.mkdir(parents=True,exist_ok=True)
     if ctx['tool'] == 'propose_regions':
         from TCM_Fusion.lib.recovery_regions import propose_regions
-        write_json(out/'regions.json', {'regions': propose_regions(img)})
+        write_json(out/'regions.json', propose_regions(img, with_audit=True))
         return 0
     if ctx['tool']=='calibrate_fov':
         info=lookup_px_per_um(ctx['source'],img,full=True)
@@ -92,6 +92,9 @@ def main(argv=None):
             ctx.get('px_per_um'),box,[box[0]-ox,box[1]-oy,box[2]-ox,box[3]-oy],
             [ox,oy,ex,ey],f'{crop.shape[1]}x{crop.shape[0]}',
             granularity=d.get('granularity') or contracts.GRANULARITY_DEFAULT)
+        # 定位分数进入 crop 契约的 raw 字段，供“高分 crop 先分类”的调度使用。
+        side['det_score']=d.get('score')
+        side['det_confidence']=d.get('confidence')
         write_json(crops/(cid+'.json'),side)
     if initial:
         write_json(out/'crops.json', {**result, 'engine':'yolo', 'count':count,

@@ -350,6 +350,13 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 "recent_action_feedback": [e["feedback"] for e in events if "feedback" in e][-4:],
                 "skills": {s["id"]: runtime.skills.get(s["id"]) for s in runtime.skills.list()},
             }
+            focus = getattr(runtime, "p0_focus", lambda: None)()
+            if focus:
+                context["p0_focus"] = focus
+                if not focus.get("attempted"):
+                    context["planning_instruction"] = planning_instruction + (
+                        " 当前 p0_focus 存在且尚未尝试：必须先选择其指向的 propose_regions/locate_feature"
+                        "（或分块检测），在其完成或失败前不得查 P1/C 存在性。")
             persist({**state, "events": events, "requests": requests, "planning_requests": planning})
             usage = None
             try:

@@ -198,9 +198,19 @@ class WorkflowSession:
                 'parents':list(parents),**metadata}
 
     def blocked_tools(self):
-        """任务内按工具/已绑定服务配置熔断；换ROI/证据版本/目标均不能重发故障服务。"""
-        return {r['tool']:r.get('error_code') for r in read_json(self.operations)['entries'].values()
-                if r.get('status')=='failed' and stage_error_kind(r.get('error_code'))=='service'}
+        """任务内按工具熔断；locate/classify 允许有界重试后再熔断。"""
+        limit = int(self.config.get('max_tool_failures', 2))
+        retryable = {'locate_feature', 'classify_target'}
+        failures = {}
+        for row in read_json(self.operations)['entries'].values():
+            if row.get('status') == 'failed' and stage_error_kind(row.get('error_code')) == 'service':
+                failures.setdefault(row.get('tool'), []).append(row.get('error_code'))
+        blocked = {}
+        for tool, codes in failures.items():
+            if tool in retryable and len(codes) < limit:
+                continue
+            blocked[tool] = codes[-1]
+        return blocked
 
     def targets(self):
         snap=self.store.current();arts=snap['artifacts'];targets={}
@@ -318,6 +328,7 @@ class WorkflowSession:
         recovery = self.config.get('targeted_recovery', False)
         gaps = self.recovery_features() if recovery else []
         locate_attempts = sum(row['tool'] == 'locate_feature' for row in done.values())
+        max_locate = int(self.config.get('max_locate_attempts', 4))
         def offer(tool,t,priority):
             if tool in blocked:return
             if tool not in self.config.get('enabled_tools',TOOLS) and not include_offline:return
@@ -331,7 +342,7 @@ class WorkflowSession:
         for tid,t in self.targets().items():
             tool=None;image=t['image_id']
             if tid.startswith('locate:'):
-                if locate_attempts < 2:
+                if locate_attempts < max_locate:
                     tool = 'locate_feature'
             elif tid.startswith('roi:'):
                 if 'detected:'+image in arts:tool='detect_region'
@@ -514,8 +525,12 @@ class WorkflowSession:
                     cid=replacements[m.crop_id]
                 image_item=self._art(cid+':pixels','crop_pixels',m.png,parents,image_id=image)
                 items.append(image_item)
+                metadata={'identity_required': True} if tool == 'locate_feature' else {}
+                if m.raw.get('det_score') is not None:
+                    metadata['det_score'] = m.raw.get('det_score')
+                    metadata['det_confidence'] = m.raw.get('det_confidence')
                 items.append(self._art(cid,'crop',m.json_path,[image,image_item['id']],image_id=image,
-                                       **({'identity_required':True} if tool == 'locate_feature' else {})))
+                                       **metadata))
             marker='detected:'+image if tool=='detect_fov_initial' else 'detected:'+target['id']
             items.append(self._art(marker,'detection',completion,parents,image_id=image))
             scales={m.px_per_um for m in metas if finite_number(m.px_per_um,minimum=1e-12)}
@@ -577,8 +592,14 @@ class WorkflowSession:
                                    feature_id=fid,label=label))
             meta=contracts.CropMeta.from_json(target['path'])
             if target.get('identity_required'):
+                min_conf=self.config.get('identity_min_confidence','high')
+                allowed={'high'} if min_conf=='high' else (
+                    {'high','medium'} if min_conf=='medium' else {'high','medium','low'})
+                confidence=str(doc.get('confidence') or '')
+                items[-1]['identity_confidence']=confidence
                 items[-1]['identity_verified'] = (fid == meta.feature_id
-                    and doc.get('confidence') == 'high' and not doc.get('reject'))
+                    and confidence in allowed and not doc.get('reject'))
+                items[-1]['identity_review'] = bool(items[-1]['identity_verified'] and confidence != 'high')
             # 复核出的类别与crop不同：写一份**同像素、只改类别**的侧车，作为可重新分割的新目标。
             # 原crop与其掩码一律保留，失败/冲突仍可回溯；不是原地改写契约。
             if not target.get('identity_required') and fid and fid!=meta.feature_id:

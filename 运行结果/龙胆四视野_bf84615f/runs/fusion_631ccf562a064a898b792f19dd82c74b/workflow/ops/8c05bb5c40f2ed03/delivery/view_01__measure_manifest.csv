@@ -1,2 +1,0 @@
-﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity
-22588295530001,view_01__cluster_crystal__inst22588295530001.png,cluster_crystal_view_01_01,D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\龙胆四视野复测_501cc87e\inputs\view_01.jpg,cluster_crystal,草酸钙簇晶,,"[45, 45, 264, 194]",5.825,ok,0.12354,instance

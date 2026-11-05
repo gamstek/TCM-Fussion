@@ -125,6 +125,14 @@ def run_pipeline(config, *, base=None):
            "status": "running", "stage": "a", "config_sha256": digest(cfg),
            "result": str(directory/"fusion.json")}
     write_json(status_path, job)
+    code_baseline = None
+    if "workflow" in cfg.get("agent", {}):
+        from .workflow_backend import WorkflowBackend
+        code_baseline = WorkflowBackend.code_signature()
+        write_json(directory/"code_signature_start.json",
+                   {"schema": "code-signature/v1", "stage": "pipeline_start",
+                    "code_signature": code_baseline,
+                    "at": time.strftime("%Y-%m-%dT%H:%M:%S%z")})
     start = time.perf_counter()
     try:
         try:
@@ -166,7 +174,16 @@ def run_pipeline(config, *, base=None):
             return directory
         if "workflow" in cfg.get("agent", {}):
             from .workflow_entry import execute_workflow
-            return asyncio.run(execute_workflow(cfg,a,directory,routing=routing,start=start,job=job,status_path=status_path))
+            from .workflow_backend import WorkflowBackend
+            current = WorkflowBackend.code_signature()
+            write_json(directory/"code_signature_before_agent.json",
+                       {"schema": "code-signature/v1", "stage": "before_agent",
+                        "code_signature": current,
+                        "baseline": code_baseline,
+                        "at": time.strftime("%Y-%m-%dT%H:%M:%S%z")})
+            if code_baseline is not None and current != code_baseline:
+                raise IntegrationError("CODE_CHANGED", "A 推理期间代码签名变化；Agent 未启动")
+            return asyncio.run(execute_workflow(cfg,a,directory,routing=routing,start=start,job=job,status_path=status_path,code_baseline=code_baseline))
         job.update(stage="b")
         write_json(status_path, job)
         b_cfg = cfg.get("b", {})
@@ -229,6 +246,24 @@ def run_pipeline(config, *, base=None):
         if isinstance(exc, IntegrationError):
             raise IntegrationError(exc.code, f"{exc}；失败记录: {status_path}") from exc
         raise IntegrationError("INTEGRATION_ERROR", f"集成失败({type(exc).__name__})；详见状态: {status_path}") from exc
+    finally:
+        if code_baseline is not None:
+            try:
+                from .workflow_backend import WorkflowBackend
+                current = WorkflowBackend.code_signature()
+                write_json(directory/"code_signature_end.json",
+                           {"schema": "code-signature/v1", "stage": "pipeline_end",
+                            "code_signature": current, "baseline": code_baseline,
+                            "changed": current != code_baseline,
+                            "at": time.strftime("%Y-%m-%dT%H:%M:%S%z")})
+                if current != code_baseline:
+                    job["code_changed"] = True
+                    if job.get("status") == "completed":
+                        job["needs_review"] = True
+                    write_json(status_path, job)
+            except Exception:
+                # 结束复核不能覆盖主流程的失败原因。
+                pass
 
 
 def doctor(config):
