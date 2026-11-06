@@ -279,14 +279,14 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(ctx.exception.code, "SAMPLE_MISMATCH")
 
     def test_recorded_data_require_opt_in(self):
-        cfg = read_json(BASE/"config/demo.json")
+        cfg = read_json(BASE/"tests/fixtures/recorded_pipeline.json")
         cfg["allow_recorded"] = False
         with self.assertRaises(IntegrationError):
             validate_config(cfg)
 
     def test_demo_exercises_real_orchestration_without_network(self):
         with patch("urllib.request.urlopen") as network, patch("subprocess.run") as processes:
-            directory = run_pipeline(read_json(BASE/"config/demo.json"), base=self.root)
+            directory = run_pipeline(read_json(BASE/"tests/fixtures/recorded_pipeline.json"), base=self.root)
         value = read_json(directory/"fusion.json")
         self.assertTrue(value["simulation"])
         self.assertEqual(value["fusion"]["agreement"], "conflict")
@@ -348,7 +348,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(result["verdict"], self.b)
 
     def test_optional_a_unavailable_preserves_b(self):
-        cfg = read_json(BASE/"config/demo.json")
+        cfg = read_json(BASE/"tests/fixtures/recorded_pipeline.json")
         cfg["a"] = {"mode": "cli", "required": False, "image": str(self.root/"missing")}
         directory = run_pipeline(cfg, base=self.root)
         value = read_json(directory/"fusion.json")

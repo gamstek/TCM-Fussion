@@ -47,6 +47,14 @@ class ToolRetryPolicyTest(unittest.TestCase):
             obj = _runtime(root, {"c1": _failed("classify_target")})
             self.assertEqual(WorkflowSession.blocked_tools(obj), {})
 
+    def test_initial_detection_and_roi_screen_have_one_service_retry(self):
+        for tool in ('detect_fov_initial', 'roi_screen'):
+            with self.subTest(tool=tool), tempfile.TemporaryDirectory() as root:
+                first = _runtime(root, {'1': _failed(tool)})
+                self.assertNotIn(tool, WorkflowSession.blocked_tools(first))
+                twice = _runtime(root, {'1': _failed(tool), '2': _failed(tool)})
+                self.assertIn(tool, WorkflowSession.blocked_tools(twice))
+
 
 if __name__ == "__main__":
     unittest.main()

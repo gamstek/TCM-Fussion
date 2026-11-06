@@ -240,11 +240,15 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
                                              {'label':'淫羊藿','probability':.4}]}
         menus = []
         intervals = {}
+        import threading
+        entered = threading.Barrier(2, timeout=10)
 
         class SlowDetection(StageFixture):
             def execute(self, *args):
+                if args[1] != 'detect_fov_initial':
+                    return super().execute(*args)
                 intervals['yolo_start'] = time.monotonic()
-                time.sleep(.2)
+                entered.wait()  # Both tools must enter; sequential scheduling fails.
                 result = super().execute(*args)
                 intervals['yolo_end'] = time.monotonic()
                 return result
@@ -252,7 +256,7 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         class SlowObservation(FixtureBackend):
             def call(self, *args):
                 intervals['glm_start'] = time.monotonic()
-                time.sleep(.15)
+                entered.wait()
                 result = super().call(*args)
                 intervals['glm_end'] = time.monotonic()
                 return result
@@ -270,8 +274,9 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         toolbox = LocalToolbox(runtime, ledger_path=self.root/'ledger.json', backend=SlowObservation())
         trace = await run_react(runtime, toolbox, planner=Planner(), planner_mode='scripted')
         self.assertEqual(menus[0], ['detect_fov_initial'])
-        self.assertLess(max(intervals['yolo_start'], intervals['glm_start']),
-                        min(intervals['yolo_end'], intervals['glm_end']))
+        self.assertFalse(entered.broken)  # Serial execution cannot pass the two-party barrier.
+        self.assertLessEqual(max(intervals['yolo_start'], intervals['glm_start']),
+                             min(intervals['yolo_end'], intervals['glm_end']))
         self.assertEqual(trace['observation_requests'], 1)
         self.assertTrue(any(e.get('policy')=='yolo_initial_and_raw_observation' for e in trace['events']))
         self.assertEqual(trace['stop_reason'], 'planner_request_review')

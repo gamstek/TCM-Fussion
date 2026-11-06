@@ -15,3 +15,7 @@
 - 2026-11-06 CODE-062：adaptive_v2 的候选/P0缺口只能作为建议，禁止按假设名称或P0等级强制调查路线。模型可提交hypothesis_updates以提出、调查、暂停、撤销、恢复假设；状态不是证据。保留已观测证据、原A逐折榜单与规则裁决，按专属/共用特征生成动作。依据摘要与应用摘要分别记录，模拟和真实决策来源不得混淆。
 
 - 2026-11-06 CODE-063：调查停止码不等于诊断。正常收尾必须固定证据并生成final_evidence/final_assessment与可读综合判断；文本收尾默认预留一次额度，不新增图像或MCP动作，硬截止/模型失败回退程序化研判。模型引用须可追溯，不得把失败当阴性、把先验或假设当显微证据、把融合分数当正确率。正式确认仍交原规则，模型及程序来源如实标注。
+
+- CODE-066：正式主CLI仅run/doctor/selftest/five-view；回放、评估、LangMem优化与发布改走cli.offline，不得当废弃代码删除。五图必须调用lib.five_view/CLI，不通过Markdown注入再生成脚本；每次新case和空A缓存，禁止参考标签进规划。config/five_view.json显式阈值/工具列表、无旧路径和p0_priority；case_9cc59640原始工件保持只读，只是历史参考。依赖解释器用--a-python或TCM_A_PYTHON，不写死在规范模板。
+
+- 离线回归保留：主链测试在tests/，Reflection/LangMem/数据划分/置信门/路由测试在tests/offline/，两组均由selftest递归发现。不得通过删除离线断言伪造主链回归通过。退休运行器测试改为拒绝路径/不改原工件的断言；固定B模拟对照归tests/fixed_baseline.py。

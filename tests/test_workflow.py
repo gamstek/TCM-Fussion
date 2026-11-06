@@ -239,6 +239,23 @@ class WorkflowTests(unittest.TestCase):
         self.assertTrue(r.workflow.store.current()['records']);self.assertTrue(any(e['phase']=='recompute' for e in result['events']))
         self.assertEqual(self.image.read_bytes(),b'simulation-fov')
 
+    def test_roi_screen_top_k_and_locate_threshold_boundaries(self):
+        runtime = self.runtime(screen_top_k=2, glm_locate_threshold=.8)
+        session = runtime.workflow
+        self.assertFalse(session.locate_override({'det_score': .799}))
+        self.assertTrue(session.locate_override({'det_score': .8}))
+        self.assertFalse(session.locate_override({'det_score': None}))
+        doc = self.root / 'screen.json'
+        write_json(doc, {'rois': [{'index': 0, 'score': .1},
+                                 {'index': 1, 'score': .9}, {'index': 2, 'score': .8}]})
+        from types import SimpleNamespace
+        from TCM_Fusion.lib.workflow_session import WorkflowSession
+        stub = SimpleNamespace(config={'screen_top_k': 2},
+            store=SimpleNamespace(current=lambda: {'artifacts': {'screen': {
+                'valid': True, 'kind': 'screen', 'image_id': 'view', 'path': str(doc)}}}))
+        self.assertEqual(WorkflowSession.screen_rois(stub, 'view'), {1, 2})
+        self.assertIsNone(WorkflowSession.screen_rois(stub, 'other'))
+
     def test_targeted_location_is_optional_and_requires_crop_identity(self):
         class RecoveryFixture(StageFixture):
             confidence = 'medium'

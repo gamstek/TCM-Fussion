@@ -1,8 +1,0 @@
-{
-  "job_id": "fusion_c17d3404b44546ecb2aed01fc51496d3",
-  "sample_id": "case_95192bbe",
-  "status": "running",
-  "stage": "workflow_agent",
-  "config_sha256": "57fc39772ba0f1c24d3d3e7bb29740ea3dfe9b6949e38f45da7d284927cd443e",
-  "result": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_95192bbe\\runs\\fusion_c17d3404b44546ecb2aed01fc51496d3\\fusion.json"
-}

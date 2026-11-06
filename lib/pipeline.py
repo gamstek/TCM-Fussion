@@ -92,13 +92,15 @@ def validate_config(config):
         if a.get('mode')=='recorded':
             raise IntegrationError('CONFIG_INVALID','真实workflow不接受模拟A；可显式设置A不可用')
     if agent.get("mode") == "active":
+        if "workflow" not in agent:
+            raise IntegrationError("CONFIG_INVALID", "主动模式必须提供 agent.workflow；旧运行器已退役")
         if (not config.get("allow_network", False) and agent.get('workflow',{}).get('execution')!='shadow'
             and ("workflow" not in agent or agent.get("planner", "llm") != "heuristic")):
             raise IntegrationError("NETWORK_DISABLED", "主动模式须显式允许联网")
         if not isinstance(agent.get("image_roots"), list) or not agent["image_roots"]:
             raise IntegrationError("CONFIG_INVALID", "主动模式须提供同样品image_roots")
         if b.get("mode") == "recorded" or b.get("enable_vlm", False):
-            raise IntegrationError("CONFIG_INVALID", "主动模式禁止录制B与旧VLM预补查；workflow可从原图/部分工件开始，旧active需测量基线")
+            raise IntegrationError("CONFIG_INVALID", "主动模式禁止录制B与旧VLM预补查；workflow可从原图/部分工件开始，主动运行统一走workflow")
         if agent.get("planner", "llm") not in {"llm", "heuristic"} or agent.get("transport", "local") not in {"local", "mcp"}:
             raise IntegrationError("CONFIG_INVALID", "主动planner/transport非法")
         steps = agent.get("max_steps", 6)
@@ -195,26 +197,17 @@ def run_pipeline(config, *, base=None):
         job.update(stage="fusion_and_shadow")
         write_json(status_path, job)
         fusion = fuse(a, b["verdict"], knowledge_base(), cfg.get("aliases"))
-        active = cfg.get("agent", {}).get("mode") == "active"
-        if active:
-            from .active_runner import execute_active
-            job.update(stage="react_agent")
-            write_json(status_path, job)
-            agent = asyncio.run(execute_active(b, a, cfg["agent"], sample_id=job["sample_id"],
-                directory=directory, aliases=cfg.get("aliases"), allow_network=cfg.get("allow_network", False)))
-            fusion = fuse(a, agent["verdict"], knowledge_base(), cfg.get("aliases"))
-            fusion.update(source="original_rules_after_agent_observations", baseline_preserved=True)
-        else:
-            agent = select_shadow(fusion, b["verdict"], cfg.get("agent", {}),
-                                  allow_network=cfg.get("allow_network", False))
+        # Read-only historical artifact integration remains for contract regression.
+        # All active executions have already entered execute_workflow above.
+        agent = select_shadow(fusion, b["verdict"], cfg.get("agent", {}),
+                              allow_network=cfg.get("allow_network", False))
         simulated = any(x.get("provenance") == "recorded_simulation" for x in (a, b))
         value = {"schema": "ab-fusion/v1", "sample_id": job["sample_id"],
                  "simulation": simulated, "real_model_validation": False if simulated else None,
                  "a": a, "b": b, "fusion": fusion, "agent": agent,
                  "routing": routing, "route": "agent_or_baseline", "b_executed": True,
                  "elapsed_seconds": time.perf_counter()-start,
-                 "limitations": [("主动Agent已执行工具观察并由原规则重评分；原B工件不覆盖" if active else
-                                  "Agent只做影子动作选择，不执行新观察、不修改B裁决"),
+                 "limitations": ["Agent只做影子动作选择，不执行新观察、不修改B裁决",
                                  "A原CLI概率保留4位小数；尚未实现模型常驻",
                                  "B检测/IGM完整API计数不可得，不声称全链预算已受控"]}
         write_json(directory/"fusion.json", value)
@@ -223,17 +216,11 @@ def run_pipeline(config, *, base=None):
                   f"- A：{fusion['a_label'] or '不可用'}\n"
                   f"- B：{b['verdict']['verdict']} / {(b['verdict'].get('conclusion') or {}).get('display', '证据不足')}\n"
                   f"- 关系：{fusion['agreement']}\n- 需要复核：{fusion['needs_review']}\n"
-                  f"- {'主动停止原因' if active else '影子动作'}：{agent['choice']}\n"
+                  f"- 影子动作：{agent['choice']}\n"
                   f"- 观察执行数：{agent['observations_executed']}；原B工件未修改。\n\n"
                   + "\n".join('- '+x for x in value['limitations'])+"\n")
         if routing["mode"] != "off":
             report += f"\n- 启发式路由：{routing['mode']}；建议跳过：{routing['recommend_skip']}；本次仍执行B。\n"
-        if active:
-            new_verdict = agent["verdict"]
-            report += (f"\n- Agent后规则裁决：{new_verdict['verdict']} / "
-                       f"{(new_verdict.get('conclusion') or {}).get('display', '证据不足')}\n"
-                       f"- 规划请求：{agent['planning_requests']}；观察请求：{agent['observation_requests']}\n"
-                       f"- 强制场景完成：{agent['mandatory_complete']}；详情：agent_trace.json\n")
         (directory/"report.md").write_text(report, encoding="utf-8")
         job.update(status="completed", stage="done", simulation=simulated,
                    needs_review=fusion["needs_review"], elapsed_seconds=value["elapsed_seconds"])

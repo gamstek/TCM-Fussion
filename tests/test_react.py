@@ -356,7 +356,7 @@ class ReactTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(result["needs_review"])
 
     async def test_original_fixed_policy_comparison_counts_planning(self):
-        from TCM_Fusion.lib.agent_evaluation import compare_fixed_fixture
+        from TCM_Fusion.tests.fixed_baseline import compare_fixed_fixture
         result = await self.run_graph()
         comparison = compare_fixed_fixture(self.runtime, FixtureBackend(self.fixture["replies"]), result)
         self.assertTrue(comparison["same_measurement_start"])
@@ -376,7 +376,7 @@ class ReactTests(unittest.IsolatedAsyncioTestCase):
             await run_react(self.runtime, self.tools, planner_mode="llm")
         self.assertEqual(ctx.exception.code, "NETWORK_DISABLED")
 
-    async def test_full_active_pipeline_writes_new_verdict_preserves_baseline(self):
+    async def test_retired_active_path_rejected_preserves_baseline(self):
         from TCM_Fusion.lib.pipeline import run_pipeline
         root = self.root/"complete_b"
         write_json(root/"run_manifest.json", {"run_id": root.name, "config": {"sample": "react_demo"}})
@@ -392,14 +392,11 @@ class ReactTests(unittest.IsolatedAsyncioTestCase):
                   "a": {"mode": "unavailable"}, "b": {"mode": "existing", "run_dir": str(root)},
                   "agent": {"mode": "active", "transport": "local", "planner": "llm",
                             "image_roots": [str(self.image)], "judgement_request_budget": 6}}
-        with patch.object(paths, "DETECTION_CONFIG_DIR", str(self.root)), \
-                patch("TCM_Fusion.lib.agent_tools.LiveBackend", return_value=self.backend), \
-                patch("TCM_Fusion.lib.react_graph.LLMPlanner", return_value=ScriptedPlanner()), \
-                patch("urllib.request.urlopen") as network:
-            directory = await asyncio.to_thread(run_pipeline, config, base=self.root/"integration")
+        # The retired active path must fail before inference or modifying B artifacts.
+        with patch("urllib.request.urlopen") as network, patch("subprocess.run") as processes:
+            with self.assertRaises(IntegrationError) as error:
+                await asyncio.to_thread(run_pipeline, config, base=self.root/"integration")
+        self.assertEqual(error.exception.code, "CONFIG_INVALID")
         network.assert_not_called()
-        result = read_json(directory/"agent_verdict.json")
-        self.assertEqual(result["verdict"], "probable")
-        self.assertEqual(result["conclusion"]["id"], "猪苓")
+        processes.assert_not_called()
         self.assertEqual(vpath.read_bytes(), before)
-        self.assertEqual(read_json(directory/"job.json")["status"], "completed")

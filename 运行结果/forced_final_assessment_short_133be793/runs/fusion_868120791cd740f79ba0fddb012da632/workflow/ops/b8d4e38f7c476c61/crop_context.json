@@ -1,6 +1,0 @@
-{
-  "tool": "detect_fov_initial",
-  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\forced_final_assessment_short_133be793\\input.jpg",
-  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\forced_final_assessment_short_133be793\\runs\\fusion_868120791cd740f79ba0fddb012da632\\workflow\\ops\\b8d4e38f7c476c61\\detection",
-  "boxes": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\forced_final_assessment_short_133be793\\runs\\fusion_868120791cd740f79ba0fddb012da632\\workflow\\ops\\b8d4e38f7c476c61\\boxes.json"
-}

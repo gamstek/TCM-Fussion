@@ -17,13 +17,13 @@ class TimeBudgetTest(unittest.TestCase):
             "max_call_seconds": 600,
         })
 
-    def test_examples_use_ten_minute_budget(self):
-        for name in ("workflow.example.json", "adaptive_quality.example.json"):
-            path = Path(paths.PROJECT_ROOT) / "TCM_Fusion" / "config" / name
-            workflow = read_json(path)["agent"]["workflow"]
-            self.assertGreaterEqual(workflow["max_seconds"], 600, name)
-            self.assertGreaterEqual(workflow.get("max_observation_seconds", 0), 600, name)
-            self.assertGreaterEqual(workflow.get("max_call_seconds", 0), 600, name)
+    def test_live_template_preserves_reference_time_budget(self):
+        path = Path(paths.PROJECT_ROOT) / "TCM_Fusion/config/five_view.json"
+        workflow = read_json(path)["agent"]["workflow"]
+        self.assertEqual(workflow["max_seconds"], 1800)
+        self.assertEqual(workflow["max_observation_seconds"], 150)
+        self.assertEqual(workflow["max_call_seconds"], 180)
+        validate_arguments(WORKFLOW_SCHEMA, workflow)
 
 
 if __name__ == "__main__":
