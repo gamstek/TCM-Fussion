@@ -1,4 +1,4 @@
-"""Five-view interface contracts; model calls are explicit mocks, never live tests."""
+"""Generic multi-image interface contracts; model calls are explicit mocks."""
 import copy
 import hashlib
 import json
@@ -8,11 +8,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 import paths
-from TCM_Fusion.lib import five_view as F
+from TCM_Fusion.lib import multi_view as F
 from TCM_Fusion.lib.storage import read_json, write_json, IntegrationError
 
 
-class FiveViewTests(unittest.TestCase):
+class MultiViewTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
@@ -20,13 +20,13 @@ class FiveViewTests(unittest.TestCase):
         self.source = self.root / 'source'
         self.source.mkdir()
         self.proof = {'herb': 'REFERENCE_ONLY', 'feature_id': 'TRUTH_ONLY', 'views': []}
-        for i in range(5):
+        for i in range(3):
             p = self.source / f'original_{i}.jpg'
             p.write_bytes(f'explicit-test-placeholder-{i}'.encode())
             self.proof['views'].append({'view': p.name, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()})
         self.save()
         self.options = {'output_root': self.root / 'outputs', 'a_python': paths.VENV_PY}
-        self.template = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/five_view.json')
+        self.template = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/multi_view.json')
 
     def save(self):
         write_json(self.source / 'input_proof.json', self.proof)
@@ -35,13 +35,13 @@ class FiveViewTests(unittest.TestCase):
         self.proof['views'][0]['sha256'] = '0' * 64
         self.save()
         with self.assertRaises(IntegrationError):
-            F.run_five_view(self.source, **self.options, dry_run=True)
+            F.run_multi_view(self.source, **self.options, dry_run=True)
         self.assertFalse(self.options['output_root'].exists())
         self.proof['views'][0] = copy.deepcopy(self.proof['views'][1])
         self.save()
         with self.assertRaises(IntegrationError) as error:
             F.inspect_sources(self.source)
-        self.assertEqual(error.exception.code, 'FIVE_VIEW_DUPLICATE')
+        self.assertEqual(error.exception.code, 'MULTI_VIEW_DUPLICATE')
 
     def test_traversal_and_wrong_count_rejected(self):
         outside = self.root / 'outside.jpg'
@@ -50,16 +50,30 @@ class FiveViewTests(unittest.TestCase):
         self.save()
         with self.assertRaises(IntegrationError) as error:
             F.inspect_sources(self.source)
-        self.assertEqual(error.exception.code, 'FIVE_VIEW_SCOPE')
-        self.proof['views'].pop()
+        self.assertEqual(error.exception.code, 'MULTI_VIEW_SCOPE')
+        self.proof['views'] = []
         self.save()
         with self.assertRaises(IntegrationError):
             F.inspect_sources(self.source)
 
+    def test_arbitrary_count_is_not_fixed_to_five(self):
+        for i in range(3, 7):
+            p = self.source / f'original_{i}.jpg'
+            p.write_bytes(f'explicit-test-placeholder-{i}'.encode())
+            self.proof['views'].append({'view': p.name,
+                                        'sha256': hashlib.sha256(p.read_bytes()).hexdigest()})
+        self.save()
+        bindings = F.inspect_sources(self.source)
+        self.assertEqual(len(bindings), 7)
+        images = [row['source'] for row in bindings]
+        cfg = F.bind_config(self.template, images, sample_id='test', a_python=paths.VENV_PY)
+        self.assertEqual(len(cfg['a']['images']), 7)
+        self.assertEqual(len(cfg['agent']['image_roots']), 7)
+
     def test_a_python_required_before_case_creation(self):
         with self.assertRaises(IntegrationError) as error:
-            F.run_five_view(self.source, output_root=self.root / 'outputs', dry_run=True)
-        self.assertEqual(error.exception.code, 'FIVE_VIEW_A_PYTHON_MISSING')
+            F.run_multi_view(self.source, output_root=self.root / 'outputs', dry_run=True)
+        self.assertEqual(error.exception.code, 'MULTI_VIEW_A_PYTHON_MISSING')
         self.assertFalse((self.root / 'outputs').exists())
 
     def test_dry_run_copies_only_sources_fresh_cache_no_labels_or_model(self):
@@ -67,7 +81,7 @@ class FiveViewTests(unittest.TestCase):
         (self.source / 'a_cache/old.json').write_text('old')
         with patch.object(F, 'doctor', return_value={'ready': True}), \
                 patch.object(F, 'run_pipeline') as pipeline, patch('urllib.request.urlopen') as network:
-            base = F.run_five_view(self.source, **self.options, dry_run=True)
+            base = F.run_multi_view(self.source, **self.options, dry_run=True)
         pipeline.assert_not_called()
         network.assert_not_called()
         cfg = read_json(base / 'config.json')
@@ -75,7 +89,7 @@ class FiveViewTests(unittest.TestCase):
         self.assertNotIn('TRUTH_ONLY', json.dumps(cfg))
         self.assertFalse((base / 'a_cache').exists())
         self.assertFalse((base / 'runs').exists())
-        self.assertEqual(len(cfg['a']['images']), 5)
+        self.assertEqual(len(cfg['a']['images']), len(self.proof['views']))
         self.assertEqual(cfg['a']['images'], cfg['agent']['image_roots'])
         self.assertEqual(cfg['agent']['transport'], 'mcp')
         self.assertNotIn('routing', cfg)
@@ -89,7 +103,7 @@ class FiveViewTests(unittest.TestCase):
             result.mkdir(parents=True)
             return result
         with patch.object(F, 'doctor', return_value={'ready': True}), patch.object(F, 'run_pipeline', side_effect=run) as call:
-            result = F.run_five_view(self.source, **self.options)
+            result = F.run_multi_view(self.source, **self.options)
         self.assertEqual(call.call_count, 1)
         base = result.parent.parent
         self.assertEqual(read_json(base / 'run_location.json')['directory'], str(result))
@@ -98,9 +112,9 @@ class FiveViewTests(unittest.TestCase):
     def test_doctor_failure_is_terminal_and_persisted(self):
         with patch.object(F, 'doctor', return_value={'ready': False}), patch.object(F, 'run_pipeline') as call:
             with self.assertRaises(IntegrationError) as error:
-                F.run_five_view(self.source, **self.options)
+                F.run_multi_view(self.source, **self.options)
         call.assert_not_called()
-        self.assertEqual(error.exception.code, 'FIVE_VIEW_NOT_READY')
+        self.assertEqual(error.exception.code, 'MULTI_VIEW_NOT_READY')
         base = next(self.options['output_root'].iterdir())
         self.assertEqual(read_json(base / 'interface_status.json')['stage'], 'doctor')
         self.assertEqual(read_json(base / 'interface_status.json')['status'], 'failed')
@@ -109,7 +123,7 @@ class FiveViewTests(unittest.TestCase):
         with patch.object(F, 'doctor', return_value={'ready': True}), \
                 patch.object(F, 'run_pipeline', side_effect=IntegrationError('TEST_FAILURE', 'fixture')):
             with self.assertRaises(IntegrationError):
-                F.run_five_view(self.source, **self.options)
+                F.run_multi_view(self.source, **self.options)
         base = next(self.options['output_root'].iterdir())
         self.assertFalse((base / 'run_location.json').exists())
         self.assertEqual(read_json(base / 'interface_status.json')['error_code'], 'TEST_FAILURE')
@@ -120,15 +134,19 @@ class FiveViewTests(unittest.TestCase):
             cfg = copy.deepcopy(self.template)
             cfg[field] = value
             with self.assertRaises(IntegrationError):
-                F.bind_config(cfg, images, sample_id='test')
+                F.bind_config(cfg, images, sample_id='test', a_python=paths.VENV_PY)
 
     def test_reference_policy_field_parity_and_explicit_defaults(self):
         ref = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/运行结果/case_9cc59640/config.json')
         old = ref['agent']['workflow']
         new = self.template['agent']['workflow']
         for field, value in old.items():
-            if field != 'p0_priority':
+            if field not in {'p0_priority', 'max_initializations', 'max_locate_attempts'}:
                 self.assertEqual(new[field], value, field)
+        self.assertNotIn('max_initializations', new)
+        self.assertNotIn('max_locate_attempts', new)
+        self.assertEqual(new['initialization_reserve'], 1)
+        self.assertEqual(new['locate_attempts_per_view'], 2)
         from TCM_Fusion.lib.workflow_session import TOOLS
         self.assertEqual(set(new['enabled_tools']), set(TOOLS))
         self.assertNotIn('p0_priority', new)

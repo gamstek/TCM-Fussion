@@ -55,7 +55,10 @@ class WorkflowSession:
                               **({'yolo': self.yolo_signature} if self.yolo_signature else {})})
         self.store=EvidenceStore(self.root/'evidence',self.identity)
         self.budget_path=self.root/'resources.json';self.operations=self.root/'operations.json'
-        self.limits={'initialization':config.get('max_initializations',len(runtime.images)),
+        init_limit = config.get('max_initializations')
+        if init_limit is None:
+            init_limit = len(runtime.images) + int(config.get('initialization_reserve', 1))
+        self.limits={'initialization':init_limit,
                      'recompute':config.get('max_recompute',8),'network':config.get('max_api_calls',16),
                      'planning':config.get('max_planning',6),'observation':config.get('max_observations',6),
                      'total':config.get('max_resource_units',48)}
@@ -416,7 +419,11 @@ class WorkflowSession:
         paused_features={c['feature'] for row in self.runtime.kb.candidates()
                          if row['id'] in inactive for c in row['criteria']}-active_features
         locate_attempts = sum(row['tool'] == 'locate_feature' for row in done.values())
-        max_locate = int(self.config.get('max_locate_attempts', 4))
+        max_locate = self.config.get('max_locate_attempts')
+        if max_locate is None:
+            max_locate = max(4, int(self.config.get('locate_attempts_per_view', 2)) * len(self.runtime.images)
+                             + int(self.config.get('locate_attempt_reserve', 2)))
+        max_locate = int(max_locate)
         def offer(tool,t,priority):
             if tool in blocked:return
             if tool not in self.config.get('enabled_tools',TOOLS) and not include_offline:return

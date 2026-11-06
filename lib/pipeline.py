@@ -62,7 +62,7 @@ def validate_config(config):
     if "images" in a:
         views = a["images"]
         if (a.get("mode", "cli") != "cli" or "image" in a or not isinstance(views, list)
-                or len(views) < 2 or any(not isinstance(p, str) or not p for p in views)
+                or len(views) < 1 or any(not isinstance(p, str) or not p for p in views)
                 or len(set(views)) != len(views) or config.get("routing")
                 or agent.get("mode") != "active" or "workflow" not in agent):
             raise IntegrationError("CONFIG_INVALID", "A.images 仅用于无路由的主动多视野工作流，须为不同原图")

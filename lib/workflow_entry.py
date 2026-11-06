@@ -46,6 +46,9 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
     'max_locate_attempts':{'type':'integer','minimum':0,'maximum':100},
+    'locate_attempts_per_view':{'type':'integer','minimum':1,'maximum':20},
+    'locate_attempt_reserve':{'type':'integer','minimum':0,'maximum':40},
+    'initialization_reserve':{'type':'integer','minimum':0,'maximum':40},
     'max_tool_failures':{'type':'integer','minimum':0,'maximum':10},
     'max_seconds':{'type':'number','exclusiveMinimum':0,'maximum':86400},
     'max_observation_seconds':{'type':'number','exclusiveMinimum':0,'maximum':86400},
