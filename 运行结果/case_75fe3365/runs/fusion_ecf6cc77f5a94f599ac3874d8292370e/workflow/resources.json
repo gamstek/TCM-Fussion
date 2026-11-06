@@ -1,0 +1,43 @@
+{
+  "identity": "c3c7a67609b84c43f253bb7d1bc59ae79c8bc5148f2c6b593b4d61e2b2140068",
+  "deadline": 1793932501.5025878,
+  "used": {
+    "planning": 2,
+    "network": 4,
+    "initialization": 1
+  },
+  "entries": {
+    "planning:0:0": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:0:0": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "f2d58a07758a1c77d1fc907fe2900c18ae6dbe8323c45aa75146e65768673777": {
+      "pool": "initialization",
+      "status": "pending"
+    },
+    "842b2c50608b54a9849b4a826d13f77b2daae768319f6e8d8ba820e711d66370": {
+      "pool": "network",
+      "status": "pending",
+      "operation_key": "f2d58a07758a1c77d1fc907fe2900c18ae6dbe8323c45aa75146e65768673777"
+    },
+    "b3d28a6288fdcaf590ace35dc498a6f2b6d0529960a2c50471d2ddc465ec3763": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "f2d58a07758a1c77d1fc907fe2900c18ae6dbe8323c45aa75146e65768673777",
+      "http_status": 200,
+      "error_type": null
+    },
+    "planning:1:1": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:1:1": {
+      "pool": "network",
+      "status": "pending"
+    }
+  }
+}

@@ -286,7 +286,7 @@ def doctor(config):
     check("A原脚本", (Path(paths.PROJECT_ROOT)/"MICROSCOPE-main/predictv3_resnet50.py").is_file(), "只通过子进程执行")
     if a.get("mode", "cli") == "cli":
         checkpoint = project_path(a.get("checkpoint_dir", "MICROSCOPE-main/runs/v3_resnet50_full"))
-        image = project_path(a.get("image", "MICROSCOPE-main/显微镜像/甘草/example.jpg"))
+        image = project_path(a.get("image") or (a.get("images") or ["MICROSCOPE-main/显微镜像/甘草/example.jpg"])[0])
         check("A五折参考落点", all((checkpoint/f"fold{i}_best.pt").is_file() for i in range(1, 6)), checkpoint)
         check("A原图", image.is_file(), image)
         py = project_path(a.get("python", paths.VENV_PY))

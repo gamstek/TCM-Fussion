@@ -1,0 +1,14 @@
+{
+  "weights": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\yolo-results\\detection\\yolo_runs\\v1_yolov10s_1024\\weights\\best.pt",
+  "class_map": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\yolo-results\\detection\\yolo_runs\\data_local.yaml",
+  "detector_config": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\config\\detector.json",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_8cd4d9cf\\view_05.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_8cd4d9cf\\runs\\fusion_94eb9b5d1d6648c793fb5c675eaaf579\\workflow\\ops\\10d05f9e4a341d96\\boxes.json",
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04"
+  }
+}

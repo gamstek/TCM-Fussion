@@ -1,0 +1,28 @@
+{
+  "entries": {
+    "f2d58a07758a1c77d1fc907fe2900c18ae6dbe8323c45aa75146e65768673777": {
+      "action_id": "d0c8d96590791269c4f07ef4ba9bd818b4b6d543e22b97ba0839c80ec0ddcc6a",
+      "tool": "detect_fov_initial",
+      "target_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "f2d58a07758a1c77d1fc907fe2900c18ae6dbe8323c45aa75146e65768673777",
+      "evidence_version": "0a8d9023585556893558d1a78753712313e4459b6327512fadd8aafa85245a55",
+      "dependency_fingerprint": "d3b7966f7a3d873dda6c4702b5fd432424ff76f3c838616194f5388e0808f534",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_75fe3365\\runs\\fusion_ecf6cc77f5a94f599ac3874d8292370e\\workflow\\ops\\f2d58a07758a1c77",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops/epidermis_cell_view_01_01.json": "a0456500ff86d6f11d88be98c8476d3851479b421eaa7fb92559332430af2cfe",
+          "detection/crops/epidermis_cell_view_01_01.png": "aa115a4f8431660e409ecf190c9a23f4ef8d30b9455630a9cf435bd194f7f4ea",
+          "detection/crops.json": "d03e00aa7fba5c3685b8fa291bbafa416302864c10bf12db6633a6503710bfe9"
+        },
+        "quality": null
+      }
+    }
+  }
+}
