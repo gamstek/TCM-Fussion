@@ -25,6 +25,8 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'execution':{'enum':['shadow','active']},
     'p0_priority':{'type':'boolean'},
     'min_support_features':{'type':'integer','enum':[1,2]},
+    'final_assessment_llm':{'type':'boolean'},
+    'final_assessment_seconds':{'type':'number','exclusiveMinimum':0,'maximum':120},
     'identity_min_confidence':{'enum':['high','medium','low']},
     'candidate_scope':{'enum':['a_topk','open_strict']},
     'a_weight':{'type':'number','minimum':0,'maximum':1},
@@ -138,14 +140,26 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
                             runtime.workflow.config.get('a_weight',0.5),
                             runtime.workflow.config.get('b_weight',0.5))
     admission=runtime.admission_decision(verdict)
-    runtime.workflow.close(result['stop_reason'])
-    result['resources']=read_json(runtime.workflow.budget_path)
     result['candidate_admission']=admission
     if admission.get('decision') in {'verify','suppress'}:
         result['needs_review']=True
     result['needs_review'] = bool(result['needs_review'] or verdict.get('needs_review'))
     verdict['needs_review']=result['needs_review']
-    verdict['candidate_admission']=admission;write_json(directory/'agent_verdict.json',verdict)
+    verdict['candidate_admission']=admission
+    from .final_assessment import finalize
+    assessment=finalize(runtime,verdict,result,directory)
+    guard.check('final_assessment_returned')
+    result['final_assessment']=assessment
+    result['needs_review']=bool(result['needs_review'] or assessment['review_required'])
+    verdict['needs_review']=result['needs_review']
+    result['events'].append({'phase':'final_assessment','decision_source':assessment['method'],
+        'stop_reason':result['stop_reason'],'candidate_id':assessment['candidate_id'],
+        'model_failure':assessment['model_failure'],'usage':assessment['usage'],
+        'new_image_calls':0,'new_tool_calls':0})
+    runtime.workflow.close(result['stop_reason'])
+    result['resources']=read_json(runtime.workflow.budget_path)
+    write_json(directory/'agent_trace.json',result)
+    write_json(directory/'agent_verdict.json',verdict)
     fusion=fuse(a,verdict,knowledge_base(),config.get('aliases'));fusion['needs_review']=result['needs_review'] or fusion['needs_review'];fusion['candidate_admission']=admission
     output=project_output(runtime.sample_id,verdict,result,a)
     write_json(directory/'output.json',output)
@@ -159,13 +173,26 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
            'b_executed':bool(result['operations']),'elapsed_seconds':time.perf_counter()-start,
            'limitations':['真实API及风险阈值需独立数据验收；资源计量为调用/任务次数，不等于费用']}
     write_json(directory/'fusion.json',value)
+    comparison='\n'.join(
+        f"| {row['display']} | {row['rule_confidence']} | {row['fused_score']} | "
+        f"{len(row['supported_criteria'])} | {len(row['required_gaps'])} |"
+        for row in assessment['candidate_comparison'])
     (directory/'report.md').write_text('# 自主B工具与A融合\n\n'
         f"- 裁决：{verdict['verdict']}\n- 交付输出：{output['status']} / "
         f"{(output['top_candidate'] or {}).get('display', '无')}\n"
         f"- 内部复核标记：{fusion['needs_review']}；交付层 review_required={output['review_required']}\n"
         f"- 强观察：{len(output['strong_observations'])} 条；备选：{len(output['alternatives'])} 个\n"
         f"- 停止原因：{result['stop_reason']}\n- 证据版本：{result['evidence_version']}\n"
-        '- 原图及原B目录未覆盖；阶段失败/资源明细见agent_trace.json。\n',encoding='utf-8')
+        '- 原图及原B目录未覆盖；阶段失败/资源明细见agent_trace.json。\n\n'
+        '## 收尾综合研判\n\n'
+        f"{assessment['judgement']}\n\n{assessment['explanation']}\n\n"
+        f"- 研判来源：{assessment['method']}；模型失败原因：{assessment['model_failure']}\n"
+        f"- 支持证据：{[f['id'] for f in assessment['supporting_evidence']]}\n"
+        f"- 反证：{[f['id'] for f in assessment['counterevidence']]}\n"
+        f"- 未解决：{[f['id'] for f in assessment['unresolved']]}\n"
+        '- 全部证据及采信边界：final_evidence.json；结论与依据：final_assessment.json。\n\n'
+        '| 候选 | B规则分 | 融合排序分（非正确率） | 支持判据数 | 必需判据缺口数 |\n'
+        '|---|---|---|---|---|\n'+comparison+'\n',encoding='utf-8')
     job.update(status='completed',stage='done',needs_review=fusion['needs_review'],route='workflow_agent',
                elapsed_seconds=value['elapsed_seconds'],output=str(directory/'output.json'),
                code_signature=guard.snapshot());write_json(status_path,job)

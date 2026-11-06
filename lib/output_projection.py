@@ -208,6 +208,8 @@ def project_output(sample_id, verdict, result, a):
         "classifications": classifications,
         "missing_required": missing,
         "review_required": needs_review,
+        "final_assessment": result.get('final_assessment'),
+        "judgement": (result.get('final_assessment') or {}).get('judgement'),
         "audit": {
             "rule_verdict": verdict.get("verdict"),
             "internal_needs_review": bool(verdict.get("needs_review")),

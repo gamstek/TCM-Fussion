@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876",
+    "decision_summary": "秦皮的C级判据sand_crystal已在本视野阳性（conf 0.82），但桔梗（折3/4/5中分数接近）的P1级required特征secretory_tissue完全未核验，是当前候选间最有区分性的缺口。执行presence_check核验桔梗联结乳管（14～25μm，含淡黄色颗粒状物），可增加支持或反证；阴性不排除，故继续保留桔梗为调查假设。维持秦皮、桔梗两个假设为investigating。",
+    "override_reason": null,
+    "investigate_candidates": [
+      "秦皮",
+      "桔梗"
+    ],
+    "investigation_reason": "秦皮sand_crystal已阳性但仍需场景核验与复核；桔梗secretory_tissue未查，是区分两候选的关键缺失证据。"
+  },
+  "usage": {
+    "completion_tokens": 231,
+    "completion_tokens_details": {
+      "reasoning_tokens": 52
+    },
+    "prompt_tokens": 11299,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 11530
+  }
+}

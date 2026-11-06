@@ -271,6 +271,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             ("pending_repair", pending_repair), ("evidence_requires_review", need)) if blocked]
         if workflow is not None and workflow.remaining_seconds() <= 0.1:
             reason = "workflow_deadline"
+        elif (autonomous and workflow.limits.get('finalization',0) and
+              workflow.remaining_seconds() <= min(workflow.config.get('final_assessment_seconds',30),
+                                                  workflow.config.get('max_seconds',600)*.2)):
+            reason = 'finalization_time_reserve'
         elif autonomous:
             if state["steps"] >= max_steps:
                 reason = "max_steps"
@@ -313,8 +317,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 "gap": gap if ranking else None,
                 "no_gain_streak": state["no_gain"],
             }
-            update.update(stop_advisory=advisory, finish_veto=veto,
-                          needs_review=update["needs_review"] or reason == "override_exhausted")
+            # An execution limit is not, by itself, evidence against a diagnosis.
+            update.update(stop_advisory=advisory, finish_veto=veto)
         persist(update)
         return update
 
@@ -322,6 +326,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         used = read_json(workflow.budget_path)["used"]
         remaining = {pool: limit - used.get(pool, 0) for pool, limit in workflow.limits.items()}
         remaining["total"] = workflow.limits["total"] - sum(used.values())
+        held=max(0,remaining.get('finalization',0))
+        remaining['network']-=held
+        remaining['total']-=2*held
+        remaining['reserved_finalization']=held
         return remaining
 
     def affordable(action, remaining):

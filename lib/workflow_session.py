@@ -59,6 +59,9 @@ class WorkflowSession:
                      'recompute':config.get('max_recompute',8),'network':config.get('max_api_calls',16),
                      'planning':config.get('max_planning',6),'observation':config.get('max_observations',6),
                      'total':config.get('max_resource_units',48)}
+        self.limits['finalization'] = int(bool(
+            config.get('final_assessment_llm', True) and allow_network and not runtime.simulation
+            and self.limits['network'] > 0 and self.limits['total'] >= 2))
         h=acquire(self.budget_path)
         try:
             if not self.budget_path.exists():write_json(self.budget_path,{'identity':self.identity,
@@ -187,7 +190,7 @@ class WorkflowSession:
 
     def charge(self,pool,key,*,network=True):
         """预约资源；`network=False` 用于 worker 内已有受控HTTP守卫、网络由其请求键自记的场景。"""
-        extra_pool = 'network' if network and pool in {'planning', 'observation'} else None
+        extra_pool = 'network' if network and pool in {'planning', 'observation', 'finalization'} else None
         if not reserve(self.budget_path,pool,key,self.limits,identity=self.identity,extra_pool=extra_pool):
             raise IntegrationError('RESOURCE_REPLAY','同资源操作已预约，禁止自动重发')
         return True

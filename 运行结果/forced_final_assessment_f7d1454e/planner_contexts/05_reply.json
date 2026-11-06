@@ -1,0 +1,18 @@
+{
+  "reply": {
+    "action_id": "bd22a23862ee802539036fc30a88b241de3ef458490982de01f9a91f9b7bc8a0",
+    "decision_summary": "秦皮sand_crystal已阳性（conf 0.82）且场景核验显示细胞内结晶、细胞壁可见，与秦皮判据形态一致；桔梗关键特征secretory_tissue在当前视野为阴性。已有观察对秦皮有利但裁决仍为insufficient_evidence（top_conf 0.51，sand_crystal标为NO_REF待复核）。当前还有观察与规划预算，继续对同一视野提议局部核验区域，以获取更强的存在性/形态证据，尝试解除复核标记后再收尾；不把阴性一次结果当作桔梗不存在的排他证据。",
+    "override_reason": null
+  },
+  "usage": {
+    "completion_tokens": 375,
+    "completion_tokens_details": {
+      "reasoning_tokens": 228
+    },
+    "prompt_tokens": 11944,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 12319
+  }
+}

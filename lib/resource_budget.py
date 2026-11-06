@@ -16,6 +16,12 @@ def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool
         if extra_pool:
             reservations.append((extra_pool, 'api:' + key))
         if any(k in value['entries'] for _, k in reservations):return False
+        held = max(0, limits.get('finalization',0)-value['used'].get('finalization',0))
+        if pool != 'finalization' and held:
+            network_after = value['used'].get('network',0)+sum(p=='network' for p,_ in reservations)
+            if (network_after > limits['network']-held or
+                    sum(value['used'].values())+len(reservations) > limits['total']-2*held):
+                raise IntegrationError('RESOURCE_BUDGET','保留收尾研判额度；停止追加调查')
         if (any(value['used'].get(p,0)>=limits[p] for p, _ in reservations)
                 or sum(value['used'].values()) + len(reservations) > limits['total']):
             raise IntegrationError('RESOURCE_BUDGET','资源预算耗尽')

@@ -1,0 +1,69 @@
+{
+  "entries": {
+    "7dec81d34844641ab4c287e1d30a6e1571e89945fa5728fb013c53f987182155": {
+      "action_id": "61d85b91b55dcb84c8f4b4bbe2641a8d5b4f8924f15a3e284f80c1b1c2ba28e9",
+      "tool": "detect_fov_initial",
+      "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "7dec81d34844641ab4c287e1d30a6e1571e89945fa5728fb013c53f987182155",
+      "evidence_version": "426bc284ed9f7e8c3bfbc145d272debad6553146d5228985cd9047d8d9a5a81d",
+      "dependency_fingerprint": "e9bd1e030a5d3572c018ad6c5c1dc1e69929cb540d7c922fc24797ec24ef83f1",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\forced_final_assessment_f7d1454e\\runs\\fusion_a0711f56aae244c0898a338fbb1420ce\\workflow\\ops\\7dec81d34844641a",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops.json": "cf9bc5f89ced1fb419b08680acc8a38c7d149ed6453c424593130ff4d5558573"
+        },
+        "quality": null
+      }
+    },
+    "6d191e8460def4b22544b75a7f8c71d70e46c21f5a46a2706fce17a3c2a415a9": {
+      "action_id": "bd22a23862ee802539036fc30a88b241de3ef458490982de01f9a91f9b7bc8a0",
+      "tool": "propose_regions",
+      "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "6d191e8460def4b22544b75a7f8c71d70e46c21f5a46a2706fce17a3c2a415a9",
+      "evidence_version": "88c3a188ce9632f6c565ea174f3197046e5ce290589ac0fcb0c8f9b40bded4ec",
+      "dependency_fingerprint": "63480769080b920a23ab15311adf27199b686b5c75eaf9d052512cb58fce1142",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\forced_final_assessment_f7d1454e\\runs\\fusion_a0711f56aae244c0898a338fbb1420ce\\workflow\\ops\\6d191e8460def4b2",
+        "paths": {
+          "regions": "detection/regions.json"
+        },
+        "files": {
+          "detection/regions.json": "627b9aa16ef40dcecf0ce43af1176b095788db454bc9b27e9ef2ecd53ad207df"
+        },
+        "quality": null
+      }
+    },
+    "2e0879c5c2d92a9ac200338a892bb889275758e7d9c4193ce864f2d75210864f": {
+      "action_id": "9d10eea5952341399b3e89d8c5110b093471a0a62b3393ecc65cb0bcaf464bfa",
+      "tool": "detect_region",
+      "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "2e0879c5c2d92a9ac200338a892bb889275758e7d9c4193ce864f2d75210864f",
+      "evidence_version": "8df69e45a67dbdd758aa13997a154ec13ad373e6b835ee3fc98a471de2edc04d",
+      "dependency_fingerprint": "2017a7a9b4a3d572148f1caf0a7f10c0a8f811d36b989dd80605e3c019495b67",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\forced_final_assessment_f7d1454e\\runs\\fusion_a0711f56aae244c0898a338fbb1420ce\\workflow\\ops\\2e0879c5c2d92a9a",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/region_result.json"
+        },
+        "files": {
+          "detection/region_result.json": "da9f3ae0e62d4cf115ca6e583473f7cfced51977077346b47427ff9518a23625"
+        },
+        "quality": null
+      }
+    }
+  }
+}
