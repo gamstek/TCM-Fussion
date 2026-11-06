@@ -1,5 +1,0 @@
-{
-  "tool": "propose_regions",
-  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_optimized_mcp_dc510d4b\\input.jpg",
-  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_optimized_mcp_dc510d4b\\runs\\fusion_b8391f9fc6024ef082340d476074db54\\workflow\\ops\\2f63f6ec7bd51ab8\\detection"
-}

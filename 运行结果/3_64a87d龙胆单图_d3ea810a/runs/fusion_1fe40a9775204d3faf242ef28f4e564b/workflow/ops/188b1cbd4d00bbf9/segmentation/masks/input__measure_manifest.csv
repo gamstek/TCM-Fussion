@@ -1,2 +1,0 @@
-﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity
-1,input__fiber__inst01.png,fiber_input_01,D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\3_64a87d_d3ea810a\input.jpg,fiber,纤维,unknown,"[0, 0, 1782, 1444]",11.65,ok,0.503172,instance

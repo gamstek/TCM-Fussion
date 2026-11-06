@@ -1,9 +1,0 @@
-{
-  "job_id": "fusion_4b260c1ac9c24e4089a73901dfec5d61",
-  "sample_id": "react_context_live_b531ebf2",
-  "status": "cancelled",
-  "stage": "test_supervisor_cancelled",
-  "config_sha256": "d5376dd388d324fe5e25214e63d2441bd07858c2175c1b1ea005a665c82ea096",
-  "result": "D:\\TCM-Microscopic-Image-Recognition-main\\results\\ui_out\\fusion\\react_context_live_b531ebf2\\runs\\fusion_4b260c1ac9c24e4089a73901dfec5d61\\fusion.json",
-  "cancel_reason": "MCP_NATIVE_IMPORT_STALL_DIAGNOSED"
-}

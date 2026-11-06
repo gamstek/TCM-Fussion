@@ -1,2 +1,0 @@
-﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity
-29225319110001,view_01__needle_crystal__inst29225319110001.png,needle_crystal_view_01_glm9963898c4126_01,D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\needle_5view_final_1f76fd81\view_01.jpg,needle_crystal,草酸钙针晶,,"[24, 24, 357, 362]",5.825,ok,0.017883,instance

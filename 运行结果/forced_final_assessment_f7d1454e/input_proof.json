@@ -1,8 +1,0 @@
-{
-  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\dataset\\目标检测标注\\草酸钙针晶\\images\\3_64a87d.jpg",
-  "sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
-  "reference_excluded_from_agent": true,
-  "previous_visual_artifacts_reused": false,
-  "client_date": "2026-11-06",
-  "purpose": "real forced-stop finalization test; max_steps intentionally set to six"
-}
