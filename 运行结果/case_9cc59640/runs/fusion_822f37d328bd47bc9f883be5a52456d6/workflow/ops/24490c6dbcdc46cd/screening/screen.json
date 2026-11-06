@@ -1,0 +1,44 @@
+{
+  "image_id": "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_9cc59640\\runs\\fusion_822f37d328bd47bc9f883be5a52456d6\\workflow\\ops\\24490c6dbcdc46cd\\screening\\sheet.jpg",
+  "rois": [
+    {
+      "index": 2,
+      "score": 0.9,
+      "worth": true,
+      "reason": "可见清晰的深色纺锤形晶体，疑似针晶束局部，最值得定向框选"
+    },
+    {
+      "index": 3,
+      "score": 0.8,
+      "worth": true,
+      "reason": "视野中央有明显的深色长条状晶体，两端渐尖，符合针晶特征"
+    },
+    {
+      "index": 5,
+      "score": 0.6,
+      "worth": true,
+      "reason": "左缘与中上部可见深色针状/条状结构，值得框选确认"
+    },
+    {
+      "index": 4,
+      "score": 0.4,
+      "worth": true,
+      "reason": "下缘出现深色斜向条状晶体，可作补充框选"
+    },
+    {
+      "index": 0,
+      "score": 0.3,
+      "worth": true,
+      "reason": "左下及中部有零星深色条状物，疑似针晶片段，价值较低"
+    },
+    {
+      "index": 1,
+      "score": 0.1,
+      "worth": true,
+      "reason": "主要为纤维背景，深色物零散模糊，仅低价值"
+    }
+  ]
+}

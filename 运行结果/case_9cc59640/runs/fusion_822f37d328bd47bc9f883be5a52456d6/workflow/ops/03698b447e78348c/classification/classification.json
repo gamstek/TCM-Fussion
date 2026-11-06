@@ -1,0 +1,22 @@
+{
+  "label": "图像不可判",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "纤维",
+  "confidence": "medium",
+  "reason": "图像虚焦，仅见模糊长条，无壁或棱角可辨",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_9cc59640\\view_02.jpg",
+  "focus": 946.5,
+  "sent_hw": [
+    193,
+    768
+  ],
+  "granularity": "instance",
+  "crop_id": "needle_crystal_view_02_glm35239bc4a4ea_02",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_9cc59640\\runs\\fusion_822f37d328bd47bc9f883be5a52456d6\\workflow\\ops\\d3d6a3ef51c868fd\\detection\\crops\\needle_crystal_view_02_glm35239bc4a4ea_02.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm"
+}

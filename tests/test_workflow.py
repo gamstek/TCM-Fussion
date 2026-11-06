@@ -284,7 +284,7 @@ class WorkflowTests(unittest.TestCase):
                     return any(a['args']['target_id'].endswith(':located') for a in options('segment_instance'))
                 self.assertFalse(can_segment())
                 execute(next(a for a in options('classify_target') if a['args']['target_id'].endswith(':located')))
-                self.assertEqual(can_segment(), confidence=='high')
+                self.assertEqual(can_segment(), confidence in {'medium', 'high'})
 
     def test_label_conflict_offers_classification_and_relabels_crop(self):
         """观察到fiber与crop类别single_crystal相左：应提供复核，并把结论落成可重分割的新crop。"""

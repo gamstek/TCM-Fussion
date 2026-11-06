@@ -1,0 +1,32 @@
+{
+  "image_id": "img_a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_9cc59640\\runs\\fusion_822f37d328bd47bc9f883be5a52456d6\\workflow\\ops\\b5756811933af051\\screening\\sheet.jpg",
+  "rois": [
+    {
+      "index": 1,
+      "score": 0.8,
+      "worth": true,
+      "reason": "可见多根细长透明的针状结晶斜向成束排列，两端渐尖，无明显细胞壁"
+    },
+    {
+      "index": 5,
+      "score": 0.65,
+      "worth": true,
+      "reason": "斜向细长透明晶体散布，形态符合针晶特征"
+    },
+    {
+      "index": 0,
+      "score": 0.5,
+      "worth": true,
+      "reason": "中央有细长透明晶体，周围散在小颗粒，疑似针晶但部分模糊"
+    },
+    {
+      "index": 3,
+      "score": 0.3,
+      "worth": true,
+      "reason": "边缘处见少量透明细长条状物，可能为针晶或纤维边缘，需进一步确认"
+    }
+  ]
+}

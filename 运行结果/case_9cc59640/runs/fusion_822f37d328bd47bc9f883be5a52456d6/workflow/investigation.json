@@ -1,0 +1,167 @@
+{
+  "identity": "8c0c70a869427dc18357be65e5148d18aa86a54bd388987cbe7a27ba8f4e22d6",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "龙胆",
+    "桔梗",
+    "秦皮",
+    "G2",
+    "G4"
+  ],
+  "hypotheses": {
+    "龙胆": {
+      "status": "investigating",
+      "reason": "维持：required needle_crystal为P0缺口，A1为最后一次定向核查，结果决定后续推进或转复核",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "桔梗": {
+      "status": "investigating",
+      "reason": "三者required特征互斥（针晶/砂晶/联结乳管），且view_02折间分歧最大，是当前最具区分性的核查对象；后续仍以presence_check等只读判据核查，本轮screen结果不构成证据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "秦皮": {
+      "status": "investigating",
+      "reason": "三者required特征互斥（针晶/砂晶/联结乳管），且view_02折间分歧最大，是当前最具区分性的核查对象；后续仍以presence_check等只读判据核查，本轮screen结果不构成证据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "G2": {
+      "status": "investigating",
+      "reason": "与龙胆共享needle_crystal判据，随A1结果联动",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "G4": {
+      "status": "investigating",
+      "reason": "与龙胆共享needle_crystal判据，随A1结果联动",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "龙胆为A最强先验（P0针晶待核）；view_02/03显示秦皮与桔梗的分化信号，三者required特征互斥性高，后续presence_check可高效区分。"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "龙胆为A最强先验（P0针晶待核）；view_02/03显示秦皮与桔梗的分化信号，三者required特征互斥性高，后续presence_check可高效区分。"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "龙胆为A最强先验（P0针晶待核）；view_02/03显示秦皮与桔梗的分化信号，三者required特征互斥性高，后续presence_check可高效区分。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "三者required特征互斥（针晶/砂晶/联结乳管），且view_02折间分歧最大，是当前最具区分性的核查对象；后续仍以presence_check等只读判据核查，本轮screen结果不构成证据。"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "三者required特征互斥（针晶/砂晶/联结乳管），且view_02折间分歧最大，是当前最具区分性的核查对象；后续仍以presence_check等只读判据核查，本轮screen结果不构成证据。"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "三者required特征互斥（针晶/砂晶/联结乳管），且view_02折间分歧最大，是当前最具区分性的核查对象；后续仍以presence_check等只读判据核查，本轮screen结果不构成证据。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "针晶类候选（G2半夏类、G4白术苍术类、龙胆）共享required needle_crystal，与桔梗(联结乳管)、秦皮(砂晶)互斥；若view_02定位仍无结果，应转向复核而非继续换ROI。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "针晶类候选（G2半夏类、G4白术苍术类、龙胆）共享required needle_crystal，与桔梗(联结乳管)、秦皮(砂晶)互斥；若view_02定位仍无结果，应转向复核而非继续换ROI。"
+        },
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "针晶类候选（G2半夏类、G4白术苍术类、龙胆）共享required needle_crystal，与桔梗(联结乳管)、秦皮(砂晶)互斥；若view_02定位仍无结果，应转向复核而非继续换ROI。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "维持：required needle_crystal为P0缺口，A2为最后一次定向核查"
+        },
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "与龙胆共享needle_crystal判据，随A2结果联动"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "与龙胆共享needle_crystal判据，随A2结果联动"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "维持：required needle_crystal为P0缺口，A1为最后一次定向核查，结果决定后续推进或转复核"
+        },
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "与龙胆共享needle_crystal判据，随A1结果联动"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "与龙胆共享needle_crystal判据，随A1结果联动"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

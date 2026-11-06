@@ -46,6 +46,7 @@
       "detect_region",
       "classify_target",
       "propose_regions",
+      "roi_screen",
       "locate_feature"
     ],
     "purpose": "按前置条件修复已绑定样品工件；不产生模型自报尺寸"

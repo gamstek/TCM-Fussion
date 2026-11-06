@@ -1,0 +1,33 @@
+{
+  "crop_id": "expanded_02",
+  "png": "expanded_02.png",
+  "source_image_path": "TCM_Fusion\\运行结果\\case_9cc59640\\view_02.jpg",
+  "stem": "view_02",
+  "feature_id": "needle_crystal",
+  "object_label": "草酸钙针晶",
+  "herb": "龙胆",
+  "px_per_um": 11.65,
+  "tight_box": [
+    0.0,
+    949.75,
+    706.5,
+    1137.25
+  ],
+  "tight_box_local": [
+    0.0,
+    24.75,
+    706.5,
+    212.25
+  ],
+  "loose_box": [
+    0,
+    925,
+    730,
+    1161
+  ],
+  "crop_size": "730x236",
+  "pad_info": "{\"expand\": 1.5, \"source_tight_bbox\": [84.0, 981.0, 582.0, 1106.0]}",
+  "granularity": "instance",
+  "det_score": 0.92,
+  "det_confidence": "high"
+}

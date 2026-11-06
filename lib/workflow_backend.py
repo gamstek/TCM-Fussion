@@ -40,6 +40,7 @@ class WorkflowBackend:
             if tool == 'locate_feature':
                 data.update(roi=target['roi'], feature_id=target['feature_id'],
                             px_per_um=target.get('px_per_um'),
+                            locate_expand=session.config.get('locate_expand', 1.5),
                             existing_boxes=session.existing_boxes(target['image_id']))
             write_json(ctx, data)
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])

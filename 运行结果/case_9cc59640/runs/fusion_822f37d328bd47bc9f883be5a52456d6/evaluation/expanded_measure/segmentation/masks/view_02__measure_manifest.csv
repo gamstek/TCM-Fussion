@@ -1,0 +1,3 @@
+﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity
+1,view_02__needle_crystal__inst01.png,expanded_01,TCM_Fusion\运行结果\case_9cc59640\view_02.jpg,needle_crystal,草酸钙针晶,龙胆,"[25, 24, 416, 394]",11.65,ok,0.159729,instance
+2,view_02__needle_crystal__inst02.png,expanded_02,TCM_Fusion\运行结果\case_9cc59640\view_02.jpg,needle_crystal,草酸钙针晶,龙胆,"[0, 25, 706, 212]",11.65,ok,0.115713,instance

@@ -93,6 +93,15 @@ class WorkflowSession:
     def purpose_quality(self):
         return self.config.get('quality_evaluation','legacy')=='purpose_v1'
 
+    def locate_override(self, target):
+        """GLM locate 高分框即使分类未通过，也允许进入诊断性 IGM/测量。"""
+        score=target.get('det_score')
+        try:
+            score=float(score)
+        except (TypeError, ValueError):
+            return False
+        return score >= float(self.config.get('glm_locate_threshold',0.8))
+
     def evaluate_segmentation(self,root,target,*,identity_verified=False):
         """在新目录重放原始生成图，保留旧工件；不从Agent参数接收资格。"""
         from quality_eval import replay
@@ -203,7 +212,7 @@ class WorkflowSession:
     def blocked_tools(self):
         """任务内按工具熔断；locate/classify 允许有界重试后再熔断。"""
         limit = int(self.config.get('max_tool_failures', 2))
-        retryable = {'locate_feature', 'classify_target', 'roi_screen'}
+        retryable = {'locate_feature', 'classify_target', 'roi_screen', 'detect_fov_initial'}
         failures = {}
         for row in read_json(self.operations)['entries'].values():
             if row.get('status') == 'failed' and stage_error_kind(row.get('error_code')) == 'service':
@@ -312,7 +321,7 @@ class WorkflowSession:
         if tool in {'segment_instance','detect_region','locate_feature'}:
             scale='scale:'+target['image_id']
             if scale in arts and arts[scale]['valid']:ids+=[scale]
-        if tool == 'segment_instance' and target.get('identity_required'):
+        if tool == 'segment_instance' and target.get('identity_required') and not self.locate_override(target):
             ids.append('classification:'+target['id'])
         return sorted(set(ids))
 
@@ -441,12 +450,16 @@ class WorkflowSession:
                     if not arts.get('scale:'+image,{}).get('valid'):tool='calibrate_fov'
             elif t['kind']=='crop':
                 crops.append(t)
-                if t.get('identity_required') and not arts.get('classification:'+tid,{}).get('identity_verified'):
+                if (t.get('identity_required')
+                        and not arts.get('classification:'+tid,{}).get('identity_verified')
+                        and not self.locate_override(t)):
                     continue
                 scale=arts.get('scale:'+image,{})
                 seg=arts.get('seg:'+tid,{})
                 review_measure=bool(review_plan and review_plan['target_id']=='seg:'+tid)
                 usable=seg.get('quality')=='valid' or (self.diagnostic_quality() and seg.get('quality')=='review') or review_measure
+                if self.locate_override(t) and seg.get('quality')=='review':
+                    usable=True
                 if self.purpose_quality() and seg.get('assessment_id'):usable=True
                 if scale.get('valid') and (not seg.get('valid') or not usable):
                     tool='segment_instance'
@@ -521,8 +534,9 @@ class WorkflowSession:
             if row.get('status') not in {'done', 'failed'}:
                 continue
             tool, target = row.get('tool'), str(row.get('target_id') or '')
-            if tool == 'detect_fov_initial' and target in images:
-                detected.add(target)
+            if tool == 'detect_fov_initial':
+                if row.get('status') == 'done' and target in images:
+                    detected.add(target)
             elif tool == 'propose_regions' and target in images:
                 proposed.add(target)
             elif tool == 'roi_screen':
@@ -805,7 +819,8 @@ class WorkflowSession:
                 items.append(self._art(aid,'quality_assessment',assessment,parents,image_id=image))
                 deps.append(aid);extra['assessment_id']=aid
             items.append(self._art(sid,'segmentation',root/'instances.json',deps,image_id=image,
-                                   masks=str(root/'masks'),quality=result['quality'],crop_id=target['id'],**extra))
+                                   masks=str(root/'masks'),quality=result['quality'],crop_id=target['id'],
+                                   locate_override=self.locate_override(target),**extra))
         elif tool=='classify_target':
             root=Path(result['classification']);doc=read_json(root/'classification.json')
             if doc.get('error'):raise IntegrationError('CLASSIFY_FAILED','分类阶段没有可采信结果')
@@ -821,13 +836,23 @@ class WorkflowSession:
                                    confidence_score=doc.get('confidence_score')))
             meta=contracts.CropMeta.from_json(target['path'])
             if target.get('identity_required'):
-                min_conf=self.config.get('identity_min_confidence','high')
+                min_conf=self.config.get('identity_min_confidence','medium')
                 allowed={'high'} if min_conf=='high' else (
                     {'high','medium'} if min_conf=='medium' else {'high','medium','low'})
                 confidence=str(doc.get('confidence') or '')
+                score=doc.get('confidence_score')
+                try:
+                    score=float(score)
+                except (TypeError, ValueError):
+                    score={'high':0.90,'medium':0.65,'low':0.30}.get(confidence.lower(),0.0)
+                threshold=float(self.config.get('glm_identity_threshold',0.8))
+                confident=score >= threshold and not doc.get('reject')
                 items[-1]['identity_confidence']=confidence
+                items[-1]['glm_confidence_score']=round(score,4)
                 items[-1]['identity_verified'] = (fid == meta.feature_id
-                    and confidence in allowed and not doc.get('reject'))
+                    and not doc.get('reject') and (confidence in allowed or confident))
+                items[-1]['identity_basis']=('glm_score>=%.2f' % threshold if confident
+                                             else 'classifier_confidence')
                 items[-1]['identity_review'] = bool(items[-1]['identity_verified'] and confidence != 'high')
             # 复核出的类别与crop不同：写一份**同像素、只改类别**的侧车，作为可重新分割的新目标。
             # 原crop与其掩码一律保留，失败/冲突仍可回溯；不是原地改写契约。
@@ -865,6 +890,11 @@ class WorkflowSession:
                     flags=list(raw.get('flags') or [])
                     if 'igm_review' not in flags:flags.append('igm_review')
                     if 'diagnostic_review' not in flags:flags.append('diagnostic_review')
+                    raw['flags']=flags
+                if target.get('locate_override'):
+                    raw['locate_override']=True
+                    flags=list(raw.get('flags') or [])
+                    if 'locate_override' not in flags:flags.append('locate_override')
                     raw['flags']=flags
                 iid=raw.get('instance_id')
                 if type(iid) is not int or iid<0:raise IntegrationError('INSTANCE_ID','实例编号非法')

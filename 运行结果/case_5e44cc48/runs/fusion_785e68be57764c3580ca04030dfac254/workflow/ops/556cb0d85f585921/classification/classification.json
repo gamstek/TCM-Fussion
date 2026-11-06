@@ -1,0 +1,22 @@
+{
+  "label": "草酸钙针晶",
+  "reject": "",
+  "raw_label": "草酸钙针晶",
+  "feature_id": "needle_crystal",
+  "second": "疑似待定",
+  "confidence": "medium",
+  "reason": "多根细长透明结晶成束，图偏糊",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_5e44cc48\\view_01.jpg",
+  "focus": 723.1,
+  "sent_hw": [
+    689,
+    768
+  ],
+  "granularity": "bundle",
+  "crop_id": "needle_crystal_view_01_glm35239bc4a4ea_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_5e44cc48\\runs\\fusion_785e68be57764c3580ca04030dfac254\\workflow\\ops\\149b5bd39b0c0809\\detection\\crops\\needle_crystal_view_01_glm35239bc4a4ea_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm"
+}

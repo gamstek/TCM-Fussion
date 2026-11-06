@@ -52,6 +52,13 @@ def main(argv=None):
         raise IntegrationError('CLASSIFY_OUTPUT_INVALID', '分类返回不是结构化对象')
     out = Path(ctx['output'])
     out.mkdir(parents=True, exist_ok=True)
+    raw_conf = value.get('confidence')
+    try:
+        numeric_conf = float(raw_conf)
+    except (TypeError, ValueError):
+        numeric_conf = {'high': 0.90, 'medium': 0.65, 'low': 0.30}.get(str(raw_conf).strip().lower(), 0.0)
+    value['confidence_score'] = round(max(0.0, min(1.0, numeric_conf)), 4)
+    value['confidence_scale'] = 'glm_high_0.90_medium_0.65_low_0.30'
     write_json(out / 'classification.json', {
         **value,
         'crop_id': ctx.get('crop_id'),

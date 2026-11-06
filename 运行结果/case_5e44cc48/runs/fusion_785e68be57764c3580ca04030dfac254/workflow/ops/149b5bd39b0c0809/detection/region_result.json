@@ -1,0 +1,39 @@
+{
+  "dets": [
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        573,
+        758,
+        778,
+        942
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "多根细长针状结晶聚集成束，两端尖锐，透明无细胞结构"
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        481,
+        1085,
+        655,
+        1249
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "细长针状晶体交错排列，两端渐尖，半透明"
+    }
+  ],
+  "roi": [
+    0,
+    512,
+    1024,
+    1536
+  ],
+  "feature_id": "needle_crystal",
+  "engine": "glm_targeted",
+  "count": 2,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

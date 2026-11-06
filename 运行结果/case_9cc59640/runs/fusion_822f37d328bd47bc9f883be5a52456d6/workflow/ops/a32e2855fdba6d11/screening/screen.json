@@ -1,0 +1,44 @@
+{
+  "image_id": "img_a14f0020f94e1db981140c439f90a9e6660cc1ed183c6a3374c3a38d2d997290",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_9cc59640\\runs\\fusion_822f37d328bd47bc9f883be5a52456d6\\workflow\\ops\\a32e2855fdba6d11\\screening\\sheet.jpg",
+  "rois": [
+    {
+      "index": 4,
+      "score": 0.3,
+      "worth": true,
+      "reason": "纤维状细胞壁结构中夹杂透明细条，但更似壁纹而非针晶"
+    },
+    {
+      "index": 0,
+      "score": 0.2,
+      "worth": true,
+      "reason": "边缘可见透明细长物，疑似但更符合纤维壁"
+    },
+    {
+      "index": 5,
+      "score": 0.2,
+      "worth": true,
+      "reason": "含少量透明细条纹，未见典型成束针晶"
+    },
+    {
+      "index": 3,
+      "score": 0.1,
+      "worth": false,
+      "reason": "仅为纤维细胞壁，无尖锐针状结晶"
+    },
+    {
+      "index": 1,
+      "score": 0.1,
+      "worth": false,
+      "reason": "散在颗粒与碎片，未见针晶束"
+    },
+    {
+      "index": 2,
+      "score": 0.1,
+      "worth": false,
+      "reason": "纤维断端，无两端尖锐的针晶"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "job_id": "fusion_34b0fea6301b4fa5abb60bfaa410fb00",
+  "sample_id": "case_68d03406",
+  "status": "failed",
+  "stage": "a",
+  "config_sha256": "ba43058482837ec7ecbb3cd27ddec9bcd9623e1186f5e53b4cf0b9c9cbc02a0f",
+  "result": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_68d03406\\runs\\fusion_34b0fea6301b4fa5abb60bfaa410fb00\\fusion.json",
+  "error_code": "SAMPLE_MISMATCH",
+  "error_type": "IntegrationError",
+  "elapsed_seconds": 2.3530804000329226
+}

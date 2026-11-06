@@ -1,0 +1,26 @@
+{
+  "image_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_9cc59640\\runs\\fusion_822f37d328bd47bc9f883be5a52456d6\\workflow\\ops\\f650547f7197fc25\\screening\\sheet.jpg",
+  "rois": [
+    {
+      "index": 1,
+      "score": 0.9,
+      "worth": true,
+      "reason": "视野中部有一根两端尖锐的细长透明结晶，符合草酸钙针晶特征，值得定向框选"
+    },
+    {
+      "index": 3,
+      "score": 0.4,
+      "worth": true,
+      "reason": "纤维与晶体交错区域可能存在成束针晶，建议后续细查"
+    },
+    {
+      "index": 4,
+      "score": 0.3,
+      "worth": true,
+      "reason": "细胞团边缘散布细小透明物，可能含针晶碎片，可进一步确认"
+    }
+  ]
+}

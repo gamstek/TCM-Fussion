@@ -125,6 +125,16 @@ def main(argv=None):
                 continue
             unique.append(det)
         dets = unique
+        expand = float(ctx.get('locate_expand') or 1.0)
+        if expand > 1.0:
+            for det in dets:
+                bx1, by1, bx2, by2 = det['tight_bbox']
+                cx, cy = (bx1 + bx2) / 2.0, (by1 + by2) / 2.0
+                bw, bh = (bx2 - bx1) * expand, (by2 - by1) * expand
+                det['source_tight_bbox'] = det['tight_bbox']
+                det['tight_bbox'] = [max(0.0, cx - bw / 2), max(0.0, cy - bh / 2),
+                                     min(float(w), cx + bw / 2), min(float(h), cy + bh / 2)]
+                det['locate_expand'] = expand
         result = {'dets': dets, 'roi': ctx['roi'], 'feature_id': ctx['feature_id']}
     else:
         result = read_json(ctx['boxes'])
@@ -164,6 +174,9 @@ def main(argv=None):
         # 定位分数进入 crop 契约的 raw 字段，供“高分 crop 先分类”的调度使用。
         side['det_score']=d.get('score')
         side['det_confidence']=d.get('confidence')
+        if d.get('source_tight_bbox') is not None:
+            side['source_tight_bbox']=d['source_tight_bbox']
+            side['locate_expand']=d.get('locate_expand')
         write_json(crops/(cid+'.json'),side)
     if initial:
         write_json(out/'crops.json', {**result, 'engine':'yolo', 'count':count,
