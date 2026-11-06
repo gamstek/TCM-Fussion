@@ -244,12 +244,19 @@ class ReactTests(unittest.IsolatedAsyncioTestCase):
         directory=self.root/'cold';directory.mkdir()
         a={'status':'disabled','ranking':[]};write_json(directory/'a.json',a)
         runtime=from_task(config,a,directory)
+        basis=runtime.score([])['evidence_digest']
+        runtime.investigate(['G1'],'protocol lifecycle probe',basis)
+        runtime.update_hypotheses([{'candidate_id':'G1','status':'paused',
+                                    'reason':'parent paused branch'}],basis)
         action=runtime.action('detect_fov_initial',{'target_id':next(iter(runtime.images)),
             'evidence_version':runtime.workflow.store.current()['version']},'workflow_repair')
         context=directory/'context.json';write_json(context,{'workflow_config':config,
             'a_prediction':str(directory/'a.json'),'directory':str(directory),'allow_network':False})
         async def check():
             async with connect_stdio(context) as tools:
+                snapshot=await tools.call('read_evidence')
+                self.assertIn('G1',snapshot['candidate_interest']['inactive_ids'])
+                self.assertNotIn('G1',snapshot['candidate_interest']['ids'])
                 return await tools.recompute(action)
         result=await asyncio.wait_for(check(),20)
         self.assertFalse(result['accepted'])

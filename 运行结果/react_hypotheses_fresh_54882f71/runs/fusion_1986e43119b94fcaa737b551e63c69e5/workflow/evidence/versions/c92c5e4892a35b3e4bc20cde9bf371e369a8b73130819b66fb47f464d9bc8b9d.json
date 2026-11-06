@@ -1,0 +1,96 @@
+{
+  "identity": "2ff88ce3e40e20fbbedcc763c881ec105e80cb4b27f70ef66b24a2ac82d567e2",
+  "parent": "a6868b8adcd5d398837997aa1f79d1057d8dea71ee848aa65d64e7ebbbac486c",
+  "artifacts": {
+    "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e": {
+      "id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\input.jpg",
+      "sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "parents": [],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "valid": true
+    },
+    "detected:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e": {
+      "id": "detected:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "kind": "detection",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\bb9802133663b863\\detection\\crops.json",
+      "sha256": "cf9bc5f89ced1fb419b08680acc8a38c7d149ed6453c424593130ff4d5558573",
+      "parents": [
+        "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+      ],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "valid": true
+    },
+    "scale:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e": {
+      "id": "scale:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "kind": "scale",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\c25cddd88357e672\\detection\\scale.json",
+      "sha256": "e731dae25b7f01c8da07fb123de651244374080a66842893d79e1986004e31f7",
+      "parents": [
+        "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+      ],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "px_per_um": 11.65,
+      "valid": true
+    },
+    "regions:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e": {
+      "id": "regions:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "kind": "region_proposals",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\e074f50dea6e6088\\detection\\regions.json",
+      "sha256": "627b9aa16ef40dcecf0ce43af1176b095788db454bc9b27e9ef2ecd53ad207df",
+      "parents": [
+        "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+      ],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "valid": true
+    },
+    "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glme8ac6dc84c4b_01:pixels": {
+      "id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glme8ac6dc84c4b_01:pixels",
+      "kind": "crop_pixels",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\0e62bf07e27077bb\\detection\\crops\\secretory_tissue_input_glme8ac6dc84c4b_01.png",
+      "sha256": "30b155a6d2ff47111a4857ba4af638d79ff3c82da5c5fb15fd829e78a1e01258",
+      "parents": [
+        "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "regions:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "scale:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "scale:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "scale:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+      ],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "valid": true
+    },
+    "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glme8ac6dc84c4b_01": {
+      "id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glme8ac6dc84c4b_01",
+      "kind": "crop",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\0e62bf07e27077bb\\detection\\crops\\secretory_tissue_input_glme8ac6dc84c4b_01.json",
+      "sha256": "01ee9f901a2479f22b4dd15f91f681960445437f9f9cb803c6abbb61d05f1ff2",
+      "parents": [
+        "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glme8ac6dc84c4b_01:pixels"
+      ],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "identity_required": true,
+      "det_score": 0.65,
+      "det_confidence": "medium",
+      "valid": true
+    },
+    "detected:locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0:secretory_tissue": {
+      "id": "detected:locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0:secretory_tissue",
+      "kind": "detection",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\0e62bf07e27077bb\\detection\\region_result.json",
+      "sha256": "fe31bfff4f278dfcee0197d97b39fce47cd4a12564e488cfaaea051fda0abb3b",
+      "parents": [
+        "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "regions:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "scale:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "scale:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+        "scale:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+      ],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "c92c5e4892a35b3e4bc20cde9bf371e369a8b73130819b66fb47f464d9bc8b9d"
+}

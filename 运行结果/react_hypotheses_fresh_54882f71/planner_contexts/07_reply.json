@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "ff775d7a4df19c1a01327e34450eac621aa9fa81a2ae0df3f24bf617dbfdb89c",
+    "decision_summary": "维持秦皮与桔梗两个调查假设。当前两者的required特征（砂晶C级、联结乳管P1级）均只有presence结果，未量化。二者最有区分性的判据是桔梗联结乳管直径14~25μm（P1），而已有标定px_per_um=11.65有效，可支持测量。本轮选择A2：对line_score最高（0.96）的恢复区域用GLM定向定位secretory_tissue并提交待验证框，之后可分割/测量直径以裁决桔梗判据；该框须单独身份核验后才可分割。不采信A逐折分数或单次presence作为排他证据。",
+    "override_reason": null,
+    "investigate_candidates": [
+      "秦皮",
+      "桔梗"
+    ],
+    "investigation_reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。"
+  },
+  "usage": {
+    "completion_tokens": 305,
+    "completion_tokens_details": {
+      "reasoning_tokens": 91
+    },
+    "prompt_tokens": 18740,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 19045
+  }
+}

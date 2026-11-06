@@ -1,0 +1,565 @@
+{
+  "version": "CODE-062",
+  "client_date": "2026-11-06",
+  "code_hashes": {
+    "TCM_Fusion/lib/workflow_runtime.py": "a5e60ede24afa8efdefbb14e7e1511b5ad5b02643f73a9cab7148a30a8efec97",
+    "TCM_Fusion/lib/evidence_runtime.py": "3c60a4774016d1d9f5e856471d2922263ebca145bf3b810387a50ef3076ba62d",
+    "TCM_Fusion/lib/workflow_session.py": "c169a20e6f0f1be92d9c9e343f4ee94e4f2802851eb47cdf623ef9c51f00e2ca",
+    "TCM_Fusion/lib/react_graph.py": "f8aac42a68367fc8d5681bbd035aa3c66cfacaaca3e8c947c99add95e6234400",
+    "TCM_Fusion/lib/tool_builtins.py": "cc630c648cd9c1880fb49440b980da453594c027358bfc345f06355767f3f62a",
+    "TCM_Fusion/tests/test_workflow.py": "f91f4f28eb06f0f778a1d9184fb7b71cdb11c30a3053d737bcc712e35622b944",
+    "TCM_Fusion/tests/test_adaptive_quality.py": "aa1d63c08674d38ee4520f5bc997af608360fcb74ea6a61a4d87039f7c96b306",
+    "TCM_Fusion/tests/test_react.py": "2fc1ebea05481db3c99057ffb6b6a5045c59ebd56f0a7cf078e04bf90496d35a"
+  },
+  "regression": {
+    "fusion": 249,
+    "passed": 249,
+    "b_rule_assertions": 59,
+    "b_adjudicator_assertions": 21,
+    "b_scene_assertions": 125,
+    "command": ".venv/Scripts/python.exe -X utf8 -m TCM_Fusion.cli.main selftest",
+    "log_sha256": "2da8a4e565f83005df64fa115ec491eface3d89f4b1c00e92745df0bea699254"
+  },
+  "live": {
+    "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5",
+    "transport": "mcp",
+    "simulation": false,
+    "elapsed_seconds": 271.95814729994163,
+    "planning_requests": 14,
+    "observation_requests": 3,
+    "steps": 14,
+    "stop_reason": "override_exhausted",
+    "operations": {
+      "detect_fov_initial": 1,
+      "calibrate_fov": 1,
+      "propose_regions": 1,
+      "locate_feature": 4,
+      "classify_target": 2,
+      "detect_region": 2
+    },
+    "output": {
+      "status": "tentative",
+      "top": "秦皮",
+      "review_required": true
+    },
+    "rule_verdict": "insufficient_evidence",
+    "classification": [
+      {
+        "crop_id": "secretory_tissue_input_glme8ac6dc84c4b_01",
+        "label": "纤维",
+        "reject": "",
+        "confidence": "low",
+        "feature_id": "fiber",
+        "reason": "长条状厚壁结构，边界模糊难辨细节",
+        "glm_confidence": "low",
+        "yolo_confidence": null,
+        "confidence_source": "glm"
+      },
+      {
+        "crop_id": "secretory_tissue_input_glm9963898c4126_01",
+        "label": "图像不可判",
+        "reject": "unreadable",
+        "confidence": "medium",
+        "feature_id": "",
+        "reason": "图糊过曝，无壁无棱角无层纹",
+        "glm_confidence": "medium",
+        "yolo_confidence": null,
+        "confidence_source": "glm"
+      }
+    ],
+    "hypotheses": {
+      "identity": "2ff88ce3e40e20fbbedcc763c881ec105e80cb4b27f70ef66b24a2ac82d567e2",
+      "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+      "ids": [
+        "秦皮",
+        "桔梗"
+      ],
+      "hypotheses": {
+        "秦皮": {
+          "status": "investigating",
+          "reason": "桔梗：需获得分泌组织实例并完成可信标定下的宽度测量以检验14~25μm判据；秦皮：砂晶阳性为C级，需维持形态核验，避免单次阴性/单一视野排除。",
+          "evidence_digest": "3dd6ab33f0c16b6355fa6a3faa608b2ee89073cc2500f13cfa4bc91a14e1a502",
+          "decision_source": "model"
+        },
+        "桔梗": {
+          "status": "investigating",
+          "reason": "桔梗：需获得分泌组织实例并完成可信标定下的宽度测量以检验14~25μm判据；秦皮：砂晶阳性为C级，需维持形态核验，避免单次阴性/单一视野排除。",
+          "evidence_digest": "3dd6ab33f0c16b6355fa6a3faa608b2ee89073cc2500f13cfa4bc91a14e1a502",
+          "decision_source": "model"
+        }
+      },
+      "history": [
+        {
+          "updates": [
+            {
+              "candidate_id": "秦皮",
+              "status": "investigating",
+              "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。"
+            },
+            {
+              "candidate_id": "桔梗",
+              "status": "investigating",
+              "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。"
+            }
+          ],
+          "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+          "scope_changed": false,
+          "is_evidence": false,
+          "decision_source": "model",
+          "simulation": false
+        },
+        {
+          "updates": [
+            {
+              "candidate_id": "秦皮",
+              "status": "investigating",
+              "reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。"
+            },
+            {
+              "candidate_id": "桔梗",
+              "status": "investigating",
+              "reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。"
+            }
+          ],
+          "evidence_digest": "3dd6ab33f0c16b6355fa6a3faa608b2ee89073cc2500f13cfa4bc91a14e1a502",
+          "scope_changed": false,
+          "is_evidence": false,
+          "decision_source": "model",
+          "simulation": false
+        },
+        {
+          "updates": [
+            {
+              "candidate_id": "秦皮",
+              "status": "investigating",
+              "reason": "下轮若A4提出待验证框，可分割测量乳管宽度以检验桔梗P1判据；若定位无结果则为unknown，不作为对桔梗的排他否定。"
+            },
+            {
+              "candidate_id": "桔梗",
+              "status": "investigating",
+              "reason": "下轮若A4提出待验证框，可分割测量乳管宽度以检验桔梗P1判据；若定位无结果则为unknown，不作为对桔梗的排他否定。"
+            }
+          ],
+          "evidence_digest": "3dd6ab33f0c16b6355fa6a3faa608b2ee89073cc2500f13cfa4bc91a14e1a502",
+          "scope_changed": false,
+          "is_evidence": false,
+          "decision_source": "model",
+          "simulation": false
+        },
+        {
+          "updates": [
+            {
+              "candidate_id": "秦皮",
+              "status": "investigating",
+              "reason": "秦皮需复核砂晶形态判据；桔梗需对分泌组织完成分割测量以检验P1宽度判据。"
+            },
+            {
+              "candidate_id": "桔梗",
+              "status": "investigating",
+              "reason": "秦皮需复核砂晶形态判据；桔梗需对分泌组织完成分割测量以检验P1宽度判据。"
+            }
+          ],
+          "evidence_digest": "3dd6ab33f0c16b6355fa6a3faa608b2ee89073cc2500f13cfa4bc91a14e1a502",
+          "scope_changed": false,
+          "is_evidence": false,
+          "decision_source": "model",
+          "simulation": false
+        },
+        {
+          "updates": [
+            {
+              "candidate_id": "桔梗",
+              "status": "investigating",
+              "reason": "桔梗：需获得分泌组织实例并完成可信标定下的宽度测量以检验14~25μm判据；秦皮：砂晶阳性为C级，需维持形态核验，避免单次阴性/单一视野排除。"
+            },
+            {
+              "candidate_id": "秦皮",
+              "status": "investigating",
+              "reason": "桔梗：需获得分泌组织实例并完成可信标定下的宽度测量以检验14~25μm判据；秦皮：砂晶阳性为C级，需维持形态核验，避免单次阴性/单一视野排除。"
+            }
+          ],
+          "evidence_digest": "3dd6ab33f0c16b6355fa6a3faa608b2ee89073cc2500f13cfa4bc91a14e1a502",
+          "scope_changed": false,
+          "is_evidence": false,
+          "decision_source": "model",
+          "simulation": false
+        }
+      ],
+      "is_evidence": false,
+      "schema": "investigation/v2"
+    },
+    "contexts": [
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\01_input.json",
+        "advisory_focus": null,
+        "scales": [],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "proposed",
+            "reason": "A候选先验，仅供提出假设",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "proposed",
+            "reason": "A候选先验，仅供提出假设",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\02_input.json",
+        "advisory_focus": null,
+        "scales": [],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\03_input.json",
+        "advisory_focus": null,
+        "scales": [],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\04_input.json",
+        "advisory_focus": null,
+        "scales": [],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\05_input.json",
+        "advisory_focus": null,
+        "scales": [],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\06_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "4868ba22ea8fe18e0cb5de5ad6d77f12fdb2b1978eac9a4e9b67526400763a9c",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\07_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "a6868b8adcd5d398837997aa1f79d1057d8dea71ee848aa65d64e7ebbbac486c",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\08_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "c92c5e4892a35b3e4bc20cde9bf371e369a8b73130819b66fb47f464d9bc8b9d",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\09_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "7d0c92b453856f1dffcaf12316c56b1651b53b82460af80a036cddfdedf9ff82",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\10_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "c86c9eef1bb0785f8230d81e73b11c1b91176503ae3c8077a4a6793a44583d40",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "两候选required判据直接冲突且当前证据不足以裁决；优先核验联结乳管尺寸（14-25μm）与砂晶充胞形态以区分。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\11_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "d91b7754932bf33cf994784f6cd60d033d730f6603ce4c8773a85567ff98c604",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "下轮若A4提出待验证框，可分割测量乳管宽度以检验桔梗P1判据；若定位无结果则为unknown，不作为对桔梗的排他否定。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "下轮若A4提出待验证框，可分割测量乳管宽度以检验桔梗P1判据；若定位无结果则为unknown，不作为对桔梗的排他否定。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\12_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "974a583f26b0a8980c983f9bc68a03b1f4d23b29e5930497e1f34769a5d9fe39",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "下轮若A4提出待验证框，可分割测量乳管宽度以检验桔梗P1判据；若定位无结果则为unknown，不作为对桔梗的排他否定。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "下轮若A4提出待验证框，可分割测量乳管宽度以检验桔梗P1判据；若定位无结果则为unknown，不作为对桔梗的排他否定。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\13_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "a93f73e39fce42a4080fb2aad3c23e6e31c71fa8dcb94a525ef57382bb99cbe4",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "秦皮需复核砂晶形态判据；桔梗需对分泌组织完成分割测量以检验P1宽度判据。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "秦皮需复核砂晶形态判据；桔梗需对分泌组织完成分割测量以检验P1宽度判据。",
+            "is_evidence": false
+          }
+        ]
+      },
+      {
+        "file": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\planner_contexts\\14_input.json",
+        "advisory_focus": null,
+        "scales": [
+          {
+            "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+            "px_per_um": 11.65,
+            "valid": true,
+            "evidence_version": "7dd2b3850bc3846383773dd22de237c74b051cc2327c3a5369cffc38db1e40e9",
+            "source": "trusted_pipeline_artifact"
+          }
+        ],
+        "stale_reads": [],
+        "hypotheses": [
+          {
+            "candidate_id": "秦皮",
+            "status": "investigating",
+            "reason": "秦皮需复核砂晶形态判据；桔梗需对分泌组织完成分割测量以检验P1宽度判据。",
+            "is_evidence": false
+          },
+          {
+            "candidate_id": "桔梗",
+            "status": "investigating",
+            "reason": "秦皮需复核砂晶形态判据；桔梗需对分泌组织完成分割测量以检验P1宽度判据。",
+            "is_evidence": false
+          }
+        ]
+      }
+    ],
+    "code_stable": true,
+    "source_reference_after_run": {
+      "herb": "龙胆",
+      "feature_id": "needle_crystal",
+      "scope": "dataset_reference"
+    },
+    "corrected_reference": false
+  },
+  "earlier_diagnostic": {
+    "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84",
+    "observed": "real model paused 桔梗, but reason cited stale read_scale; fixed afterward",
+    "not_a_validation_of_fresh_context_decision_quality": true
+  },
+  "limits": [
+    "one image; no classification gain established",
+    "final model retained hypotheses and hit override_exhausted",
+    "pause/withdraw/revival exercised with deterministic fixtures and real MCP state synchronization",
+    "latest live run proves current calibration visible, not that model always abandons a weak hypothesis",
+    "no successful mask or measurement; no cross-task self-evolution validation"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "reply": {
+    "action_id": "57299b7fc71378a37ea76c880a995f859150bf2078800c6eb8e49909f7f01ee2",
+    "decision_summary": "当前候选秦皮与桔梗均无任何有效显微证据，判据互斥特征为sand_crystal（秦皮，C级）与secretory_tissue（桔梗，P1级）。本轮先对秦皮的砂晶做存在性核验；阴性不作为排除证据，下一轮再核验乳管。",
+    "override_reason": null,
+    "investigate_candidates": [
+      "桔梗"
+    ],
+    "investigation_reason": "若砂晶核验后仍证据不足，下一轮对桔梗的联结乳管（secretory_tissue，P1，直径14～25μm）做存在性核验，以完成两候选差异特征的对照。"
+  },
+  "usage": {
+    "completion_tokens": 257,
+    "completion_tokens_details": {
+      "reasoning_tokens": 107
+    },
+    "prompt_tokens": 10409,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 10666
+  }
+}

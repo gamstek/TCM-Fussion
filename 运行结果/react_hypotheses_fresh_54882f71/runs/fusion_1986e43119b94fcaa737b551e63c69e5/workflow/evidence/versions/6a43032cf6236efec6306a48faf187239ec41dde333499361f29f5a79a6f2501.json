@@ -1,0 +1,28 @@
+{
+  "identity": "2ff88ce3e40e20fbbedcc763c881ec105e80cb4b27f70ef66b24a2ac82d567e2",
+  "parent": "558d4e293c5d9df63f998f9a275262cd2ca36f6e2c708aa93a5cdf0556abedee",
+  "artifacts": {
+    "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e": {
+      "id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\input.jpg",
+      "sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "parents": [],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "valid": true
+    },
+    "detected:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e": {
+      "id": "detected:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "kind": "detection",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\bb9802133663b863\\detection\\crops.json",
+      "sha256": "cf9bc5f89ced1fb419b08680acc8a38c7d149ed6453c424593130ff4d5558573",
+      "parents": [
+        "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+      ],
+      "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "6a43032cf6236efec6306a48faf187239ec41dde333499361f29f5a79a6f2501"
+}

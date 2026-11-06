@@ -119,6 +119,10 @@ class EvidenceRuntime:
         """Investigation scope only; never rule evidence or confirmation."""
         return a_candidates(self.a, self.kb, self.aliases, self.candidate_policy)
 
+    def read_revision(self, state):
+        """Legacy evidence-only reads; workflow adds physical and control revisions."""
+        return state['evidence_digest']
+
     def _legacy_proposals(self, state):
         scored = self.score(state.get("observations", []))
         cards, decision = scored["cards"], scored["decision"]
@@ -139,6 +143,7 @@ class EvidenceRuntime:
                         if r.get("support_count", 0) > 0 and r.get("confidence", 0) > 0][:3]
         # A仅扩大补查兴趣集合；不筛掉B候选、不把类别名传给观察工具。
         interest = self.candidate_interest()
+        selected_ids = [cid for cid in selected_ids if cid not in interest.get('inactive_ids', [])]
         for aid in interest["ids"]:
             if aid in candidates and aid not in selected_ids:
                 selected_ids.append(aid)

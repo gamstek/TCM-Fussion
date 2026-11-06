@@ -373,6 +373,14 @@ class WorkflowSession:
         recovery = self.config.get('targeted_recovery', False)
         gaps = self.recovery_features() if recovery else []
         review_plan = self.review_measure_plan()
+        interest = self.runtime.candidate_interest()
+        inactive = set(interest.get('inactive_ids', []))
+        # A withdrawn hypothesis only closes its exclusive recovery branch. Shared
+        # features and already committed evidence remain available to other hypotheses.
+        active_features={c['feature'] for row in self.runtime.kb.candidates()
+                         if row['id'] in interest['ids'] for c in row['criteria']}
+        paused_features={c['feature'] for row in self.runtime.kb.candidates()
+                         if row['id'] in inactive for c in row['criteria']}-active_features
         locate_attempts = sum(row['tool'] == 'locate_feature' for row in done.values())
         max_locate = int(self.config.get('max_locate_attempts', 4))
         def offer(tool,t,priority):
@@ -387,6 +395,11 @@ class WorkflowSession:
         crops=[]
         for tid,t in self.targets().items():
             tool=None;image=t['image_id']
+            origin = t if t.get('kind')=='crop' else arts.get(t.get('crop_id'), {})
+            if origin.get('identity_required') and paused_features:
+                meta=contracts.CropMeta.from_json(origin['path'])
+                if meta.feature_id in paused_features:
+                    continue
             if tid.startswith('locate:'):
                 if locate_attempts < max_locate:
                     tool = 'locate_feature'

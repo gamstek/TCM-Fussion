@@ -105,6 +105,67 @@ class WorkflowTests(unittest.TestCase):
             result=r.admission_decision({'verdict':'insufficient_evidence','needs_review':True})
         self.assertEqual(result['decision'],'verify')
 
+    def test_hypothesis_pause_and_resume_does_not_change_evidence_or_a(self):
+        r=self.runtime(agent_policy='adaptive_v2',targeted_recovery=True)
+        r.a={'status':'ok','fold_rankings':[[{'label':'秦皮','probability':1.0}]]*5}
+        original_a=copy.deepcopy(r.a);before=r.score([])
+        r.investigate(['G1'],'新假设',before['evidence_digest'])
+        version=r.workflow.store.current()['version']
+        result=r.update_hypotheses([
+            {'candidate_id':'G1','status':'paused','reason':'定位没有支持'},
+            {'candidate_id':'秦皮','status':'withdrawn','reason':'暂时离开A先验方向'}],before['evidence_digest'])
+        self.assertTrue(result['scope_changed'])
+        self.assertNotIn('G1',r.candidate_interest()['ids'])
+        self.assertNotIn('秦皮',r.candidate_interest()['ids'])
+        self.assertEqual(r.a,original_a)
+        self.assertEqual(r.score([])['decision'],before['decision'])
+        self.assertEqual(r.workflow.store.current()['version'],version)
+        r.update_hypotheses([{'candidate_id':'G1','status':'investigating','reason':'新观察值得重查'}],before['evidence_digest'])
+        self.assertIn('G1',r.candidate_interest()['ids'])
+        # A separately constructed MCP-side runtime consumes the same lifecycle.
+        other=self.runtime(agent_policy='adaptive_v2',targeted_recovery=True);other.a=original_a
+        self.assertIn('G1',other.candidate_interest()['ids'])
+        self.assertNotIn('秦皮',other.candidate_interest()['ids'])
+
+    def test_invalid_hypothesis_update_is_atomic(self):
+        r=self.runtime();d=r.score([])['evidence_digest'];r.investigate(['G1'],'initial',d)
+        before=file_hash(r.workflow.root/'investigation.json')
+        with self.assertRaises(IntegrationError):
+            r.update_hypotheses([{'candidate_id':'G1','status':'paused','reason':'wait'},
+                                 {'candidate_id':'unknown','status':'investigating','reason':'bad'}],d)
+        self.assertEqual(file_hash(r.workflow.root/'investigation.json'),before)
+
+    def test_calibration_changes_read_revision_even_without_rule_evidence_change(self):
+        r=self.runtime(backend=StageFixture(scale=None),agent_policy='adaptive_v2')
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        before=r.score([]);state={'observations':[],'evidence_digest':before['evidence_digest']}
+        revision=r.read_revision(state)
+        self.assertEqual(r.tools.read(r,'read_scale',{},state)['scales'],[])
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='calibrate_fov'))
+        after=r.score([])
+        self.assertEqual(after['evidence_digest'],before['evidence_digest'])
+        self.assertNotEqual(r.read_revision(state),revision)
+        current=r.summary(state)['workflow']['calibration']
+        self.assertTrue(any(row.get('valid') and row.get('px_per_um')==2 for row in current['scales']))
+
+    def test_paused_exclusive_crop_branch_is_hidden_but_shared_feature_survives(self):
+        r=self.runtime(agent_policy='adaptive_v2',targeted_recovery=True)
+        r.a={'status':'ok','fold_rankings':[[{'label':'秦皮','probability':1.0}]]*5}
+        image=next(iter(r.images));d=r.score([])['evidence_digest'];r.investigate(['G1'],'probe',d)
+        side=self.root/'cluster.json'
+        write_json(side,contracts.crop_sidecar('cluster',str(self.image),str(self.image),self.image.stem,
+                   'cluster_crystal','草酸钙簇晶','',2,[0,0,8,8],[0,0,8,8],[0,0,8,8],'8x8'))
+        art=r.workflow._art('crop:probe','crop',side,[image],image_id=image,identity_required=True)
+        r.workflow.store.commit(r.workflow.store.current()['version'],[art])
+        def offers():return [a for a in r.workflow.propose() if a['tool']=='classify_target' and a['args']['target_id']=='crop:probe']
+        self.assertTrue(offers())
+        r.update_hypotheses([{'candidate_id':'G1','status':'paused','reason':'no gain'}],d)
+        self.assertFalse(offers())
+        shared=next(row['id'] for row in r.kb.candidates() if row['id']!='G1'
+                    and any(c['feature']=='cluster_crystal' for c in row['criteria']))
+        r.investigate([shared],'shared feature still matters',d)
+        self.assertTrue(offers())
+
     def test_review_component_plan_is_bound_to_one_segmentation(self):
         r=self.runtime()
         r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))

@@ -1,0 +1,157 @@
+{
+  "entries": {
+    "24efcbfaa65ddd32751a05dbfbad1c5052271f99096d45a53a2626ca33e23272": {
+      "action_id": "b43faf9a699559a37c46d7e10dd2e8a6196fb76b7f85ae4dcc39826856609eb6",
+      "tool": "detect_fov_initial",
+      "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "24efcbfaa65ddd32751a05dbfbad1c5052271f99096d45a53a2626ca33e23272",
+      "evidence_version": "b9df1d61030589d0fcf2764c18abf92044614121d8f10eecff27aeb601237e01",
+      "dependency_fingerprint": "4527fc28e24ed40a9911e7cf1bbef192899e195c4de53449c76be784363e0d24",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\runs\\fusion_bdeb5f77a67a4e6f8734bbfbeac219ab\\workflow\\ops\\24efcbfaa65ddd32",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops.json": "cf9bc5f89ced1fb419b08680acc8a38c7d149ed6453c424593130ff4d5558573"
+        },
+        "quality": null
+      }
+    },
+    "97aceb4c418afd66fa77d64f550dba7eb868608bbbceef70cac44a12bb59836a": {
+      "action_id": "2143ebc5b86f7c6b648e8a66df24a24d72ed9b46b189b1072de12eda21bc8d8c",
+      "tool": "calibrate_fov",
+      "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "97aceb4c418afd66fa77d64f550dba7eb868608bbbceef70cac44a12bb59836a",
+      "evidence_version": "a4d5fe8e212d5c27a94538dc0eb99f491b159e5f35a8d191ab5d44637a37c781",
+      "dependency_fingerprint": "eeedc00247afd428b5753484d86ef349065c4742f0aad2ac207cef65fbf77810",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\runs\\fusion_bdeb5f77a67a4e6f8734bbfbeac219ab\\workflow\\ops\\97aceb4c418afd66",
+        "paths": {
+          "scale": "detection/scale.json"
+        },
+        "files": {
+          "detection/scale.json": "e731dae25b7f01c8da07fb123de651244374080a66842893d79e1986004e31f7"
+        },
+        "quality": null
+      }
+    },
+    "e7c47a0e9b3e1a8f3826b77e2d287ededb5cc5051202d96af9fe2b7e29af6205": {
+      "action_id": "92ac67a276c871876ed47d3fa443b5bd3db6ad718ebbea253ff521ab49264e81",
+      "tool": "propose_regions",
+      "target_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "e7c47a0e9b3e1a8f3826b77e2d287ededb5cc5051202d96af9fe2b7e29af6205",
+      "evidence_version": "bbb2d73e37f8733b2d081a40a181aeae15055cf1c36ed4cc1d8f4224d432e046",
+      "dependency_fingerprint": "5cbae2184e893368509a5cf456b99048a2d551f77bd65258b95419fae2b92e91",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\runs\\fusion_bdeb5f77a67a4e6f8734bbfbeac219ab\\workflow\\ops\\e7c47a0e9b3e1a8f",
+        "paths": {
+          "regions": "detection/regions.json"
+        },
+        "files": {
+          "detection/regions.json": "627b9aa16ef40dcecf0ce43af1176b095788db454bc9b27e9ef2ecd53ad207df"
+        },
+        "quality": null
+      }
+    },
+    "e2093c6b274e5e1b14e4ecee08660503f1eed1c39754f8d88553fc2c1f4d546f": {
+      "action_id": "1d2fc9dca372248bc5386ac30906db82bbd3cef4bc237504ea005a120ac2ce3d",
+      "tool": "detect_region",
+      "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "e2093c6b274e5e1b14e4ecee08660503f1eed1c39754f8d88553fc2c1f4d546f",
+      "evidence_version": "f045d61a2a1d08738a5c6657b228b12d6078732adeb0d10aa22c6674b7db9abc",
+      "dependency_fingerprint": "cceed0406c6f7b4fcd01cd329234dc365d27ba0910cfcf2345eb7d4ac520b31e",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\runs\\fusion_bdeb5f77a67a4e6f8734bbfbeac219ab\\workflow\\ops\\e2093c6b274e5e1b",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/region_result.json"
+        },
+        "files": {
+          "detection/region_result.json": "da9f3ae0e62d4cf115ca6e583473f7cfced51977077346b47427ff9518a23625"
+        },
+        "quality": null
+      }
+    },
+    "23f4e60f574aef62dbae33445dc7420fb196139b5b39111be0ce114050de1c0d": {
+      "action_id": "4d25ceeb591cb69046581e336d21bd026d9a7811f6f54c8855c6b90f976911ad",
+      "tool": "locate_feature",
+      "target_id": "locate:roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:0:secretory_tissue",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "23f4e60f574aef62dbae33445dc7420fb196139b5b39111be0ce114050de1c0d",
+      "evidence_version": "f90e3741e15ed6a2eafcf92dcca5371d3c8c8fb28ce23c27890782fbdab1f14a",
+      "dependency_fingerprint": "6461ff4a2e1479cb980da0a922407e993a9a9b1c6361e5a410d6aba1f9ff21e3",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\runs\\fusion_bdeb5f77a67a4e6f8734bbfbeac219ab\\workflow\\ops\\23f4e60f574aef62",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/region_result.json"
+        },
+        "files": {
+          "detection/crops/secretory_tissue_input_glme8ac6dc84c4b_01.json": "1099c508506bff6d17ca830e4ee4290e54094cf4bba63e9decf905c009af449d",
+          "detection/crops/secretory_tissue_input_glme8ac6dc84c4b_01.png": "384d4ae12c7f8fd7404c2cd263fcd01bdda4ee5e6c4a8bfa79b34ed163b73824",
+          "detection/region_result.json": "69fe4062be0e6cc904399664d0b563a178d6e3d60de4569986be7722cd001dcb"
+        },
+        "quality": null
+      }
+    },
+    "baa75a2bf96acf86b47dde0e6cf12ef83136190023b50630b76fbd1a9b07158b": {
+      "action_id": "ea702e08ab10fc75bc624bd184492f01b7b937c9a548b7516d4ea84e0551f810",
+      "tool": "classify_target",
+      "target_id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glme8ac6dc84c4b_01",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "baa75a2bf96acf86b47dde0e6cf12ef83136190023b50630b76fbd1a9b07158b",
+      "evidence_version": "9d6df4a00448c7462251efb0cf1e63262f26be29f9780826d0173b8486aa4dc3",
+      "dependency_fingerprint": "223f88b056422b56b917ecc29928c8ae145778e82c0a85f4aab33347dca00461",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\runs\\fusion_bdeb5f77a67a4e6f8734bbfbeac219ab\\workflow\\ops\\baa75a2bf96acf86",
+        "paths": {
+          "classification": "classification"
+        },
+        "files": {
+          "classification/classification.json": "2075568bf4c35a131e523c83456900947d17e11220bfddcd4d98b2d09bf9b3c2"
+        },
+        "quality": null
+      }
+    },
+    "5d715a23f1a2af20e0fd7994bce6ca0b766c049459e6cdb3a6d3932e57398159": {
+      "action_id": "adc2e8c97189780ef9ac006ce0de931eff8c67d92009e894d32e56f3d7d8a259",
+      "tool": "detect_region",
+      "target_id": "roi:recovery:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:1",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "5d715a23f1a2af20e0fd7994bce6ca0b766c049459e6cdb3a6d3932e57398159",
+      "evidence_version": "cdec36622a9541861add1b99d0814fb758e342785565850eb410b841518b8caa",
+      "dependency_fingerprint": "3ab39354f73b760be3064d26f1fe1f3e0b611353f9f33701313acc0813588d92",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\runs\\fusion_bdeb5f77a67a4e6f8734bbfbeac219ab\\workflow\\ops\\5d715a23f1a2af20",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/region_result.json"
+        },
+        "files": {
+          "detection/region_result.json": "ca273bf14785814f10d59dc663a562a7bc90ed611d94de7ccd3442c0ee43bb62"
+        },
+        "quality": null
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "source_sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+  "image_size": [
+    2048,
+    1536
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04"
+  },
+  "confidence": 0.25,
+  "roi": [
+    1024,
+    512,
+    2048,
+    1536
+  ],
+  "dets": [
+    {
+      "label": "其他",
+      "tight_bbox": [
+        1038.5,
+        512.0,
+        1829.0,
+        1289.5
+      ],
+      "confidence": "high",
+      "score": 0.8627,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ],
+  "engine": "yolo",
+  "count": 0,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

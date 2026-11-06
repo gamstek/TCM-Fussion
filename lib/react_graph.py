@@ -44,6 +44,9 @@ class AgentState(TypedDict, total=False):
     stop_advisory: dict
     finish_veto: list
     override_streak: int
+    pending_hypothesis_updates: list
+    pending_legacy_nomination: bool
+    pending_hypothesis_basis: str
 
 
 class LLMPlanner:
@@ -85,6 +88,14 @@ class LLMPlanner:
                         "A的Top-K可能遗漏真类；不要把A的分数或一次阴性当成排他证据。"
                         "可选investigate_candidates（evidence.hypothesis_catalog中最多3个ID）和investigation_reason，"
                         "用于下一轮扩展调查，不等于证据或确认。扩展时本轮宜选择只读动作核查判据。"
+                        "也可改用hypothesis_updates，每轮最多3项，格式"
+                        '[{"candidate_id":"知识库ID","status":"proposed|investigating|paused|withdrawn","reason":"依据"}]。'
+                        "两个提名格式不能同时使用。状态更新在本轮动作完成后、下一轮规划前生效；"
+                        "暂停或撤销只改变调查方向，不删除证据、不证明药材不存在。"
+                        "P0缺口仅是建议，不是强制任务；你决定继续、暂停、撤销、改查或复核。"
+                        "场景自由文本中的类别描述只是待核验线索，不是已确认的特征身份。"
+                        "read_results是历史查询，stale=true时不得当成当前状态。"
+                        "标定以当前evidence.workflow.calibration为准，卡片UNCAL不等于当前没有标定。"
                         "收到反思后，应说明维持或修正哪个假设、下一动作预期解决什么；"
                         "换ROI本身不等于增益，连续无增益应考虑其他假设、视野或停止。"
                         "偏离stop_advisory时，将override_reason填为具体理由；也可在decision_summary中说明该理由。"
@@ -196,8 +207,33 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         if trace_path:
             write_json(trace_path, state)
 
+    def read_context(state):
+        revision=runtime.read_revision(state)
+        return [{**row,'stale':row.get('read_revision')!=revision}
+                for row in state.get('read_results',[])]
+
     def assess(state):
         scored = runtime.score(state.get("observations", []))
+        pending = state.get('pending_hypothesis_updates', [])
+        if pending:
+            events = list(state['events'])
+            try:
+                change = runtime.update_hypotheses(
+                    pending, state.get('pending_hypothesis_basis') or state['evidence_digest'],
+                    decision_source=planner_source)
+                events.append({'phase':'hypotheses_updated', **change,
+                               'applied_evidence_digest':scored['evidence_digest']})
+                if state.get('pending_legacy_nomination'):
+                    events.append({'phase':'investigation_expanded','decision_source':planner_source,
+                                   'candidate_ids':runtime.candidate_interest()['investigation_ids'],
+                                   'is_evidence':False,'reason':pending[0]['reason']})
+                if change['scope_changed']:
+                    state = {**state,'override_streak':0}
+            except IntegrationError as exc:
+                events.append({'phase':'hypothesis_update_rejected','reason':exc.code,
+                               'is_evidence':False})
+            state = {**state,'events':events,'pending_hypothesis_updates':[],
+                     'pending_legacy_nomination':False,'pending_hypothesis_basis':''}
         actions = runtime.legal_actions(state)
         mandatory = any(a["mandatory"] for a in actions)
         failed_scene = any(o["action"]["tool"] == "scene_check" and not o["accepted"]
@@ -346,7 +382,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 "actions": choices, "evidence": runtime.summary(state),
                 "parallel_observations": parallel,
                 "planning_instruction": planning_instruction,
-                "previous_observations": state["observations"], "read_results": state.get("read_results", []),
+                "previous_observations": state["observations"], "read_results": read_context(state),
                 "action_objectives": {a["action_id"]: objective(a) for a in choices if "args" in a},
                 "stop_advisory": state["stop_advisory"], "finish_veto": state["finish_veto"],
                 "remaining_budget": current_budget, "rejected_proposals": rejected,
@@ -358,7 +394,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             focus = getattr(runtime, "p0_focus", lambda: None)()
             if focus:
                 context["p0_focus"] = focus
-                if not focus.get("attempted"):
+                if not focus.get("attempted") and not focus.get('advisory_only'):
                     context["planning_instruction"] = planning_instruction + (
                         " 当前 p0_focus 存在且尚未尝试：必须先选择其指向的 propose_regions/locate_feature"
                         "（或分块检测），在其完成或失败前不得查 P1/C 存在性。")
@@ -397,11 +433,19 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 else:
                     error = "override_reason_required"
             investigation = reply.get('investigate_candidates') if isinstance(reply, dict) else None
-            expanded = None
-            if not error and investigation:
+            updates = reply.get('hypothesis_updates') if isinstance(reply, dict) else None
+            legacy_nomination = bool(investigation)
+            if not error and (investigation or updates):
                 try:
-                    expanded = runtime.investigate(investigation, reply.get('investigation_reason'),
-                                                   state['evidence_digest'])
+                    if investigation and updates:
+                        raise IntegrationError('INVESTIGATION_SCOPE','提名与状态更新不可同时使用')
+                    if investigation:
+                        if not isinstance(investigation,list):
+                            raise IntegrationError('INVESTIGATION_SCOPE','提名必须是ID列表')
+                        updates=[{'candidate_id':cid,'status':'investigating',
+                                  'reason':reply.get('investigation_reason')} for cid in investigation]
+                    runtime.update_hypotheses(updates, state['evidence_digest'], commit=False,
+                                              decision_source=planner_source)
                 except IntegrationError as exc:
                     error = exc.code
             if error:
@@ -423,14 +467,27 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                            "overrode_advisory": override,
                            "override_reason": override_reason[:240] if override else None,
                            "parallel_observation_id": companion["action_id"] if companion else None})
-            if expanded is not None:
-                events.append({'phase':'investigation_expanded','decision_source':planner_source,
-                               'candidate_ids':expanded,'is_evidence':False,
-                               'reason':reply['investigation_reason'][:480]})
+            if updates:
+                events.append({'phase':'hypothesis_update_requested','decision_source':planner_source,
+                               'updates':updates,'is_evidence':False,'applies':'after_current_action'})
             update = {"selected": chosen, "events": events, "requests": requests, "planning_requests": planning,
                       "parallel_observation": companion,
+                      "pending_hypothesis_updates": updates or [],
+                      "pending_legacy_nomination": legacy_nomination,
+                      "pending_hypothesis_basis": state['evidence_digest'] if updates else '',
                       "override_streak": state.get("override_streak", 0) + 1 if override and not is_stop else 0}
             if is_stop:
+                if updates:
+                    try:
+                        change=runtime.update_hypotheses(updates,state['evidence_digest'],
+                                                         decision_source=planner_source)
+                        events.append({'phase':'hypotheses_updated',**change})
+                    except IntegrationError as exc:
+                        events.append({'phase':'hypothesis_update_rejected','reason':exc.code,
+                                       'is_evidence':False})
+                    update['pending_hypothesis_updates']=[]
+                    update['pending_legacy_nomination']=False
+                    update['pending_hypothesis_basis']=''
                 update.update(done=True, stop_reason="planner_" + chosen["tool"],
                               needs_review=state["needs_review"] or chosen["tool"] == "request_review")
             persist({**state, **update})
@@ -473,7 +530,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             queries += [("query_criteria", {"candidate_id": cid}) for cid in interest["ids"]]
             for name, args in queries:
                 action = runtime.action(name, args, "evidence_inspection")
-                action["action_id"] = digest({"query": action["action_id"], "evidence": state["evidence_digest"]})
+                action["action_id"] = digest({"query": action["action_id"], "evidence": runtime.read_revision(state)})
                 if action["action_id"] not in state.get("attempted", []):
                     eligible.append(action)
         stop = [{"action_id": "finish", "tool": "finish"},
@@ -506,7 +563,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                "planning_instruction": planning_instruction,
                                "skills": {s["id"]: runtime.skills.get(s["id"]) for s in runtime.skills.list()},
                                "previous_observations": state["observations"],
-                               "read_results": state.get("read_results", []),
+                               "read_results": read_context(state),
                                "remaining_requests_after_plan": max_requests-requests}
                     context['task_reflection']=state.get('reflection')
                     context['recent_action_feedback']=[e['feedback'] for e in state['events'] if 'feedback' in e][-4:]
@@ -612,7 +669,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         if runtime.tools.get(action["tool"]).layer == "read":
             runtime.tools.validate(action, runtime)
             canonical = runtime.action(action["tool"], action["args"], action["skill"])
-            expected = digest({"query": canonical["action_id"], "evidence": state["evidence_digest"]})
+            revision=runtime.read_revision(state)
+            expected = digest({"query": canonical["action_id"], "evidence": revision})
             if action["action_id"] != expected or action["action_id"] in state.get("attempted", []):
                 raise IntegrationError("ACTION_STALE", "只读动作已失效或重复")
             try:
@@ -630,7 +688,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 return state
             state = {**state, "steps": state["steps"]+1,
                      "attempted": state["attempted"]+[action["action_id"]],
-                     "read_results": state.get("read_results", [])+[{"tool": action["tool"], "result": result}],
+                     "read_results": state.get("read_results", [])+[
+                         {"tool": action["tool"], "result": result,'read_revision':revision}],
                      "events": state["events"]+[{"phase": "read", "tool": action["tool"], "new_requests": 0}]}
             persist(state)
             return state

@@ -1,0 +1,20 @@
+{
+  "tool": "classify_target",
+  "crop_id": "secretory_tissue_input_glme8ac6dc84c4b_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\0e62bf07e27077bb\\detection\\crops\\secretory_tissue_input_glme8ac6dc84c4b_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\0e62bf07e27077bb\\detection\\crops\\secretory_tissue_input_glme8ac6dc84c4b_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\input.jpg",
+  "tight_box": [
+    1531,
+    1126,
+    1623,
+    1331
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\550d5d4b4b94cead\\classification",
+  "tight_box_local": [
+    24,
+    24,
+    116,
+    229
+  ]
+}

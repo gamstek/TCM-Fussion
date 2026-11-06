@@ -1,0 +1,36 @@
+{
+  "tool": "detect_region",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\input.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\3621d55577fc1e54\\detection",
+  "boxes": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_fresh_54882f71\\runs\\fusion_1986e43119b94fcaa737b551e63c69e5\\workflow\\ops\\3621d55577fc1e54\\boxes.json",
+  "roi": [
+    0,
+    0,
+    1024,
+    1024
+  ],
+  "px_per_um": 11.65,
+  "existing_boxes": [
+    {
+      "id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glme8ac6dc84c4b_01",
+      "label": "分泌组织",
+      "box": [
+        1531,
+        1126,
+        1623,
+        1331
+      ]
+    },
+    {
+      "id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:secretory_tissue_input_glm9963898c4126_01",
+      "label": "分泌组织",
+      "box": [
+        1731,
+        440,
+        1946,
+        676
+      ]
+    }
+  ],
+  "replace_id": null
+}

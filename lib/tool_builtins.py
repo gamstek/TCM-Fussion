@@ -6,6 +6,9 @@ def read_builtin(runtime, name, args, state):
     scored = runtime.score(state.get('observations', []))
     common = {'sample_id': runtime.sample_id, 'evidence_digest': scored['evidence_digest'],
               'registry_sha256': runtime.tools.signature()}
+    workflow=getattr(runtime,'workflow',None)
+    if workflow is not None:
+        common['evidence_version']=workflow.store.current()['version']
     if name == 'read_quality':
         workflow=getattr(runtime,'workflow',None)
         result={'assessments':[],'unobserved_state':'unknown'}

@@ -276,7 +276,7 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(any(e.get('policy')=='yolo_initial_and_raw_observation' for e in trace['events']))
         self.assertEqual(trace['stop_reason'], 'planner_request_review')
 
-    async def test_v2_p0_focus_blocks_presence_checks_until_targeted_search(self):
+    async def test_v2_p0_gap_is_advisory_and_keeps_independent_checks_available(self):
         runtime = self.runtime(agent_policy='adaptive_v2', targeted_recovery=True)
         runtime.a = {'status': 'ok', 'ranking': [{'label': '龙胆', 'probability': .99},
                                                   {'label': '桔梗', 'probability': .01}]}
@@ -285,9 +285,43 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNotNone(focus)
         self.assertEqual(focus['candidate_id'], '龙胆')
         self.assertEqual(focus['feature_id'], 'needle_crystal')
+        self.assertTrue(focus['advisory_only'])
+        self.assertFalse(focus['mandatory'])
         tools = [a['tool'] for a in runtime.legal_actions({'observations': [], 'attempted': []})]
         self.assertIn('detect_fov_initial', tools)
-        self.assertNotIn('presence_check', tools)
+        self.assertIn('presence_check', tools)
+
+    async def test_v2_failure_can_withdraw_one_hypothesis_and_switch_next_round(self):
+        r=self.runtime(agent_policy='adaptive_v2',targeted_recovery=True,max_planning=8)
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        r.a={'status':'ok','fold_rankings':[[{'label':'秦皮','probability':1.0}]]*5}
+        r.investigate(['G1'],'待核验簇晶假设',r.score([])['evidence_digest'])
+        contexts=[]
+        class Planner:
+            def choose(self,context):
+                contexts.append(copy.deepcopy(context))
+                if len(contexts)==1:
+                    action=next(a for a in context['actions'] if a['tool']=='presence_check'
+                                and a['args']['feature_id']=='sand_crystal')
+                    return {'action_id':action['action_id'],'decision_summary':'核验砂晶'},None
+                if len(contexts)==2:
+                    action=next(a for a in context['actions'] if a['tool']=='read_evidence')
+                    return {'action_id':action['action_id'],'decision_summary':'失败后重新检查假设',
+                            'hypothesis_updates':[
+                                {'candidate_id':'G1','status':'withdrawn','reason':'原路线未取得可用观察，撤销调查优先'},
+                                {'candidate_id':'龙胆','status':'investigating','reason':'尝试其他知识库假设'}]},None
+                return {'action_id':'review','decision_summary':'保留证据不足'},None
+        class Failure(FixtureBackend):
+            def call(self,*args):raise IntegrationError('TEST_FAILURE','fixture')
+        trace=await run_react(r,LocalToolbox(r,ledger_path=self.root/'ledger.json',backend=Failure()),
+                              planner=Planner(),planner_mode='scripted',max_steps=6)
+        self.assertTrue(contexts[1]['task_reflection'])
+        interest=contexts[2]['evidence']['candidate_interest']
+        self.assertIn('G1',interest['inactive_ids']);self.assertNotIn('G1',interest['ids'])
+        self.assertIn('龙胆',interest['ids'])
+        self.assertTrue(any(e['phase']=='hypotheses_updated' for e in trace['events']))
+        self.assertNotEqual(trace['decision']['verdict'],'confirmed')
+        self.assertEqual(trace['stop_reason'],'planner_request_review')
 
     async def test_v2_veto_replans_with_one_observation_and_carries_failure(self):
         r = self.runtime(agent_policy="adaptive_v2", max_observations=1)
@@ -317,6 +351,55 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(trace["stop_reason"], "planner_request_review")
         self.assertEqual(trace["events"][-1]["override_reason"], "视觉失败")
         self.assertTrue(trace["needs_review"])
+
+    async def test_hypothesis_update_keeps_decision_basis_and_preserves_new_observation(self):
+        r=self.runtime(agent_policy='adaptive_v2',max_planning=4)
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        r.a={'status':'ok','fold_rankings':[[{'label':'秦皮','probability':1.0}]]*5}
+        contexts=[]
+        class Planner:
+            def choose(self,context):
+                contexts.append(copy.deepcopy(context))
+                if len(contexts)==1:
+                    action=next(a for a in context['actions'] if a['tool']=='presence_check'
+                                and a['args']['feature_id']=='sand_crystal')
+                    return {'action_id':action['action_id'],'hypothesis_updates':[
+                        {'candidate_id':'G1','status':'paused','reason':'本轮后暂不沿簇晶调查'}]},None
+                return {'action_id':'review','decision_summary':'保留不确定性'},None
+        backend=FixtureBackend({'sand_crystal':{'ok':True,'present':True,'conf':.9}})
+        trace=await run_react(r,LocalToolbox(r,ledger_path=self.root/'ledger.json',backend=backend),
+                              planner=Planner(),planner_mode='scripted',max_steps=4)
+        change=next(e for e in trace['events'] if e['phase']=='hypotheses_updated')
+        self.assertEqual(change['evidence_digest'],contexts[0]['evidence']['evidence_digest'])
+        self.assertNotEqual(change['applied_evidence_digest'],change['evidence_digest'])
+        self.assertEqual(change['decision_source'],'injected_planner')
+        self.assertTrue(change['simulation'])
+        self.assertTrue(r.score(trace['observations'])['cards']['sand_crystal'].present)
+
+    async def test_calibrated_context_marks_old_scale_read_stale_and_allows_refresh(self):
+        r=self.runtime(agent_policy='adaptive_v2',max_planning=6)
+        r.workflow.backend=StageFixture(scale=None)
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        r.a={'status':'ok','fold_rankings':[[{'label':'秦皮','probability':1.0}]]*5}
+        contexts=[];read_ids=[]
+        class Planner:
+            def choose(self,context):
+                contexts.append(copy.deepcopy(context));n=len(contexts)
+                if n in (1,3):
+                    if n==3:
+                        assert context['read_results'][0]['stale'] is True
+                        assert context['evidence']['workflow']['calibration']['scales'][0]['px_per_um']==2
+                    action=next(a for a in context['actions'] if a['tool']=='read_scale')
+                    read_ids.append(action['action_id'])
+                    return {'action_id':action['action_id']},None
+                if n==2:
+                    action=next(a for a in context['actions'] if a['tool']=='calibrate_fov')
+                    return {'action_id':action['action_id']},None
+                return {'action_id':'review','decision_summary':'标定已更新，其他证据仍缺失'},None
+        trace=await run_react(r,LocalToolbox(r,ledger_path=self.root/'ledger.json',backend=FixtureBackend()),
+                              planner=Planner(),planner_mode='scripted',max_steps=6)
+        self.assertEqual(len(read_ids),2);self.assertNotEqual(read_ids[0],read_ids[1])
+        self.assertEqual(trace['stop_reason'],'planner_request_review')
 
     async def test_v2_multiview_initializes_remaining_view_after_rejected_stop(self):
         second = self.root / "second.png"

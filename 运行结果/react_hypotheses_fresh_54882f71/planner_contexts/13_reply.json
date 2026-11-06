@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "b18d4728968831b9316f08e97366fbc4ed8ca894418e58791d4332cefc6ac2ad",
+    "decision_summary": "秦皮砂晶已有C级支持，桔梗联结乳管宽度判据待测。反思显示多个ROI核验无进展，避开已列问题ID；选择未检且line_score最高(0.96)的roi:0做YOLO重检，期望产出可分割/测量的分泌组织候选以推进桔梗P1宽度判据。",
+    "override_reason": null,
+    "investigation_candidates": [
+      "桔梗",
+      "秦皮"
+    ],
+    "investigation_reason": "维持两候选：秦皮需复核砂晶形态；桔梗需获得分泌组织实测宽度(14-25μm)以区分。"
+  },
+  "usage": {
+    "completion_tokens": 170,
+    "completion_tokens_details": {
+      "reasoning_tokens": 31
+    },
+    "prompt_tokens": 21183,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 21353
+  }
+}

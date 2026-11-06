@@ -1,0 +1,22 @@
+{
+  "label": "图像不可判",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "",
+  "confidence": "medium",
+  "reason": "图像虚焦模糊，无清晰壁或结晶结构",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\input.jpg",
+  "focus": 520.0,
+  "sent_hw": [
+    768,
+    351
+  ],
+  "granularity": "instance",
+  "crop_id": "secretory_tissue_input_glme8ac6dc84c4b_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\react_hypotheses_de696a84\\runs\\fusion_bdeb5f77a67a4e6f8734bbfbeac219ab\\workflow\\ops\\23f4e60f574aef62\\detection\\crops\\secretory_tissue_input_glme8ac6dc84c4b_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm"
+}

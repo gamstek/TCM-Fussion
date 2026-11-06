@@ -290,3 +290,31 @@ observations必须是先前真实录制或明确模拟的{action,accepted,result
 MCP 服务接收请求前在主线程预加载已有数值/图像依赖，避免工作线程冷导入阻塞。有效阴性按视野回写，失败仍是 unknown。任务反思提供失败事实与质疑假设的问题，不强制下一工具；自进化效果仍需独立评测。
 
 交付可始终生成报告，同时必须如实保留 `review_required`。`confidence` 保留 B 规则分，`fused_score` 是未校准排序分；重排不能继承另一候选的确认结论。D8 默认2类，单类放宽实验须显式配置 `agent.workflow.min_support_features=1`。决策审查共享规划/网络预算，任务关闭后不得再发请求。
+
+
+## 2026-11-06｜假设生命周期与自主调查（CODE-062）
+
+adaptive_v2 将 P0 判据缺口作为建议，不再按候选是否含 P0 自动升级为执行任务。模型读取全部合法动作、判据、观察、失败反馈、任务反思和当前假设状态，再决定下一步。强制场景、身份/标定/质量资格、权限和预算仍由程序校验；这些约束不指定应调查哪味药材。
+
+模型回复可使用下列控制字段（每轮最多3项）：
+
+```json
+{
+  "action_id": "本轮合法动作编号",
+  "decision_summary": "本轮动作理由",
+  "hypothesis_updates": [
+    {"candidate_id": "知识库中已有的候选ID", "status": "paused", "reason": "根据已有工具反馈暂停该调查"}
+  ]
+}
+```
+
+状态为 proposed（提出）、investigating（调查中）、paused（暂停）、withdrawn（撤销本次调查）。暂停/撤销不证明候选不存在、不删除观察、不改变规则裁决；可因新信息重新进入 investigating。撤销的专属补救分支不再提议，共用特征仍可用于其他活跃假设。
+
+状态更新通常在本轮工具动作结束、下一轮规划前生效；选择停止时立即提交。investigation.json 保存状态、理由、历史和原始决策依据的 evidence_digest；轨迹另外记录应用时的证据摘要。状态变化可清除旧路线的连续覆盖计数，但不算证据收益、不重置总预算和步数。
+
+兼容旧 investigate_candidates/investigation_reason 提名字段；两个格式不能同时使用。提名只表示调查兴趣。场景自由描述中的“簇晶状”等措辞只能提出待核验线索，不能直接授予目标身份或强制优先级。全部提名与状态只接受已知知识库ID，额外候选总计最多6个。
+
+检验是否真正自主：查看 planner_contexts 的输入与原始模型回复，及 agent_trace.json 的 hypothesis_update_requested/hypotheses_updated。程序不能替模型填写撤销理由或预设“先查簇晶再查针晶”。模拟来源必须标注 injected_planner，真实来源为 model。
+
+
+CODE-062 新鲜度约定：`read_results` 保留历史查询并标注 `stale`。工作流只读动作的版本键覆盖实际工件版本、操作状态、假设状态和观察；标定变化即使不改变规则卡池，也会允许重新执行 read_scale。每轮 `evidence.workflow.calibration` 直接给出当前受信标定。特征卡的 UNCAL 可以表示尚无可信尺寸，不应被解释为“原图当前没有标定”。

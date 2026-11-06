@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "249a4b2a5c66e5a5a23a5a5fe09f13c371336ba3e83b9ab1991dda166ff4f876",
+    "decision_summary": "维持秦皮与桔梗两个调查假设。秦皮required的sand_crystal已在本视野观察到present（C级），但桔梗required的secretory_tissue（P1，联结乳管直径14～25μm）尚未核验，是当前两候选间最具区分性的缺口。本轮做secretory_tissue存在性检查，无论结果均有助于区分；阴性不作为排他证据。下一轮补做强制的scene_check。",
+    "override_reason": null,
+    "investigation_candidates": [
+      "秦皮",
+      "桔梗"
+    ],
+    "investigation_reason": "秦皮sand_crystal已present但仅限当前视野，桔梗secretory_tissue待核验，二者判据不同需分别落实。"
+  },
+  "usage": {
+    "completion_tokens": 299,
+    "completion_tokens_details": {
+      "reasoning_tokens": 141
+    },
+    "prompt_tokens": 11402,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 11701
+  }
+}

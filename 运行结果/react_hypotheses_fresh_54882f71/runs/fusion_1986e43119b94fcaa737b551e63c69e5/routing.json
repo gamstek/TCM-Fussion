@@ -1,0 +1,12 @@
+{
+  "mode": "shadow",
+  "policy_id": "ed13bef05802435f5edd7428558fc575515ca901abf77308d44cfc2d928f5522",
+  "calibrated": false,
+  "rounding_decimals": 4,
+  "recommend_skip": false,
+  "skip": false,
+  "reason": "below_threshold_or_boundary",
+  "top_k": 3,
+  "raw_score": 0.685,
+  "raw_margin": 0.40580000000000005
+}

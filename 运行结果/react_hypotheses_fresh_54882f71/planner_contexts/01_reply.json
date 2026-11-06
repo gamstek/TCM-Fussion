@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "dabd53e4c9ffacf923ac77f47b694b24a1222663b6da7b313e41b8be381588dc",
+    "decision_summary": "尚无任何有效观察，证据缺口大；先对原图执行初始检测以恢复/生成有效证据，再据结果核查秦皮（砂晶）与桔梗（分泌组织）的区分性判据。维持两个proposed假设不变。",
+    "override_reason": null,
+    "investigate_candidates": [
+      "秦皮",
+      "桔梗"
+    ],
+    "investigation_reason": "A逐折Top-K稳定指向秦皮与桔梗（党参联结乳管未映射）。二者required判据不同（秦皮砂晶C级 vs 桔梗联结乳管P1级、直径14-25μm），下一轮用只读/存在性检查核验区分。分数仅作假设，非证据。"
+  },
+  "usage": {
+    "completion_tokens": 251,
+    "completion_tokens_details": {
+      "reasoning_tokens": 91
+    },
+    "prompt_tokens": 7034,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 7285
+  }
+}

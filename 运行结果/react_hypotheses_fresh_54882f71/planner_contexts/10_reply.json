@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "fbda0176b123266b1bae823066b6a99bd3329083ba8dfa22b1c06d941b9a591d",
+    "decision_summary": "维持秦皮与桔梗两个investigating假设：秦皮的砂晶(C)已present，桔梗的联结乳管(P1,宽14-25μm)仅presence_check低置信present且未经尺寸核验，两判据冲突尚无法裁决。ROI:0/1的定位与分类未产生新证据，ROI:2是尚未核验的较高分区区域，对其做GLM定位secretory_tissue，预期产出待验证框供后续分割测量乳管宽度，是当前最具区分性的只读核验方向；偏离stop_advisory的理由为存在可裁决的量化缺口，且observation预算仍充足。",
+    "override_reason": "no_gain_streak不构成停止条件：桔梗required判据的关键量化特征（乳管直径14-25μm）尚未测量，继续在未核验区域定向定位可产生直接裁决性证据，而非重复同一依赖。",
+    "investigate_candidates": [
+      "秦皮",
+      "桔梗"
+    ],
+    "investigation_reason": "下轮若A4提出待验证框，可分割测量乳管宽度以检验桔梗P1判据；若定位无结果则为unknown，不作为对桔梗的排他否定。"
+  },
+  "usage": {
+    "completion_tokens": 424,
+    "completion_tokens_details": {
+      "reasoning_tokens": 163
+    },
+    "prompt_tokens": 20405,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 20829
+  }
+}

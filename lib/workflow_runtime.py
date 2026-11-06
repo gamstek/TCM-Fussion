@@ -4,8 +4,16 @@ import contracts
 import paths
 from .evidence_runtime import EvidenceRuntime
 from .workflow_session import WorkflowSession, TOOLS
-from .tool_registry import ToolSpec, object_schema
+from .tool_registry import ToolSpec, object_schema, validate_arguments
 from .storage import IntegrationError, project_path, file_hash, digest, read_json, write_json
+
+
+HYPOTHESIS_UPDATES = {'type':'array','minItems':1,'maxItems':3,'items':{
+    'type':'object','additionalProperties':False,
+    'required':['candidate_id','status','reason'],
+    'properties':{'candidate_id':{'type':'string','minLength':1},
+                  'status':{'enum':['proposed','investigating','paused','withdrawn']},
+                  'reason':{'type':'string','minLength':1,'maxLength':480}}}}
 
 
 class WorkflowRuntime(EvidenceRuntime):
@@ -60,40 +68,96 @@ class WorkflowRuntime(EvidenceRuntime):
         workflow = getattr(self, 'workflow', None)
         if workflow is None:
             return interest
+        doc = self._hypothesis_document()
+        states = doc.get('hypotheses', {})
+        inactive = [cid for cid, row in states.items() if row['status'] in {'paused','withdrawn'}]
+        nominated = doc.get('ids', [])
+        active = [cid for cid in nominated if cid not in inactive]
+        ids = [cid for cid in dict.fromkeys(interest['ids']+active) if cid not in inactive]
+        return {**interest, 'ids': ids, 'a_topk_ids': interest['ids'],
+                'investigation_ids': active, 'inactive_ids': inactive,
+                'hypotheses': [{
+                    'candidate_id':cid, 'status':states.get(cid,{}).get('status','proposed'),
+                    'reason':states.get(cid,{}).get('reason','A候选先验，仅供提出假设'),
+                    'is_evidence':False} for cid in dict.fromkeys(interest['ids']+nominated)],
+                'investigation_is_evidence': False}
+
+    def _hypothesis_document(self):
+        """Read task-bound routing state, including the older additive-only format."""
+        workflow = self.workflow
         path = workflow.root/'investigation.json'
         if not path.exists():
-            return interest
+            return {'identity':workflow.identity,'kb_sha256':self.kb_sha256,
+                    'ids':[],'hypotheses':{},'history':[],'is_evidence':False}
         doc = read_json(path)
         known = {row['id'] for row in self.kb.candidates()}
         if doc.get('identity') != workflow.identity or doc.get('kb_sha256') != self.kb_sha256:
             raise IntegrationError('INVESTIGATION_SCOPE', '调查范围与任务/知识库不符')
         ids = doc.get('ids', [])
-        if not isinstance(ids, list) or len(ids) > 6 or any(not isinstance(x, str) or x not in known for x in ids):
+        if not isinstance(ids, list) or len(ids) > len(known) or any(not isinstance(x, str) or x not in known for x in ids):
             raise IntegrationError('INVESTIGATION_SCOPE', '调查候选非法')
-        return {**interest, 'ids': list(dict.fromkeys(interest['ids']+ids)),
-                'investigation_ids': ids, 'investigation_is_evidence': False}
+        states = doc.get('hypotheses', {cid:{'status':'investigating','reason':doc.get('reason','旧调查记录')} for cid in ids})
+        if not isinstance(states,dict) or set(states)-set(ids):
+            raise IntegrationError('INVESTIGATION_SCOPE','假设状态不匹配')
+        for row in states.values():
+            if not isinstance(row,dict) or row.get('status') not in {'proposed','investigating','paused','withdrawn'}:
+                raise IntegrationError('INVESTIGATION_SCOPE','假设状态非法')
+        return {**doc,'hypotheses':states}
+
+    def read_revision(self, state):
+        observations = sorted([
+            [o.get('action',{}).get('action_id',''), bool(o.get('accepted')), o.get('result',{})]
+            for o in state.get('observations',[])], key=lambda row:row[0])
+        return digest({'rule':state['evidence_digest'],
+                       'artifacts':self.workflow.store.current()['version'],
+                       'operations':read_json(self.workflow.operations),
+                       'hypotheses':{cid:row['status'] for cid,row in
+                                     self._hypothesis_document()['hypotheses'].items()},
+                       'observations':observations})
 
     def investigate(self, ids, reason, evidence_digest):
-        """Persist model-selected KB candidates for parent and MCP; not evidence."""
+        """Compatibility for earlier planners; nomination never grants priority."""
         if (not isinstance(ids, list) or not 1 <= len(ids) <= 3 or
                 any(not isinstance(x, str) for x in ids) or
                 not isinstance(reason, str) or not reason.strip()):
             raise IntegrationError('INVESTIGATION_SCOPE', '扩展候选需要1至3个知识库ID和具体理由')
+        self.update_hypotheses([{'candidate_id':cid,'status':'investigating','reason':reason}
+                                for cid in ids], evidence_digest)
+        return self.candidate_interest().get('investigation_ids', [])
+
+    def update_hypotheses(self, updates, evidence_digest, *, commit=True, decision_source='runtime'):
+        """Model-owned routing lifecycle. Never delete observations or re-score truth."""
+        validate_arguments(HYPOTHESIS_UPDATES, updates)
         known = {row['id'] for row in self.kb.candidates()}
-        if any(x not in known for x in ids):
-            raise IntegrationError('INVESTIGATION_SCOPE', '禁止未知候选')
+        ids = [row['candidate_id'] for row in updates]
+        if len(set(ids)) != len(ids) or any(cid not in known for cid in ids):
+            raise IntegrationError('INVESTIGATION_SCOPE','未知或重复假设ID')
+        if any(not row['reason'].strip() for row in updates):
+            raise IntegrationError('INVESTIGATION_SCOPE','假设变更必须有理由')
         workflow = self.workflow
         if workflow.remaining_seconds() <= .1 or read_json(workflow.budget_path).get('closed'):
-            raise IntegrationError('WORKFLOW_CLOSED', '结束后不能扩大调查范围')
-        current = self.candidate_interest().get('investigation_ids', [])
-        combined = list(dict.fromkeys(current+ids))
-        if len(combined) > 6:
+            raise IntegrationError('WORKFLOW_CLOSED','结束后不能变更调查范围')
+        doc = self._hypothesis_document()
+        combined = list(dict.fromkeys(doc['ids']+ids))
+        a_ids = super().candidate_interest()['ids']
+        if len(set(combined)-set(a_ids)) > 6:
             raise IntegrationError('INVESTIGATION_SCOPE', '本任务额外调查候选上限为6')
-        write_json(workflow.root/'investigation.json', {
-            'identity': workflow.identity, 'kb_sha256': self.kb_sha256,
-            'ids': combined, 'reason': reason[:480], 'evidence_digest': evidence_digest,
-            'decision_source': 'model', 'is_evidence': False})
-        return combined
+        before = {cid for cid in a_ids+doc['ids']
+                  if doc['hypotheses'].get(cid,{}).get('status') not in {'paused','withdrawn'}}
+        states = {**doc['hypotheses']}
+        for row in updates:
+            states[row['candidate_id']]={
+                'status':row['status'],'reason':row['reason'],
+                'evidence_digest':evidence_digest,'decision_source':decision_source}
+        after = {cid for cid in a_ids+combined if states.get(cid,{}).get('status') not in {'paused','withdrawn'}}
+        change = {'updates':updates,'evidence_digest':evidence_digest,
+                  'scope_changed':before!=after,'is_evidence':False,
+                  'decision_source':decision_source,'simulation':self.simulation}
+        if commit:
+            write_json(workflow.root/'investigation.json', {
+                **doc,'schema':'investigation/v2','ids':combined,'hypotheses':states,
+                'history':doc.get('history',[])+[change],'is_evidence':False})
+        return change
 
     def _decision_client(self):
         if not getattr(self, 'allow_network', False):
@@ -162,6 +226,15 @@ class WorkflowRuntime(EvidenceRuntime):
         return value
 
     def p0_focus(self):
+        """An unfilled criterion is advisory in v2; it is never an execution duty."""
+        focus = WorkflowRuntime._legacy_p0_focus(self)
+        if focus and self.workflow.config.get('agent_policy')=='adaptive_v2':
+            focus={**focus,'mandatory':False,'advisory_only':True,
+                   'directive':'这是未解决的判据缺口，不是强制路线。可核验、暂停、撤销或切换假设；'
+                               '若选择尺寸采信，仍须满足真实身份、标定与质量前置条件。'}
+        return focus
+
+    def _legacy_p0_focus(self):
         """A 前列候选的 required P0 特征缺口；用于强制先做定向检索。"""
         workflow = self.workflow
         if workflow is None or not workflow.config.get('p0_priority', True):
@@ -290,7 +363,8 @@ class WorkflowRuntime(EvidenceRuntime):
                                'review': review, 'attempted': False,
                                'directive': '先 read_quality 读取 review_reason_codes/n_components/fg_outside_box_ratio；'
                                             '由 planner 判断重新定位、拆分分量、诊断测量或放弃，不得直接跳到别的候选。'}
-                        decider=getattr(self, 'review_decision', None)
+                        decider=(getattr(self, 'review_decision', None)
+                                 if workflow.config.get('agent_policy')!='adaptive_v2' else None)
                         focus['review_decision']=(decider(focus) if decider else
                                                   {'available':False,'repair':'abandon',
                                                    'reason':'review decision unavailable','fallback':True})
@@ -347,6 +421,8 @@ class WorkflowRuntime(EvidenceRuntime):
         repair=[a for a in base if self.tools.get(a['tool']).budget_class=='recompute']
         rest=[a for a in base if self.tools.get(a['tool']).budget_class!='recompute']
         actions=repair+rest if self.records or self.workflow.diagnostic_quality() or self.workflow.config.get('agent_policy') in {'adaptive_v1','adaptive_v2'} else repair
+        if self.workflow.config.get('agent_policy')=='adaptive_v2':
+            return actions  # Candidate gaps cannot suppress independent lawful alternatives.
         focus=self.p0_focus()
         if focus and focus.get('status')=='crop_pending_classification' and not focus['attempted']:
             target=focus.get('crop_artifact_id')
@@ -400,6 +476,9 @@ class WorkflowRuntime(EvidenceRuntime):
                             'blocked_tools':self.workflow.blocked_tools(),
                             'p0_focus':focus,
                             'unresolved':self.workflow.unresolved()}
+        # Current trusted calibration must not be hidden behind an old read_scale
+        # snapshot: calibration can change without changing rule cards or verdicts.
+        result['workflow']['calibration']=self.tools.read(self,'read_scale',{},state)
         result['workflow']['quality_assessments']=[self.workflow.assessment(v) for v in
             self.workflow.store.current()['artifacts'].values() if v['valid'] and v['kind']=='segmentation' and v.get('assessment_id')]
         result['workflow']['segmentation_reviews']=self.workflow.segmentation_reviews()

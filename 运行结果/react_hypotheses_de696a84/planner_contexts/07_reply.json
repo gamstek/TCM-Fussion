@@ -1,0 +1,23 @@
+{
+  "reply": {
+    "action_id": "92ac67a276c871876ed47d3fa443b5bd3db6ad718ebbea253ff521ab49264e81",
+    "decision_summary": "秦皮砂晶与桔梗联结乳管均为present但均未定量（n_measured=0），桔梗P1判据需乳管宽度14–25μm的mask测量；propose_regions可从原图提议局部核验区域以支撑定向分割测量，尚未达停止条件（gap 0.076，insufficient_evidence）。",
+    "override_reason": null,
+    "investigate_candidates": [
+      "桔梗",
+      "秦皮"
+    ],
+    "investigation_reason": "两候选required特征均已presence但缺定量测量，提议区域后预期通过分割+测量核验桔梗乳管直径与秦皮砂晶细胞内分布，区分二者。"
+  },
+  "usage": {
+    "completion_tokens": 254,
+    "completion_tokens_details": {
+      "reasoning_tokens": 107
+    },
+    "prompt_tokens": 11771,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 12025
+  }
+}
