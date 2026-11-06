@@ -1,0 +1,303 @@
+{
+  "identity": "a96961cb48ccd2c5bc9440a8892c3c225c7058fd8b64c44e22831e3d457864ea",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "龙胆",
+    "桔梗",
+    "秦皮",
+    "G2",
+    "柴胡",
+    "麦芽"
+  ],
+  "hypotheses": {
+    "龙胆": {
+      "status": "paused",
+      "reason": "needle_crystal分类返回图像不可判，多次定位无已验证进展；P0缺口保持advisory，暂停调查转向其他候选",
+      "evidence_digest": "be9907246961d1ebdeb2dc67d2d0ccfaa09903ad5aa69563a7b17edcb6f5e461",
+      "decision_source": "model"
+    },
+    "桔梗": {
+      "status": "investigating",
+      "reason": "麦芽若epidermis_cell阴性可撤；桔梗/柴胡需后续尺寸测量区分；G2针晶P0缺口仍advisory，可继续或暂停",
+      "evidence_digest": "ad2d504b2ff464abdfa9b826827d5df333541fcc9072140257e8255365d324b1",
+      "decision_source": "model"
+    },
+    "秦皮": {
+      "status": "investigating",
+      "reason": "若砂晶阴性则秦皮假设可撤；阳性则进入尺寸/身份核验。桔梗与柴胡共享secretory_tissue判据，需后续测量宽度14-25μm(桔梗)与8-25μm(柴胡)区分；提名仅为下一轮方向，不等于证据。",
+      "evidence_digest": "be9907246961d1ebdeb2dc67d2d0ccfaa09903ad5aa69563a7b17edcb6f5e461",
+      "decision_source": "model"
+    },
+    "G2": {
+      "status": "investigating",
+      "reason": "麦芽若epidermis_cell阴性可撤；桔梗/柴胡需后续尺寸测量区分；G2针晶P0缺口仍advisory，可继续或暂停",
+      "evidence_digest": "ad2d504b2ff464abdfa9b826827d5df333541fcc9072140257e8255365d324b1",
+      "decision_source": "model"
+    },
+    "柴胡": {
+      "status": "investigating",
+      "reason": "若砂晶阴性则秦皮假设可撤；阳性则进入尺寸/身份核验。桔梗与柴胡共享secretory_tissue判据，需后续测量宽度14-25μm(桔梗)与8-25μm(柴胡)区分；提名仅为下一轮方向，不等于证据。",
+      "evidence_digest": "be9907246961d1ebdeb2dc67d2d0ccfaa09903ad5aa69563a7b17edcb6f5e461",
+      "decision_source": "model"
+    },
+    "麦芽": {
+      "status": "investigating",
+      "reason": "麦芽若epidermis_cell阴性可撤；桔梗/柴胡需后续尺寸测量区分；G2针晶P0缺口仍advisory，可继续或暂停",
+      "evidence_digest": "ad2d504b2ff464abdfa9b826827d5df333541fcc9072140257e8255365d324b1",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "龙胆为A先验榜首且存在P0针晶缺口；桔梗在多折多视野有第二位支持（联结乳管14–25μm）；秦皮在view_03集中出现（砂晶C级）。下轮在获得检出/标定后用只读或presence_check区分这三个假设。"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "龙胆为A先验榜首且存在P0针晶缺口；桔梗在多折多视野有第二位支持（联结乳管14–25μm）；秦皮在view_03集中出现（砂晶C级）。下轮在获得检出/标定后用只读或presence_check区分这三个假设。"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "龙胆为A先验榜首且存在P0针晶缺口；桔梗在多折多视野有第二位支持（联结乳管14–25μm）；秦皮在view_03集中出现（砂晶C级）。下轮在获得检出/标定后用只读或presence_check区分这三个假设。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "维持三个investigating假设：龙胆A先验榜首且有P0针晶缺口待核，桔梗多折第二位支持(联结乳管14–25μm)，秦皮view_03集中出现(砂晶)；待两个视野检出后用presence_check差集区分，不视为证据"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "维持三个investigating假设：龙胆A先验榜首且有P0针晶缺口待核，桔梗多折第二位支持(联结乳管14–25μm)，秦皮view_03集中出现(砂晶)；待两个视野检出后用presence_check差集区分，不视为证据"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "维持三个investigating假设：龙胆A先验榜首且有P0针晶缺口待核，桔梗多折第二位支持(联结乳管14–25μm)，秦皮view_03集中出现(砂晶)；待两个视野检出后用presence_check差集区分，不视为证据"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "龙胆P0针晶缺口未解，桔梗联结乳管(14–25μm)与秦皮砂晶是当前最有区分度的P1/C判据，经view_01提议区域与并行存在性观察验证后再做差集裁决。"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "龙胆P0针晶缺口未解，桔梗联结乳管(14–25μm)与秦皮砂晶是当前最有区分度的P1/C判据，经view_01提议区域与并行存在性观察验证后再做差集裁决。"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "龙胆P0针晶缺口未解，桔梗联结乳管(14–25μm)与秦皮砂晶是当前最有区分度的P1/C判据，经view_01提议区域与并行存在性观察验证后再做差集裁决。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "龙胆P0为针晶，与知识库G2(半夏类针晶P0)同特征，若A2及后续核验持续阴性可扩展核查该组以避免Top-K遗漏真类。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "若A1针晶阴性，G2(半夏类针晶P0)可作为Top-K遗漏真类的扩展假设；桔梗联结乳管(P1)与秦皮砂晶(C)是当前候选间最有区分度的P1/C判据，宜在下一轮做差集核查。"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "若A1针晶阴性，G2(半夏类针晶P0)可作为Top-K遗漏真类的扩展假设；桔梗联结乳管(P1)与秦皮砂晶(C)是当前候选间最有区分度的P1/C判据，宜在下一轮做差集核查。"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "若A1针晶阴性，G2(半夏类针晶P0)可作为Top-K遗漏真类的扩展假设；桔梗联结乳管(P1)与秦皮砂晶(C)是当前候选间最有区分度的P1/C判据，宜在下一轮做差集核查。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "若A1针晶阴性，转向桔梗联结乳管(P1)与秦皮砂晶(C)差集核查，并将G2(半夏类针晶P0)作为Top-K遗漏真类扩展假设。"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "若A1针晶阴性，转向桔梗联结乳管(P1)与秦皮砂晶(C)差集核查，并将G2(半夏类针晶P0)作为Top-K遗漏真类扩展假设。"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "若A1针晶阴性，转向桔梗联结乳管(P1)与秦皮砂晶(C)差集核查，并将G2(半夏类针晶P0)作为Top-K遗漏真类扩展假设。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "若A153分类证实针晶且满足尺寸/身份前置，则龙胆P0得到正向证据；若阴性，转向桔梗联结乳管(P1)与秦皮砂晶(C)差集，并保持G2(半夏类)作为Top-K遗漏真类假设。"
+        },
+        {
+          "candidate_id": "龙胆",
+          "status": "investigating",
+          "reason": "若A153分类证实针晶且满足尺寸/身份前置，则龙胆P0得到正向证据；若阴性，转向桔梗联结乳管(P1)与秦皮砂晶(C)差集，并保持G2(半夏类)作为Top-K遗漏真类假设。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "若分类确认联结乳管样分泌结构且后续尺寸满足14-25μm，支持桔梗/柴胡P1；若无法确认，转向G2针晶P0或其他候选。提名仅为下一轮调查方向，不等于证据。"
+        },
+        {
+          "candidate_id": "柴胡",
+          "status": "investigating",
+          "reason": "若分类确认联结乳管样分泌结构且后续尺寸满足14-25μm，支持桔梗/柴胡P1；若无法确认，转向G2针晶P0或其他候选。提名仅为下一轮调查方向，不等于证据。"
+        },
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "若分类确认联结乳管样分泌结构且后续尺寸满足14-25μm，支持桔梗/柴胡P1；若无法确认，转向G2针晶P0或其他候选。提名仅为下一轮调查方向，不等于证据。"
+        }
+      ],
+      "evidence_digest": "be9907246961d1ebdeb2dc67d2d0ccfaa09903ad5aa69563a7b17edcb6f5e461",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "龙胆",
+          "status": "paused",
+          "reason": "needle_crystal分类返回图像不可判，多次定位无已验证进展；P0缺口保持advisory，暂停调查转向其他候选"
+        },
+        {
+          "candidate_id": "麦芽",
+          "status": "investigating",
+          "reason": "提名为下一轮独立特征核验方向，若表皮细胞长细胞与短细胞交互排列阳性则支持麦芽假设；不等于证据"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "secretory_tissue presence_conf=0.6(UNCAL)维持P1待尺寸/身份核验，继续调查"
+        }
+      ],
+      "evidence_digest": "be9907246961d1ebdeb2dc67d2d0ccfaa09903ad5aa69563a7b17edcb6f5e461",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "若砂晶阴性则秦皮假设可撤；阳性则进入尺寸/身份核验。桔梗与柴胡共享secretory_tissue判据，需后续测量宽度14-25μm(桔梗)与8-25μm(柴胡)区分；提名仅为下一轮方向，不等于证据。"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "若砂晶阴性则秦皮假设可撤；阳性则进入尺寸/身份核验。桔梗与柴胡共享secretory_tissue判据，需后续测量宽度14-25μm(桔梗)与8-25μm(柴胡)区分；提名仅为下一轮方向，不等于证据。"
+        },
+        {
+          "candidate_id": "柴胡",
+          "status": "investigating",
+          "reason": "若砂晶阴性则秦皮假设可撤；阳性则进入尺寸/身份核验。桔梗与柴胡共享secretory_tissue判据，需后续测量宽度14-25μm(桔梗)与8-25μm(柴胡)区分；提名仅为下一轮方向，不等于证据。"
+        }
+      ],
+      "evidence_digest": "be9907246961d1ebdeb2dc67d2d0ccfaa09903ad5aa69563a7b17edcb6f5e461",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "麦芽",
+          "status": "investigating",
+          "reason": "麦芽若epidermis_cell阴性可撤；桔梗/柴胡需后续尺寸测量区分；G2针晶P0缺口仍advisory，可继续或暂停"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "麦芽若epidermis_cell阴性可撤；桔梗/柴胡需后续尺寸测量区分；G2针晶P0缺口仍advisory，可继续或暂停"
+        },
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "麦芽若epidermis_cell阴性可撤；桔梗/柴胡需后续尺寸测量区分；G2针晶P0缺口仍advisory，可继续或暂停"
+        }
+      ],
+      "evidence_digest": "ad2d504b2ff464abdfa9b826827d5df333541fcc9072140257e8255365d324b1",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

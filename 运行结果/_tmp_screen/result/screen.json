@@ -1,0 +1,26 @@
+{
+  "image_id": "img_test",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "TCM_Fusion\\运行结果\\_tmp_screen\\result\\sheet.jpg",
+  "rois": [
+    {
+      "index": 0,
+      "score": 0.85,
+      "worth": true,
+      "reason": "视野中央清晰可见一根两端尖锐的细长针状结晶，透明无细胞壁，疑似草酸钙针晶"
+    },
+    {
+      "index": 5,
+      "score": 0.4,
+      "worth": true,
+      "reason": "中下部似有细长针状物隐约可见，建议定向复核"
+    },
+    {
+      "index": 4,
+      "score": 0.25,
+      "worth": true,
+      "reason": "顶部附近有暗色细小尖状物，存在针晶可能"
+    }
+  ]
+}

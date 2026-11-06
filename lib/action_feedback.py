@@ -6,6 +6,7 @@ def objective(action):
                 'measure_instances':'获取具有用途资格的真实量化证据','segment_instance':'恢复可用目标掩码',
                 'detect_region':'局部 YOLO 重检',
                 'propose_regions':'从原图纹理提议局部核验区域',
+                'roi_screen':'用 GLM 多图筛选 ROI，决定哪些局部值得继续框选',
                 'locate_feature':'用 GLM 核验选定局部并提出待验证框'}.get(tool,'读取或恢复有效证据'),
             'expected_resolution':'增加有效证据/反证或解除实际前置阻塞',
             'stop_condition':'同依赖重复动作、服务失败、预算或截止，不以生成过门为成功'}

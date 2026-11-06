@@ -1,0 +1,33 @@
+{
+  "crop_id": "needle_crystal_view_04_glme8ac6dc84c4b_01",
+  "png": "needle_crystal_view_04_glme8ac6dc84c4b_01.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_04.jpg",
+  "stem": "view_04",
+  "feature_id": "needle_crystal",
+  "object_label": "草酸钙针晶",
+  "herb": "",
+  "px_per_um": 11.65,
+  "tight_box": [
+    1434,
+    891,
+    1613,
+    1055
+  ],
+  "tight_box_local": [
+    24,
+    24,
+    203,
+    188
+  ],
+  "loose_box": [
+    1410,
+    867,
+    1637,
+    1079
+  ],
+  "crop_size": "227x212",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.65,
+  "det_confidence": "medium"
+}

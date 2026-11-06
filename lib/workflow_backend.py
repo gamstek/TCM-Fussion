@@ -24,6 +24,15 @@ class WorkflowBackend:
     def execute(self, session, tool, target, work, context):
         def command(args, python=session.python, log='stage.log'):
             run([str(python),'-X','utf8',*map(str,args)],context_path=context,timeout=session.remaining_seconds(),log_path=work/log,cancel_event=session.cancel_event)
+        if tool == 'roi_screen':
+            out = work / 'screening'
+            ctx = work / 'screen.json'
+            write_json(ctx, {'tool': tool, 'source': str(target['source']),
+                             'regions': str(target['regions']),
+                             'feature_id': target.get('feature_id'),
+                             'image_id': target['image_id'], 'output': str(out)})
+            command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
+            return {'screen': str(out / 'screen.json')}
         if tool in {'propose_regions', 'locate_feature'}:
             out = work / 'detection'
             ctx = work / 'recovery.json'

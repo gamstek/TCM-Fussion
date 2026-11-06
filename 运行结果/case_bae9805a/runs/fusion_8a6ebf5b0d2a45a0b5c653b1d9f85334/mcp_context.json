@@ -1,0 +1,79 @@
+{
+  "workflow_config": {
+    "sample_id": "case_bae9805a",
+    "allow_network": true,
+    "a": {
+      "mode": "cli",
+      "required": true,
+      "python": "D:/Anaconda/python.exe",
+      "checkpoint_dir": "MICROSCOPE-main/v3_resnet50_full",
+      "timeout_seconds": 180,
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_01.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_02.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_03.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_04.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_05.jpg"
+      ]
+    },
+    "b": {
+      "mode": "run",
+      "input_mode": "images",
+      "input": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_01.jpg",
+      "enable_vlm": false
+    },
+    "agent": {
+      "mode": "active",
+      "planner": "llm",
+      "transport": "mcp",
+      "image_roots": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_01.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_02.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_03.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_04.jpg",
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_05.jpg"
+      ],
+      "max_steps": 40,
+      "candidate_policy": {
+        "top_k": 3
+      },
+      "workflow": {
+        "execution": "active",
+        "agent_policy": "adaptive_v2",
+        "python": ".venv/vision/Scripts/python.exe",
+        "detector": "yolo",
+        "targeted_recovery": true,
+        "p0_priority": true,
+        "max_parallel": 2,
+        "max_locate_attempts": 6,
+        "max_tool_failures": 2,
+        "identity_min_confidence": "high",
+        "max_seconds": 1800,
+        "max_observation_seconds": 150,
+        "max_call_seconds": 180,
+        "max_initializations": 5,
+        "max_planning": 32,
+        "max_observations": 10,
+        "max_recompute": 30,
+        "max_api_calls": 60,
+        "max_resource_units": 220,
+        "quality_policy": "strict",
+        "quality_evaluation": "legacy",
+        "box_association": "region_component",
+        "candidate_scope": "open_strict",
+        "a_weight": 0.6,
+        "b_weight": 0.4,
+        "min_support_features": 2,
+        "final_assessment_llm": true,
+        "final_assessment_seconds": 45
+      }
+    },
+    "aliases": {},
+    "allow_recorded": false
+  },
+  "a_prediction": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\runs\\fusion_8a6ebf5b0d2a45a0b5c653b1d9f85334\\a_prediction.json",
+  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\runs\\fusion_8a6ebf5b0d2a45a0b5c653b1d9f85334",
+  "allow_network": true,
+  "max_requests": 10,
+  "simulation": false
+}

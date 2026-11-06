@@ -1,0 +1,35 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_02.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\runs\\fusion_8a6ebf5b0d2a45a0b5c653b1d9f85334\\workflow\\ops\\0015f1b1c5573d4e\\detection",
+  "roi": [
+    1024,
+    0,
+    2048,
+    1024
+  ],
+  "feature_id": "secretory_tissue",
+  "px_per_um": 11.65,
+  "existing_boxes": [
+    {
+      "id": "crop:img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263:epidermis_cell_view_02_02",
+      "label": "表皮细胞",
+      "box": [
+        6.0,
+        19.9,
+        1886.1,
+        1534.2
+      ]
+    },
+    {
+      "id": "crop:img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263:secretory_tissue_view_02_01",
+      "label": "分泌组织",
+      "box": [
+        40.5,
+        24.4,
+        1949.4,
+        1534.8
+      ]
+    }
+  ]
+}

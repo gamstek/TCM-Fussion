@@ -1,0 +1,14 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_03.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\runs\\fusion_8a6ebf5b0d2a45a0b5c653b1d9f85334\\workflow\\ops\\3939788becb87628\\detection",
+  "roi": [
+    1024,
+    512,
+    2048,
+    1536
+  ],
+  "feature_id": "needle_crystal",
+  "px_per_um": null,
+  "existing_boxes": []
+}

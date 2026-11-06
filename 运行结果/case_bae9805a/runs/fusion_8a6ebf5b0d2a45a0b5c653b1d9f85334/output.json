@@ -1,0 +1,1589 @@
+{
+  "schema": "diagnosis-output/v1",
+  "sample_id": "case_bae9805a",
+  "status": "tentative",
+  "top_candidate": {
+    "id": "龙胆",
+    "display": "龙胆",
+    "kind": "herb",
+    "score": 0.383256,
+    "confidence": 0.0,
+    "support_count": 0,
+    "a_probability": 0.63876,
+    "b_confidence": 0.0,
+    "fused_score": 0.383256,
+    "admission": "verify"
+  },
+  "candidate_admission": {
+    "available": false,
+    "decision": "verify",
+    "fallback": true,
+    "reason": "rule evidence requires review; no model admission requested",
+    "decision_source": "runtime_precondition"
+  },
+  "alternatives": [
+    {
+      "id": "秦皮",
+      "display": "秦皮",
+      "score": 0.286235,
+      "confidence": 0.51
+    },
+    {
+      "id": "桔梗",
+      "display": "桔梗",
+      "score": 0.233481,
+      "confidence": 0.3825
+    },
+    {
+      "id": "石膏",
+      "display": "石膏",
+      "score": 0.006632,
+      "confidence": 0.0
+    },
+    {
+      "id": "菟丝子",
+      "display": "菟丝子",
+      "score": 0.001011,
+      "confidence": 0.0
+    }
+  ],
+  "ambiguous_with": [],
+  "tie_break": {
+    "applied": false,
+    "a_majority": "龙胆",
+    "a_fold_top1": 16,
+    "total_folds": 25
+  },
+  "strong_observations": [
+    {
+      "view": "view_03",
+      "tool": "presence_check",
+      "feature_id": "secretory_tissue",
+      "present": true,
+      "confidence": 0.6,
+      "source": "glm_presence",
+      "supporting_candidates": [
+        "桔梗"
+      ]
+    },
+    {
+      "view": "view_03",
+      "tool": "presence_check",
+      "feature_id": "epidermis_cell",
+      "present": false,
+      "confidence": 0.78,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_03",
+      "tool": "presence_check",
+      "feature_id": "sand_crystal",
+      "present": true,
+      "confidence": 0.8,
+      "source": "glm_presence",
+      "supporting_candidates": [
+        "秦皮"
+      ]
+    },
+    {
+      "view": "view_03",
+      "tool": "presence_check",
+      "feature_id": "mineral_feature",
+      "present": false,
+      "confidence": 0.78,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_03",
+      "tool": "scene_check",
+      "feature_id": "scene_check",
+      "present": null,
+      "confidence": 0.6,
+      "source": "glm_scene",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_05",
+      "tool": "scene_check",
+      "feature_id": "scene_check",
+      "present": null,
+      "confidence": 0.6,
+      "source": "glm_scene",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_02",
+      "tool": "presence_check",
+      "feature_id": "epidermis_cell",
+      "present": false,
+      "confidence": 0.85,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    }
+  ],
+  "detections": [
+    {
+      "tool": "detect_fov_initial",
+      "label": "表皮细胞",
+      "score": 0.9073,
+      "box": [
+        262.8,
+        12.5,
+        1529.8,
+        1494.4
+      ],
+      "source_sha256": "f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "其他",
+      "score": 0.7894,
+      "box": [
+        7.0,
+        0.0,
+        1853.4,
+        1411.5
+      ],
+      "source_sha256": "72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "分泌组织",
+      "score": 0.4066,
+      "box": [
+        40.5,
+        24.4,
+        1949.4,
+        1534.8
+      ],
+      "source_sha256": "aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "表皮细胞",
+      "score": 0.4355,
+      "box": [
+        6.0,
+        19.9,
+        1886.1,
+        1534.2
+      ],
+      "source_sha256": "aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "分泌组织",
+      "score": 0.5529,
+      "box": [
+        76.5,
+        15.3,
+        1807.0,
+        1530.7
+      ],
+      "source_sha256": "a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8"
+    },
+    {
+      "tool": "locate_feature",
+      "label": "分泌组织",
+      "score": 0.65,
+      "box": [
+        1049,
+        946,
+        1158,
+        1056
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.65,
+      "box": [
+        1434,
+        891,
+        1613,
+        1055
+      ],
+      "source_sha256": null
+    }
+  ],
+  "classifications": [
+    {
+      "crop_id": "needle_crystal_view_04_glme8ac6dc84c4b_01",
+      "label": "图像不可判",
+      "reject": "unreadable",
+      "confidence": "high",
+      "feature_id": "",
+      "reason": "图像模糊，无清晰壁、棱角或结构",
+      "glm_confidence": "high",
+      "yolo_confidence": null,
+      "confidence_source": "glm"
+    },
+    {
+      "crop_id": "secretory_tissue_view_01_glme8ac6dc84c4b_01",
+      "label": "图像不可判",
+      "reject": "unreadable",
+      "confidence": "medium",
+      "feature_id": "",
+      "reason": "图像过曝模糊，无壁无棱角可辨",
+      "glm_confidence": "medium",
+      "yolo_confidence": null,
+      "confidence_source": "glm"
+    }
+  ],
+  "missing_required": [
+    {
+      "feature_id": "needle_crystal",
+      "state": "NOT_DETECTED"
+    }
+  ],
+  "review_required": true,
+  "final_assessment": {
+    "schema": "final-assessment/v1",
+    "method": "deterministic",
+    "simulation": false,
+    "stop_reason": "planner_request_review",
+    "candidate_id": "龙胆",
+    "candidate_display": "龙胆",
+    "status": "tentative",
+    "judgement": "现有证据暂倾向：龙胆；仅有A先验，缺少独立显微支持，不构成鉴定。",
+    "explanation": "依据全部已收集证据及原规则综合排序给出当前倾向。判据状态：needle_crystal=NOT_DETECTED；epidermis_cell=NOT_DETECTED。原规则说明：D8 证据数量门槛：独立证据特征仅 1 类（sand_crystal），不足以支撑 probable 结论（top1 秦皮 conf 0.51）；降级为证据不足、top1 保留为首个备选，补齐其他判据特征或经 VLM 补证据后重评。未完成的身份或尺寸仍保留不确定性。",
+    "supporting_evidence": [
+      {
+        "id": "a_prior:23",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.998030960559845,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "党参联结乳管",
+              "probability": 0.0008391364244744182,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "木香木纤维",
+              "probability": 0.00048568015336059034,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:24",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9696999788284302,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.02669309638440609,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.0027919220738112926,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "桔梗"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:25",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9992948770523071,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "麦芽",
+              "probability": 0.00031357555417343974,
+              "candidate_id": "麦芽"
+            },
+            {
+              "rank": 3,
+              "label": "木香木纤维",
+              "probability": 0.00015884418098721653,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "麦芽"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:26",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9810412526130676,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "麦芽",
+              "probability": 0.012106071226298809,
+              "candidate_id": "麦芽"
+            },
+            {
+              "rank": 3,
+              "label": "乌梅",
+              "probability": 0.001892291707918048,
+              "candidate_id": "乌梅"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "麦芽",
+          "乌梅"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:27",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9997212290763855,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "乌梅",
+              "probability": 0.00012565912038553506,
+              "candidate_id": "乌梅"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 5.434575359686278e-05,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "乌梅"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:28",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9977228045463562,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "党参联结乳管",
+              "probability": 0.0013576262863352895,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "木香木纤维",
+              "probability": 0.0004635151126421988,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:29",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "木香木纤维",
+              "probability": 0.5641375184059143,
+              "candidate_id": null
+            },
+            {
+              "rank": 2,
+              "label": "龙胆",
+              "probability": 0.3740648925304413,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 3,
+              "label": "板蓝根木纤维",
+              "probability": 0.02762962505221367,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:30",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.947412371635437,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "木香木纤维",
+              "probability": 0.042079538106918335,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "板蓝根木纤维",
+              "probability": 0.005520189180970192,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:31",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.8601183891296387,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "党参联结乳管",
+              "probability": 0.1054610162973404,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "板蓝根木纤维",
+              "probability": 0.02330099605023861,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:32",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "党参联结乳管",
+              "probability": 0.7419338822364807,
+              "candidate_id": null
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.23183509707450867,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "龙胆",
+              "probability": 0.01553355809301138,
+              "candidate_id": "龙胆"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "桔梗",
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:38",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.924048125743866,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.07512366771697998,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.00046104667126201093,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "桔梗"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:39",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.981756865978241,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.017861438915133476,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.00035196219687350094,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "桔梗"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:40",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9935990571975708,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.004254557657986879,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.0014087969902902842,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "桔梗"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:41",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "桔梗",
+              "probability": 0.7710531949996948,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 2,
+              "label": "龙胆",
+              "probability": 0.22189204394817352,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.006980015896260738,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "桔梗",
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:42",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "桔梗",
+              "probability": 0.7751585245132446,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 2,
+              "label": "龙胆",
+              "probability": 0.15486443042755127,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 3,
+              "label": "党参联结乳管",
+              "probability": 0.06928888708353043,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "桔梗",
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:43",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.8029503226280212,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "石膏",
+              "probability": 0.1545107364654541,
+              "candidate_id": "石膏"
+            },
+            {
+              "rank": 3,
+              "label": "菟丝子",
+              "probability": 0.026128366589546204,
+              "candidate_id": "菟丝子"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "石膏",
+          "菟丝子"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:44",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9995392560958862,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "桔梗",
+              "probability": 0.00029987702146172523,
+              "candidate_id": "桔梗"
+            },
+            {
+              "rank": 3,
+              "label": "石膏",
+              "probability": 4.3037063733208925e-05,
+              "candidate_id": "石膏"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "桔梗",
+          "石膏"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:45",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9926279187202454,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "木香菊糖",
+              "probability": 0.0023062455002218485,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "黄芪",
+              "probability": 0.001631933031603694,
+              "candidate_id": "黄芪"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "黄芪"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:46",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.7643902897834778,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "石膏",
+              "probability": 0.11982525885105133,
+              "candidate_id": "石膏"
+            },
+            {
+              "rank": 3,
+              "label": "桔梗",
+              "probability": 0.05025440454483032,
+              "candidate_id": "桔梗"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "石膏",
+          "桔梗"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:47",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "龙胆",
+              "probability": 0.9906890392303467,
+              "candidate_id": "龙胆"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.002134512411430478,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "苦参",
+              "probability": 0.002134384121745825,
+              "candidate_id": "苦参"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "龙胆",
+          "黄芪",
+          "苦参"
+        ],
+        "counters_candidate_ids": []
+      }
+    ],
+    "counterevidence": [
+      {
+        "id": "observation:49",
+        "kind": "observation",
+        "data": {
+          "accepted": true,
+          "action": {
+            "tool": "presence_check",
+            "args": {
+              "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+              "feature_id": "epidermis_cell",
+              "morph_hint": "外表皮长细胞与2个短细胞（栓化细胞、硅质细胞）交互排列，长细胞壁厚深波状弯曲"
+            },
+            "action_id": "53d35e59658069dcb041e040a32fe4ba229e90fa4456abc1cd4f13f284846c39"
+          },
+          "result": {
+            "present": false,
+            "conf": 0.78,
+            "reason": "视野中仅见半透明无定形组织碎片与纵向纤维状条纹，未见长细胞与成对短细胞（栓化/硅质细胞）交互排列且壁厚深波状弯曲的表皮特征。",
+            "ok": true
+          },
+          "scope": "bound field of view; failed or unreadable is unknown, not absent"
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": [
+          "乌梅",
+          "大青叶",
+          "荜茇",
+          "荆芥",
+          "麦芽",
+          "使君子",
+          "葶苈子",
+          "王不留行",
+          "淡竹叶",
+          "苦杏仁",
+          "龙胆"
+        ]
+      },
+      {
+        "id": "observation:54",
+        "kind": "observation",
+        "data": {
+          "accepted": true,
+          "action": {
+            "tool": "presence_check",
+            "args": {
+              "image_id": "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+              "feature_id": "epidermis_cell",
+              "morph_hint": "外表皮长细胞与2个短细胞（栓化细胞、硅质细胞）交互排列，长细胞壁厚深波状弯曲"
+            },
+            "action_id": "fc2a2ec9bb6eeedf54bef5e0f9fe43d5007eb610182aebc7731cd3e1a25aa1fa"
+          },
+          "result": {
+            "present": false,
+            "conf": 0.85,
+            "reason": "视野中主要为纵向排列的长条形纤维及散在棕色内容物，未见长细胞与栓化/硅质短细胞交互排列且壁厚深波状弯曲的表皮细胞特征。",
+            "ok": true
+          },
+          "scope": "bound field of view; failed or unreadable is unknown, not absent"
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": [
+          "乌梅",
+          "大青叶",
+          "荜茇",
+          "荆芥",
+          "麦芽",
+          "使君子",
+          "葶苈子",
+          "王不留行",
+          "淡竹叶",
+          "苦杏仁",
+          "龙胆"
+        ]
+      }
+    ],
+    "unresolved": [
+      {
+        "id": "criterion:18",
+        "kind": "criterion",
+        "data": {
+          "candidate_id": "龙胆",
+          "feature_id": "needle_crystal",
+          "role": "required",
+          "state": "NOT_DETECTED",
+          "present": false,
+          "tier": "P0",
+          "quant": null,
+          "morph": null,
+          "note": null,
+          "score_contribution": 0.0
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "observation:55",
+        "kind": "observation",
+        "data": {
+          "accepted": false,
+          "action": {
+            "tool": "scene_check",
+            "args": {
+              "image_id": "img_a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8"
+            },
+            "action_id": "4e9cea0afaedff5cefa93fcc76907a53ca605e4110a895f6c9d94e627d85be44"
+          },
+          "result": {
+            "ok": false,
+            "error_code": "MODEL_JSON_INVALID"
+          },
+          "scope": "bound field of view; failed or unreadable is unknown, not absent"
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "classification:61",
+        "kind": "classification",
+        "data": {
+          "artifact_id": "classification:crop:img_a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8:needle_crystal_view_04_glme8ac6dc84c4b_01",
+          "identity_verified": false,
+          "result": {
+            "label": "图像不可判",
+            "reject": "unreadable",
+            "raw_label": "图像不可判",
+            "feature_id": "",
+            "second": "",
+            "confidence": "high",
+            "reason": "图像模糊，无清晰壁、棱角或结构",
+            "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_04.jpg",
+            "focus": 100.9,
+            "sent_hw": [
+              704,
+              768
+            ],
+            "granularity": "instance",
+            "crop_id": "needle_crystal_view_04_glme8ac6dc84c4b_01",
+            "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\runs\\fusion_8a6ebf5b0d2a45a0b5c653b1d9f85334\\workflow\\ops\\a67c44db81269cae\\detection\\crops\\needle_crystal_view_04_glme8ac6dc84c4b_01.png",
+            "glm_confidence": "high",
+            "yolo_confidence": null,
+            "yolo_checked": true,
+            "confidence_source": "glm"
+          }
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "classification:62",
+        "kind": "classification",
+        "data": {
+          "artifact_id": "classification:crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:secretory_tissue_view_01_glme8ac6dc84c4b_01",
+          "identity_verified": false,
+          "result": {
+            "label": "图像不可判",
+            "reject": "unreadable",
+            "raw_label": "图像不可判",
+            "feature_id": "",
+            "second": "",
+            "confidence": "medium",
+            "reason": "图像过曝模糊，无壁无棱角可辨",
+            "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\view_01.jpg",
+            "focus": 331.7,
+            "sent_hw": [
+              768,
+              761
+            ],
+            "granularity": "instance",
+            "crop_id": "secretory_tissue_view_01_glme8ac6dc84c4b_01",
+            "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\runs\\fusion_8a6ebf5b0d2a45a0b5c653b1d9f85334\\workflow\\ops\\79bbd00a72968eb8\\detection\\crops\\secretory_tissue_view_01_glme8ac6dc84c4b_01.png",
+            "glm_confidence": "medium",
+            "yolo_confidence": null,
+            "yolo_checked": true,
+            "confidence_source": "glm"
+          }
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      }
+    ],
+    "formal_verdict": "insufficient_evidence",
+    "formal_conclusion_id": null,
+    "candidate_comparison": [
+      {
+        "candidate_id": "龙胆",
+        "display": "龙胆",
+        "rule_confidence": 0.0,
+        "fused_score": 0.383256,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:18"
+        ]
+      },
+      {
+        "candidate_id": "秦皮",
+        "display": "秦皮",
+        "rule_confidence": 0.51,
+        "fused_score": 0.286235,
+        "supported_criteria": [
+          "criterion:1"
+        ],
+        "required_gaps": []
+      },
+      {
+        "candidate_id": "桔梗",
+        "display": "桔梗",
+        "rule_confidence": 0.3825,
+        "fused_score": 0.233481,
+        "supported_criteria": [
+          "criterion:7"
+        ],
+        "required_gaps": [
+          "criterion:7"
+        ]
+      },
+      {
+        "candidate_id": "石膏",
+        "display": "石膏",
+        "rule_confidence": 0.0,
+        "fused_score": 0.006632,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:12"
+        ]
+      },
+      {
+        "candidate_id": "菟丝子",
+        "display": "菟丝子",
+        "rule_confidence": 0.0,
+        "fused_score": 0.001011,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:16"
+        ]
+      },
+      {
+        "candidate_id": "黄芪",
+        "display": "黄芪",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000541,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:17"
+        ]
+      },
+      {
+        "candidate_id": "苦参",
+        "display": "苦参",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000471,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:13"
+        ]
+      },
+      {
+        "candidate_id": "麦芽",
+        "display": "麦芽",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000317,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:14"
+        ]
+      },
+      {
+        "candidate_id": "乌梅",
+        "display": "乌梅",
+        "rule_confidence": 0.0,
+        "fused_score": 5.3e-05,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:10"
+        ]
+      }
+    ],
+    "rule_notes": [
+      "D8 证据数量门槛：独立证据特征仅 1 类（sand_crystal），不足以支撑 probable 结论（top1 秦皮 conf 0.51）；降级为证据不足、top1 保留为首个备选，补齐其他判据特征或经 VLM 补证据后重评"
+    ],
+    "review_required": true,
+    "confidence_basis": {
+      "rule_confidence": 0.0,
+      "calibrated_probability": null,
+      "level": "low",
+      "has_admitted_b_support": false
+    },
+    "evidence_packet": {
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\runs\\fusion_8a6ebf5b0d2a45a0b5c653b1d9f85334\\final_evidence.json",
+      "sha256": "1cca48f4b89e5ad0ba717d08b1f199dd991973a5ef9cac792a8444462382404a",
+      "fact_count": 90,
+      "hash_method": "canonical_json_sha256",
+      "evidence_version": "c2cffd66505d5231589d40f17c0f59772c60558b08654e559242fe3f3512e8e0"
+    },
+    "model_failure": "ASSESSMENT_INVALID",
+    "model_validation_error": "候选缺少可引用支持；失败、假设和标定不能独自支持药材身份",
+    "model_proposal": {
+      "candidate_id": "秦皮",
+      "explanation": "秦皮是唯一有阳性主判特征且与A先验一致的候选：criterion:1砂晶present，observation:50直接观察到薄壁细胞内充满细小折光颗粒(conf 0.8)，view_03各fold(a_prior:33-37)秦皮先验最高，二者相互印证。桔梗/柴胡/防风等共享的secretory_tissue仅由observation:48以UNCAL状态判为present，未做尺寸测量，无法在桔梗(14-25μm)与柴胡间区分。龙胆虽融合分最高(0.383，主要来自A先验a_prior:23-31的高概率)，但其P0特征needle_crystal NOT_DETECTED 且classification:61判图像不可判，不可判不等于不存在，故其领先不可作为已证实支持。石膏的mineral_feature被observation:51反证(视野为植物组织样结构，非矿物结晶)。正式结论为证据不足：独立证据特征仅1类(sand_crystal)，未达到probable门槛；秦皮保留为首选备选，缺口包括secretory_tissue未校准测量、针晶视场图像质量、以及秦皮其他辅助判据特征未补齐。融合分数为A先验+B证据加权，非校准正确率。",
+      "support_refs": [
+        "criterion:1",
+        "observation:50",
+        "admitted_card:57",
+        "a_prior:33",
+        "a_prior:34",
+        "a_prior:35",
+        "a_prior:37"
+      ],
+      "counter_refs": [],
+      "unresolved_refs": [
+        "observation:48",
+        "criterion:7",
+        "criterion:18",
+        "classification:61",
+        "classification:62",
+        "observation:51"
+      ]
+    },
+    "usage": {
+      "completion_tokens": 486,
+      "completion_tokens_details": {
+        "reasoning_tokens": 125
+      },
+      "prompt_tokens": 31373,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 31859
+    },
+    "new_image_calls": 0,
+    "new_tool_calls": 0
+  },
+  "judgement": "现有证据暂倾向：龙胆；仅有A先验，缺少独立显微支持，不构成鉴定。",
+  "audit": {
+    "rule_verdict": "insufficient_evidence",
+    "internal_needs_review": true,
+    "status_note": null,
+    "candidate_scope": {
+      "scope": "open_strict",
+      "a_topk_ids": [
+        "龙胆",
+        "桔梗",
+        "麦芽",
+        "乌梅",
+        "秦皮",
+        "石膏",
+        "菟丝子",
+        "黄芪",
+        "苦参"
+      ],
+      "kept_ids": [
+        "秦皮",
+        "桔梗",
+        "乌梅",
+        "石膏",
+        "苦参",
+        "麦芽",
+        "菟丝子",
+        "黄芪",
+        "龙胆"
+      ],
+      "dropped": [
+        {
+          "id": "柴胡",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "防风",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "香附",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "鱼腥草",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "地黄",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "党参",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "厚朴",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "蝉蜕",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "牡蛎",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "郁金",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "当归",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "薄荷",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "莱菔子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "牵牛子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "白头翁",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "辣蓼",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "青黛",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "槟榔",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "穿心莲",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "大青叶",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "滑石",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "水牛角",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "雄黄",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "泽泻",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "艾叶",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "板蓝根",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "荜茇",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "川楝子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "甘草",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "广藿香",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "诃子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "红花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄柏",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄连",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄芩",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "金银花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "荆芥",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "菊花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "连翘",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "麻黄",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "使君子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "葶苈子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "王不留行",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "益母草",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "茵陈",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "茯苓",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "大腹皮",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "淡竹叶",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "木香",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G1",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G3",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G4",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "桂枝",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "苦杏仁",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "马齿苋",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "肉桂",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "山楂",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "射干",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "五味子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "玄参",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "淫羊藿",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "知母",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "栀子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "猪苓",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "麦冬",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "桑白皮",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G2",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "白芍",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "虎杖",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "大黄",
+          "reason": "not_in_a_topk"
+        }
+      ],
+      "policy": "A Top-K 为 Plan B 重点；非 A 仅在 open_strict 且 required+supporting 全部符合时保留"
+    },
+    "fusion_weights": {
+      "a": 0.6,
+      "b": 0.4,
+      "a_folds": 25
+    },
+    "fusion_policy": "A 先验 + B 证据加权；B verdict/证据状态不由 A 改写",
+    "policy": "always_output_tentative"
+  },
+  "note": "tentative 是未确认候选；review_required 如实表示复核需要，不阻止报告交付。"
+}

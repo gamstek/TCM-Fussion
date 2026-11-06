@@ -482,6 +482,7 @@ class WorkflowRuntime(EvidenceRuntime):
         result['workflow']['quality_assessments']=[self.workflow.assessment(v) for v in
             self.workflow.store.current()['artifacts'].values() if v['valid'] and v['kind']=='segmentation' and v.get('assessment_id')]
         result['workflow']['segmentation_reviews']=self.workflow.segmentation_reviews()
+        result['workflow']['coverage']=self.workflow.coverage()
         # 类别复核结论单独列出：规划器据此决定是否重分割/重检，规则分不受其直接改写。
         result['workflow']['classifications']=[{'crop_id':v.get('crop_id'),'feature_id':v.get('feature_id'),
                                                  'label':v.get('label'),

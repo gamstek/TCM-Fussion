@@ -14,7 +14,7 @@ from .service_errors import stage_error_kind
 
 
 TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
-       'propose_regions','locate_feature')
+       'propose_regions','roi_screen','locate_feature')
 
 
 class WorkflowSession:
@@ -203,7 +203,7 @@ class WorkflowSession:
     def blocked_tools(self):
         """任务内按工具熔断；locate/classify 允许有界重试后再熔断。"""
         limit = int(self.config.get('max_tool_failures', 2))
-        retryable = {'locate_feature', 'classify_target'}
+        retryable = {'locate_feature', 'classify_target', 'roi_screen'}
         failures = {}
         for row in read_json(self.operations)['entries'].values():
             if row.get('status') == 'failed' and stage_error_kind(row.get('error_code')) == 'service':
@@ -214,6 +214,19 @@ class WorkflowSession:
                 continue
             blocked[tool] = codes[-1]
         return blocked
+
+    def screen_rois(self, image):
+        """返回 screen 结果中的 top ROI 索引；没有 screen 时不限制。"""
+        for value in self.store.current()['artifacts'].values():
+            if value.get('valid') and value.get('kind') == 'screen' and value.get('image_id') == image:
+                try:
+                    doc = read_json(value['path'])
+                    rows = sorted(doc.get('rois') or [], key=lambda x: float(x.get('score') or 0), reverse=True)
+                    top_k = max(1, int(self.config.get('screen_top_k', 2)))
+                    return {int(row['index']) for row in rows[:top_k] if row.get('worth', True)}
+                except (OSError, ValueError, KeyError, TypeError):
+                    return None
+        return None
 
     def targets(self):
         snap=self.store.current();arts=snap['artifacts'];targets={}
@@ -258,7 +271,16 @@ class WorkflowSession:
                 image = item['image_id']
                 if file_hash(item['path']) != item['sha256']:
                     raise IntegrationError('ARTIFACT_CHANGED', '区域提议已变化')
+                screen_id = 'screen:' + image
+                if screen_id not in arts and gaps:
+                    targets[screen_id] = {'id': screen_id, 'kind': 'screen', 'image_id': image,
+                                          'source': self.runtime.images[image]['path'],
+                                          'regions': item['path'], 'parents': [image, item['id']],
+                                          'feature_id': gaps[0]}
+                top_rois = self.screen_rois(image)
                 for index, region in enumerate(read_json(item['path'])['regions']):
+                    if top_rois is not None and index not in top_rois:
+                        continue
                     identifier = f"roi:recovery:{image}:{index}"
                     region_target = {'id': identifier, 'image_id': image,
                                      'source': self.runtime.images[image]['path'],
@@ -408,6 +430,9 @@ class WorkflowSession:
                     tool = 'locate_feature'
             elif tid.startswith('roi:'):
                 if 'detected:'+image in arts:tool='detect_region'
+            elif t.get('kind') == 'screen':
+                if not arts.get('screen:'+image, {}).get('valid'):
+                    tool = 'roi_screen'
             elif t['kind']=='image':
                 if 'detected:'+image not in arts:tool='detect_fov_initial'
                 else:
@@ -436,9 +461,14 @@ class WorkflowSession:
                 elif not arts.get('measurement:'+tid,{}).get('valid'):tool='measure_instances'
             if tool:offer(tool,t,(0,tool,tid))
         # 复核类别是“修复”而非主路径：排在物理阶段之后，只在观察到的存在特征与crop类别相左时出现。
+        pending = [t for t in crops if not arts.get('classification:'+t['id'], {}).get('valid')
+                   and (t.get('identity_required') or self.label_conflict(t))]
+        best = max(pending, key=lambda c: float(c.get('det_score') or 0), default=None)
         for t in crops:
             if arts.get('classification:'+t['id'],{}).get('valid'):continue
             if not t.get('identity_required') and not self.label_conflict(t):continue
+            if t.get('identity_required') and best is not None and t['id'] != best['id']:
+                continue
             offer('classify_target',t,(1,'classify_target',t['id']))
         return out
 
@@ -478,6 +508,64 @@ class WorkflowSession:
         if not mask.is_file() or file_hash(mask)!=value['bindings'].get('mask'):
             raise IntegrationError('QUALITY_SCOPE','关联mask与用途评估不符')
         return value
+
+    def coverage(self):
+        """逐视野覆盖审计：detected / proposed / screened，以及 screen top-k 的 locate。"""
+        import re
+        images = list(self.runtime.images)
+        detected, proposed, screened, located = set(), set(), set(), set()
+        located_pairs = set()
+        image_pattern = re.compile(r'img_[0-9a-f]{16,}')
+        pair_pattern = re.compile(r'locate:roi:recovery:(img_[0-9a-f]{16,}):(\d+):')
+        for row in read_json(self.operations).get('entries', {}).values():
+            if row.get('status') not in {'done', 'failed'}:
+                continue
+            tool, target = row.get('tool'), str(row.get('target_id') or '')
+            if tool == 'detect_fov_initial' and target in images:
+                detected.add(target)
+            elif tool == 'propose_regions' and target in images:
+                proposed.add(target)
+            elif tool == 'roi_screen':
+                hit = image_pattern.search(target)
+                if hit:
+                    screened.add(hit.group(0))
+            elif tool == 'locate_feature':
+                hit = image_pattern.search(target)
+                if hit:
+                    located.add(hit.group(0))
+                pair = pair_pattern.search(target)
+                if pair:
+                    located_pairs.add((pair.group(1), int(pair.group(2))))
+        required_pairs = set()
+        rows = []
+        for image in images:
+            top_rois = self.screen_rois(image)
+            if top_rois is not None:
+                required_pairs.update((image, int(index)) for index in top_rois)
+            done_rois = {index for name, index in located_pairs if name == image}
+            rows.append({'image_id': image, 'detected': image in detected,
+                         'proposed': image in proposed, 'screened': image in screened,
+                         'located': image in located,
+                         'top_rois': sorted(top_rois) if top_rois is not None else None,
+                         'located_rois': sorted(done_rois)})
+        missing_pairs = sorted(required_pairs - located_pairs)
+        missing_locate = sorted({image for image, _ in missing_pairs})
+        located_all = (all(pair in located_pairs for pair in required_pairs)
+                       if required_pairs else len(located) == len(images))
+        return {
+            'views': rows,
+            'detected_all': len(detected) == len(images),
+            'proposed_all': len(proposed) == len(images),
+            'screened_all': len(screened) == len(images),
+            'located_all': located_all,
+            'required_locate_pairs': [{'image_id': image, 'index': index}
+                                      for image, index in sorted(required_pairs)],
+            'missing_locate_pairs': [{'image_id': image, 'index': index}
+                                     for image, index in missing_pairs],
+            'missing_propose': [x['image_id'] for x in rows if not x['proposed']],
+            'missing_screen': [x['image_id'] for x in rows if not x['screened']],
+            'missing_locate': missing_locate or [x['image_id'] for x in rows if not x['located']],
+        }
 
     def segmentation_reviews(self):
         """把 IGM review 的原始原因整理成 planner 可读的结构化字段。
@@ -636,7 +724,14 @@ class WorkflowSession:
 
     def accept(self,tool,target,result,parent):
         image=target['image_id'];items=[];rows=[];replace=[]
-        if tool == 'propose_regions':
+        if tool == 'roi_screen':
+            path = Path(result['screen'])
+            doc = read_json(path)
+            if doc.get('image_id') not in {None, image} or not isinstance(doc.get('rois'), list):
+                raise IntegrationError('SCREEN_INVALID', 'ROI screen 结果与图像不匹配')
+            items.append(self._art('screen:'+image, 'screen', path, target.get('parents', [image]),
+                                   image_id=image))
+        elif tool == 'propose_regions':
             items.append(self._art('regions:'+image, 'region_proposals', result['regions'],
                                    [image], image_id=image))
         elif tool in {'detect_fov_initial','detect_region','locate_feature'}:

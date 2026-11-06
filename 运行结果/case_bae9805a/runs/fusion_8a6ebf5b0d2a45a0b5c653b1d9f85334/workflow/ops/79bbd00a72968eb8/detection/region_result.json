@@ -1,0 +1,27 @@
+{
+  "dets": [
+    {
+      "label": "分泌组织",
+      "tight_bbox": [
+        1049,
+        946,
+        1158,
+        1056
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "圆形腔隙，内含黄棕色油滴状分泌物，中心亮区为油滴反光"
+    }
+  ],
+  "roi": [
+    1024,
+    512,
+    2048,
+    1536
+  ],
+  "feature_id": "secretory_tissue",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

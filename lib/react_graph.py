@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import copy
 import json
+import re
 import time
 from pathlib import Path
 from typing import TypedDict
@@ -359,6 +360,41 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         coverage = [action for action in eligible
                     if action["tool"] == "detect_fov_initial"
                     and affordable(action, remaining_budget())]
+        if not coverage and workflow is not None:
+            try:
+                cov = workflow.coverage()
+            except Exception:
+                cov = {}
+            if cov.get('detected_all') and not cov.get('proposed_all'):
+                missing = set(cov.get('missing_propose') or [])
+                coverage = [a for a in eligible if a['tool'] == 'propose_regions'
+                            and a.get('args', {}).get('target_id') in missing
+                            and affordable(a, remaining_budget())]
+            if cov.get('detected_all') and cov.get('proposed_all') and not cov.get('screened_all'):
+                missing = set(cov.get('missing_screen') or [])
+                coverage = [a for a in eligible if a['tool'] == 'roi_screen'
+                            and str(a.get('args', {}).get('target_id') or '').removeprefix('screen:') in missing
+                            and affordable(a, remaining_budget())]
+            elif cov.get('detected_all') and cov.get('proposed_all') and cov.get('screened_all') and not cov.get('located_all'):
+                missing = {(row['image_id'], int(row['index']))
+                           for row in (cov.get('missing_locate_pairs') or [])}
+                preferred = None
+                try:
+                    focus = getattr(runtime, 'p0_focus', lambda: None)()
+                    preferred = (focus or {}).get('feature_id')
+                except Exception:
+                    preferred = None
+                coverage = []
+                for a in eligible:
+                    if a['tool'] != 'locate_feature' or not affordable(a, remaining_budget()):
+                        continue
+                    target = str(a.get('args', {}).get('target_id') or '')
+                    pair = re.search(r'locate:roi:recovery:(img_[0-9a-f]{16,}):(\d+):', target)
+                    if not pair or (pair.group(1), int(pair.group(2))) not in missing:
+                        continue
+                    if preferred and not target.endswith(':' + preferred):
+                        continue
+                    coverage.append(a)
         observations = [a for a in eligible if a["tool"] in {"presence_check", "scene_check"}
                         and any(a["args"]["image_id"] == c["args"]["target_id"] for c in coverage)]
         if coverage:
@@ -406,6 +442,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     context["planning_instruction"] = planning_instruction + (
                         " 当前 p0_focus 存在且尚未尝试：必须先选择其指向的 propose_regions/locate_feature"
                         "（或分块检测），在其完成或失败前不得查 P1/C 存在性。")
+            context["coverage"] = (context.get("evidence") or {}).get("workflow", {}).get("coverage")
             persist({**state, "events": events, "requests": requests, "planning_requests": planning})
             usage = None
             try:

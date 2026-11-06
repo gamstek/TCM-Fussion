@@ -1,0 +1,14 @@
+{
+  "operation_key": "2b3f05bc9391db94293a9778c5c6c167737555869a6db0459f7af19d3abd17b6",
+  "budget_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_bae9805a\\runs\\fusion_8a6ebf5b0d2a45a0b5c653b1d9f85334\\workflow\\resources.json",
+  "limits": {
+    "initialization": 5,
+    "recompute": 30,
+    "network": 60,
+    "planning": 32,
+    "observation": 10,
+    "total": 220,
+    "finalization": 1
+  },
+  "identity": "a96961cb48ccd2c5bc9440a8892c3c225c7058fd8b64c44e22831e3d457864ea"
+}

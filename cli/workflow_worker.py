@@ -16,6 +16,66 @@ def main(argv=None):
         from TCM_Fusion.lib.recovery_regions import propose_regions
         write_json(out/'regions.json', propose_regions(img, with_audit=True))
         return 0
+    if ctx['tool'] == 'roi_screen':
+        import cv2
+        import numpy as np
+        from detect_core import FEATURE_ID
+        from ls_common import load_config, resolve_key
+        from prompts import CLASSIFY_HINTS
+        from vlm_api import call_vlm, encode_jpeg_b64, parse_vlm_json
+        regions = read_json(ctx['regions']).get('regions') or []
+        feature = ctx.get('feature_id')
+        label = next((name for name, fid in FEATURE_ID.items() if fid == feature), None)
+        if not label or label not in CLASSIFY_HINTS:
+            raise IntegrationError('SCREEN_INVALID', 'ROI screen 特征没有受信形态描述')
+        tile = 512
+        cols = 3
+        rows = max(1, (len(regions) + cols - 1) // cols)
+        sheet = np.zeros((rows * tile, cols * tile, 3), dtype=np.uint8)
+        for index, region in enumerate(regions):
+            x1, y1, x2, y2 = [int(v) for v in region['box']]
+            crop = img[max(0, y1):min(img.shape[0], y2), max(0, x1):min(img.shape[1], x2)]
+            if crop.size == 0:
+                continue
+            crop = cv2.resize(crop, (tile, tile), interpolation=cv2.INTER_AREA)
+            row, col = divmod(index, cols)
+            sheet[row * tile:(row + 1) * tile, col * tile:(col + 1) * tile] = crop
+            cv2.rectangle(sheet, (col * tile + 2, row * tile + 2),
+                          (col * tile + 64, row * tile + 44), (0, 0, 0), -1)
+            cv2.putText(sheet, str(index), (col * tile + 12, row * tile + 34),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2, cv2.LINE_AA)
+        b64, _ = encode_jpeg_b64(sheet, quality=90)
+        prompt = (f'这是 {rows}×{cols} 的局部拼图，每格左下角有索引。'
+                  f'特征：{label}；形态：{CLASSIFY_HINTS[label]}。'
+                  '只判断哪些局部值得做后续定向框选，不要输出任何框。'
+                  '按值得程度从高到低，返回所有非空局部；只输出 JSON：'
+                  '{"rois":[{"index":0,"score":0.0,"worth":true,"reason":"一句话"}]}')
+        cfg = load_config()
+        text, error = call_vlm(cfg['vlm'], resolve_key(cfg), b64, prompt)
+        if text is None:
+            raise IntegrationError('SCREEN_FAILED', f'ROI screen 请求失败: {error or "unknown"}')
+        try:
+            parsed = parse_vlm_json(text)
+        except Exception as exc:
+            raise IntegrationError('SCREEN_INVALID', f'ROI screen 解析失败: {exc}') from exc
+        ranking = []
+        for row in parsed.get('rois', []):
+            try:
+                index = int(row['index'])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if 0 <= index < len(regions):
+                ranking.append({'index': index, 'score': float(row.get('score') or 0),
+                                'worth': bool(row.get('worth', True)),
+                                'reason': str(row.get('reason') or '')[:200]})
+        ranking.sort(key=lambda item: item['score'], reverse=True)
+        write_json(out / 'screen.json', {'image_id': ctx.get('image_id'), 'feature_id': feature,
+                                         'engine': 'glm_screen', 'sheet': str(out / 'sheet.jpg'),
+                                         'rois': ranking})
+        ok, encoded = cv2.imencode('.jpg', sheet)
+        if ok:
+            (out / 'sheet.jpg').write_bytes(encoded.tobytes())
+        return 0
     if ctx['tool']=='calibrate_fov':
         info=lookup_px_per_um(ctx['source'],img,full=True)
         if info.get('status') not in TRUSTED_STATUSES:
@@ -42,7 +102,8 @@ def main(argv=None):
         if label not in CLASSIFY_HINTS:
             raise IntegrationError('ACTION_DENIED', '该特征没有受信形态描述')
         prompt = (f'只检查所给局部是否可定位 {label}。形态：{CLASSIFY_HINTS[label]}。'
-                  '无法区分、目标截断或看不清时返回空 objects。最多返回一个完整目标的紧框。'
+                  '无法区分、目标截断或看不清时返回空 objects。'
+                  '列出所有可分辨的完整目标紧框，按置信度从高到低；不要为了凑数编造目标。'
                   '坐标相对所给局部归一化到0至1000。'
                   f'仅输出JSON：{{"objects":[{{"label":"{label}","bbox_2d":[x1,y1,x2,y2],'
                   '"confidence":"high 或 medium","morphology":"可见判别特征"}]}')
@@ -52,10 +113,18 @@ def main(argv=None):
         if error:
             raise IntegrationError('DETECTION_FAILED', 'GLM 定向定位请求失败')
         dets = []
-        for det in response['dets'][:1]:
+        for det in response['dets']:
             left, top, right, bottom = map(round, det['tight_bbox'])
             if x1 < left < right < x2 and y1 < top < bottom < y2:
                 dets.append({**det, 'tight_bbox': [left, top, right, bottom]})
+        # 同一 ROI 内 GLM 可能重复给同一目标；保留置信度高的框，避免重复注入。
+        dets.sort(key=lambda d: float(d.get('score') or 0), reverse=True)
+        unique = []
+        for det in dets:
+            if any(iou_box(det['tight_bbox'], other['tight_bbox']) >= 0.5 for other in unique):
+                continue
+            unique.append(det)
+        dets = unique
         result = {'dets': dets, 'roi': ctx['roi'], 'feature_id': ctx['feature_id']}
     else:
         result = read_json(ctx['boxes'])

@@ -1,0 +1,20 @@
+{
+  "tool": "classify_target",
+  "crop_id": "needle_crystal_view_03_glme8ac6dc84c4b_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_8ffd60d3\\runs\\fusion_dfe76db0e5084b789fb7167d986a271e\\workflow\\ops\\d16bb845116a6b6c\\detection\\crops\\needle_crystal_view_03_glme8ac6dc84c4b_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_8ffd60d3\\runs\\fusion_dfe76db0e5084b789fb7167d986a271e\\workflow\\ops\\d16bb845116a6b6c\\detection\\crops\\needle_crystal_view_03_glme8ac6dc84c4b_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_8ffd60d3\\view_03.jpg",
+  "tight_box": [
+    1531,
+    1116,
+    1623,
+    1336
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_8ffd60d3\\runs\\fusion_dfe76db0e5084b789fb7167d986a271e\\workflow\\ops\\cebd9bafe23f6c5b\\classification",
+  "tight_box_local": [
+    24,
+    24,
+    116,
+    244
+  ]
+}
