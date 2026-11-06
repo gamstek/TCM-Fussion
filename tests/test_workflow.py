@@ -297,6 +297,7 @@ class WorkflowTests(unittest.TestCase):
                 execute(options('propose_regions')[0])
                 locate = next(a for a in options('locate_feature') if a['args']['target_id'].endswith(':needle_crystal'))
                 execute(locate)
+                self.assertIsNotNone(runtime.workflow.identity_pending())
                 def can_segment():
                     return any(a['args']['target_id'].endswith(':located') for a in options('segment_instance'))
                 self.assertFalse(can_segment())

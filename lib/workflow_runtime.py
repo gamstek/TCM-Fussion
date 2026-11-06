@@ -483,6 +483,13 @@ class WorkflowRuntime(EvidenceRuntime):
             self.workflow.store.current()['artifacts'].values() if v['valid'] and v['kind']=='segmentation' and v.get('assessment_id')]
         result['workflow']['segmentation_reviews']=self.workflow.segmentation_reviews()
         result['workflow']['coverage']=self.workflow.coverage()
+        pending=self.workflow.identity_pending()
+        if pending:
+            meta=contracts.CropMeta.from_json(pending['path'])
+            result['workflow']['identity_pending']={'target_id':pending['id'],
+                'feature_id':meta.feature_id,'det_score':pending.get('det_score')}
+        else:
+            result['workflow']['identity_pending']=None
         # 类别复核结论单独列出：规划器据此决定是否重分割/重检，规则分不受其直接改写。
         result['workflow']['classifications']=[{'crop_id':v.get('crop_id'),'feature_id':v.get('feature_id'),
                                                  'label':v.get('label'),

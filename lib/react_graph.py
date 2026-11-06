@@ -372,7 +372,9 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                             and affordable(a, remaining_budget())]
             if cov.get('detected_all') and cov.get('proposed_all') and not cov.get('screened_all'):
                 missing = set(cov.get('missing_screen') or [])
-                coverage = [a for a in eligible if a['tool'] == 'roi_screen'
+                batch = [a for a in eligible if a['tool'] == 'roi_screen_batch'
+                         and affordable(a, remaining_budget())]
+                coverage = batch or [a for a in eligible if a['tool'] == 'roi_screen'
                             and str(a.get('args', {}).get('target_id') or '').removeprefix('screen:') in missing
                             and affordable(a, remaining_budget())]
             elif cov.get('detected_all') and cov.get('proposed_all') and cov.get('screened_all') and not cov.get('located_all'):
@@ -395,6 +397,16 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     if preferred and not target.endswith(':' + preferred):
                         continue
                     coverage.append(a)
+        if not coverage and workflow is not None:
+            try:
+                pending = workflow.identity_pending()
+            except Exception:
+                pending = None
+            if pending:
+                target_id = pending.get('id')
+                coverage = [a for a in eligible if a['tool'] == 'classify_target'
+                            and (a.get('args') or {}).get('target_id') == target_id
+                            and affordable(a, remaining_budget())]
         observations = [a for a in eligible if a["tool"] in {"presence_check", "scene_check"}
                         and any(a["args"]["image_id"] == c["args"]["target_id"] for c in coverage)]
         if coverage:
@@ -443,6 +455,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                         " 当前 p0_focus 存在且尚未尝试：必须先选择其指向的 propose_regions/locate_feature"
                         "（或分块检测），在其完成或失败前不得查 P1/C 存在性。")
             context["coverage"] = (context.get("evidence") or {}).get("workflow", {}).get("coverage")
+            context["identity_pending"] = (context.get("evidence") or {}).get("workflow", {}).get("identity_pending")
             persist({**state, "events": events, "requests": requests, "planning_requests": planning})
             usage = None
             try:

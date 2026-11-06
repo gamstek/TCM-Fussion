@@ -1,0 +1,44 @@
+{
+  "image_id": "img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_af4149f1\\runs\\fusion_aab4b2b77e584804a5916d9c7a378c4b\\workflow\\ops\\9d9d40d3a4188e9e\\screening\\sheet.jpg",
+  "rois": [
+    {
+      "index": 2,
+      "score": 0.95,
+      "worth": true,
+      "reason": "深色针晶束清晰，两端尖细，多根成束，特征典型"
+    },
+    {
+      "index": 3,
+      "score": 0.9,
+      "worth": true,
+      "reason": "可见成束针晶，形态细长尖锐，无细胞壁结构"
+    },
+    {
+      "index": 5,
+      "score": 0.7,
+      "worth": true,
+      "reason": "有一根细长针状结晶，两端渐尖，疑似针晶"
+    },
+    {
+      "index": 4,
+      "score": 0.6,
+      "worth": true,
+      "reason": "下方有一深色细长针状物，需进一步确认是否针晶"
+    },
+    {
+      "index": 1,
+      "score": 0.2,
+      "worth": false,
+      "reason": "主要为纤维与纹理，未见典型针晶束"
+    },
+    {
+      "index": 0,
+      "score": 0.1,
+      "worth": false,
+      "reason": "仅少量碎片状杂质，无典型针晶"
+    }
+  ]
+}

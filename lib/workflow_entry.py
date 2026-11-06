@@ -37,12 +37,13 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'quality_evaluation':{'enum':['legacy','purpose_v1']},
     'max_parallel':{'type':'integer','minimum':1,'maximum':2},
     'screen_top_k':{'type':'integer','minimum':1,'maximum':6},
+    'screen_concurrency':{'type':'integer','minimum':1,'maximum':8},
     'glm_identity_threshold':{'type':'number','minimum':0,'maximum':1},
     'glm_locate_threshold':{'type':'number','minimum':0,'maximum':1},
     'locate_expand':{'type':'number','minimum':1,'maximum':3},
     'enabled_tools':{'type':'array','uniqueItems':True,'items':{'enum':[
         'detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
-        'propose_regions','roi_screen','locate_feature']}},
+        'propose_regions','roi_screen','roi_screen_batch','locate_feature']}},
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
     'max_locate_attempts':{'type':'integer','minimum':0,'maximum':100},

@@ -7,6 +7,7 @@ def objective(action):
                 'detect_region':'局部 YOLO 重检',
                 'propose_regions':'从原图纹理提议局部核验区域',
                 'roi_screen':'用 GLM 多图筛选 ROI，决定哪些局部值得继续框选',
+                'roi_screen_batch':'并发执行多个视野的 ROI 筛选',
                 'locate_feature':'用 GLM 核验选定局部并提出待验证框'}.get(tool,'读取或恢复有效证据'),
             'expected_resolution':'增加有效证据/反证或解除实际前置阻塞',
             'stop_condition':'同依赖重复动作、服务失败、预算或截止，不以生成过门为成功'}

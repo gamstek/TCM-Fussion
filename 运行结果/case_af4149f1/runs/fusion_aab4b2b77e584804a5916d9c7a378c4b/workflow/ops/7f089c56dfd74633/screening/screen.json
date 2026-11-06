@@ -1,0 +1,44 @@
+{
+  "image_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_af4149f1\\runs\\fusion_aab4b2b77e584804a5916d9c7a378c4b\\workflow\\ops\\7f089c56dfd74633\\screening\\sheet.jpg",
+  "rois": [
+    {
+      "index": 1,
+      "score": 0.85,
+      "worth": true,
+      "reason": "视野中右侧有一根两端尖锐的细长透明针状结晶，符合草酸钙针晶特征，值得定向框选"
+    },
+    {
+      "index": 2,
+      "score": 0.2,
+      "worth": true,
+      "reason": "仅见矿物颗粒与团块，无明显针晶"
+    },
+    {
+      "index": 4,
+      "score": 0.15,
+      "worth": true,
+      "reason": "以簇针/团块为主，未见明确针晶束"
+    },
+    {
+      "index": 3,
+      "score": 0.1,
+      "worth": true,
+      "reason": "多为球形簇晶与颗粒，针晶不明显"
+    },
+    {
+      "index": 5,
+      "score": 0.1,
+      "worth": true,
+      "reason": "含颗粒与团块，疑似细针结构模糊"
+    },
+    {
+      "index": 0,
+      "score": 0.05,
+      "worth": false,
+      "reason": "几乎空白，无针晶迹象"
+    }
+  ]
+}

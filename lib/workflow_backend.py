@@ -24,6 +24,27 @@ class WorkflowBackend:
     def execute(self, session, tool, target, work, context):
         def command(args, python=session.python, log='stage.log'):
             run([str(python),'-X','utf8',*map(str,args)],context_path=context,timeout=session.remaining_seconds(),log_path=work/log,cancel_event=session.cancel_event)
+        if tool == 'roi_screen_batch':
+            from concurrent.futures import ThreadPoolExecutor
+            items=list(target.get('items') or [])
+            if not items:
+                raise IntegrationError('SCREEN_INPUT','批量筛选没有输入视野')
+            out=work/'screening_batch';out.mkdir(parents=True,exist_ok=True)
+            workers=max(1,min(int(session.config.get('screen_concurrency',2)),len(items)))
+            def one(index_item):
+                index,item=index_item
+                sub=out/f'{index:02d}';sub.mkdir()
+                ctx=sub/'screen.json'
+                write_json(ctx,{'tool':'roi_screen','source':str(item['source']),
+                                'regions':str(item['regions']),'feature_id':item.get('feature_id'),
+                                'image_id':item['image_id'],'output':str(sub/'result')})
+                run([str(session.python),'-X','utf8','-m','TCM_Fusion.cli.workflow_worker',
+                     '--context',str(ctx)],context_path=ctx,timeout=session.remaining_seconds(),
+                    log_path=sub/'stage.log',cancel_event=session.cancel_event)
+                return str(sub/'result'/'screen.json')
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                screens=list(pool.map(one,enumerate(items)))
+            return {'screens':screens}
         if tool == 'roi_screen':
             out = work / 'screening'
             ctx = work / 'screen.json'

@@ -14,7 +14,7 @@ from .service_errors import stage_error_kind
 
 
 TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
-       'propose_regions','roi_screen','locate_feature')
+       'propose_regions','roi_screen','roi_screen_batch','locate_feature')
 
 
 class WorkflowSession:
@@ -104,6 +104,35 @@ class WorkflowSession:
         except (TypeError, ValueError):
             return False
         return score >= float(self.config.get('glm_locate_threshold',0.8))
+
+    def identity_pending(self):
+        """最高 det_score 的 locate crop，尚未尝试 classify，且不适用高分绕过。"""
+        candidates=[]
+        done=read_json(self.operations).get('entries', {})
+        interest=self.runtime.candidate_interest()
+        active_features={c['feature'] for row in self.runtime.kb.candidates()
+                         if row['id'] in interest['ids'] for c in row['criteria']}
+        paused_features={c['feature'] for row in self.runtime.kb.candidates()
+                         if row['id'] in set(interest.get('inactive_ids', []))
+                         for c in row['criteria']}-active_features
+        for tid,target in self.targets().items():
+            if target.get('kind')!='crop' or not target.get('identity_required'):
+                continue
+            if self.locate_override(target):
+                continue
+            meta=contracts.CropMeta.from_json(target['path'])
+            if meta.feature_id in paused_features:
+                continue
+            if self.store.current()['artifacts'].get('classification:'+tid,{}).get('valid'):
+                continue
+            key=self.operation_key('classify_target',target)
+            row=done.get(key,{})
+            if row.get('status') in {'done','failed','pending'}:
+                continue
+            try: score=float(target.get('det_score') or 0)
+            except (TypeError, ValueError): score=0.0
+            candidates.append((score,target))
+        return max(candidates,key=lambda item:item[0])[1] if candidates else None
 
     def evaluate_segmentation(self,root,target,*,identity_verified=False):
         """在新目录重放原始生成图，保留旧工件；不从Agent参数接收资格。"""
@@ -215,7 +244,7 @@ class WorkflowSession:
     def blocked_tools(self):
         """任务内按工具熔断；locate/classify 允许有界重试后再熔断。"""
         limit = int(self.config.get('max_tool_failures', 2))
-        retryable = {'locate_feature', 'classify_target', 'roi_screen', 'detect_fov_initial'}
+        retryable = {'locate_feature', 'classify_target', 'roi_screen', 'roi_screen_batch', 'detect_fov_initial'}
         failures = {}
         for row in read_json(self.operations)['entries'].values():
             if row.get('status') == 'failed' and stage_error_kind(row.get('error_code')) == 'service':
@@ -277,6 +306,7 @@ class WorkflowSession:
                 'roi':region['box'],'parents':[key],'px_per_um':scale.get('px_per_um')}
         if self.config.get('targeted_recovery', False):
             gaps = self.recovery_features()
+            screen_batch_items = []
             for item in arts.values():
                 if not item['valid'] or item['kind'] != 'region_proposals':
                     continue
@@ -289,6 +319,9 @@ class WorkflowSession:
                                           'source': self.runtime.images[image]['path'],
                                           'regions': item['path'], 'parents': [image, item['id']],
                                           'feature_id': gaps[0]}
+                    screen_batch_items.append({'image_id': image, 'source': self.runtime.images[image]['path'],
+                                               'regions': item['path'], 'feature_id': gaps[0],
+                                               'parents': [image, item['id']]})
                 top_rois = self.screen_rois(image)
                 for index, region in enumerate(read_json(item['path'])['regions']):
                     if top_rois is not None and index not in top_rois:
@@ -303,6 +336,11 @@ class WorkflowSession:
                     for feature in gaps:
                         key = f'locate:{identifier}:{feature}'
                         targets[key] = {**region_target, 'id': key, 'feature_id': feature}
+            if len(screen_batch_items) > 1 and int(self.config.get('screen_concurrency', 1)) > 1:
+                targets['screen:batch'] = {'id': 'screen:batch', 'kind': 'screen_batch',
+                                           'image_id': screen_batch_items[0]['image_id'],
+                                           'items': screen_batch_items,
+                                           'parents': [x['image_id'] for x in screen_batch_items]}
         return targets
 
     def recovery_features(self):
@@ -419,6 +457,12 @@ class WorkflowSession:
         paused_features={c['feature'] for row in self.runtime.kb.candidates()
                          if row['id'] in inactive for c in row['criteria']}-active_features
         locate_attempts = sum(row['tool'] == 'locate_feature' for row in done.values())
+        import re
+        locate_pairs=set()
+        for row in done.values():
+            if row.get('tool')=='locate_feature' and row.get('status') in {'done','failed'}:
+                hit=re.search(r'locate:roi:recovery:(img_[0-9a-f]{16,}):(\d+):',str(row.get('target_id') or ''))
+                if hit: locate_pairs.add((hit.group(1),int(hit.group(2))))
         max_locate = self.config.get('max_locate_attempts')
         if max_locate is None:
             max_locate = max(4, int(self.config.get('locate_attempts_per_view', 2)) * len(self.runtime.images)
@@ -434,7 +478,9 @@ class WorkflowSession:
                 out.append(self.runtime.action(tool,{'target_id':t['id'],'evidence_version':snap['version']},
                     'workflow_repair',priority=priority))
         crops=[]
-        for tid,t in self.targets().items():
+        target_map=self.targets()
+        has_batch_screen='screen:batch' in target_map
+        for tid,t in target_map.items():
             tool=None;image=t['image_id']
             origin = t if t.get('kind')=='crop' else arts.get(t.get('crop_id'), {})
             if origin.get('identity_required') and paused_features:
@@ -442,12 +488,16 @@ class WorkflowSession:
                 if meta.feature_id in paused_features:
                     continue
             if tid.startswith('locate:'):
-                if locate_attempts < max_locate:
+                hit=re.search(r'locate:roi:recovery:(img_[0-9a-f]{16,}):(\d+):',tid)
+                pair=(hit.group(1),int(hit.group(2))) if hit else None
+                if locate_attempts < max_locate and pair not in locate_pairs:
                     tool = 'locate_feature'
             elif tid.startswith('roi:'):
                 if 'detected:'+image in arts:tool='detect_region'
+            elif t.get('kind') == 'screen_batch':
+                tool = 'roi_screen_batch'
             elif t.get('kind') == 'screen':
-                if not arts.get('screen:'+image, {}).get('valid'):
+                if not has_batch_screen and not arts.get('screen:'+image, {}).get('valid'):
                     tool = 'roi_screen'
             elif t['kind']=='image':
                 if 'detected:'+image not in arts:tool='detect_fov_initial'
@@ -482,9 +532,12 @@ class WorkflowSession:
             if tool:offer(tool,t,(0,tool,tid))
         # 复核类别是“修复”而非主路径：排在物理阶段之后，只在观察到的存在特征与crop类别相左时出现。
         pending = [t for t in crops if not arts.get('classification:'+t['id'], {}).get('valid')
-                   and (t.get('identity_required') or self.label_conflict(t))]
+                   and (t.get('identity_required') or self.label_conflict(t))
+                   and not self.locate_override(t)]
         best = max(pending, key=lambda c: float(c.get('det_score') or 0), default=None)
         for t in crops:
+            if t.get('identity_required') and self.locate_override(t):
+                continue
             if arts.get('classification:'+t['id'],{}).get('valid'):continue
             if not t.get('identity_required') and not self.label_conflict(t):continue
             if t.get('identity_required') and best is not None and t['id'] != best['id']:
@@ -557,6 +610,9 @@ class WorkflowSession:
                 pair = pair_pattern.search(target)
                 if pair:
                     located_pairs.add((pair.group(1), int(pair.group(2))))
+        for value in self.store.current()['artifacts'].values():
+            if value.get('valid') and value.get('kind')=='screen' and value.get('image_id') in images:
+                screened.add(value['image_id'])
         required_pairs = set()
         rows = []
         for image in images:
@@ -745,7 +801,14 @@ class WorkflowSession:
 
     def accept(self,tool,target,result,parent):
         image=target['image_id'];items=[];rows=[];replace=[]
-        if tool == 'roi_screen':
+        if tool == 'roi_screen_batch':
+            for raw in result.get('screens') or []:
+                path=Path(raw);doc=read_json(path)
+                image_id=doc.get('image_id') or target.get('image_id')
+                if image_id not in self.runtime.images or not isinstance(doc.get('rois'), list):
+                    raise IntegrationError('SCREEN_INVALID','批量筛选结果与图像不匹配')
+                items.append(self._art('screen:'+image_id,'screen',path,[image_id],image_id=image_id))
+        elif tool == 'roi_screen':
             path = Path(result['screen'])
             doc = read_json(path)
             if doc.get('image_id') not in {None, image} or not isinstance(doc.get('rois'), list):

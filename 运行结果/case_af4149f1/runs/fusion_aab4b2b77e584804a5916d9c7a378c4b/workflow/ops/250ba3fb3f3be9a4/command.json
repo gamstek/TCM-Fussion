@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\.venv\\vision\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "TCM_Fusion.cli.workflow_worker",
+    "--context",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_af4149f1\\runs\\fusion_aab4b2b77e584804a5916d9c7a378c4b\\workflow\\ops\\250ba3fb3f3be9a4\\crop_context.json"
+  ],
+  "timeout_seconds": 1727.497854232788
+}
