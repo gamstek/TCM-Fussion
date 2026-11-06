@@ -17,7 +17,7 @@ from rule_engine import BAND_PROBABLE, MARGIN_DELTA
 
 from .collaboration import fuse
 from .storage import IntegrationError, digest, read_json, write_json
-from .prompt_optimization import DEFAULT_INSTRUCTION, GUARD
+from .prompt_defaults import DEFAULT_INSTRUCTION, GUARD
 
 
 class AgentState(TypedDict, total=False):

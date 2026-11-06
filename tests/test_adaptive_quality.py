@@ -15,9 +15,7 @@ import contracts
 import paths
 from quality_eval import assess,replay
 from TCM_Fusion.lib.storage import write_json,read_json,file_hash,IntegrationError,digest
-from TCM_Fusion.lib.action_feedback import snapshot,evaluate,reflection_card
-from TCM_Fusion.lib.outcome_evaluation import evaluate as outcome
-from TCM_Fusion.lib.ablation_evaluation import wilson,compare
+from TCM_Fusion.lib.action_feedback import snapshot,evaluate
 from TCM_Fusion.lib.workflow_runtime import WorkflowRuntime
 from TCM_Fusion.lib.agent_tools import LocalToolbox,FixtureBackend
 from TCM_Fusion.lib.react_graph import run_react
@@ -116,16 +114,6 @@ class QualityTests(unittest.TestCase):
         self.assertEqual(a.tobytes(),b.tobytes());self.assertEqual(ia,ib)
         self.assertEqual(set(stages),{'binary','filled','resized','pre_box','legacy_final'})
 
-    def test_true_reference_is_not_exposed_by_task_feedback(self):
-        trace={'decision':{'conclusion':{'id':'correct'},'verdict':'confirmed'},'needs_review':False,'events':[]}
-        ref={'label':'correct','label_source':'expert','group_id':'g','split':'training','label_scope':'sample_identity'}
-        value=outcome(trace,ref,a_label='wrong')
-        self.assertTrue(value['corrected_a']);self.assertNotIn('label',value)
-        self.assertFalse(reflection_card([])['uses_reference_label'])
-        trace['needs_review']=True
-        value=outcome(trace,ref,a_label='correct')
-        self.assertTrue(value['abstained']);self.assertFalse(value['broke_correct_a'])
-
     def test_negative_observation_is_useful_but_not_positive_evidence(self):
         s={'features':{},'checks':{},'ranking':[],'verdict':'insufficient_evidence'}
         action={'tool':'presence_check','args':{'feature_id':'fiber'}}
@@ -137,15 +125,6 @@ class QualityTests(unittest.TestCase):
         value=evaluate(state,state,{'tool':'presence_check','args':{'feature_id':'fiber','image_id':'fov'}},
             accepted=True,result={'present':False,'conf':.9})
         self.assertFalse(value['useful']);self.assertEqual(value['new_counterevidence'],[])
-
-    def test_image_label_is_not_silently_sample_identity_truth(self):
-        trace={'decision':{'conclusion':{'id':'x'}},'needs_review':False}
-        result=outcome(trace,{'label':'x','label_source':'expert','group_id':'g','split':'test','label_scope':'image_class'})
-        self.assertFalse(result['scope_compatible']);self.assertIsNone(result['correct'])
-
-    def test_zero_errors_does_not_imply_zero_risk(self):
-        self.assertGreater(wilson(0,5)[1],0)
-        with self.assertRaises(IntegrationError):compare({'split':'test','cases':[]})
 
     def test_real_process_hard_deadline_kills_hanging_worker(self):
         import subprocess

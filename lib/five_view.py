@@ -66,7 +66,12 @@ def bind_config(template, images, *, sample_id, a_python=None):
     cfg['sample_id'] = sample_id
     cfg['a'].pop('image', None)
     cfg['a']['images'] = list(images)
-    cfg['a']['python'] = str(project_path(a_python or os.environ.get('TCM_A_PYTHON') or paths.VENV_PY))
+    a_python = a_python or os.environ.get('TCM_A_PYTHON')
+    if not a_python:
+        raise IntegrationError(
+            'FIVE_VIEW_A_PYTHON_MISSING',
+            '必须用 --a-python 或 TCM_A_PYTHON 指定 A 解释器；不默认使用 Agent venv')
+    cfg['a']['python'] = str(project_path(a_python))
     cfg['b'].update(input_mode='images', input=images[0])
     cfg['agent']['image_roots'] = list(images)
     return validate_config(cfg)
@@ -80,6 +85,11 @@ def run_five_view(source_dir, *, output_root=None, manifest=None,
     another case; no recorded observations, old A cache or hidden fallback.
     """
     bindings = inspect_sources(source_dir, manifest)
+    a_python = a_python or os.environ.get('TCM_A_PYTHON')
+    if not a_python:
+        raise IntegrationError(
+            'FIVE_VIEW_A_PYTHON_MISSING',
+            '必须用 --a-python 或 TCM_A_PYTHON 指定 A 解释器；不默认使用 Agent venv')
     template_path = project_path(config_template) if config_template else (
         Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/five_view.json')
     template = read_json(template_path)

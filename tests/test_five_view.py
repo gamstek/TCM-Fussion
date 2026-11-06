@@ -56,6 +56,12 @@ class FiveViewTests(unittest.TestCase):
         with self.assertRaises(IntegrationError):
             F.inspect_sources(self.source)
 
+    def test_a_python_required_before_case_creation(self):
+        with self.assertRaises(IntegrationError) as error:
+            F.run_five_view(self.source, output_root=self.root / 'outputs', dry_run=True)
+        self.assertEqual(error.exception.code, 'FIVE_VIEW_A_PYTHON_MISSING')
+        self.assertFalse((self.root / 'outputs').exists())
+
     def test_dry_run_copies_only_sources_fresh_cache_no_labels_or_model(self):
         (self.source / 'a_cache').mkdir()
         (self.source / 'a_cache/old.json').write_text('old')
