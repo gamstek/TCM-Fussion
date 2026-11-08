@@ -1,0 +1,26 @@
+{
+  "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\workflow\\ops\\a2135d2a38283936\\screening_batch\\01\\result\\sheet.jpg",
+  "rois": [
+    {
+      "index": 0,
+      "score": 0.85,
+      "worth": true,
+      "reason": "左下有透明的细长针状结晶，两端渐尖，符合草酸钙针晶特征"
+    },
+    {
+      "index": 5,
+      "score": 0.4,
+      "worth": true,
+      "reason": "右下缘有暗色细长棒状物，或为针晶，值得定向复核"
+    },
+    {
+      "index": 1,
+      "score": 0.15,
+      "worth": false,
+      "reason": "为成束纤维组织，可见壁与腔，非针晶"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "image_id": "img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\workflow\\ops\\a2135d2a38283936\\screening_batch\\00\\result\\sheet.jpg",
+  "rois": [
+    {
+      "index": 1,
+      "score": 0.9,
+      "worth": true,
+      "reason": "视野中央有一根两端尖细的透明长针晶，形态典型"
+    },
+    {
+      "index": 4,
+      "score": 0.3,
+      "worth": true,
+      "reason": "簇状结构边缘疑似有细针状晶体，需进一步确认"
+    },
+    {
+      "index": 0,
+      "score": 0.2,
+      "worth": true,
+      "reason": "左缘簇边缘隐约可见细长针状物，但大部分空背景"
+    },
+    {
+      "index": 2,
+      "score": 0.1,
+      "worth": true,
+      "reason": "簇边有少量细碎结晶，疑似针晶但不够典型"
+    },
+    {
+      "index": 3,
+      "score": 0.1,
+      "worth": true,
+      "reason": "以簇和球晶为主，疑似有少量针晶"
+    },
+    {
+      "index": 5,
+      "score": 0.1,
+      "worth": true,
+      "reason": "簇边疑似有细针状结构，需定向确认"
+    }
+  ]
+}

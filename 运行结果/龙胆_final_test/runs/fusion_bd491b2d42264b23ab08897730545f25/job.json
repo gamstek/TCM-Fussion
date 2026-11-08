@@ -1,0 +1,21 @@
+{
+  "job_id": "fusion_bd491b2d42264b23ab08897730545f25",
+  "sample_id": "final_test",
+  "status": "completed",
+  "stage": "done",
+  "config_sha256": "4bfe32b00f7e23e2893cfbde30b78526370d0d0a9b5b9f57bd61b493f79e64d0",
+  "result": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\fusion.json",
+  "needs_review": true,
+  "route": "workflow_agent",
+  "elapsed_seconds": 933.8359022000805,
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\output.json",
+  "code_signature": {
+    "baseline": "37181c67d3b2e3e575c3fa2b3f5f549733ded5f5c6ce41b669713657e532bd5e",
+    "current": "37181c67d3b2e3e575c3fa2b3f5f549733ded5f5c6ce41b669713657e532bd5e",
+    "changed": false,
+    "changed_at": null,
+    "checks": 90,
+    "started_at": "2026-11-06T16:33:59+0800",
+    "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\code_signature.json"
+  }
+}

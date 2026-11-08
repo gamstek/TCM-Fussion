@@ -39,7 +39,7 @@ class WorkflowBackend:
                                 'regions':str(item['regions']),'feature_id':item.get('feature_id'),
                                 'image_id':item['image_id'],'output':str(sub/'result')})
                 run([str(session.python),'-X','utf8','-m','TCM_Fusion.cli.workflow_worker',
-                     '--context',str(ctx)],context_path=ctx,timeout=session.remaining_seconds(),
+                     '--context',str(ctx)],context_path=context,timeout=session.remaining_seconds(),
                     log_path=sub/'stage.log',cancel_event=session.cancel_event)
                 return str(sub/'result'/'screen.json')
             with ThreadPoolExecutor(max_workers=workers) as pool:

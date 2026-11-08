@@ -1,0 +1,26 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\view_03.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\workflow\\ops\\611c2baa1c7a267c\\detection",
+  "roi": [
+    512,
+    512,
+    1536,
+    1536
+  ],
+  "feature_id": "needle_crystal",
+  "px_per_um": null,
+  "locate_expand": 1.5,
+  "existing_boxes": [
+    {
+      "id": "crop:img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e:needle_crystal_view_03_glme8ac6dc84c4b_01",
+      "label": "草酸钙针晶",
+      "box": [
+        1522.25,
+        1086.0,
+        1634.75,
+        1380.0
+      ]
+    }
+  ]
+}

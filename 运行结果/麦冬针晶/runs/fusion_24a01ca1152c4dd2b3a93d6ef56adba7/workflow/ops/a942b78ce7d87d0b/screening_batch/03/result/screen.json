@@ -1,0 +1,44 @@
+{
+  "image_id": "img_823aae19f6ed1b336f9158b980e940b9ae054d90bf99e5cdaef106ea1172cf7d",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\workflow\\ops\\a942b78ce7d87d0b\\screening_batch\\03\\result\\sheet.jpg",
+  "rois": [
+    {
+      "index": 5,
+      "score": 0.95,
+      "worth": true,
+      "reason": "大量成束的细长针状结晶，两端尖锐、无细胞壁，针晶特征最典型"
+    },
+    {
+      "index": 4,
+      "score": 0.9,
+      "worth": true,
+      "reason": "明显成束排列的透明细长针晶，簇状分布清晰"
+    },
+    {
+      "index": 1,
+      "score": 0.6,
+      "worth": true,
+      "reason": "右侧有成束针晶，左侧伴少量散在碎片"
+    },
+    {
+      "index": 2,
+      "score": 0.5,
+      "worth": true,
+      "reason": "右上角见成束针晶，数量较少"
+    },
+    {
+      "index": 0,
+      "score": 0.3,
+      "worth": true,
+      "reason": "左右边缘仅见少量针晶，分布零散"
+    },
+    {
+      "index": 3,
+      "score": 0.25,
+      "worth": true,
+      "reason": "左边缘有少量针晶，含量最少"
+    }
+  ]
+}

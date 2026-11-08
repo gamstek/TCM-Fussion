@@ -1,0 +1,20 @@
+{
+  "tool": "classify_target",
+  "crop_id": "needle_crystal_view_04_glm35239bc4a4ea_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\workflow\\ops\\d50e131b4499ad28\\detection\\crops\\needle_crystal_view_04_glm35239bc4a4ea_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\workflow\\ops\\d50e131b4499ad28\\detection\\crops\\needle_crystal_view_04_glm35239bc4a4ea_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\view_04.jpg",
+  "tight_box": [
+    245.75,
+    834.5,
+    799.25,
+    1479.5
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\workflow\\ops\\b7a32e191b72f6ec\\classification",
+  "tight_box_local": [
+    27.75,
+    28.5,
+    581.25,
+    673.5
+  ]
+}

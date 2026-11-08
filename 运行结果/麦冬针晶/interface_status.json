@@ -1,0 +1,8 @@
+{
+  "schema": "multi-view-interface/v1",
+  "dry_run": false,
+  "base": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶",
+  "stage": "done",
+  "status": "completed",
+  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7"
+}

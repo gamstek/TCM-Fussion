@@ -28,6 +28,7 @@ def main(argv=None):
         item.add_argument("--manifest")
         item.add_argument("--output-root")
         item.add_argument("--config-template")
+        item.add_argument("--name", help="case目录名；sample_id会另做ASCII清洗")
         item.add_argument("--a-python", help="A模型解释器，或设TCM_A_PYTHON；不自动切环境")
         item.add_argument("--dry-run", action="store_true", help="只准备和本地doctor，不调用模型")
         item.add_argument("--json", action="store_true")
@@ -45,7 +46,7 @@ def main(argv=None):
             from TCM_Fusion.lib.multi_view import run_multi_view
             directory = run_multi_view(args.source_dir, manifest=args.manifest,
                 output_root=args.output_root, config_template=args.config_template,
-                a_python=args.a_python, dry_run=args.dry_run)
+                a_python=args.a_python, dry_run=args.dry_run, case_name=args.name)
             value = {"directory": str(directory), "dry_run": args.dry_run,
                      "status": "prepared" if args.dry_run else "completed"}
             print(json.dumps(value, ensure_ascii=False) if args.json else str(directory))

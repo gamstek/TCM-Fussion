@@ -1,0 +1,44 @@
+{
+  "image_id": "img_f85fb5603524f7beb2374e508084969947064a20b1e3c53a7be926c4509c1744",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\workflow\\ops\\a942b78ce7d87d0b\\screening_batch\\04\\result\\sheet.jpg",
+  "rois": [
+    {
+      "index": 3,
+      "score": 0.95,
+      "worth": true,
+      "reason": "针晶束完整居中、边缘清晰，典型成束细长结晶，最适合定向框选"
+    },
+    {
+      "index": 4,
+      "score": 0.9,
+      "worth": true,
+      "reason": "针晶束完整且背景杂质丰富，可提供定位参照，特征清晰"
+    },
+    {
+      "index": 5,
+      "score": 0.85,
+      "worth": true,
+      "reason": "针晶束完整清晰，仅轻微偏淡，仍具典型形态"
+    },
+    {
+      "index": 2,
+      "score": 0.75,
+      "worth": true,
+      "reason": "针晶束大部分可见，仅上缘被裁切，形态典型"
+    },
+    {
+      "index": 0,
+      "score": 0.7,
+      "worth": true,
+      "reason": "针晶束可见但上端被裁切，伴杂质的背景有助于确认"
+    },
+    {
+      "index": 1,
+      "score": 0.55,
+      "worth": true,
+      "reason": "仅含针晶束末端一角，信息有限但可辅助拼接定位"
+    }
+  ]
+}

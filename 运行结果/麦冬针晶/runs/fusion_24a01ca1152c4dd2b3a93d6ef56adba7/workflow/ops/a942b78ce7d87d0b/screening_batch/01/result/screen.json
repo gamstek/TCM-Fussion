@@ -1,0 +1,44 @@
+{
+  "image_id": "img_7e0c830fba53987a0fc58164a6e57b4abde99114920d848eaac83e2203e4c8fd",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\workflow\\ops\\a942b78ce7d87d0b\\screening_batch\\01\\result\\sheet.jpg",
+  "rois": [
+    {
+      "index": 5,
+      "score": 0.95,
+      "worth": true,
+      "reason": "完整针晶束，多根细长晶体放射状排列，典型草酸钙针晶特征最清晰"
+    },
+    {
+      "index": 3,
+      "score": 0.9,
+      "worth": true,
+      "reason": "成束针晶形态完整，两端尖锐，无细胞壁结构"
+    },
+    {
+      "index": 4,
+      "score": 0.85,
+      "worth": true,
+      "reason": "针晶束及散在针晶可见，背景干净，边界清楚"
+    },
+    {
+      "index": 0,
+      "score": 0.7,
+      "worth": true,
+      "reason": "左下针晶束及散在碎针晶，与图4为同一结构的不同视野"
+    },
+    {
+      "index": 2,
+      "score": 0.6,
+      "worth": true,
+      "reason": "右下有成束针晶，但左侧混杂暗色杂质遮挡"
+    },
+    {
+      "index": 1,
+      "score": 0.3,
+      "worth": true,
+      "reason": "仅有少量散在碎针晶，主体为暗色杂质，针晶特征不明显"
+    }
+  ]
+}

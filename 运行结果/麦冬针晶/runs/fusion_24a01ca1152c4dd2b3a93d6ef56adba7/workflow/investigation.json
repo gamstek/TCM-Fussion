@@ -1,0 +1,153 @@
+{
+  "identity": "4ade880ffb466ca611c79bd851472f49bdc2af365a68b95daa7058c64f1cbca2",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "麦冬",
+    "G2",
+    "G4"
+  ],
+  "hypotheses": {
+    "麦冬": {
+      "status": "investigating",
+      "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "G2": {
+      "status": "investigating",
+      "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "G4": {
+      "status": "investigating",
+      "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "麦冬",
+          "status": "investigating",
+          "reason": "麦冬为样本名指向的假设，需P0级needle_crystal与stone_cell双核验；G2（半夏类）与G4（白术/苍术）同为针晶P0候选，可通过针晶尺寸量纲（26-110μm vs 5-32μm）与石细胞/菊糖辅助特征区分，下一轮以只读locate/measure核查判据"
+        },
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "麦冬为样本名指向的假设，需P0级needle_crystal与stone_cell双核验；G2（半夏类）与G4（白术/苍术）同为针晶P0候选，可通过针晶尺寸量纲（26-110μm vs 5-32μm）与石细胞/菊糖辅助特征区分，下一轮以只读locate/measure核查判据"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "麦冬为样本名指向的假设，需P0级needle_crystal与stone_cell双核验；G2（半夏类）与G4（白术/苍术）同为针晶P0候选，可通过针晶尺寸量纲（26-110μm vs 5-32μm）与石细胞/菊糖辅助特征区分，下一轮以只读locate/measure核查判据"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "麦冬",
+          "status": "investigating",
+          "reason": "三个候选均以needle_crystal为P0必需且待核验；若本轮定位后获得可测量针晶实例，其feret_max量纲可区分麦冬/G2（26-110/20-144μm）与G4（5-32μm），后续再用stone_cell（麦冬）或starch_grain/vessel（G2）辅助判别；提名仅供下一轮调查方向，不构成证据。"
+        },
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "三个候选均以needle_crystal为P0必需且待核验；若本轮定位后获得可测量针晶实例，其feret_max量纲可区分麦冬/G2（26-110/20-144μm）与G4（5-32μm），后续再用stone_cell（麦冬）或starch_grain/vessel（G2）辅助判别；提名仅供下一轮调查方向，不构成证据。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "三个候选均以needle_crystal为P0必需且待核验；若本轮定位后获得可测量针晶实例，其feret_max量纲可区分麦冬/G2（26-110/20-144μm）与G4（5-32μm），后续再用stone_cell（麦冬）或starch_grain/vessel（G2）辅助判别；提名仅供下一轮调查方向，不构成证据。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "麦冬",
+          "status": "investigating",
+          "reason": "定位后若获得合格实例，以feret_max量纲做三者区分；后续再用stone_cell(麦冬)或starch_grain/vessel(G2)辅助判别。提名仅为下一轮方向，不构成证据。"
+        },
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "定位后若获得合格实例，以feret_max量纲做三者区分；后续再用stone_cell(麦冬)或starch_grain/vessel(G2)辅助判别。提名仅为下一轮方向，不构成证据。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "定位后若获得合格实例，以feret_max量纲做三者区分；后续再用stone_cell(麦冬)或starch_grain/vessel(G2)辅助判别。提名仅为下一轮方向，不构成证据。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "麦冬",
+          "status": "investigating",
+          "reason": "维持：针晶为P0判据，view_04尚无定位证据，不因其他视野阴性而撤销"
+        },
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "维持：针晶+辅助判据（淀粉粒/导管）尚未核查，等待合格实例测量区分"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "维持：针晶feret_max 5–32μm与知母26–110μm区间有区分力，需view_04定位结果参与判别"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认"
+        },
+        {
+          "candidate_id": "麦冬",
+          "status": "investigating",
+          "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

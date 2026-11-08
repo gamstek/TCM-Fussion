@@ -1,0 +1,21 @@
+{
+  "job_id": "fusion_24a01ca1152c4dd2b3a93d6ef56adba7",
+  "sample_id": "麦冬针晶",
+  "status": "completed",
+  "stage": "done",
+  "config_sha256": "1faa489364ed9282c738b15dbbe1340e1d56fafbeb8b0db336dd83684d42d1a6",
+  "result": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\fusion.json",
+  "needs_review": true,
+  "route": "workflow_agent",
+  "elapsed_seconds": 887.6432222999865,
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\output.json",
+  "code_signature": {
+    "baseline": "37181c67d3b2e3e575c3fa2b3f5f549733ded5f5c6ce41b669713657e532bd5e",
+    "current": "37181c67d3b2e3e575c3fa2b3f5f549733ded5f5c6ce41b669713657e532bd5e",
+    "changed": false,
+    "changed_at": null,
+    "checks": 86,
+    "started_at": "2026-11-06T17:23:28+0800",
+    "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\code_signature.json"
+  }
+}

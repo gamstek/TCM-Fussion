@@ -18,6 +18,28 @@ import paths
 from .pipeline import doctor, run_pipeline, validate_config
 from .storage import IntegrationError, file_hash, project_path, read_json, write_json
 
+_INVALID_NAME_CHARS = frozenset('<>:"/\\|?*') | frozenset(chr(i) for i in range(32))
+_RESERVED_NAMES = frozenset({'CON', 'PRN', 'AUX', 'NUL'}) | frozenset(
+    f'{prefix}{i}' for prefix in ('COM', 'LPT') for i in range(1, 10))
+_MAX_CASE_NAME = 100
+
+
+def _validate_case_name(case_name):
+    """Reject names that cannot be used as a portable directory component."""
+    if not isinstance(case_name, str) or not case_name.strip():
+        raise IntegrationError('MULTI_VIEW_NAME', 'case_name不能为空')
+    if len(case_name) > _MAX_CASE_NAME:
+        raise IntegrationError('MULTI_VIEW_NAME', f'case_name不能超过{_MAX_CASE_NAME}个字符')
+    if case_name in {'.', '..'} or case_name != case_name.strip() or case_name[-1] in ' .':
+        raise IntegrationError('MULTI_VIEW_NAME', 'case_name不能为"."/".."，且不能以空格或点结尾')
+    invalid = sorted({ch for ch in case_name if ch in _INVALID_NAME_CHARS})
+    if invalid:
+        raise IntegrationError(
+            'MULTI_VIEW_NAME', 'case_name包含非法字符: ' + ' '.join(repr(ch) for ch in invalid))
+    if case_name.split('.', 1)[0].upper() in _RESERVED_NAMES:
+        raise IntegrationError('MULTI_VIEW_NAME', f'case_name不能使用系统保留名: {case_name}')
+    return case_name
+
 
 def inspect_sources(source_dir, manifest=None):
     """Validate any positive number of distinct original files inside source_dir."""
@@ -80,9 +102,11 @@ def bind_config(template, images, *, sample_id, a_python=None):
 
 
 def run_multi_view(source_dir, *, output_root=None, manifest=None,
-                  config_template=None, a_python=None, dry_run=False):
+                  config_template=None, a_python=None, dry_run=False, case_name=None):
     """Return fresh case on dry-run, completed run directory on live execution.
 
+    case_name optionally names the case directory; the config sample_id is
+    sanitized separately so Chinese/display names remain usable on disk.
     All failures after case creation write interface_status.json. Retrying means
     another case; no recorded observations, old A cache or hidden fallback.
     """
@@ -100,8 +124,14 @@ def run_multi_view(source_dir, *, output_root=None, manifest=None,
     source = project_path(source_dir)
     if root == source or root.is_relative_to(source):
         raise IntegrationError('MULTI_VIEW_SCOPE', '输出根不能位于输入图像目录内')
-    base = root / ('case_' + uuid.uuid4().hex[:8])
+    if case_name is not None:
+        _validate_case_name(case_name)
+        base = root / case_name
+    else:
+        base = root / ('case_' + uuid.uuid4().hex[:8])
     base.mkdir(parents=True, exist_ok=False)
+    sample_id = re.sub(r'[^0-9A-Za-z_-]+','_', case_name)[:64].strip('_') if case_name else base.name
+    sample_id = sample_id or base.name
     status = {'schema': 'multi-view-interface/v1', 'dry_run': bool(dry_run),
               'base': str(base), 'stage': 'copying', 'status': 'running'}
     write_json(base / 'interface_status.json', status)
@@ -114,7 +144,7 @@ def run_multi_view(source_dir, *, output_root=None, manifest=None,
             if file_hash(image) != row['sha256']:
                 raise IntegrationError('MULTI_VIEW_HASH', '复制期间原图内容发生变化')
             images.append(str(image))
-        cfg = bind_config(template, images, sample_id=base.name, a_python=a_python)
+        cfg = bind_config(template, images, sample_id=sample_id, a_python=a_python)
         write_json(base / 'config.json', cfg)
         write_json(base / 'input_proof.json', {'views': [
             {**row, 'view': Path(image).name} for row, image in zip(bindings, images)],

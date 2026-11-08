@@ -76,6 +76,24 @@ class MultiViewTests(unittest.TestCase):
         self.assertEqual(error.exception.code, 'MULTI_VIEW_A_PYTHON_MISSING')
         self.assertFalse((self.root / 'outputs').exists())
 
+    def test_case_name_rejects_os_invalid_and_reserved_names(self):
+        invalid = ['', '   ', '.', '..', 'a<b', 'a>b', 'a"b', 'a|b', 'a?b', 'a*b',
+                   'a:b', 'a\\b', 'a/b', 'a\x00b', 'a\nb', ' name', 'name ',
+                   'name.', 'CON', 'con.txt', 'COM1', 'LPT9', 'a' * 101]
+        for name in invalid:
+            with self.subTest(name=name):
+                with self.assertRaises(IntegrationError) as error:
+                    F.run_multi_view(self.source, **self.options, dry_run=True, case_name=name)
+                self.assertEqual(error.exception.code, 'MULTI_VIEW_NAME')
+        self.assertFalse(self.options['output_root'].exists())
+
+    def test_case_name_accepts_portable_names(self):
+        with patch.object(F, 'doctor', return_value={'ready': True}):
+            base = F.run_multi_view(self.source, **self.options, dry_run=True,
+                                    case_name='龙胆测试_v1')
+        self.assertEqual(base.name, '龙胆测试_v1')
+        self.assertTrue((base / 'interface_status.json').is_file())
+
     def test_dry_run_copies_only_sources_fresh_cache_no_labels_or_model(self):
         (self.source / 'a_cache').mkdir()
         (self.source / 'a_cache/old.json').write_text('old')

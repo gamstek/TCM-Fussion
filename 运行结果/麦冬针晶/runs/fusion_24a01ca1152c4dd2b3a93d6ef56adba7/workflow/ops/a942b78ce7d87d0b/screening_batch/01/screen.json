@@ -1,0 +1,8 @@
+{
+  "tool": "roi_screen",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\view_02.jpg",
+  "regions": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\workflow\\ops\\2a2a4d28a3197d86\\detection\\regions.json",
+  "feature_id": "needle_crystal",
+  "image_id": "img_7e0c830fba53987a0fc58164a6e57b4abde99114920d848eaac83e2203e4c8fd",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\workflow\\ops\\a942b78ce7d87d0b\\screening_batch\\01\\result"
+}

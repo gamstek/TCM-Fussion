@@ -1,0 +1,1843 @@
+{
+  "schema": "diagnosis-output/v1",
+  "sample_id": "麦冬针晶",
+  "status": "tentative",
+  "top_candidate": {
+    "id": "知母",
+    "display": "知母",
+    "kind": "herb",
+    "score": 0.596794,
+    "confidence": 0.0,
+    "support_count": 0,
+    "a_probability": 0.994657,
+    "b_confidence": 0.0,
+    "fused_score": 0.596794,
+    "admission": "verify"
+  },
+  "candidate_admission": {
+    "available": false,
+    "decision": "verify",
+    "fallback": true,
+    "reason": "rule evidence requires review; no model admission requested",
+    "decision_source": "runtime_precondition"
+  },
+  "alternatives": [
+    {
+      "id": "黄芪",
+      "display": "黄芪",
+      "score": 0.000329,
+      "confidence": 0.0
+    },
+    {
+      "id": "G4",
+      "display": "白术 / 苍术",
+      "score": 0.000208,
+      "confidence": 0.0
+    },
+    {
+      "id": "益母草",
+      "display": "益母草",
+      "score": 0.000165,
+      "confidence": 0.0
+    },
+    {
+      "id": "苦参",
+      "display": "苦参",
+      "score": 0.000143,
+      "confidence": 0.0
+    }
+  ],
+  "ambiguous_with": [],
+  "tie_break": {
+    "applied": false,
+    "a_majority": "知母",
+    "a_fold_top1": 25,
+    "total_folds": 25
+  },
+  "strong_observations": [],
+  "detections": [
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.5493,
+      "box": [
+        929.5,
+        208.0,
+        1192.8,
+        670.8
+      ],
+      "source_sha256": "f8040d05634f018cf651b8824b7faa676f3926fbdf56fe911299b6844896739d"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.3994,
+      "box": [
+        1236.5,
+        487.2,
+        1520.4,
+        828.0
+      ],
+      "source_sha256": "f8040d05634f018cf651b8824b7faa676f3926fbdf56fe911299b6844896739d"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.8802,
+      "box": [
+        1138.7,
+        691.4,
+        1569.1,
+        1020.2
+      ],
+      "source_sha256": "f8040d05634f018cf651b8824b7faa676f3926fbdf56fe911299b6844896739d"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.5694,
+      "box": [
+        545.5,
+        812.4,
+        819.3,
+        1111.3
+      ],
+      "source_sha256": "f8040d05634f018cf651b8824b7faa676f3926fbdf56fe911299b6844896739d"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.9272,
+      "box": [
+        596.9,
+        360.0,
+        1466.8,
+        986.9
+      ],
+      "source_sha256": "7e0c830fba53987a0fc58164a6e57b4abde99114920d848eaac83e2203e4c8fd"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.9284,
+      "box": [
+        754.9,
+        681.4,
+        1216.8,
+        1266.4
+      ],
+      "source_sha256": "74add6c007dd442093430c91dbdcac579bbeb957773534a4e479dc2b7b6503d3"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.9015,
+      "box": [
+        466.6,
+        776.0,
+        688.0,
+        1266.8
+      ],
+      "source_sha256": "74add6c007dd442093430c91dbdcac579bbeb957773534a4e479dc2b7b6503d3"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "其他",
+      "score": 0.7622,
+      "box": [
+        1967.2,
+        118.2,
+        2046.8,
+        248.5
+      ],
+      "source_sha256": "823aae19f6ed1b336f9158b980e940b9ae054d90bf99e5cdaef106ea1172cf7d"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.8295,
+      "box": [
+        1060.1,
+        58.0,
+        1208.0,
+        193.9
+      ],
+      "source_sha256": "823aae19f6ed1b336f9158b980e940b9ae054d90bf99e5cdaef106ea1172cf7d"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.9337,
+      "box": [
+        693.8,
+        151.1,
+        1255.5,
+        1073.4
+      ],
+      "source_sha256": "823aae19f6ed1b336f9158b980e940b9ae054d90bf99e5cdaef106ea1172cf7d"
+    },
+    {
+      "tool": "detect_fov_initial",
+      "label": "草酸钙针晶",
+      "score": 0.9398,
+      "box": [
+        762.8,
+        456.1,
+        1332.0,
+        909.6
+      ],
+      "source_sha256": "f85fb5603524f7beb2374e508084969947064a20b1e3c53a7be926c4509c1744"
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        662.75,
+        555.0,
+        1330.25,
+        1401.0
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        419.75,
+        620.0,
+        727.25,
+        1388.0
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        700.25,
+        531.5,
+        1076.75,
+        1368.5
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.65,
+      "box": [
+        130.0,
+        518.5,
+        238.0,
+        695.5
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        650.5,
+        356.25,
+        1427.5,
+        1014.75
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        898.0,
+        108.5,
+        1246.0,
+        777.5
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        1077.25,
+        363.0,
+        1615.75,
+        1101.0
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        485.0,
+        757.75,
+        923.0,
+        1065.25
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        381.5,
+        191.75,
+        1656.5,
+        1129.25
+      ],
+      "source_sha256": null
+    },
+    {
+      "tool": "locate_feature",
+      "label": "草酸钙针晶",
+      "score": 0.92,
+      "box": [
+        572.5,
+        0.0,
+        1397.5,
+        1211.0
+      ],
+      "source_sha256": null
+    }
+  ],
+  "classifications": [
+    {
+      "crop_id": "needle_crystal_view_03_glm35239bc4a4ea_02",
+      "label": "纤维",
+      "reject": "",
+      "confidence": "medium",
+      "feature_id": "fiber",
+      "reason": "长条状厚壁结构，两端渐尖，疑有胞腔",
+      "glm_confidence": "medium",
+      "yolo_confidence": null,
+      "confidence_source": "glm"
+    }
+  ],
+  "missing_required": [
+    {
+      "feature_id": "needle_crystal",
+      "state": "NOT_DETECTED"
+    }
+  ],
+  "review_required": true,
+  "final_assessment": {
+    "schema": "final-assessment/v1",
+    "method": "model",
+    "simulation": false,
+    "stop_reason": "planner_request_review",
+    "candidate_id": "知母",
+    "candidate_display": "知母",
+    "status": "tentative",
+    "judgement": "现有证据暂倾向：知母；仅有A先验，缺少独立显微支持，不构成鉴定。",
+    "explanation": "正式判定为insufficient_evidence。A先验在全部5个视图25个折中一致将知母排第一（a_prior:24–a_prior:48，约0.975–0.999），但所有A概率仅为未校准先验且同源视图不构成独立投票。B通道证据全部为阴性：知母主判P0特征针晶NOT_DETECTED（criterion:21），麦冬针晶（criterion:22、criterion:23）与G4针晶（criterion:17）亦未检出，support_count=0，B置信0。分类产物classification:54将view_03疑似结构判为'纤维'（medium置信，second为'图像不可判'），与针晶判据不符且未量化尺寸，不能据calibration:49–53的标定换算物理尺寸。hypothesis:84/89/90仍处investigating，针晶三分候选（知母26–110、G4 5–32、G2 20–144μm feret_max）未获分割测量数据，判别悬置。当前倾向知母（仅先验支撑），但缺少针晶形态与尺寸确认，维持证据不足结论。",
+    "supporting_evidence": [
+      {
+        "id": "a_prior:24",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9963177442550659,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "益母草",
+              "probability": 0.0006239700596779585,
+              "candidate_id": "益母草"
+            },
+            {
+              "rank": 3,
+              "label": "白头翁",
+              "probability": 0.00034534584847278893,
+              "candidate_id": "白头翁"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "益母草",
+          "白头翁"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:25",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9973752498626709,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.0009454032406210899,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "大青叶",
+              "probability": 0.00024319972726516426,
+              "candidate_id": "大青叶"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "大青叶"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:26",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9903110265731812,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.00259542022831738,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "雄黄",
+              "probability": 0.0018069954821839929,
+              "candidate_id": "雄黄"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "雄黄"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:27",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.998582124710083,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "大黄导管",
+              "probability": 0.0004019098123535514,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "苍术",
+              "probability": 0.0002461927942931652,
+              "candidate_id": "G4"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:28",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_01",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9982008934020996,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.00043580596684478223,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "大黄导管",
+              "probability": 0.0004175404610577971,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:29",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9998927116394043,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "苍术",
+              "probability": 2.306909482285846e-05,
+              "candidate_id": "G4"
+            },
+            {
+              "rank": 3,
+              "label": "益母草",
+              "probability": 1.1632027963059954e-05,
+              "candidate_id": "益母草"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4",
+          "益母草"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:30",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.997515082359314,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.0010004121577367187,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "苍术",
+              "probability": 0.0002583005407359451,
+              "candidate_id": "G4"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "G4"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:31",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9978741407394409,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "苍术",
+              "probability": 0.00039471444324590266,
+              "candidate_id": "G4"
+            },
+            {
+              "rank": 3,
+              "label": "黄芪",
+              "probability": 0.0002785902179311961,
+              "candidate_id": "黄芪"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4",
+          "黄芪"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:32",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9973945617675781,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "苍术",
+              "probability": 0.0010149608133360744,
+              "candidate_id": "G4"
+            },
+            {
+              "rank": 3,
+              "label": "黄芪",
+              "probability": 0.0002678836171980947,
+              "candidate_id": "黄芪"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4",
+          "黄芪"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:33",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_02",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9944764971733093,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "大黄导管",
+              "probability": 0.0007291606161743402,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "苍术",
+              "probability": 0.00047795381397008896,
+              "candidate_id": "G4"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:34",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_03",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9897386431694031,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.0008171878871507943,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "苦参",
+              "probability": 0.0006176481838338077,
+              "candidate_id": "苦参"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "苦参"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:35",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_03",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9976291060447693,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.0005091543425805867,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "甘草",
+              "probability": 0.0003098607121501118,
+              "candidate_id": "甘草"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "甘草"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:36",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_03",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9976556301116943,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.0002835837076418102,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "诃子",
+              "probability": 0.0001463262306060642,
+              "candidate_id": "诃子"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "诃子"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:37",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_03",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9966296553611755,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "苍术",
+              "probability": 0.0005349000566639006,
+              "candidate_id": "G4"
+            },
+            {
+              "rank": 3,
+              "label": "黄芪",
+              "probability": 0.00031730899354442954,
+              "candidate_id": "黄芪"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4",
+          "黄芪"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:38",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_03",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.98846834897995,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.001055847853422165,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "益母草",
+              "probability": 0.0009709238074719906,
+              "candidate_id": "益母草"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "益母草"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:39",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9994749426841736,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "党参联结乳管",
+              "probability": 6.141750782262534e-05,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "苍术",
+              "probability": 5.5348580644931644e-05,
+              "candidate_id": "G4"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:40",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9997524619102478,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 7.940903014969081e-05,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "甘草",
+              "probability": 5.711359699489549e-05,
+              "candidate_id": "甘草"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "甘草"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:41",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9984806180000305,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "黄芪",
+              "probability": 0.00023220836010295898,
+              "candidate_id": "黄芪"
+            },
+            {
+              "rank": 3,
+              "label": "苍术",
+              "probability": 0.00016341217269655317,
+              "candidate_id": "G4"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "黄芪",
+          "G4"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:42",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.99956876039505,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "苍术",
+              "probability": 0.0002593116369098425,
+              "candidate_id": "G4"
+            },
+            {
+              "rank": 3,
+              "label": "黄芪",
+              "probability": 2.593649332993664e-05,
+              "candidate_id": "黄芪"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4",
+          "黄芪"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:43",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_04",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9901748895645142,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "大黄导管",
+              "probability": 0.0009107314981520176,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "苦参",
+              "probability": 0.0006268526194617152,
+              "candidate_id": "苦参"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "苦参"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:44",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 1,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9956127405166626,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "党参联结乳管",
+              "probability": 0.0006473248358815908,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "菟丝子",
+              "probability": 0.0004248226759955287,
+              "candidate_id": "菟丝子"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "菟丝子"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:45",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 2,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9904198050498962,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "甘草",
+              "probability": 0.0015698125353083014,
+              "candidate_id": "甘草"
+            },
+            {
+              "rank": 3,
+              "label": "黄芪",
+              "probability": 0.001298893359489739,
+              "candidate_id": "黄芪"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "甘草",
+          "黄芪"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:46",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 3,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9856244325637817,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "党参联结乳管",
+              "probability": 0.0012065018527209759,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "苍术",
+              "probability": 0.0007425691583193839,
+              "candidate_id": "G4"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:47",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 4,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.99363774061203,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "苍术",
+              "probability": 0.0013009647373110056,
+              "candidate_id": "G4"
+            },
+            {
+              "rank": 3,
+              "label": "黄芪",
+              "probability": 0.0005379510694183409,
+              "candidate_id": "黄芪"
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母",
+          "G4",
+          "黄芪"
+        ],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "a_prior:48",
+        "kind": "a_prior",
+        "data": {
+          "view": "view_05",
+          "fold": 5,
+          "ranking": [
+            {
+              "rank": 1,
+              "label": "知母",
+              "probability": 0.9756288528442383,
+              "candidate_id": "知母"
+            },
+            {
+              "rank": 2,
+              "label": "大黄导管",
+              "probability": 0.0014819948701187968,
+              "candidate_id": null
+            },
+            {
+              "rank": 3,
+              "label": "木香木纤维",
+              "probability": 0.0014020564267411828,
+              "candidate_id": null
+            }
+          ],
+          "is_microscopic_evidence": false
+        },
+        "supports_candidate_ids": [
+          "知母"
+        ],
+        "counters_candidate_ids": []
+      }
+    ],
+    "counterevidence": [],
+    "unresolved": [
+      {
+        "id": "criterion:21",
+        "kind": "criterion",
+        "data": {
+          "candidate_id": "知母",
+          "feature_id": "needle_crystal",
+          "role": "required",
+          "state": "NOT_DETECTED",
+          "present": false,
+          "tier": "P0",
+          "quant": null,
+          "morph": null,
+          "note": null,
+          "score_contribution": 0.0
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "criterion:22",
+        "kind": "criterion",
+        "data": {
+          "candidate_id": "麦冬",
+          "feature_id": "needle_crystal",
+          "role": "required",
+          "state": "NOT_DETECTED",
+          "present": false,
+          "tier": "P0",
+          "quant": null,
+          "morph": null,
+          "note": null,
+          "score_contribution": 0.0
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "criterion:23",
+        "kind": "criterion",
+        "data": {
+          "candidate_id": "麦冬",
+          "feature_id": "stone_cell",
+          "role": "required",
+          "state": "NOT_DETECTED",
+          "present": false,
+          "tier": "P0",
+          "quant": null,
+          "morph": null,
+          "note": null,
+          "score_contribution": 0.0
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "classification:54",
+        "kind": "classification",
+        "data": {
+          "artifact_id": "classification:crop:img_74add6c007dd442093430c91dbdcac579bbeb957773534a4e479dc2b7b6503d3:needle_crystal_view_03_glm35239bc4a4ea_02",
+          "identity_verified": false,
+          "result": {
+            "label": "纤维",
+            "reject": "",
+            "raw_label": "纤维",
+            "feature_id": "fiber",
+            "second": "图像不可判",
+            "confidence": "medium",
+            "reason": "长条状厚壁结构，两端渐尖，疑有胞腔",
+            "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\view_03.jpg",
+            "focus": 68.7,
+            "sent_hw": [
+              768,
+              469
+            ],
+            "granularity": "instance",
+            "confidence_score": 0.65,
+            "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+            "crop_id": "needle_crystal_view_03_glm35239bc4a4ea_02",
+            "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\workflow\\ops\\ec24a802a1fed731\\detection\\crops\\needle_crystal_view_03_glm35239bc4a4ea_02.png",
+            "glm_confidence": "medium",
+            "yolo_confidence": null,
+            "yolo_checked": true,
+            "confidence_source": "glm"
+          }
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "hypothesis:84",
+        "kind": "hypothesis",
+        "data": {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认",
+          "is_evidence": false
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "hypothesis:89",
+        "kind": "hypothesis",
+        "data": {
+          "candidate_id": "麦冬",
+          "status": "investigating",
+          "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认",
+          "is_evidence": false
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "hypothesis:90",
+        "kind": "hypothesis",
+        "data": {
+          "candidate_id": "G2",
+          "status": "investigating",
+          "reason": "三者均为针晶P0判据的in Vestigating候选，feret_max区间互有区分（知母26–110、G4 5–32、G2 20–144），定位产物经分割测量后可直接判别；本轮动作只读定位，不等于确认",
+          "is_evidence": false
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      }
+    ],
+    "formal_verdict": "insufficient_evidence",
+    "formal_conclusion_id": null,
+    "candidate_comparison": [
+      {
+        "candidate_id": "知母",
+        "display": "知母",
+        "rule_confidence": 0.0,
+        "fused_score": 0.596794,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:21"
+        ]
+      },
+      {
+        "candidate_id": "黄芪",
+        "display": "黄芪",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000329,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:13"
+        ]
+      },
+      {
+        "candidate_id": "G4",
+        "display": "白术 / 苍术",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000208,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:17"
+        ]
+      },
+      {
+        "candidate_id": "益母草",
+        "display": "益母草",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000165,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:11"
+        ]
+      },
+      {
+        "candidate_id": "苦参",
+        "display": "苦参",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000143,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:9"
+        ]
+      },
+      {
+        "candidate_id": "菟丝子",
+        "display": "菟丝子",
+        "rule_confidence": 0.0,
+        "fused_score": 0.00014,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:10"
+        ]
+      },
+      {
+        "candidate_id": "甘草",
+        "display": "甘草",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000131,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:5"
+        ]
+      },
+      {
+        "candidate_id": "雄黄",
+        "display": "雄黄",
+        "rule_confidence": 0.0,
+        "fused_score": 0.000112,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:4"
+        ]
+      },
+      {
+        "candidate_id": "白头翁",
+        "display": "白头翁",
+        "rule_confidence": 0.0,
+        "fused_score": 8.5e-05,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:12"
+        ]
+      },
+      {
+        "candidate_id": "大青叶",
+        "display": "大青叶",
+        "rule_confidence": 0.0,
+        "fused_score": 6e-05,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:1"
+        ]
+      },
+      {
+        "candidate_id": "诃子",
+        "display": "诃子",
+        "rule_confidence": 0.0,
+        "fused_score": 5e-05,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:6"
+        ]
+      }
+    ],
+    "rule_notes": [
+      "候选池为空或最高分候选无有效支持分（<0.50）"
+    ],
+    "review_required": true,
+    "confidence_basis": {
+      "rule_confidence": 0.0,
+      "calibrated_probability": null,
+      "level": "low",
+      "has_admitted_b_support": false
+    },
+    "evidence_packet": {
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\麦冬针晶\\runs\\fusion_24a01ca1152c4dd2b3a93d6ef56adba7\\final_evidence.json",
+      "sha256": "a9bbddca2435244739ed9a3f1415df16fdfdf1c967daca915a723538157dfe94",
+      "fact_count": 90,
+      "hash_method": "canonical_json_sha256",
+      "evidence_version": "00453ff8d57427d7f88485047dea8f230b7bad50c5143c9695511f4a5d641ca0"
+    },
+    "model_failure": null,
+    "model_validation_error": null,
+    "model_proposal": {
+      "candidate_id": "知母",
+      "explanation": "正式判定为insufficient_evidence。A先验在全部5个视图25个折中一致将知母排第一（a_prior:24–a_prior:48，约0.975–0.999），但所有A概率仅为未校准先验且同源视图不构成独立投票。B通道证据全部为阴性：知母主判P0特征针晶NOT_DETECTED（criterion:21），麦冬针晶（criterion:22、criterion:23）与G4针晶（criterion:17）亦未检出，support_count=0，B置信0。分类产物classification:54将view_03疑似结构判为'纤维'（medium置信，second为'图像不可判'），与针晶判据不符且未量化尺寸，不能据calibration:49–53的标定换算物理尺寸。hypothesis:84/89/90仍处investigating，针晶三分候选（知母26–110、G4 5–32、G2 20–144μm feret_max）未获分割测量数据，判别悬置。当前倾向知母（仅先验支撑），但缺少针晶形态与尺寸确认，维持证据不足结论。",
+      "support_refs": [
+        "a_prior:24",
+        "a_prior:25",
+        "a_prior:26",
+        "a_prior:27",
+        "a_prior:28",
+        "a_prior:29",
+        "a_prior:30",
+        "a_prior:31",
+        "a_prior:32",
+        "a_prior:33",
+        "a_prior:34",
+        "a_prior:35",
+        "a_prior:36",
+        "a_prior:37",
+        "a_prior:38",
+        "a_prior:39",
+        "a_prior:40",
+        "a_prior:41",
+        "a_prior:42",
+        "a_prior:43",
+        "a_prior:44",
+        "a_prior:45",
+        "a_prior:46",
+        "a_prior:47",
+        "a_prior:48"
+      ],
+      "counter_refs": [],
+      "unresolved_refs": [
+        "criterion:21",
+        "criterion:22",
+        "criterion:23",
+        "classification:54",
+        "hypothesis:84",
+        "hypothesis:89",
+        "hypothesis:90"
+      ]
+    },
+    "usage": {
+      "completion_tokens": 537,
+      "completion_tokens_details": {
+        "reasoning_tokens": 87
+      },
+      "prompt_tokens": 32808,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 33345
+    },
+    "new_image_calls": 0,
+    "new_tool_calls": 0
+  },
+  "judgement": "现有证据暂倾向：知母；仅有A先验，缺少独立显微支持，不构成鉴定。",
+  "audit": {
+    "rule_verdict": "insufficient_evidence",
+    "internal_needs_review": true,
+    "status_note": null,
+    "candidate_scope": {
+      "scope": "open_strict",
+      "a_topk_ids": [
+        "知母",
+        "益母草",
+        "白头翁",
+        "黄芪",
+        "大青叶",
+        "雄黄",
+        "G4",
+        "苦参",
+        "甘草",
+        "诃子",
+        "菟丝子"
+      ],
+      "kept_ids": [
+        "大青叶",
+        "雄黄",
+        "甘草",
+        "诃子",
+        "苦参",
+        "菟丝子",
+        "益母草",
+        "白头翁",
+        "黄芪",
+        "G4",
+        "知母"
+      ],
+      "dropped": [
+        {
+          "id": "辣蓼",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "青黛",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "槟榔",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "蝉蜕",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "穿心莲",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "地黄",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "滑石",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "牡蛎",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "秦皮",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "石膏",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "水牛角",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "郁金",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "泽泻",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "当归",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "艾叶",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "板蓝根",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "薄荷",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "荜茇",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "柴胡",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "川楝子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "防风",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "广藿香",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "红花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄柏",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄连",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄芩",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "金银花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "荆芥",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "桔梗",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "菊花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "莱菔子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "连翘",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "麻黄",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "麦芽",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "牵牛子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "桑白皮",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "使君子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "葶苈子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "王不留行",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "乌梅",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "香附",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "茵陈",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "鱼腥草",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "茯苓",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "大腹皮",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "淡竹叶",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "木香",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G1",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G2",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G3",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "白芍",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "桂枝",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "厚朴",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "虎杖",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "苦杏仁",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "龙胆",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "马齿苋",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "肉桂",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "山楂",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "射干",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "五味子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "玄参",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "淫羊藿",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "栀子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "党参",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "猪苓",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "麦冬",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "大黄",
+          "reason": "not_in_a_topk"
+        }
+      ],
+      "policy": "A Top-K 为 Plan B 重点；非 A 仅在 open_strict 且 required+supporting 全部符合时保留"
+    },
+    "fusion_weights": {
+      "a": 0.6,
+      "b": 0.4,
+      "a_folds": 25
+    },
+    "fusion_policy": "A 先验 + B 证据加权；B verdict/证据状态不由 A 改写",
+    "policy": "always_output_tentative"
+  },
+  "note": "tentative 是未确认候选；review_required 如实表示复核需要，不阻止报告交付。"
+}

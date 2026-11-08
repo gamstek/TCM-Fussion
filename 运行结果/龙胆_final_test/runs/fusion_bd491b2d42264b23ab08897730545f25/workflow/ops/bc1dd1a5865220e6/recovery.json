@@ -1,0 +1,36 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\view_02.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_final_test\\runs\\fusion_bd491b2d42264b23ab08897730545f25\\workflow\\ops\\bc1dd1a5865220e6\\detection",
+  "roi": [
+    1024,
+    512,
+    2048,
+    1536
+  ],
+  "feature_id": "needle_crystal",
+  "px_per_um": 11.65,
+  "locate_expand": 1.5,
+  "existing_boxes": [
+    {
+      "id": "crop:img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263:epidermis_cell_view_02_02",
+      "label": "表皮细胞",
+      "box": [
+        6.0,
+        19.9,
+        1886.1,
+        1534.2
+      ]
+    },
+    {
+      "id": "crop:img_aafc678bf4c62fb91ccfbb6455c227e7f84e802d66b14c86b9c14e48d6875263:secretory_tissue_view_02_01",
+      "label": "分泌组织",
+      "box": [
+        40.5,
+        24.4,
+        1949.4,
+        1534.8
+      ]
+    }
+  ]
+}

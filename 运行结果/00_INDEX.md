@@ -1,8 +1,22 @@
 # 当前保留的运行参考
 
-- [case_9cc59640](case_9cc59640/)：用户指定保留的历史五图运行，run_id=fusion_822f37d328bd47bc9f883be5a52456d6；原始295个文件哈希清理前后完全一致。五张A均cache_hit=true，不能当成本次新代码重推理证据。
-- [五张原图及manifest](needle_5view_final_1f76fd81/)：只保留view_01～05.jpg和input_proof.json，供正式five-view接口复制原图。不是已有crop/mask的回放入口。
+- [case_9cc59640](case_9cc59640/)：用户指定保留的历史五图运行，run_id=`fusion_822f37d328bd47bc9f883be5a52456d6`；原始文件哈希清理前后一致。该次五张 A 均 `cache_hit=true`，不是当前代码重新推理的证据。
+- 示例输入副本：[龙胆_final_test](龙胆_final_test/) 内含 `view_01`～`05.jpg` 和 `input_proof.json`；它同时是一次独立运行，仅作输入格式示例。原始龙胆源图若已归档，请从归档或数据集重新准备，不要修改历史 case。
+- [龙胆_final_test](龙胆_final_test/)：当前代码的独立五图运行；使用 `multi-view`、空 A 缓存。
+- [麦冬针晶](麦冬针晶/)：麦冬针晶 4–8 五图运行；输入 manifest 为 `麦冬针晶_manifest.json`。
+- [case_af4149f1](case_af4149f1/)：早期独立多图运行，用于对照；其中 classify/segment/measure 为 0，不能代表加入身份门后的行为。
 
-旧运行与临时实验已移至项目根archive/TCM_Fusion_CODE-066_20261106/removed/运行结果，原相对路径保留；历史修改记录中的旧链接需按该归档查阅。
+## 当前命令
 
-最新代码的五图运行使用cli.main five-view，读取config/five_view.json规范模板。新实验生成新case，不覆盖参考。CODE-066仅执行离线回归与本地doctor dry-run，没有新付费识别。
+```powershell
+.venv\Scripts\python.exe -X utf8 -m TCM_Fusion.cli.main multi-view `
+  --source-dir <含input_proof.json的目录> `
+  --a-python D:/Anaconda/python.exe `
+  --json
+```
+
+`five-view` 仍为兼容别名，但新运行统一使用 `multi-view` 和 `config/multi_view.json`。新实验生成新 case，不覆盖历史参考。
+
+旧运行与临时实验已移至项目根 `archive/TCM_Fusion_CODE-066_20261106/removed/运行结果`，原相对路径保留；历史修改记录中的旧链接需按归档查阅。
+
+[返回 README](../README.md) · [多图接口](../多图测试运行方案.md) · [修改记录](../修改记录.md)
