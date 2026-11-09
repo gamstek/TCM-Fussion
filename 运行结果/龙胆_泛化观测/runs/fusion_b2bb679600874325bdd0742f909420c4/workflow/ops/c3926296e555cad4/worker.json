@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "needle_crystal_view_01_glm35239bc4a4ea_02",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\runs\\fusion_b2bb679600874325bdd0742f909420c4\\workflow\\ops\\421c4363d41b8607\\detection\\crops\\needle_crystal_view_01_glm35239bc4a4ea_02.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\runs\\fusion_b2bb679600874325bdd0742f909420c4\\workflow\\ops\\421c4363d41b8607\\detection\\crops\\needle_crystal_view_01_glm35239bc4a4ea_02.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_01.jpg",
+  "tight_box": [
+    543.25,
+    1089.75,
+    667.75,
+    1271.25
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\runs\\fusion_b2bb679600874325bdd0742f909420c4\\workflow\\ops\\c3926296e555cad4\\classification",
+  "feature_hint": "目标正例：优先单根、细长、两端尖、透明或半透明、无连续细胞壁/胞腔的草酸钙针晶；成簇时只框可分辨的单根。 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；表皮细胞；花粉粒；其他结晶；纯组织区域",
+  "tight_box_local": [
+    24.25,
+    24.75,
+    148.75,
+    206.25
+  ]
+}

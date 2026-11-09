@@ -1,0 +1,123 @@
+{
+  "allow_network": true,
+  "a": {
+    "mode": "cli",
+    "required": true,
+    "checkpoint_dir": "MICROSCOPE-main/v3_resnet50_full",
+    "timeout_seconds": 180,
+    "images": [
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_01.jpg",
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_02.jpg",
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_03.jpg",
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_04.jpg",
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_05.jpg"
+    ],
+    "python": "D:\\Anaconda\\python.exe"
+  },
+  "b": {
+    "mode": "run",
+    "input_mode": "images",
+    "enable_vlm": false,
+    "input": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_01.jpg"
+  },
+  "agent": {
+    "mode": "active",
+    "planner": "llm",
+    "transport": "mcp",
+    "max_steps": 40,
+    "candidate_policy": {
+      "top_k": 3
+    },
+    "workflow": {
+      "execution": "active",
+      "agent_policy": "adaptive_v2",
+      "python": ".venv/vision/Scripts/python.exe",
+      "detector": "yolo",
+      "targeted_recovery": true,
+      "max_parallel": 2,
+      "locate_attempts_per_view": 2,
+      "locate_attempt_reserve": 2,
+      "max_tool_failures": 2,
+      "identity_min_confidence": "medium",
+      "max_seconds": 1800,
+      "max_observation_seconds": 150,
+      "max_call_seconds": 180,
+      "initialization_reserve": 1,
+      "max_planning": 32,
+      "max_observations": 10,
+      "max_recompute": 30,
+      "max_api_calls": 60,
+      "max_resource_units": 220,
+      "quality_policy": "strict",
+      "quality_evaluation": "legacy",
+      "box_association": "region_component",
+      "candidate_scope": "open_strict",
+      "a_weight": 0.6,
+      "b_weight": 0.4,
+      "min_support_features": 2,
+      "final_assessment_llm": true,
+      "final_assessment_seconds": 45,
+      "needle_audit": true,
+      "feature_audit": true,
+      "feature_audit_features": [
+        "needle_crystal"
+      ],
+      "needle_negative_hint": "不要将纤维（连续细胞壁、胞腔）、表皮细胞、花粉粒、其他结晶或纯组织区域当作针晶；只框可分辨的针晶。",
+      "needle_positive_hint": "优先单根、细长、两端尖、透明或半透明、无连续细胞壁/胞腔的草酸钙针晶；成簇时只框可分辨的单根。",
+      "screen_top_k": 2,
+      "screen_concurrency": 3,
+      "needle_scan_enabled": false,
+      "needle_scan_tile_size": 1024,
+      "needle_scan_overlap": 0.15,
+      "needle_scan_max_tiles": 9,
+      "needle_scan_concurrency": 2,
+      "feature_scan_enabled": false,
+      "feature_scan_features": [
+        "needle_crystal"
+      ],
+      "feature_scan_tile_size": 1024,
+      "feature_scan_overlap": 0.15,
+      "feature_scan_max_tiles": 9,
+      "feature_scan_concurrency": 2,
+      "feature_profiles": {
+        "needle_crystal": {
+          "positive": "优先单根、细长、两端尖、透明或半透明、无连续细胞壁/胞腔的草酸钙针晶；成簇时只框可分辨的单根。",
+          "negative": [
+            "纤维：连续细胞壁/胞腔",
+            "表皮细胞",
+            "花粉粒",
+            "其他结晶",
+            "纯组织区域"
+          ]
+        }
+      },
+      "glm_identity_threshold": 0.8,
+      "glm_locate_threshold": 0.8,
+      "locate_expand": 1.5,
+      "enabled_tools": [
+        "detect_fov_initial",
+        "calibrate_fov",
+        "segment_instance",
+        "classify_target",
+        "measure_instances",
+        "detect_region",
+        "propose_regions",
+        "roi_screen",
+        "roi_screen_batch",
+        "locate_feature",
+        "needle_scan",
+        "feature_scan"
+      ]
+    },
+    "image_roots": [
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_01.jpg",
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_02.jpg",
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_03.jpg",
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_04.jpg",
+      "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_05.jpg"
+    ]
+  },
+  "aliases": {},
+  "allow_recorded": false,
+  "sample_id": "龙胆_泛化观测"
+}

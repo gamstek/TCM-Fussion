@@ -210,6 +210,8 @@ def project_output(sample_id, verdict, result, a):
         "review_required": needs_review,
         "final_assessment": result.get('final_assessment'),
         "judgement": (result.get('final_assessment') or {}).get('judgement'),
+        "needle_audit": result.get('needle_audit'),
+        "feature_audit": result.get('feature_audit'),
         "audit": {
             "rule_verdict": verdict.get("verdict"),
             "internal_needs_review": bool(verdict.get("needs_review")),

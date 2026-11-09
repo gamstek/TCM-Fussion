@@ -8,6 +8,9 @@
 
 ```text
 multi_view
+feature_profiles
+negative_feature_bank
+needle_observation
 workflow
 adaptive_quality
 react

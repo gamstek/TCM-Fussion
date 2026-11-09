@@ -24,6 +24,17 @@ class WorkflowBackend:
     def execute(self, session, tool, target, work, context):
         def command(args, python=session.python, log='stage.log'):
             run([str(python),'-X','utf8',*map(str,args)],context_path=context,timeout=session.remaining_seconds(),log_path=work/log,cancel_event=session.cancel_event)
+        from .feature_profiles import hint_text, profile_for
+        def feature_hint(feature_id):
+            override = session.config.get('feature_profiles') or {}
+            profile = profile_for(feature_id, override)
+            text = hint_text(profile)
+            if feature_id == 'needle_crystal' and 'needle_crystal' not in override:
+                legacy = ' '.join(str(session.config.get(key) or '')
+                                  for key in ('needle_positive_hint', 'needle_negative_hint')).strip()
+                if legacy:
+                    text = legacy
+            return text
         if tool == 'roi_screen_batch':
             from concurrent.futures import ThreadPoolExecutor
             items=list(target.get('items') or [])
@@ -37,7 +48,8 @@ class WorkflowBackend:
                 ctx=sub/'screen.json'
                 write_json(ctx,{'tool':'roi_screen','source':str(item['source']),
                                 'regions':str(item['regions']),'feature_id':item.get('feature_id'),
-                                'image_id':item['image_id'],'output':str(sub/'result')})
+                                'image_id':item['image_id'],'output':str(sub/'result'),
+                                'feature_hint':feature_hint(item.get('feature_id'))})
                 run([str(session.python),'-X','utf8','-m','TCM_Fusion.cli.workflow_worker',
                      '--context',str(ctx)],context_path=context,timeout=session.remaining_seconds(),
                     log_path=sub/'stage.log',cancel_event=session.cancel_event)
@@ -51,9 +63,67 @@ class WorkflowBackend:
             write_json(ctx, {'tool': tool, 'source': str(target['source']),
                              'regions': str(target['regions']),
                              'feature_id': target.get('feature_id'),
-                             'image_id': target['image_id'], 'output': str(out)})
+                             'image_id': target['image_id'], 'output': str(out),
+                             'feature_hint': feature_hint(target.get('feature_id'))})
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
             return {'screen': str(out / 'screen.json')}
+        if tool in {'needle_scan', 'feature_scan'}:
+            from concurrent.futures import ThreadPoolExecutor
+            from PIL import Image
+            source = Path(target['source'])
+            feature_id = target.get('feature_id') or 'needle_crystal'
+            prefix = 'feature_scan' if tool == 'feature_scan' else 'needle_scan'
+            with Image.open(source) as handle:
+                width, height = handle.size
+            tile = max(256, min(2048, int(session.config.get(prefix + '_tile_size', 1024))))
+            overlap = max(0.0, min(0.5, float(session.config.get(prefix + '_overlap', 0.15))))
+            step = max(128, int(tile * (1.0 - overlap)))
+            boxes = []
+            for y in range(0, max(1, height), step):
+                for x in range(0, max(1, width), step):
+                    x2, y2 = min(width, x + tile), min(height, y + tile)
+                    if x2 - x >= 128 and y2 - y >= 128:
+                        boxes.append([x, y, x2, y2])
+            boxes = boxes[:max(1, int(session.config.get(prefix + '_max_tiles', 9)))]
+            out = work / 'scan'
+            out.mkdir(parents=True, exist_ok=True)
+            workers = max(1, min(int(session.config.get(prefix + '_concurrency', 2)), len(boxes)))
+            def one(index_box):
+                index, box = index_box
+                sub = out / f'tile_{index:02d}'
+                sub.mkdir(parents=True, exist_ok=True)
+                ctx = sub / 'locate.json'
+                write_json(ctx, {'tool': 'locate_feature', 'source': str(source),
+                                 'output': str(sub / 'detection'), 'roi': box,
+                                 'feature_id': feature_id,
+                                 'px_per_um': target.get('px_per_um'),
+                                 'locate_expand': session.config.get('locate_expand', 1.5),
+                                 'feature_hint': feature_hint(feature_id),
+                                 'existing_boxes': []})
+                run([str(session.python), '-X', 'utf8', '-m', 'TCM_Fusion.cli.workflow_worker',
+                     '--context', str(ctx)], context_path=context,
+                    timeout=session.remaining_seconds(), log_path=sub / 'stage.log',
+                    cancel_event=session.cancel_event)
+                return sub / 'detection'
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                dirs = list(pool.map(one, enumerate(boxes)))
+            crops = out / 'crops'
+            crops.mkdir(parents=True, exist_ok=True)
+            count = 0
+            for folder in dirs:
+                source_crops = folder / 'crops'
+                if not source_crops.is_dir():
+                    continue
+                for path in source_crops.iterdir():
+                    if path.is_file():
+                        shutil.copy2(path, crops / path.name)
+                        if path.suffix == '.json':
+                            count += 1
+            completion = out / 'scan_result.json'
+            write_json(completion, {'engine': 'glm_full_scan', 'count': count,
+                                    'tiles': boxes, 'roi': None, 'feature_id': feature_id,
+                                    'coordinate_system': 'original_pixels'})
+            return {'crops_dir': str(crops), 'completion': str(completion), 'tiles': boxes}
         if tool in {'propose_regions', 'locate_feature'}:
             out = work / 'detection'
             ctx = work / 'recovery.json'
@@ -62,6 +132,7 @@ class WorkflowBackend:
                 data.update(roi=target['roi'], feature_id=target['feature_id'],
                             px_per_um=target.get('px_per_um'),
                             locate_expand=session.config.get('locate_expand', 1.5),
+                            feature_hint=feature_hint(target['feature_id']),
                             existing_boxes=session.existing_boxes(target['image_id']))
             write_json(ctx, data)
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
@@ -108,7 +179,8 @@ class WorkflowBackend:
             meta=contracts.CropMeta.from_json(target['path'])
             ctx={'tool':tool,'crop_id':meta.crop_id,'crop_json':str(target['path']),
                  'crop_png':str(meta.png),'source':meta.source_image_path,
-                 'tight_box':meta.tight_box,'output':str(work/'classification')}
+                 'tight_box':meta.tight_box,'output':str(work/'classification'),
+                 'feature_hint':feature_hint(meta.feature_id)}
             if target.get('identity_required'):
                 ctx['tight_box_local'] = meta.tight_box_local
             f=work/'worker.json';write_json(f,ctx)

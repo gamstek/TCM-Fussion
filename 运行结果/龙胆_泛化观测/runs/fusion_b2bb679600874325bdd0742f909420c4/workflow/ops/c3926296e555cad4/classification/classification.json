@@ -1,0 +1,24 @@
+{
+  "label": "图像不可判",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "",
+  "confidence": "high",
+  "reason": "图像虚焦模糊，无可见壁、棱角或晶体结构",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_01.jpg",
+  "focus": 709.5,
+  "sent_hw": [
+    768,
+    523
+  ],
+  "granularity": "instance",
+  "confidence_score": 0.9,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "needle_crystal_view_01_glm35239bc4a4ea_02",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\runs\\fusion_b2bb679600874325bdd0742f909420c4\\workflow\\ops\\421c4363d41b8607\\detection\\crops\\needle_crystal_view_01_glm35239bc4a4ea_02.png",
+  "glm_confidence": "high",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm"
+}

@@ -14,7 +14,7 @@ from .service_errors import stage_error_kind
 
 
 TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
-       'propose_regions','roi_screen','roi_screen_batch','locate_feature')
+       'propose_regions','roi_screen','roi_screen_batch','locate_feature','needle_scan','feature_scan')
 
 
 class WorkflowSession:
@@ -244,7 +244,7 @@ class WorkflowSession:
     def blocked_tools(self):
         """任务内按工具熔断；locate/classify 允许有界重试后再熔断。"""
         limit = int(self.config.get('max_tool_failures', 2))
-        retryable = {'locate_feature', 'classify_target', 'roi_screen', 'roi_screen_batch', 'detect_fov_initial'}
+        retryable = {'locate_feature', 'classify_target', 'roi_screen', 'roi_screen_batch', 'needle_scan', 'feature_scan', 'detect_fov_initial'}
         failures = {}
         for row in read_json(self.operations)['entries'].values():
             if row.get('status') == 'failed' and stage_error_kind(row.get('error_code')) == 'service':
@@ -275,6 +275,21 @@ class WorkflowSession:
             if not v['valid']:continue
             if v['kind']=='image':
                 targets[identifier]={**v,'source':v['path'],'image_id':identifier}
+                if (self.config.get('needle_scan_enabled', False)
+                        and arts.get('detected:'+identifier, {}).get('valid')):
+                    targets['scan:'+identifier]={'id':'scan:'+identifier,'kind':'needle_scan',
+                        'image_id':identifier,'source':v['path'],'parents':[identifier],
+                        'px_per_um':arts.get('scale:'+identifier,{}).get('px_per_um')}
+                if (self.config.get('feature_scan_enabled', False)
+                        and arts.get('detected:'+identifier, {}).get('valid')):
+                    for feature_id in self.config.get('feature_scan_features') or []:
+                        feature_id=str(feature_id)
+                        if not feature_id:
+                            continue
+                        key='feature_scan:'+identifier+':'+feature_id
+                        targets[key]={'id':key,'kind':'feature_scan','feature_id':feature_id,
+                            'image_id':identifier,'source':v['path'],'parents':[identifier],
+                            'px_per_um':arts.get('scale:'+identifier,{}).get('px_per_um')}
             elif v['kind'] in {'crop','segmentation'}:targets[identifier]=v
         failed={r.get('target_id') for r in read_json(self.operations)['entries'].values()
                 if r.get('tool')=='segment_instance' and r.get('status')=='failed'
@@ -496,6 +511,10 @@ class WorkflowSession:
                 if 'detected:'+image in arts:tool='detect_region'
             elif t.get('kind') == 'screen_batch':
                 tool = 'roi_screen_batch'
+            elif t.get('kind') == 'needle_scan':
+                tool = 'needle_scan'
+            elif t.get('kind') == 'feature_scan':
+                tool = 'feature_scan'
             elif t.get('kind') == 'screen':
                 if not has_batch_screen and not arts.get('screen:'+image, {}).get('valid'):
                     tool = 'roi_screen'
@@ -818,10 +837,10 @@ class WorkflowSession:
         elif tool == 'propose_regions':
             items.append(self._art('regions:'+image, 'region_proposals', result['regions'],
                                    [image], image_id=image))
-        elif tool in {'detect_fov_initial','detect_region','locate_feature'}:
+        elif tool in {'detect_fov_initial','detect_region','locate_feature','needle_scan','feature_scan'}:
             folder=Path(result['crops_dir']);metas=contracts.load_crop_metas(str(folder))
             completion=result['completion'];parents=[image]
-            if tool == 'locate_feature':
+            if tool in {'locate_feature','needle_scan','feature_scan'}:
                 parents = target['parents']
             replacements=read_json(completion).get('replacements',{}) if tool=='detect_region' else {}
             for m in metas:
@@ -834,13 +853,14 @@ class WorkflowSession:
                     cid=replacements[m.crop_id]
                 image_item=self._art(cid+':pixels','crop_pixels',m.png,parents,image_id=image)
                 items.append(image_item)
-                metadata={'identity_required': True} if tool == 'locate_feature' else {}
+                metadata={'identity_required': True} if tool in {'locate_feature','needle_scan','feature_scan'} else {}
                 if m.raw.get('det_score') is not None:
                     metadata['det_score'] = m.raw.get('det_score')
                     metadata['det_confidence'] = m.raw.get('det_confidence')
                 items.append(self._art(cid,'crop',m.json_path,[image,image_item['id']],image_id=image,
                                        **metadata))
-            marker='detected:'+image if tool=='detect_fov_initial' else 'detected:'+target['id']
+            marker=('detected:'+image if tool=='detect_fov_initial' else
+                    ('scanned:'+image if tool in {'needle_scan','feature_scan'} else 'detected:'+target['id']))
             items.append(self._art(marker,'detection',completion,parents,image_id=image))
             scales={m.px_per_um for m in metas if finite_number(m.px_per_um,minimum=1e-12)}
             if len(scales)==1 and not self.store.current()['artifacts'].get('scale:'+image,{}).get('valid'):

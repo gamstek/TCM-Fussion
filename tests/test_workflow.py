@@ -63,6 +63,33 @@ class WorkflowTests(unittest.TestCase):
         return WorkflowRuntime([self.image],root=self.root/'task',sample_id='sample',a={},
             workflow_config={'max_recompute':8,**config},simulation=True,backend=backend or StageFixture())
 
+    def test_needle_scan_target_is_opt_in(self):
+        disabled = self.runtime()
+        image = next(iter(disabled.images))
+        self.assertNotIn('scan:' + image, disabled.workflow.targets())
+        enabled = WorkflowRuntime([self.image], root=self.root / 'enabled_task',
+                                  sample_id='sample', a={},
+                                  workflow_config={'max_recompute': 8, 'needle_scan_enabled': True},
+                                  simulation=True, backend=StageFixture())
+        detect = next(a for a in enabled.legal_actions({'observations': []})
+                      if a['tool'] == 'detect_fov_initial')
+        self.assertTrue(enabled.tools.invoke(enabled, detect, {'action': detect})['accepted'])
+        self.assertIn('scan:' + image, enabled.workflow.targets())
+        self.assertTrue(any(a['tool'] == 'needle_scan'
+                            for a in enabled.legal_actions({'observations': []})))
+        generic = WorkflowRuntime([self.image], root=self.root / 'generic_task',
+                                  sample_id='sample', a={},
+                                  workflow_config={'max_recompute': 8,
+                                                   'feature_scan_enabled': True,
+                                                   'feature_scan_features': ['needle_crystal']},
+                                  simulation=True, backend=StageFixture())
+        detect = next(a for a in generic.legal_actions({'observations': []})
+                      if a['tool'] == 'detect_fov_initial')
+        self.assertTrue(generic.tools.invoke(generic, detect, {'action': detect})['accepted'])
+        self.assertIn('feature_scan:' + image + ':needle_crystal', generic.workflow.targets())
+        self.assertTrue(any(a['tool'] == 'feature_scan'
+                            for a in generic.legal_actions({'observations': []})))
+
     def test_nested_jsonschema_and_external_ref(self):
         schema={'type':'object','required':['x'],'additionalProperties':False,'properties':{
             'x':{'type':'array','items':{'type':'integer','minimum':1},'minItems':2}}}

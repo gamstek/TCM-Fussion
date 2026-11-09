@@ -27,6 +27,11 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'min_support_features':{'type':'integer','enum':[1,2]},
     'final_assessment_llm':{'type':'boolean'},
     'final_assessment_seconds':{'type':'number','exclusiveMinimum':0,'maximum':120},
+    'needle_audit':{'type':'boolean'},
+    'feature_audit':{'type':'boolean'},
+    'feature_audit_features':{'type':'array','items':{'type':'string'}},
+    'needle_negative_hint':{'type':'string','maxLength':500},
+    'needle_positive_hint':{'type':'string','maxLength':500},
     'identity_min_confidence':{'enum':['high','medium','low']},
     'candidate_scope':{'enum':['a_topk','open_strict']},
     'a_weight':{'type':'number','minimum':0,'maximum':1},
@@ -38,12 +43,24 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'max_parallel':{'type':'integer','minimum':1,'maximum':2},
     'screen_top_k':{'type':'integer','minimum':1,'maximum':6},
     'screen_concurrency':{'type':'integer','minimum':1,'maximum':8},
+    'needle_scan_enabled':{'type':'boolean'},
+    'needle_scan_tile_size':{'type':'integer','minimum':256,'maximum':2048},
+    'needle_scan_overlap':{'type':'number','minimum':0,'maximum':0.5},
+    'needle_scan_max_tiles':{'type':'integer','minimum':1,'maximum':50},
+    'needle_scan_concurrency':{'type':'integer','minimum':1,'maximum':8},
+    'feature_scan_enabled':{'type':'boolean'},
+    'feature_scan_features':{'type':'array','items':{'type':'string'}},
+    'feature_scan_tile_size':{'type':'integer','minimum':256,'maximum':2048},
+    'feature_scan_overlap':{'type':'number','minimum':0,'maximum':0.5},
+    'feature_scan_max_tiles':{'type':'integer','minimum':1,'maximum':50},
+    'feature_scan_concurrency':{'type':'integer','minimum':1,'maximum':8},
+    'feature_profiles':{'type':'object'},
     'glm_identity_threshold':{'type':'number','minimum':0,'maximum':1},
     'glm_locate_threshold':{'type':'number','minimum':0,'maximum':1},
     'locate_expand':{'type':'number','minimum':1,'maximum':3},
     'enabled_tools':{'type':'array','uniqueItems':True,'items':{'enum':[
         'detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
-        'propose_regions','roi_screen','roi_screen_batch','locate_feature']}},
+        'propose_regions','roi_screen','roi_screen_batch','locate_feature','needle_scan','feature_scan']}},
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
     'max_locate_attempts':{'type':'integer','minimum':0,'maximum':100},
@@ -117,6 +134,18 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
         guard.stop()
     from .storage import read_json
     runtime.score(result['observations'])
+    if workflow.get('feature_audit', False) or workflow.get('needle_audit', False):
+        try:
+            from .needle_observation import build_feature_audit
+            feature_ids = workflow.get('feature_audit_features') or ['needle_crystal']
+            result['feature_audit']=build_feature_audit(directory, feature_ids=feature_ids)
+            if 'needle_crystal' in feature_ids:
+                result['needle_audit']=result['feature_audit']
+        except Exception as exc:
+            # 旁路审计失败不得改变原裁决或关闭任务。
+            result['feature_audit']={'schema':'feature-audit/v1','non_blocking':True,
+                                     'error':f'{type(exc).__name__}: {exc}'}
+            result['needle_audit']=result['feature_audit']
     guard.check('before_fusion')
     if runtime.workflow.purpose_quality():
         from .purpose_evidence import project

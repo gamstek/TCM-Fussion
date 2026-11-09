@@ -48,7 +48,9 @@
       "propose_regions",
       "roi_screen",
       "roi_screen_batch",
-      "locate_feature"
+      "locate_feature",
+      "needle_scan",
+      "feature_scan"
     ],
     "purpose": "按前置条件修复已绑定样品工件；不产生模型自报尺寸"
   }

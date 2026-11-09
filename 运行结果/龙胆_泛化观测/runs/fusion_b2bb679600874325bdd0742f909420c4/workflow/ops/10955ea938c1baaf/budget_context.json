@@ -1,0 +1,14 @@
+{
+  "operation_key": "10955ea938c1baaf847aad8f63c15057fe8f115240a448e5cfeb331d24e17939",
+  "budget_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\runs\\fusion_b2bb679600874325bdd0742f909420c4\\workflow\\resources.json",
+  "limits": {
+    "initialization": 6,
+    "recompute": 30,
+    "network": 60,
+    "planning": 32,
+    "observation": 10,
+    "total": 220,
+    "finalization": 1
+  },
+  "identity": "b6285d13d4505e7967ee4fb6b1100a08571f02a24bd69a0a6c77357213154ab3"
+}

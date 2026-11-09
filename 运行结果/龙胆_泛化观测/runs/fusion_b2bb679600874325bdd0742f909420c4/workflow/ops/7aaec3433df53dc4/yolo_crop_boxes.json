@@ -1,0 +1,31 @@
+{
+  "source_sha256": "c4aecc358800c476e7332aa1d2e954fbdf7cbb1dd31763196f5b18234b978c26",
+  "image_size": [
+    160,
+    128
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "菌丝",
+      "tight_bbox": [
+        0.9,
+        1.6,
+        119.2,
+        127.8
+      ],
+      "confidence": "low",
+      "score": 0.351,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ]
+}

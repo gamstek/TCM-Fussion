@@ -47,6 +47,7 @@ def main(argv=None):
         b64, _ = encode_jpeg_b64(sheet, quality=90)
         prompt = (f'这是 {rows}×{cols} 的局部拼图，每格左下角有索引。'
                   f'特征：{label}；形态：{CLASSIFY_HINTS[label]}。'
+                  f'{ctx.get("feature_hint") or ""} '
                   '只判断哪些局部值得做后续定向框选，不要输出任何框。'
                   '按值得程度从高到低，返回所有非空局部；只输出 JSON：'
                   '{"rois":[{"index":0,"score":0.0,"worth":true,"reason":"一句话"}]}')
@@ -102,6 +103,7 @@ def main(argv=None):
         if label not in CLASSIFY_HINTS:
             raise IntegrationError('ACTION_DENIED', '该特征没有受信形态描述')
         prompt = (f'只检查所给局部是否可定位 {label}。形态：{CLASSIFY_HINTS[label]}。'
+                  f'{ctx.get("feature_hint") or ""} '
                   '无法区分、目标截断或看不清时返回空 objects。'
                   '列出所有可分辨的完整目标紧框，按置信度从高到低；不要为了凑数编造目标。'
                   '坐标相对所给局部归一化到0至1000。'

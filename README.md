@@ -67,6 +67,11 @@ detect_fov_initial
 - **propose_regions**：本地把原图切成固定 ROI 网格并计算线纹理分，不调用模型。
 - **roi_screen_batch**：多视野 contact sheet 并发筛选，默认 `screen_concurrency=3`；每个视野返回 top ROI，不返回框。
 - **locate_feature**：GLM 在指定 ROI 找指定特征候选框；同一 `(image, ROI)` 已有 locate 时不再因不同 feature 重复执行。
+- **目标条件提示**：`needle_positive_hint` / `needle_negative_hint` 会附加到 screen、locate 和 classify 提示，明确单根针晶正例与纤维/表皮/花粉/组织负例；不改变 `det_score` 阈值。
+- **全视野 `needle_scan` / `feature_scan`**：`needle_scan` 是针晶兼容名；`feature_scan` 按 `feature_id` 泛化，读取 `feature_profiles`（taxonomy 默认 + 配置覆盖），默认关闭。
+- **feature_profiles**：以 `feature_taxonomy.json` 为全集生成默认 profile；针晶的负例只属于针晶 profile，不会污染其他特征。
+- **negative_feature_bank.json**：按 P0 test 错误归因构建的 target-conditioned 负例特征库；淀粉粒因漏检高且类别混淆为 0，不作为针晶硬负例。
+- **needle_audit / feature_audit**：workflow 结束后离线读取已有 crop/classification/mask，生成通用 `feature_audit/feature_audit.json`；针晶兼容名仍写 `needle_audit/`；只做非阻断审计和实例拆分统计。
 - **classify_target**：GLM 对 locate crop 做身份复核；required crop 还会做一次 YOLO crop 复核。YOLO 未命中时保留 GLM 结论。
 - **identity_pending**：存在未分类的低分 `identity_required` crop 时，规划器必须先 classify 最高 `det_score` crop，不能继续 locate，也不能直接暂停或 review；classify 失败/不可判会留下操作记录，不会无限重试。
 - **locate_override**：`det_score >= glm_locate_threshold=0.8` 的 crop 可绕过 classify 进入诊断性 IGM/测量；低于 0.8 不享受该绕过。
@@ -86,6 +91,21 @@ glm_identity_threshold = 0.8
 glm_locate_threshold = 0.8
 locate_expand = 1.5
 identity_min_confidence = medium
+needle_audit = true
+needle_positive_hint / needle_negative_hint = 文本提示
+needle_scan_enabled = false
+needle_scan_tile_size = 1024
+needle_scan_overlap = 0.15
+needle_scan_max_tiles = 9
+needle_scan_concurrency = 2
+feature_scan_enabled = false
+feature_scan_features = ["needle_crystal"]
+feature_scan_tile_size = 1024
+feature_scan_overlap = 0.15
+feature_scan_max_tiles = 9
+feature_scan_concurrency = 2
+feature_audit = true
+feature_audit_features = ["needle_crystal"]
 candidate_scope = open_strict
 a_weight / b_weight = 0.6 / 0.4
 min_support_features = 2
@@ -143,6 +163,8 @@ a_prediction.json
 agent_trace.json
 workflow/operations.json
 workflow/ops/
+needle_audit/needle_audit.json
+feature_audit/feature_audit.json
 agent_verdict.json
 fusion.json
 output.json

@@ -47,6 +47,9 @@ def main(argv=None):
     config = load_config()
     key = resolve_key(config)
     context = geometry_context(ctx['tight_box'], width, height) if ctx.get('tight_box') else ""
+    hints = str(ctx.get('feature_hint') or '').strip()
+    if hints:
+        context = (context + "\n" + hints).strip()
     value = classify_crop(crop, config['vlm'], key, ctx=context)
     if not isinstance(value, dict):
         raise IntegrationError('CLASSIFY_OUTPUT_INVALID', '分类返回不是结构化对象')
