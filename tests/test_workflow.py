@@ -63,6 +63,17 @@ class WorkflowTests(unittest.TestCase):
         return WorkflowRuntime([self.image],root=self.root/'task',sample_id='sample',a={},
             workflow_config={'max_recompute':8,**config},simulation=True,backend=backend or StageFixture())
 
+    def test_feature_scan_rejects_missing_feature_before_work(self):
+        from TCM_Fusion.lib.workflow_backend import WorkflowBackend
+
+        for target in ({}, {'feature_id': ''}, {'feature_id': '   '}):
+            with self.subTest(target=target):
+                with self.assertRaises(IntegrationError) as raised:
+                    WorkflowBackend().execute(self.runtime().workflow, 'feature_scan',
+                                              target, self.root / 'scan', None)
+                self.assertEqual(raised.exception.code, 'FEATURE_SCAN_INPUT')
+                self.assertFalse((self.root / 'scan').exists())
+
     def test_needle_scan_target_is_opt_in(self):
         disabled = self.runtime()
         image = next(iter(disabled.images))

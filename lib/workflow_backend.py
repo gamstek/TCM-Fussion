@@ -68,10 +68,14 @@ class WorkflowBackend:
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
             return {'screen': str(out / 'screen.json')}
         if tool in {'needle_scan', 'feature_scan'}:
+            feature_id = target.get('feature_id')
+            if tool == 'needle_scan':
+                feature_id = feature_id or 'needle_crystal'
+            elif not isinstance(feature_id, str) or not feature_id.strip():
+                raise IntegrationError('FEATURE_SCAN_INPUT', 'feature_scan 必须显式提供 feature_id')
             from concurrent.futures import ThreadPoolExecutor
             from PIL import Image
             source = Path(target['source'])
-            feature_id = target.get('feature_id') or 'needle_crystal'
             prefix = 'feature_scan' if tool == 'feature_scan' else 'needle_scan'
             with Image.open(source) as handle:
                 width, height = handle.size
