@@ -50,7 +50,9 @@
       "roi_screen_batch",
       "locate_feature",
       "needle_scan",
-      "feature_scan"
+      "feature_scan",
+      "hybrid_scan",
+      "image_exemplar_audit"
     ],
     "purpose": "按前置条件修复已绑定样品工件；不产生模型自报尺寸"
   }

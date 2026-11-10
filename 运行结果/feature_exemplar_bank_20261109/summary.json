@@ -1,0 +1,63 @@
+{
+  "targets": 14,
+  "per_target": {
+    "cluster_crystal": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "epidermis_cell": {
+      "positives": 20,
+      "negatives": 24
+    },
+    "fiber": {
+      "positives": 20,
+      "negatives": 32
+    },
+    "hypha": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "needle_crystal": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "non_glandular_hair": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "other": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "pollen_grain": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "secretory_tissue": {
+      "positives": 20,
+      "negatives": 24
+    },
+    "single_crystal": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "starch_grain": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "stoma": {
+      "positives": 20,
+      "negatives": 40
+    },
+    "stone_cell": {
+      "positives": 20,
+      "negatives": 24
+    },
+    "vessel": {
+      "positives": 20,
+      "negatives": 24
+    }
+  },
+  "total_crops": 768,
+  "selection_review": "auto_unreviewed"
+}

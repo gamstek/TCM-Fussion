@@ -357,9 +357,17 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         rejection_details = []
         fallback_reason = "planning_attempt_limit"
         # 原图先走 YOLO 初检，随后才向模型开放视觉复核和补救。
-        coverage = [action for action in eligible
-                    if action["tool"] == "detect_fov_initial"
-                    and affordable(action, remaining_budget())]
+        coverage = []
+        if workflow is not None and workflow.config.get('hybrid_scan_enabled', False):
+            coverage = [action for action in eligible if action["tool"] == "hybrid_scan"
+                        and affordable(action, remaining_budget())]
+        if not coverage and workflow is not None and workflow.config.get('feature_scan_enabled', False):
+            coverage = [action for action in eligible if action["tool"] == "feature_scan"
+                        and affordable(action, remaining_budget())]
+        if not coverage:
+            coverage = [action for action in eligible
+                        if action["tool"] == "detect_fov_initial"
+                        and affordable(action, remaining_budget())]
         if not coverage and workflow is not None:
             try:
                 cov = workflow.coverage()

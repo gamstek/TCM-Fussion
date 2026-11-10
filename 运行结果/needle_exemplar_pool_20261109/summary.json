@@ -1,0 +1,18 @@
+{
+  "rows": 326,
+  "positive_gt": 117,
+  "negative_gt": 209,
+  "negative_by_class": {
+    "分泌组织": 51,
+    "导管": 34,
+    "石细胞": 55,
+    "纤维": 37,
+    "表皮细胞": 32
+  },
+  "positive_by_class": {
+    "草酸钙针晶": 117
+  },
+  "source": "E:\\目标检测标注 labels; boxes are human-reviewed per folder",
+  "split_warning": "E set likely overlaps training; split is unverified_e_training_overlap",
+  "review_required": "visibility and hard_negative still need human review"
+}

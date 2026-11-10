@@ -128,6 +128,50 @@ class WorkflowBackend:
                                     'tiles': boxes, 'roi': None, 'feature_id': feature_id,
                                     'coordinate_system': 'original_pixels'})
             return {'crops_dir': str(crops), 'completion': str(completion), 'tiles': boxes}
+        if tool == 'hybrid_scan':
+            from concurrent.futures import ThreadPoolExecutor
+            features = [str(x) for x in (target.get('features') or []) if str(x)]
+            if not features:
+                raise IntegrationError('HYBRID_INPUT', 'hybrid_scan 没有 feature')
+            source = Path(target['source'])
+            yolo_target = {'id': target['id'] + ':yolo', 'image_id': target['image_id'],
+                           'path': str(source), 'source': str(source), 'parents': target.get('parents', [])}
+            def run_yolo():
+                return self.execute(session, 'detect_fov_initial', yolo_target,
+                                    work / 'yolo', context)
+            def run_feature(index_feature):
+                index, fid = index_feature
+                feature_target = {'id': target['id'] + ':feature:' + fid,
+                                  'image_id': target['image_id'], 'source': str(source),
+                                  'kind': 'feature_scan', 'feature_id': fid,
+                                  'parents': target.get('parents', []),
+                                  'px_per_um': target.get('px_per_um')}
+                return fid, self.execute(session, 'feature_scan', feature_target,
+                                         work / f'glm_{index:02d}', context)
+            with ThreadPoolExecutor(max_workers=max(2, min(4, len(features) + 1))) as pool:
+                yolo_future = pool.submit(run_yolo)
+                feature_futures = [pool.submit(run_feature, pair)
+                                   for pair in enumerate(features)]
+                yolo_result = yolo_future.result()
+                feature_results = [future.result() for future in feature_futures]
+            merged = work / 'features'
+            crops = merged / 'crops'
+            crops.mkdir(parents=True, exist_ok=True)
+            count = 0
+            for _fid, result in feature_results:
+                source_crops = Path(result['crops_dir'])
+                if not source_crops.is_dir():
+                    continue
+                for path in source_crops.iterdir():
+                    if path.is_file():
+                        shutil.copy2(path, crops / path.name)
+                        if path.suffix == '.json':
+                            count += 1
+            completion = merged / 'scan_result.json'
+            write_json(completion, {'engine': 'glm_full_scan', 'count': count,
+                                    'features': features, 'coordinate_system': 'original_pixels'})
+            return {'detections': yolo_result,
+                    'feature_scan': {'crops_dir': str(crops), 'completion': str(completion)}}
         if tool in {'propose_regions', 'locate_feature'}:
             out = work / 'detection'
             ctx = work / 'recovery.json'
@@ -177,6 +221,27 @@ class WorkflowBackend:
             write_json(ctx, {'tool': tool, 'source': target['source'], 'output': str(out)})
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
             return {'scale': str(out / 'scale.json')}
+        if tool=='image_exemplar_audit':
+            meta=contracts.CropMeta.from_json(target['path'])
+            feature_id=meta.feature_id
+            bank_path=project_path(session.config.get('image_exemplar_bank') or
+                (Path(paths.PROJECT_ROOT)/'TCM_Fusion/config/feature_exemplar_bank.json'))
+            bank=read_json(bank_path)
+            entry=(bank.get('targets') or {}).get(feature_id) or {}
+            positives=[x.get('crop') for x in (entry.get('positives') or []) if x.get('crop')]
+            negatives=[x.get('crop') for x in (entry.get('negatives') or []) if x.get('crop')]
+            if not positives or not negatives:
+                raise IntegrationError('AUDIT_EXEMPLAR_MISSING',f'示例库没有 {feature_id} 的正例或负例')
+            np=max(1,int(session.config.get('image_exemplar_positive',4)))
+            nn=max(1,int(session.config.get('image_exemplar_negative',4)))
+            out=work/'image_audit';ctx=work/'audit.json'
+            write_json(ctx,{'tool':tool,'target':str(meta.png),'target_id':meta.crop_id,
+                'target_label':feature_id,'feature_id':feature_id,
+                'positives':positives[:np],'negatives':negatives[:nn],'output':str(out)})
+            command(['-m','TCM_Fusion.cli.image_audit_worker','--context',ctx])
+            if not (out/'audit.json').is_file():
+                raise IntegrationError('AUDIT_INCOMPLETE','图片示例审计没有产出 audit.json')
+            return {'audit':str(out/'audit.json'),'contact_sheet':str(out/'contact.jpg')}
         if tool=='classify_target':
             # 单crop类别复核：复用检测侧 classify_crop（提示词/解析/白名单只此一份），
             # 在子进程内跑，网络请求由 worker_bootstrap 的HTTP守卫按请求键记账。

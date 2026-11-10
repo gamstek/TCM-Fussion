@@ -103,6 +103,25 @@ def _classifications(operations):
     return rows
 
 
+def _image_audits(operations):
+    rows=[]
+    for op in (operations or {}).values():
+        if op.get('tool')!='image_exemplar_audit':
+            continue
+        bundle=op.get('bundle') or {}; root=Path(bundle.get('root') or '')
+        path=root/'image_audit/audit.json'
+        if not path.is_file(): continue
+        try: doc=read_json(path)
+        except (OSError,ValueError): continue
+        rows.append({'target_id':doc.get('target_id'),'feature_id':doc.get('feature_id'),
+                     'target_score':doc.get('target_score'),'needle_score':doc.get('needle_score'),
+                     'negative_similarity':doc.get('negative_similarity'),
+                     'negative_margin':doc.get('negative_margin'),'audit_label':doc.get('audit_label'),
+                     'confidence':doc.get('confidence'),'reason':doc.get('reason'),
+                     'review_status':doc.get('review_status'),'non_blocking':doc.get('non_blocking')})
+    return rows
+
+
 def _observations(result, views):
     rows = []
     for obs in result.get("observations") or []:
@@ -212,6 +231,7 @@ def project_output(sample_id, verdict, result, a):
         "judgement": (result.get('final_assessment') or {}).get('judgement'),
         "needle_audit": result.get('needle_audit'),
         "feature_audit": result.get('feature_audit'),
+        "image_exemplar_audits": _image_audits(result.get('operations')),
         "audit": {
             "rule_verdict": verdict.get("verdict"),
             "internal_needs_review": bool(verdict.get("needs_review")),

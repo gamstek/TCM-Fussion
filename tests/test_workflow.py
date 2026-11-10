@@ -94,12 +94,23 @@ class WorkflowTests(unittest.TestCase):
                                                    'feature_scan_enabled': True,
                                                    'feature_scan_features': ['needle_crystal']},
                                   simulation=True, backend=StageFixture())
+        self.assertTrue(any(a['tool'] == 'feature_scan'
+                            for a in generic.legal_actions({'observations': []})))
         detect = next(a for a in generic.legal_actions({'observations': []})
                       if a['tool'] == 'detect_fov_initial')
         self.assertTrue(generic.tools.invoke(generic, detect, {'action': detect})['accepted'])
         self.assertIn('feature_scan:' + image + ':needle_crystal', generic.workflow.targets())
         self.assertTrue(any(a['tool'] == 'feature_scan'
                             for a in generic.legal_actions({'observations': []})))
+        hybrid = WorkflowRuntime([self.image], root=self.root / 'hybrid_task',
+                                 sample_id='sample', a={},
+                                 workflow_config={'max_recompute': 8,
+                                                  'hybrid_scan_enabled': True,
+                                                  'feature_scan_features': ['needle_crystal']},
+                                 simulation=True, backend=StageFixture())
+        self.assertIn('hybrid_scan:' + image, hybrid.workflow.targets())
+        self.assertTrue(any(a['tool'] == 'hybrid_scan'
+                            for a in hybrid.legal_actions({'observations': []})))
 
     def test_nested_jsonschema_and_external_ref(self):
         schema={'type':'object','required':['x'],'additionalProperties':False,'properties':{

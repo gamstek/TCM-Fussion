@@ -1,0 +1,21 @@
+{
+  "all_candidates": 7482,
+  "all_by_group": {
+    "positive_gt": 647,
+    "negative_gt": 2849,
+    "other_gt": 3986
+  },
+  "selected_total": 170,
+  "selected_positive": 50,
+  "selected_negative": 120,
+  "selected_negative_by_class": {
+    "fiber": 24,
+    "epidermis_cell": 24,
+    "vessel": 24,
+    "stone_cell": 24,
+    "secretory_tissue": 24
+  },
+  "labels": "auto_unreviewed; positive visibility auto_single_heuristic; hard_negative unverified",
+  "split": "unverified_e_training_overlap",
+  "positive_selection": "area_ratio<=0.03, aspect>=1.5, no border; auto_single_heuristic"
+}

@@ -10,6 +10,7 @@
 multi_view
 feature_profiles
 negative_feature_bank
+image_exemplar_audit
 needle_observation
 workflow
 adaptive_quality

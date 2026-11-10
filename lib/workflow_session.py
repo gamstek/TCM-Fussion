@@ -14,7 +14,7 @@ from .service_errors import stage_error_kind
 
 
 TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
-       'propose_regions','roi_screen','roi_screen_batch','locate_feature','needle_scan','feature_scan')
+       'propose_regions','roi_screen','roi_screen_batch','locate_feature','needle_scan','feature_scan','hybrid_scan','image_exemplar_audit')
 
 
 class WorkflowSession:
@@ -280,15 +280,30 @@ class WorkflowSession:
                     targets['scan:'+identifier]={'id':'scan:'+identifier,'kind':'needle_scan',
                         'image_id':identifier,'source':v['path'],'parents':[identifier],
                         'px_per_um':arts.get('scale:'+identifier,{}).get('px_per_um')}
-                if (self.config.get('feature_scan_enabled', False)
-                        and arts.get('detected:'+identifier, {}).get('valid')):
-                    for feature_id in self.config.get('feature_scan_features') or []:
-                        feature_id=str(feature_id)
-                        if not feature_id:
-                            continue
+                if self.config.get('feature_scan_enabled', False):
+                    requested=[str(x) for x in (self.config.get('feature_scan_features') or []) if str(x)]
+                    if self.config.get('feature_scan_from_candidates', False):
+                        try:
+                            requested += self.recovery_features()
+                        except Exception:
+                            pass
+                    features=list(dict.fromkeys(requested))[:max(1,int(self.config.get('feature_scan_max_features',2)))]
+                    for feature_id in features:
                         key='feature_scan:'+identifier+':'+feature_id
                         targets[key]={'id':key,'kind':'feature_scan','feature_id':feature_id,
                             'image_id':identifier,'source':v['path'],'parents':[identifier],
+                            'px_per_um':arts.get('scale:'+identifier,{}).get('px_per_um')}
+                if self.config.get('hybrid_scan_enabled', False):
+                    requested=[str(x) for x in (self.config.get('feature_scan_features') or []) if str(x)]
+                    try:
+                        requested += self.recovery_features()
+                    except Exception:
+                        pass
+                    features=list(dict.fromkeys(requested))[:max(1,int(self.config.get('hybrid_scan_max_features',2)))]
+                    if features:
+                        targets['hybrid_scan:'+identifier]={'id':'hybrid_scan:'+identifier,
+                            'kind':'hybrid_scan','features':features,'image_id':identifier,
+                            'source':v['path'],'parents':[identifier],
                             'px_per_um':arts.get('scale:'+identifier,{}).get('px_per_um')}
             elif v['kind'] in {'crop','segmentation'}:targets[identifier]=v
         failed={r.get('target_id') for r in read_json(self.operations)['entries'].values()
@@ -515,6 +530,8 @@ class WorkflowSession:
                 tool = 'needle_scan'
             elif t.get('kind') == 'feature_scan':
                 tool = 'feature_scan'
+            elif t.get('kind') == 'hybrid_scan':
+                tool = 'hybrid_scan'
             elif t.get('kind') == 'screen':
                 if not has_batch_screen and not arts.get('screen:'+image, {}).get('valid'):
                     tool = 'roi_screen'
@@ -530,6 +547,10 @@ class WorkflowSession:
                         and not arts.get('classification:'+tid,{}).get('identity_verified')
                         and not self.locate_override(t)):
                     continue
+                if self.config.get('image_exemplar_audit', False):
+                    meta=contracts.CropMeta.from_json(t['path'])
+                    if meta.feature_id:
+                        offer('image_exemplar_audit', t, (2, 'image_exemplar_audit', tid))
                 scale=arts.get('scale:'+image,{})
                 seg=arts.get('seg:'+tid,{})
                 review_measure=bool(review_plan and review_plan['target_id']=='seg:'+tid)
@@ -784,7 +805,7 @@ class WorkflowSession:
             # 类别复核是一次受控视觉观察：只占观察/网络预算，不挤占测量所需的重算额度；
             # 其网络请求由同一worker内的HTTP守卫按请求键记账，这里不重复预约。
             pool=('initialization' if tool=='detect_fov_initial' else
-                  'observation' if tool=='classify_target' else 'recompute')
+                  'observation' if tool in {'classify_target','image_exemplar_audit'} else 'recompute')
             self.charge(pool,key,network=tool!='classify_target')
             pending={'action_id':action['action_id'],'tool':tool,'target_id':target['id'],
                      'status':'pending','accepted':False,'repair_completed':False,'operation_key':key}
@@ -820,7 +841,29 @@ class WorkflowSession:
 
     def accept(self,tool,target,result,parent):
         image=target['image_id'];items=[];rows=[];replace=[]
-        if tool == 'roi_screen_batch':
+        if tool=='hybrid_scan':
+            detections=result.get('detections') or {}
+            feature_scan=result.get('feature_scan') or {}
+            for kind,bundle in (('detect',detections),('feature',feature_scan)):
+                folder=Path(bundle.get('crops_dir') or '')
+                if not folder.is_dir():
+                    continue
+                for m in contracts.load_crop_metas(str(folder)):
+                    if file_hash(m.source_image_path)!=self.runtime.images[image]['sha256']:
+                        raise IntegrationError('SAMPLE_MISMATCH','混合扫描产物不属于绑定原图')
+                    cid='crop:'+image+':'+m.crop_id
+                    image_item=self._art(cid+':pixels','crop_pixels',m.png,[image],image_id=image)
+                    items.append(image_item)
+                    metadata={'identity_required': True} if kind=='feature' else {}
+                    if m.raw.get('det_score') is not None:
+                        metadata['det_score']=m.raw.get('det_score')
+                        metadata['det_confidence']=m.raw.get('det_confidence')
+                    items.append(self._art(cid,'crop',m.json_path,[image,image_item['id']],
+                                           image_id=image,**metadata))
+                marker=('detected:'+image if kind=='detect' else 'scanned:'+image)
+                items.append(self._art(marker,'detection',bundle.get('completion'),[image],
+                                       image_id=image))
+        elif tool == 'roi_screen_batch':
             for raw in result.get('screens') or []:
                 path=Path(raw);doc=read_json(path)
                 image_id=doc.get('image_id') or target.get('image_id')
@@ -911,6 +954,14 @@ class WorkflowSession:
             items.append(self._art(sid,'segmentation',root/'instances.json',deps,image_id=image,
                                    masks=str(root/'masks'),quality=result['quality'],crop_id=target['id'],
                                    locate_override=self.locate_override(target),**extra))
+        elif tool=='image_exemplar_audit':
+            root=Path(result['audit']);doc=read_json(root)
+            if doc.get('schema') not in {'image-exemplar-audit/v1','image-exemplar-audit/v2'}:
+                raise IntegrationError('AUDIT_OUTPUT_INVALID','图片示例审计 schema 不匹配')
+            items.append(self._art('image_audit:'+target['id'],'image_audit',root,[target['id']],
+                                   image_id=image, target_id=target['id'],
+                                   contact_sheet=result.get('contact_sheet'),
+                                   review_status='auto_unreviewed', non_blocking=True))
         elif tool=='classify_target':
             root=Path(result['classification']);doc=read_json(root/'classification.json')
             if doc.get('error'):raise IntegrationError('CLASSIFY_FAILED','分类阶段没有可采信结果')
