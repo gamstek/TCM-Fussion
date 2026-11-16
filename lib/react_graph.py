@@ -257,6 +257,17 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                             and not conflict)
         workflow = getattr(runtime, "workflow", None)
         pending_repair = workflow is not None and workflow.unresolved()
+        missing_useful = False
+        fast_mode = bool(workflow is not None and workflow.config.get('fast_yolo_stage2', False))
+        if workflow is not None and workflow.config.get('agent_driven_coverage', False):
+            try:
+                cov_for_veto = workflow.coverage()
+                if fast_mode:
+                    missing_useful = bool(cov_for_veto.get('missing_required'))
+                else:
+                    missing_useful = bool(cov_for_veto.get('missing_useful'))
+            except Exception:
+                missing_useful = False
         adaptive=workflow is not None and workflow.config.get('agent_policy')=='adaptive_v1'
         failed_action = bool(state['events'] and state['events'][-1].get('accepted') is False)
         if (adaptive or autonomous) and (state.get('no_gain',0)>=no_gain_limit or
@@ -269,7 +280,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         advisory = {"recommend": "continue", "why": "evidence_gap"}
         veto = [name for name, blocked in (
             ("mandatory_context_incomplete", mandatory or failed_scene or missing_fov),
-            ("pending_repair", pending_repair), ("evidence_requires_review", need)) if blocked]
+            ("pending_repair", pending_repair), ("evidence_requires_review", need),
+            ("useful_coverage_incomplete", missing_useful)) if blocked]
         if workflow is not None and workflow.remaining_seconds() <= 0.1:
             reason = "workflow_deadline"
         elif (autonomous and workflow.limits.get('finalization',0) and
@@ -279,7 +291,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         elif autonomous:
             if state["steps"] >= max_steps:
                 reason = "max_steps"
-            elif state.get("override_streak", 0) >= 2:
+            elif state.get("override_streak", 0) >= 2 and not missing_useful:
                 reason = "override_exhausted"
             elif not actions:
                 reason = "no_legal_action"
@@ -356,6 +368,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         rejected = []
         rejection_details = []
         fallback_reason = "planning_attempt_limit"
+        agent_driven = bool(workflow is not None and
+                            workflow.config.get('agent_driven_coverage', False))
+        fast_mode = bool(workflow is not None and
+                         workflow.config.get('fast_yolo_stage2', False))
         # 原图先走 YOLO 初检，随后才向模型开放视觉复核和补救。
         coverage = []
         if workflow is not None and workflow.config.get('hybrid_scan_enabled', False):
@@ -405,7 +421,29 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     if preferred and not target.endswith(':' + preferred):
                         continue
                     coverage.append(a)
-        if not coverage and workflow is not None:
+            if (cov.get('detected_all')
+                    and not (cov.get('required_all') if fast_mode else cov.get('useful_all'))):
+                if fast_mode:
+                    missing = {row['image_id'] for row in (cov.get('missing_required') or [])}
+                else:
+                    missing = set(cov.get('missing_useful') or [])
+                try:
+                    target_map = workflow.targets()
+                except Exception:
+                    target_map = {}
+                coverage = [a for a in eligible if a['tool'] == 'classify_target'
+                            and target_map.get(str(a.get('args', {}).get('target_id') or ''), {}).get('image_id') in missing
+                            and affordable(a, remaining_budget())]
+                if not coverage:
+                    # 没有可分类 crop 的视野：允许补扫描；仍不把“无框”单独判成阴性。
+                    for tool in ('hybrid_scan', 'feature_scan', 'detect_fov_initial'):
+                        coverage = [a for a in eligible if a['tool'] == tool
+                                    and any(image in str(a.get('args', {}).get('target_id') or '')
+                                            for image in missing)
+                                    and affordable(a, remaining_budget())]
+                        if coverage:
+                            break
+        if not agent_driven and not coverage and workflow is not None:
             try:
                 pending = workflow.identity_pending()
             except Exception:
@@ -415,6 +453,19 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 coverage = [a for a in eligible if a['tool'] == 'classify_target'
                             and (a.get('args') or {}).get('target_id') == target_id
                             and affordable(a, remaining_budget())]
+        forced_coverage = list(coverage)
+        if agent_driven:
+            # 全局覆盖护栏：只限制“缺失视野”的动作集合，不规定先 scan 还是先 classify；
+            # 有缺口的视野优先补齐，避免 planner 在单一视野的 identity_pending 上过拟合。
+            try:
+                cov_now = workflow.coverage()
+            except Exception:
+                cov_now = {}
+            coverage_complete = cov_now.get('required_all' if fast_mode else 'useful_all')
+            if (cov_now.get('detected_all') and not coverage_complete
+                    and forced_coverage):
+                eligible = forced_coverage
+            coverage = []
         observations = [a for a in eligible if a["tool"] in {"presence_check", "scene_check"}
                         and any(a["args"]["image_id"] == c["args"]["target_id"] for c in coverage)]
         if coverage:
@@ -458,12 +509,23 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             focus = getattr(runtime, "p0_focus", lambda: None)()
             if focus:
                 context["p0_focus"] = focus
-                if not focus.get("attempted") and not focus.get('advisory_only'):
+                if not focus.get("attempted") and not focus.get('advisory_only') and not agent_driven:
                     context["planning_instruction"] = planning_instruction + (
                         " 当前 p0_focus 存在且尚未尝试：必须先选择其指向的 propose_regions/locate_feature"
                         "（或分块检测），在其完成或失败前不得查 P1/C 存在性。")
             context["coverage"] = (context.get("evidence") or {}).get("workflow", {}).get("coverage")
             context["identity_pending"] = (context.get("evidence") or {}).get("workflow", {}).get("identity_pending")
+            context["agent_driven_coverage"] = agent_driven
+            context["remaining_seconds"] = (round(workflow.remaining_seconds(), 1)
+                                             if workflow is not None else None)
+            if agent_driven:
+                context["planning_instruction"] = planning_instruction + (
+                    " coverage/missing_useful 只是观察，不是强制路线：自行选择当前最值得的工具，"
+                    "优先让每个视野至少有一个非空 feature 的 classification；"
+                    "不得因单一 identity_pending 或单一视野的低分 crop 反复分类；"
+                    "只要 missing_useful 非空且预算/时间仍允许，先补其他缺失视野；"
+                    "stage2/CNN 很快，空白框也应先识别而不是先丢弃；"
+                    "同时参考 remaining_budget/remaining_seconds，避免耗尽时间。")
             persist({**state, "events": events, "requests": requests, "planning_requests": planning})
             usage = None
             try:
@@ -486,6 +548,9 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             if chosen is None:
                 error = "action_unavailable"
             elif chosen["tool"] == "finish" and state["finish_veto"]:
+                error = "finish_veto"
+            elif (chosen["tool"] == "request_review"
+                  and "useful_coverage_incomplete" in state["finish_veto"]):
                 error = "finish_veto"
             is_stop = chosen is not None and chosen["tool"] in {"finish", "request_review"}
             recommend_stop = state["stop_advisory"]["recommend"] != "continue"
@@ -559,7 +624,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             persist({**state, **update})
             return update
         remaining = remaining_budget()
-        fallback = next((action for action in coverage if affordable(action, remaining)), None)
+        fallback = next((action for action in (coverage or forced_coverage) if affordable(action, remaining)), None)
         if fallback is not None and workflow.remaining_seconds() > 0.1:
             events.append({"phase": "thought", "decision_source": "runtime_fallback",
                            "action_id": fallback["action_id"], "reason": fallback_reason,

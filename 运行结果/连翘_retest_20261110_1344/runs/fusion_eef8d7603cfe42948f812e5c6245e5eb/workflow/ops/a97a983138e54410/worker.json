@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "stoma_view_03_glm3df6d852daf1_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\838dcda7b834fada\\features\\crops\\stoma_view_03_glm3df6d852daf1_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\838dcda7b834fada\\features\\crops\\stoma_view_03_glm3df6d852daf1_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\view_03.tif",
+  "tight_box": [
+    1423.25,
+    1252.25,
+    1673.75,
+    1544.75
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\a97a983138e54410\\classification",
+  "feature_hint": "目标正例：气孔：由两个保卫细胞围成的通气结构，两保卫细胞相对呈肾形、半月形或哑铃形，中间为孔缝，周围有副卫细胞环绕",
+  "tight_box_local": [
+    24.25,
+    24.25,
+    274.75,
+    316.75
+  ]
+}

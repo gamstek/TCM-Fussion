@@ -1,0 +1,44 @@
+{
+  "engine": "glm_full_scan",
+  "count": 0,
+  "tiles": [
+    [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    [
+      1920,
+      0,
+      3840,
+      1080
+    ],
+    [
+      0,
+      1080,
+      1920,
+      2160
+    ],
+    [
+      1920,
+      1080,
+      3840,
+      2160
+    ]
+  ],
+  "roi": null,
+  "feature_id": "stoma",
+  "partial": true,
+  "errors": [
+    {
+      "tile": 0,
+      "error": "任务超时或取消；进程树已终止，不自动重发"
+    },
+    {
+      "tile": 3,
+      "error": "原B模型请求失败；停止本阶段且不接受空检测产物，详见资源账本"
+    }
+  ],
+  "coordinate_system": "original_pixels"
+}

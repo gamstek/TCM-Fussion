@@ -1,0 +1,17 @@
+{
+  "engine": "glm_full_scan",
+  "count": 1,
+  "features": [
+    "stone_cell",
+    "needle_crystal",
+    "stoma"
+  ],
+  "partial": true,
+  "errors": [
+    {
+      "phase": "yolo",
+      "error": "任务超时或取消；进程树已终止，不自动重发"
+    }
+  ],
+  "coordinate_system": "original_pixels"
+}

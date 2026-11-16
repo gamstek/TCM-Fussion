@@ -1,0 +1,32 @@
+{
+  "image_id": "img_a14f0020f94e1db981140c439f90a9e6660cc1ed183c6a3374c3a38d2d997290",
+  "feature_id": "needle_crystal",
+  "engine": "glm_screen",
+  "sheet": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_resume_20261109_1745\\runs\\fusion_resume_once_0001\\workflow\\ops\\89b568e7644c4255\\screening\\sheet.jpg",
+  "rois": [
+    {
+      "index": 0,
+      "score": 0.85,
+      "worth": true,
+      "reason": "边缘可见多根成束的细长透明针晶，形态典型"
+    },
+    {
+      "index": 3,
+      "score": 0.8,
+      "worth": true,
+      "reason": "下缘密集分布成束针晶，清晰可辨"
+    },
+    {
+      "index": 5,
+      "score": 0.8,
+      "worth": true,
+      "reason": "中部边缘多根针晶相邻成束，特征明显"
+    },
+    {
+      "index": 1,
+      "score": 0.6,
+      "worth": true,
+      "reason": "视野中散在数根细长针晶，可定向框选"
+    }
+  ]
+}

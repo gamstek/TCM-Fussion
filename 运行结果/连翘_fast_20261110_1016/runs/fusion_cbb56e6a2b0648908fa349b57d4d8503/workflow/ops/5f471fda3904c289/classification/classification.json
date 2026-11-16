@@ -1,0 +1,44 @@
+{
+  "label": "石细胞",
+  "reject": "",
+  "raw_label": "石细胞",
+  "feature_id": "stone_cell",
+  "second": "纤维",
+  "confidence": "medium",
+  "reason": "壁增厚、中央胞腔小，椭圆形厚壁细胞",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\view_04.tif",
+  "focus": 293.2,
+  "sent_hw": [
+    287,
+    768
+  ],
+  "granularity": "instance",
+  "confidence_score": 0.65,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "stone_cell_view_04_glm059f3d033e13_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\runs\\fusion_cbb56e6a2b0648908fa349b57d4d8503\\workflow\\ops\\dda95f9d61553f48\\features\\crops\\stone_cell_view_04_glm059f3d033e13_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm",
+  "cnn_score": 0.389598,
+  "cnn_entropy": 0.773528,
+  "cnn_topk": [
+    {
+      "class": "11_fiber",
+      "feature_id": "fiber",
+      "prob": 0.389598
+    },
+    {
+      "class": "13_other",
+      "feature_id": "other",
+      "prob": 0.141869
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.110463
+    }
+  ],
+  "cnn_fallback_reason": "low_confidence_or_other"
+}

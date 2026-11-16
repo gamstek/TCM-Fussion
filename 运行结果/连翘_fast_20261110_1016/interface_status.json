@@ -1,0 +1,7 @@
+{
+  "schema": "multi-view-interface/v1",
+  "dry_run": false,
+  "base": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016",
+  "stage": "pipeline",
+  "status": "running"
+}

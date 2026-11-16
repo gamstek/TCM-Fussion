@@ -1,8 +1,0 @@
-{
-  "schema": "multi-view-interface/v1",
-  "dry_run": false,
-  "base": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测",
-  "stage": "done",
-  "status": "completed",
-  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\runs\\fusion_b2bb679600874325bdd0742f909420c4"
-}

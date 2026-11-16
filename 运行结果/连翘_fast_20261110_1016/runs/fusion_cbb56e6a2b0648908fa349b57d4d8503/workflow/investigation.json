@@ -1,0 +1,129 @@
+{
+  "identity": "bd15d3706b0c1fbc0d80b7aa4a44cade1c2b4fe70bd3bcd58dce31d6b49287e8",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "诃子",
+    "黄芩",
+    "连翘"
+  ],
+  "hypotheses": {
+    "诃子": {
+      "status": "investigating",
+      "reason": "维持三候选假设；fiber形态（纵横交错/梭形壁厚孔沟细/短梭形交错）预期在本轮hybrid_scan中直接区分三者。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "黄芩": {
+      "status": "investigating",
+      "reason": "维持三候选假设；fiber形态（纵横交错/梭形壁厚孔沟细/短梭形交错）预期在本轮hybrid_scan中直接区分三者。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "连翘": {
+      "status": "investigating",
+      "reason": "维持三候选假设；fiber形态（纵横交错/梭形壁厚孔沟细/短梭形交错）预期在本轮hybrid_scan中直接区分三者。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "诃子",
+          "status": "investigating",
+          "reason": "fiber形态与宽度差异是当前候选间最有区分性的判据，分类结果用于下一轮定向presence_check或排除"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "fiber形态与宽度差异是当前候选间最有区分性的判据，分类结果用于下一轮定向presence_check或排除"
+        },
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "fiber形态与宽度差异是当前候选间最有区分性的判据，分类结果用于下一轮定向presence_check或排除"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "连翘在view_02/04多折高分但尚无显微证据；诃子在view_01/03部分折占优；黄芩需纤维形态判据区分。三者均可通过fiber相关P1判据区分。"
+        },
+        {
+          "candidate_id": "诃子",
+          "status": "investigating",
+          "reason": "连翘在view_02/04多折高分但尚无显微证据；诃子在view_01/03部分折占优；黄芩需纤维形态判据区分。三者均可通过fiber相关P1判据区分。"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "连翘在view_02/04多折高分但尚无显微证据；诃子在view_01/03部分折占优；黄芩需纤维形态判据区分。三者均可通过fiber相关P1判据区分。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "诃子",
+          "status": "investigating",
+          "reason": "三者共享fiber P1判据，hybrid_scan结果可通过纤维形态（纵横交错/梭形壁厚孔沟细/短梭形交错）直接区分，选最有区分性的方向"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "三者共享fiber P1判据，hybrid_scan结果可通过纤维形态（纵横交错/梭形壁厚孔沟细/短梭形交错）直接区分，选最有区分性的方向"
+        },
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "三者共享fiber P1判据，hybrid_scan结果可通过纤维形态（纵横交错/梭形壁厚孔沟细/短梭形交错）直接区分，选最有区分性的方向"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "维持三候选假设；fiber形态（纵横交错/梭形壁厚孔沟细/短梭形交错）预期在本轮hybrid_scan中直接区分三者。"
+        },
+        {
+          "candidate_id": "诃子",
+          "status": "investigating",
+          "reason": "维持三候选假设；fiber形态（纵横交错/梭形壁厚孔沟细/短梭形交错）预期在本轮hybrid_scan中直接区分三者。"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "维持三候选假设；fiber形态（纵横交错/梭形壁厚孔沟细/短梭形交错）预期在本轮hybrid_scan中直接区分三者。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

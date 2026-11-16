@@ -1,6 +1,8 @@
 """融合路由后的自主B工具入口；无需B完成清单，产物位于独立fusion任务。"""
 import time
 import copy
+from pathlib import Path
+import paths
 from .code_guard import CodeSignatureGuard
 from .output_projection import project_output
 from .storage import write_json, IntegrationError
@@ -31,12 +33,19 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'feature_audit':{'type':'boolean'},
     'feature_audit_features':{'type':'array','items':{'type':'string'}},
     'image_exemplar_audit':{'type':'boolean'},
+    'image_exemplar_audit_min_det_score':{'type':'number','minimum':0,'maximum':1},
+    'image_exemplar_audit_max_crops':{'type':'integer','minimum':1,'maximum':50},
+    'image_exemplar_audit_skip_classified':{'type':'boolean'},
     'image_exemplar_bank':{'type':'string'},
     'image_exemplar_positive':{'type':'integer','minimum':1,'maximum':20},
     'image_exemplar_negative':{'type':'integer','minimum':1,'maximum':20},
     'image_exemplar_seconds':{'type':'number','exclusiveMinimum':0,'maximum':180},
-    'needle_negative_hint':{'type':'string','maxLength':500},
-    'needle_positive_hint':{'type':'string','maxLength':500},
+    'cnn_weights':{'type':'string'},
+    'cnn_meta':{'type':'string'},
+    'cnn_threshold':{'type':'number','minimum':0,'maximum':1},
+    'cnn_entropy_threshold':{'type':'number','minimum':0,'maximum':1},
+    'cnn_batch_size':{'type':'integer','minimum':1,'maximum':128},
+    'cnn_other_fallback':{'type':'boolean'},
     'identity_min_confidence':{'enum':['high','medium','low']},
     'candidate_scope':{'enum':['a_topk','open_strict']},
     'a_weight':{'type':'number','minimum':0,'maximum':1},
@@ -47,6 +56,11 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'quality_evaluation':{'enum':['legacy','purpose_v1']},
     'max_parallel':{'type':'integer','minimum':1,'maximum':2},
     'screen_top_k':{'type':'integer','minimum':1,'maximum':6},
+    'screen_max_rois':{'type':'integer','minimum':1,'maximum':20},
+    'fast_yolo_stage2':{'type':'boolean'},
+    'fast_fallback_max_features':{'type':'integer','minimum':1,'maximum':4},
+    'fast_fallback_max_locate_calls':{'type':'integer','minimum':1,'maximum':64},
+    'feature_scan_tile_policy':{'enum':['prescreen','full']},
     'screen_concurrency':{'type':'integer','minimum':1,'maximum':8},
     'needle_scan_enabled':{'type':'boolean'},
     'needle_scan_tile_size':{'type':'integer','minimum':256,'maximum':2048},
@@ -67,11 +81,16 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'glm_identity_threshold':{'type':'number','minimum':0,'maximum':1},
     'glm_locate_threshold':{'type':'number','minimum':0,'maximum':1},
     'locate_expand':{'type':'number','minimum':1,'maximum':3},
+    'locate_min_box_side':{'type':'integer','minimum':16,'maximum':1024},
+    'locate_min_roi_side':{'type':'integer','minimum':64,'maximum':2048},
+    'box_quality_enabled':{'type':'boolean'},
+    'box_quality_retry':{'type':'boolean'},
     'enabled_tools':{'type':'array','uniqueItems':True,'items':{'enum':[
         'detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
         'propose_regions','roi_screen','roi_screen_batch','locate_feature','needle_scan','feature_scan','hybrid_scan','image_exemplar_audit']}},
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
+    'agent_driven_coverage':{'type':'boolean'},
     'max_locate_attempts':{'type':'integer','minimum':0,'maximum':100},
     'locate_attempts_per_view':{'type':'integer','minimum':1,'maximum':20},
     'locate_attempt_reserve':{'type':'integer','minimum':0,'maximum':40},
@@ -146,7 +165,11 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
     if workflow.get('feature_audit', False) or workflow.get('needle_audit', False):
         try:
             from .needle_observation import build_feature_audit
-            feature_ids = workflow.get('feature_audit_features') or ['needle_crystal']
+            feature_ids = workflow.get('feature_audit_features') or [
+                row.get('feature_id') for row in
+                (read_json(Path(paths.PROJECT_ROOT) / 'feature_taxonomy.json').get('features') or [])
+                if row.get('feature_id')]
+            feature_ids = [str(x) for x in feature_ids if str(x)]
             result['feature_audit']=build_feature_audit(directory, feature_ids=feature_ids)
             if 'needle_crystal' in feature_ids:
                 result['needle_audit']=result['feature_audit']

@@ -22,12 +22,15 @@
 
 ## 3. 当前工作流约束
 
+- 当前默认 `fast_yolo_stage2=true`：每图 YOLO 先检，所有 YOLO crop 进入 CNN batch；默认不创建 `propose_regions` / `roi_screen` / 普通 `hybrid_scan`。
+- fast fallback 只补整组视野尚未覆盖的 A 候选 required feature，每图最多一次；`fast_fallback_max_features=3`、`fast_fallback_max_locate_calls=12`、`feature_scan_tile_policy=full`。`full` 为 4 tile 全并发，全空即弃，不重试。
+- YOLO 框全部保留；CNN stage2 先分类，低置信/other 才回退 GLM classify；required crop 的 YOLO crop 复核只是辅助。
 - `adaptive_v2` 的 P0 缺口只能作为建议，不得按假设名称或 P0 等级强制调查路线；模型可以提出、调查、暂停、撤销或恢复假设，状态不是证据。
 - 身份完整性门是数据完整性约束，不是 P0 路线：存在 `identity_required` 且未分类的低分 locate crop 时，必须先 classify 最高 `det_score` crop，再允许继续 locate、暂停或 review。
-- `det_score >= glm_locate_threshold=0.8` 的 crop 可走 `locate_override` 进入诊断性 IGM/测量，不强制 classify；低于 0.8 不享受绕过。
-- `roi_screen_batch` 可按 `screen_concurrency` 并发筛选多个视野；批量只在 worker 并发，证据由 `WorkflowSession` 一次提交。
-- 同一 `(image, ROI)` 已有 locate 后，不再为其他 feature 重复 locate。
-- `classify_target` 当前仍是单 crop 串行；`classify_batch` 和 YOLO batch/GPU 尚未实现，不得在文档或验收中声称已完成。
+- `det_score >= glm_locate_threshold=0.8` 的 crop 可走 `locate_override` 进入诊断性 IGM/测量，不强制 classify；低于 0.8 不享受绕过。`blank` 只阻断低分 segment；高分 crop 仍保留后续路线。
+- `locate_min_roi_side=256`、`locate_min_box_side=90`；locate 无目标必须返回空，不伪造 crop。
+- `detect_fov_initial` 的 YOLO 与自动标定解耦：scalebar 失败只置 `px_per_um=None`，不回滚 YOLO 框。
+- `roi_screen_batch` 仍支持多视野并发；fast 默认不走。`classify_target` 对外仍是单 crop 动作；`classify_batch` 和 YOLO batch/GPU 尚未实现，不得在文档或验收中声称已完成。
 - 只采信合法、可追溯的观察、定位、标定和测量。服务失败和无效输出按未知处理；任务结束、HTTP 成功、工具通过校验、药材判定和准确率是不同层次的结果。
 - 调查停止码不等于诊断。正常收尾必须固定证据并生成 `final_evidence` / `final_assessment`；文本失败、非法引用或硬截止回退程序化研判。不得把失败当阴性、把先验或假设当显微证据、把融合分数当正确率。
 
@@ -58,3 +61,4 @@ python -m TCM_Fusion.cli.main five-view   # 兼容别名
 - CODE-069：locate 后身份完整性门；未分类低分 crop 先 classify。
 - CODE-070：同 ROI locate 去重；`roi_screen_batch` 并发筛选。
 - CODE-071：按当前设计同步全部描述性 Markdown；不改变运行逻辑。
+- CODE-101–110：fast_yolo_stage2、required coverage、full/prescreen tile policy、locate 最小尺寸、高分绕过、检测/标定解耦；当前默认 `fast_yolo_stage2=true`、`fast_fallback_max_features=3`、`fast_fallback_max_locate_calls=12`、`feature_scan_tile_policy=full`。

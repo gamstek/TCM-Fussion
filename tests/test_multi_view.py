@@ -155,12 +155,22 @@ class MultiViewTests(unittest.TestCase):
                 F.bind_config(cfg, images, sample_id='test', a_python=paths.VENV_PY)
 
     def test_reference_policy_field_parity_and_explicit_defaults(self):
-        ref = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/运行结果/case_9cc59640/config.json')
+        ref_path = Path(paths.PROJECT_ROOT) / 'TCM_Fusion/运行结果/case_9cc59640/config.json'
+        if not ref_path.is_file():
+            self.skipTest('historical reference case is not present in this workspace')
+        ref = read_json(ref_path)
         old = ref['agent']['workflow']
         new = self.template['agent']['workflow']
         for field, value in old.items():
-            if field not in {'p0_priority', 'max_initializations', 'max_locate_attempts'}:
+            if field not in {'p0_priority', 'max_initializations', 'max_locate_attempts',
+                             'max_planning', 'max_observations', 'max_api_calls',
+                             'max_resource_units'}:
                 self.assertEqual(new[field], value, field)
+        self.assertEqual(new['max_planning'], 60)
+        self.assertEqual(new['max_observations'], 40)
+        self.assertEqual(new['max_api_calls'], 200)
+        self.assertEqual(new['max_resource_units'], 400)
+        self.assertEqual(self.template['agent']['max_steps'], 60)
         self.assertNotIn('max_initializations', new)
         self.assertNotIn('max_locate_attempts', new)
         self.assertEqual(new['initialization_reserve'], 1)
@@ -172,7 +182,8 @@ class MultiViewTests(unittest.TestCase):
         self.assertEqual(new['glm_locate_threshold'], .8)
         self.assertEqual(new['locate_expand'], 1.5)
         self.assertTrue(new['needle_audit'])
-        self.assertIn('针晶', new['needle_positive_hint'])
-        self.assertIn('纤维', new['needle_negative_hint'])
+        self.assertIn('针晶', new['feature_profiles']['needle_crystal']['positive'])
+        self.assertNotIn('needle_positive_hint', new)
+        self.assertNotIn('needle_negative_hint', new)
         self.assertNotIn('python', self.template['a'])
         self.assertNotIn('case_9cc59640', json.dumps(self.template))

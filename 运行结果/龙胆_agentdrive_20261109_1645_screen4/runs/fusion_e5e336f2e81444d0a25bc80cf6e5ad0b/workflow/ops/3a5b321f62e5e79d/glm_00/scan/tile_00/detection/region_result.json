@@ -1,0 +1,91 @@
+{
+  "dets": [
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        587.0,
+        302.0,
+        647.0,
+        368.0
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "细长针状、两端尖锐、无细胞壁结构，散在",
+      "source_tight_bbox": [
+        597,
+        313,
+        637,
+        357
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        910.0,
+        296.5,
+        970.0,
+        353.5
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "两根相邻的短针状结晶，两端尖、半透明",
+      "source_tight_bbox": [
+        920,
+        306,
+        960,
+        344
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        399.5,
+        256.0,
+        450.5,
+        310.0
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "深色细长针状、两端尖锐、无胞腔",
+      "source_tight_bbox": [
+        408,
+        265,
+        442,
+        301
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        318.25,
+        244.75,
+        388.75,
+        306.25
+      ],
+      "confidence": "low",
+      "score": 0.65,
+      "morphology": "小型针状结晶，两端略尖",
+      "source_tight_bbox": [
+        330,
+        255,
+        377,
+        296
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    0,
+    0,
+    1024,
+    768
+  ],
+  "feature_id": "needle_crystal",
+  "engine": "glm_targeted",
+  "count": 4,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

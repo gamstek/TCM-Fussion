@@ -1,0 +1,11 @@
+{
+  "engine": "glm_full_scan",
+  "count": 11,
+  "features": [
+    "needle_crystal",
+    "secretory_tissue"
+  ],
+  "partial": false,
+  "errors": [],
+  "coordinate_system": "original_pixels"
+}

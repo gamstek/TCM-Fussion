@@ -1,0 +1,16 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\view_05.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\runs\\fusion_e5e336f2e81444d0a25bc80cf6e5ad0b\\workflow\\ops\\b8d238c7127f0fa3\\glm_01\\scan\\tile_01\\detection",
+  "roi": [
+    1024,
+    0,
+    2048,
+    768
+  ],
+  "feature_id": "secretory_tissue",
+  "px_per_um": null,
+  "locate_expand": 1.5,
+  "feature_hint": "目标正例：分泌组织：类圆形腔隙或长管状结构，腔内含淡黄色、黄棕色或金黄色的分泌物、油滴或颗粒状物 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；石细胞：厚壁/胞腔；未分类组织/背景",
+  "existing_boxes": []
+}

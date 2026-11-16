@@ -1,0 +1,24 @@
+{
+  "label": "分泌组织",
+  "reject": "",
+  "raw_label": "分泌组织",
+  "feature_id": "secretory_tissue",
+  "second": "纤维",
+  "confidence": "medium",
+  "reason": "长管状结构内含黄棕色分泌物，无连续细胞壁",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\view_02.jpg",
+  "focus": 1659.4,
+  "sent_hw": [
+    233,
+    768
+  ],
+  "granularity": "instance",
+  "confidence_score": 0.65,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "secretory_tissue_view_02_glm809388596c20_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\runs\\fusion_e5e336f2e81444d0a25bc80cf6e5ad0b\\workflow\\ops\\3a5b321f62e5e79d\\features\\crops\\secretory_tissue_view_02_glm809388596c20_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm"
+}

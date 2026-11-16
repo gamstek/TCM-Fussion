@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "secretory_tissue_view_03_glm3667244f60f3_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\runs\\fusion_e5e336f2e81444d0a25bc80cf6e5ad0b\\workflow\\ops\\69e2fa1bfa72cee1\\features\\crops\\secretory_tissue_view_03_glm3667244f60f3_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\runs\\fusion_e5e336f2e81444d0a25bc80cf6e5ad0b\\workflow\\ops\\69e2fa1bfa72cee1\\features\\crops\\secretory_tissue_view_03_glm3667244f60f3_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\view_03.jpg",
+  "tight_box": [
+    1712.0,
+    408.25,
+    1994.0,
+    706.75
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\runs\\fusion_e5e336f2e81444d0a25bc80cf6e5ad0b\\workflow\\ops\\fcff63b34a623ad3\\classification",
+  "feature_hint": "目标正例：分泌组织：类圆形腔隙或长管状结构，腔内含淡黄色、黄棕色或金黄色的分泌物、油滴或颗粒状物 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；石细胞：厚壁/胞腔；未分类组织/背景",
+  "tight_box_local": [
+    24.0,
+    24.25,
+    306.0,
+    322.75
+  ]
+}

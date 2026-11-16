@@ -1,0 +1,72 @@
+{
+  "dets": [
+    {
+      "label": "石细胞",
+      "tight_bbox": [
+        2230.0,
+        785.5,
+        2710.0,
+        980.5
+      ],
+      "confidence": "high",
+      "score": 0.92,
+      "morphology": "细胞壁显著增厚，中央胞腔小，椭圆形轮廓，暗色厚壁",
+      "source_tight_bbox": [
+        2310,
+        818,
+        2630,
+        948
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "石细胞",
+      "tight_bbox": [
+        3029.5,
+        942.75,
+        3260.5,
+        1094.25
+      ],
+      "confidence": "high",
+      "score": 0.92,
+      "morphology": "壁厚、胞腔小，类椭圆形",
+      "source_tight_bbox": [
+        3068,
+        968,
+        3222,
+        1069
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "石细胞",
+      "tight_bbox": [
+        2887.5,
+        704.5,
+        3058.5,
+        845.5
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "近圆形轮廓，厚壁中央小胞腔，可能为横切面石细胞",
+      "source_tight_bbox": [
+        2916,
+        728,
+        3030,
+        822
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1920,
+    0,
+    3840,
+    1080
+  ],
+  "feature_id": "stone_cell",
+  "engine": "glm_targeted",
+  "count": 3,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

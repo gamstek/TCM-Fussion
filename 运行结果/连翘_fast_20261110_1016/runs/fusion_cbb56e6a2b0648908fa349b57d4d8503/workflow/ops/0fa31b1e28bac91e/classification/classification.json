@@ -1,0 +1,39 @@
+{
+  "label": "纤维",
+  "raw_label": "11_fiber",
+  "feature_id": "fiber",
+  "second": "",
+  "confidence": "high",
+  "reason": "CNN 高置信初判",
+  "source": "cnn",
+  "focus": null,
+  "sent_hw": null,
+  "granularity": "instance",
+  "confidence_score": 0.79923,
+  "confidence_scale": "cnn_prob",
+  "crop_id": "fiber_view_04_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\runs\\fusion_cbb56e6a2b0648908fa349b57d4d8503\\workflow\\ops\\a51b36ea8e5dba5a\\detection\\crops\\fiber_view_04_01.png",
+  "glm_confidence": null,
+  "yolo_confidence": null,
+  "yolo_checked": false,
+  "confidence_source": "cnn",
+  "cnn_score": 0.79923,
+  "cnn_entropy": 0.370156,
+  "cnn_topk": [
+    {
+      "class": "11_fiber",
+      "feature_id": "fiber",
+      "prob": 0.79923
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.043522
+    },
+    {
+      "class": "08_stoma",
+      "feature_id": "stoma",
+      "prob": 0.028598
+    }
+  ]
+}

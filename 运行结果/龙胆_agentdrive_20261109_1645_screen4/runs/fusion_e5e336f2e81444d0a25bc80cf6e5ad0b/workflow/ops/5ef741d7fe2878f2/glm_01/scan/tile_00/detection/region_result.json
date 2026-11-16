@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "分泌组织",
+      "tight_bbox": [
+        499.0,
+        407.25,
+        883.0,
+        729.75
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "类圆形腔隙，腔内含深棕黑色分泌物团块，呈空腔结构而非厚壁细胞腔",
+      "source_tight_bbox": [
+        563,
+        461,
+        819,
+        676
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    0,
+    0,
+    1024,
+    768
+  ],
+  "feature_id": "secretory_tissue",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

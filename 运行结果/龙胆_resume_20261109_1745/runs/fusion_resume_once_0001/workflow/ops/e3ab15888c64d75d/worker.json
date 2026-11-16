@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "secretory_tissue_view_03_glm3667244f60f3_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_resume_20261109_1745\\runs\\fusion_resume_once_0001\\workflow\\ops\\19fa2a9f82bb2fba\\features\\crops\\secretory_tissue_view_03_glm3667244f60f3_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_resume_20261109_1745\\runs\\fusion_resume_once_0001\\workflow\\ops\\19fa2a9f82bb2fba\\features\\crops\\secretory_tissue_view_03_glm3667244f60f3_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\view_03.jpg",
+  "tight_box": [
+    1711.25,
+    403.0,
+    1979.75,
+    703.0
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_resume_20261109_1745\\runs\\fusion_resume_once_0001\\workflow\\ops\\e3ab15888c64d75d\\classification",
+  "feature_hint": "目标正例：分泌组织：类圆形腔隙或长管状结构，腔内含淡黄色、黄棕色或金黄色的分泌物、油滴或颗粒状物 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；石细胞：厚壁/胞腔；未分类组织/背景",
+  "tight_box_local": [
+    24.25,
+    24.0,
+    292.75,
+    324.0
+  ]
+}

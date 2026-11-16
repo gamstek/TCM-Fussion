@@ -10,6 +10,7 @@ from .ledger_lock import acquire, release
 from .resource_budget import reserve
 from .storage import IntegrationError, digest, file_hash, project_path, read_json, write_json, finite_number
 from .workflow_backend import WorkflowBackend
+from .box_quality import assess_meta
 from .service_errors import stage_error_kind
 
 
@@ -276,11 +277,13 @@ class WorkflowSession:
             if v['kind']=='image':
                 targets[identifier]={**v,'source':v['path'],'image_id':identifier}
                 if (self.config.get('needle_scan_enabled', False)
+                        and not self.config.get('fast_yolo_stage2', False)
                         and arts.get('detected:'+identifier, {}).get('valid')):
                     targets['scan:'+identifier]={'id':'scan:'+identifier,'kind':'needle_scan',
                         'image_id':identifier,'source':v['path'],'parents':[identifier],
                         'px_per_um':arts.get('scale:'+identifier,{}).get('px_per_um')}
-                if self.config.get('feature_scan_enabled', False):
+                if (self.config.get('feature_scan_enabled', False)
+                        and not self.config.get('fast_yolo_stage2', False)):
                     requested=[str(x) for x in (self.config.get('feature_scan_features') or []) if str(x)]
                     if self.config.get('feature_scan_from_candidates', False):
                         try:
@@ -293,7 +296,8 @@ class WorkflowSession:
                         targets[key]={'id':key,'kind':'feature_scan','feature_id':feature_id,
                             'image_id':identifier,'source':v['path'],'parents':[identifier],
                             'px_per_um':arts.get('scale:'+identifier,{}).get('px_per_um')}
-                if self.config.get('hybrid_scan_enabled', False):
+                if (self.config.get('hybrid_scan_enabled', False)
+                        and not self.config.get('fast_yolo_stage2', False)):
                     requested=[str(x) for x in (self.config.get('feature_scan_features') or []) if str(x)]
                     try:
                         requested += self.recovery_features()
@@ -306,6 +310,37 @@ class WorkflowSession:
                             'source':v['path'],'parents':[identifier],
                             'px_per_um':arts.get('scale:'+identifier,{}).get('px_per_um')}
             elif v['kind'] in {'crop','segmentation'}:targets[identifier]=v
+        if self.config.get('fast_yolo_stage2', False):
+            # Fast path：YOLO 框 → CNN batch；只有目标 required feature 缺失时才允许一次 GLM 兜底。
+            operations=read_json(self.operations)['entries']
+            required=[]
+            try:
+                required=self.recovery_features()
+            except Exception:
+                required=[]
+            present = set().union(*self._classified_features_by_image(arts).values())
+            missing = [fid for fid in required if fid and fid not in present]
+            for image in self.runtime.images:
+                if not missing:
+                    break
+                if not arts.get('detected:'+image,{}).get('valid'):
+                    continue
+                image_crops=[(cid,a) for cid,a in arts.items()
+                             if a.get('valid') and a.get('kind')=='crop' and a.get('image_id')==image]
+                if any('classification:'+cid not in arts for cid,_ in image_crops):
+                    continue
+                fallback_id='hybrid_scan:'+image
+                if any(str(row.get('target_id') or '')==fallback_id
+                       for row in operations.values()):
+                    continue
+                features=list(dict.fromkeys(
+                    [fid for fid in (self.config.get('feature_scan_features') or []) if fid in missing] + missing
+                ))[:max(1,int(self.config.get('fast_fallback_max_features',1)))]
+                if features:
+                    targets[fallback_id]={'id':fallback_id,'kind':'hybrid_scan','features':features,
+                        'image_id':image,'source':self.runtime.images[image]['path'],'parents':[image],
+                        'max_locate_calls':int(self.config.get('fast_fallback_max_locate_calls',4)),
+                        'px_per_um':arts.get('scale:'+image,{}).get('px_per_um')}
         failed={r.get('target_id') for r in read_json(self.operations)['entries'].values()
                 if r.get('tool')=='segment_instance' and r.get('status')=='failed'
                 and stage_error_kind(r.get('error_code'))=='evidence'}
@@ -328,6 +363,28 @@ class WorkflowSession:
             targets['roi:auto:'+cid]={'id':'roi:auto:'+cid,'image_id':image,'source':str(src),
                 'roi':[int(v) for v in m.loose_box],'parents':[cid,image],
                 'px_per_um':scale.get('px_per_um'),'replace_id':cid}
+        # 框内容不可用：保留原 crop，但允许一次基于 loose_box 的重定位；不删除原证据。
+        retry_done={r.get('target_id') for r in read_json(self.operations)['entries'].values()
+                    if str(r.get('target_id') or '').startswith('locate:roi:boxq:')}
+        for cid,crop in arts.items():
+            if not self.config.get('box_quality_retry', True):
+                break
+            if not crop.get('valid') or crop.get('kind')!='crop':
+                continue
+            if crop.get('box_quality') not in {'blank','low_detail'}:
+                continue
+            if crop.get('box_quality_retry'):
+                continue
+            try:m=contracts.CropMeta.from_json(crop['path'])
+            except (OSError,ValueError,contracts.ContractError):continue
+            if not m.loose_box or not m.feature_id:continue
+            image=crop.get('image_id');src=self.runtime.images[image]['path']
+            key='locate:roi:boxq:'+image+':'+digest([cid])[:12]
+            if key in retry_done:continue
+            targets[key]={'id':key,'kind':'roi','image_id':image,'source':str(src),
+                'roi':[int(v) for v in m.loose_box],'feature_id':m.feature_id,
+                'parents':[cid,image],'px_per_um':arts.get('scale:'+image,{}).get('px_per_um'),
+                'box_quality_retry':True}
         for i,region in enumerate(self.config.get('regions',[])):
             matches=[(k,v) for k,v in self.runtime.images.items() if region['image_stem'] in v['stems']]
             if len(matches)!=1:raise IntegrationError('ROI_SCOPE','ROI不能唯一绑定视野')
@@ -508,6 +565,9 @@ class WorkflowSession:
                 out.append(self.runtime.action(tool,{'target_id':t['id'],'evidence_version':snap['version']},
                     'workflow_repair',priority=priority))
         crops=[]
+        audit_done=sum(1 for row in done.values()
+                       if row.get('tool')=='image_exemplar_audit')
+        audit_cap=max(1,int(self.config.get('image_exemplar_audit_max_crops',6)))
         target_map=self.targets()
         has_batch_screen='screen:batch' in target_map
         for tid,t in target_map.items():
@@ -538,19 +598,34 @@ class WorkflowSession:
             elif t['kind']=='image':
                 if 'detected:'+image not in arts:tool='detect_fov_initial'
                 else:
-                    if gaps:
+                    if gaps and not self.config.get('fast_yolo_stage2', False):
                         offer('propose_regions', t, (1, 'propose_regions', tid))
                     if not arts.get('scale:'+image,{}).get('valid'):tool='calibrate_fov'
             elif t['kind']=='crop':
                 crops.append(t)
+                classification=arts.get('classification:'+tid,{})
+                if (not classification.get('valid')
+                        and (t.get('identity_required') or self.config.get('fast_yolo_stage2', False))):
+                    # stage2/CNN 很快：所有候选都先识别，不因框质量或高分绕过而跳过分类证据。
+                    offer('classify_target', t, (2, 'classify_all_crops', tid))
+                if (self.config.get('box_quality_enabled', True)
+                        and t.get('box_quality')=='blank' and not self.locate_override(t)):
+                    continue
                 if (t.get('identity_required')
-                        and not arts.get('classification:'+tid,{}).get('identity_verified')
+                        and not classification.get('identity_verified')
                         and not self.locate_override(t)):
                     continue
-                if self.config.get('image_exemplar_audit', False):
+                if self.config.get('image_exemplar_audit', False) and audit_done<audit_cap:
                     meta=contracts.CropMeta.from_json(t['path'])
-                    if meta.feature_id:
+                    score=0.0
+                    try:score=float(t.get('det_score') or 0)
+                    except (TypeError,ValueError):pass
+                    skip_classified=bool(self.config.get('image_exemplar_audit_skip_classified',True)
+                        and classification.get('identity_verified'))
+                    if (meta.feature_id and score>=float(self.config.get('image_exemplar_audit_min_det_score',.8))
+                            and not skip_classified):
                         offer('image_exemplar_audit', t, (2, 'image_exemplar_audit', tid))
+                        audit_done+=1
                 scale=arts.get('scale:'+image,{})
                 seg=arts.get('seg:'+tid,{})
                 review_measure=bool(review_plan and review_plan['target_id']=='seg:'+tid)
@@ -622,11 +697,24 @@ class WorkflowSession:
             raise IntegrationError('QUALITY_SCOPE','关联mask与用途评估不符')
         return value
 
+    def _classified_features_by_image(self, artifacts):
+        features = {}
+        for value in artifacts.values():
+            image = value.get('image_id')
+            feature = value.get('feature_id')
+            if (value.get('valid') and value.get('kind') == 'classification'
+                    and image in self.runtime.images and isinstance(feature, str) and feature.strip()):
+                features.setdefault(image, set()).add(feature)
+        return features
+
     def coverage(self):
         """逐视野覆盖审计：detected / proposed / screened，以及 screen top-k 的 locate。"""
         import re
         images = list(self.runtime.images)
         detected, proposed, screened, located = set(), set(), set(), set()
+        artifacts = self.store.current()['artifacts']
+        features_by_image = self._classified_features_by_image(artifacts)
+        useful = set(features_by_image)
         located_pairs = set()
         image_pattern = re.compile(r'img_[0-9a-f]{16,}')
         pair_pattern = re.compile(r'locate:roi:recovery:(img_[0-9a-f]{16,}):(\d+):')
@@ -650,9 +738,14 @@ class WorkflowSession:
                 pair = pair_pattern.search(target)
                 if pair:
                     located_pairs.add((pair.group(1), int(pair.group(2))))
-        for value in self.store.current()['artifacts'].values():
+        for value in artifacts.values():
             if value.get('valid') and value.get('kind')=='screen' and value.get('image_id') in images:
                 screened.add(value['image_id'])
+        try:
+            required_features=set(self.recovery_features())
+        except Exception:
+            required_features=set()
+        sample_missing = sorted(required_features - set().union(*features_by_image.values()))
         required_pairs = set()
         rows = []
         for image in images:
@@ -662,7 +755,9 @@ class WorkflowSession:
             done_rois = {index for name, index in located_pairs if name == image}
             rows.append({'image_id': image, 'detected': image in detected,
                          'proposed': image in proposed, 'screened': image in screened,
-                         'located': image in located,
+                         'located': image in located, 'useful': image in useful,
+                         'required_useful': bool(required_features & features_by_image.get(image, set())),
+                         'missing_required': sorted(required_features - features_by_image.get(image, set())),
                          'top_rois': sorted(top_rois) if top_rois is not None else None,
                          'located_rois': sorted(done_rois)})
         missing_pairs = sorted(required_pairs - located_pairs)
@@ -675,6 +770,12 @@ class WorkflowSession:
             'proposed_all': len(proposed) == len(images),
             'screened_all': len(screened) == len(images),
             'located_all': located_all,
+            'useful_all': len(useful) == len(images),
+            'missing_useful': [x['image_id'] for x in rows if not x['useful']],
+            'required_features': sorted(required_features),
+            'required_all': not sample_missing,
+            'missing_required': [{'image_id': image, 'features': sample_missing}
+                                 for image in images if sample_missing],
             'required_locate_pairs': [{'image_id': image, 'index': index}
                                       for image, index in sorted(required_pairs)],
             'missing_locate_pairs': [{'image_id': image, 'index': index}
@@ -844,6 +945,14 @@ class WorkflowSession:
         if tool=='hybrid_scan':
             detections=result.get('detections') or {}
             feature_scan=result.get('feature_scan') or {}
+            yolo_boxes=[]
+            def iou(a,b):
+                if not a or not b or len(a)!=4 or len(b)!=4:return 0.0
+                ax1,ay1,ax2,ay2=map(float,a);bx1,by1,bx2,by2=map(float,b)
+                ix1,iy1=max(ax1,bx1),max(ay1,by1);ix2,iy2=min(ax2,bx2),min(ay2,by2)
+                inter=max(0.0,ix2-ix1)*max(0.0,iy2-iy1)
+                aa=max(0.0,ax2-ax1)*max(0.0,ay2-ay1);bb=max(0.0,bx2-bx1)*max(0.0,by2-by1)
+                return inter/(aa+bb-inter+1e-9)
             for kind,bundle in (('detect',detections),('feature',feature_scan)):
                 folder=Path(bundle.get('crops_dir') or '')
                 if not folder.is_dir():
@@ -851,10 +960,19 @@ class WorkflowSession:
                 for m in contracts.load_crop_metas(str(folder)):
                     if file_hash(m.source_image_path)!=self.runtime.images[image]['sha256']:
                         raise IntegrationError('SAMPLE_MISMATCH','混合扫描产物不属于绑定原图')
+                    if kind=='detect':
+                        yolo_boxes.append((m.feature_id,m.tight_box))
+                    elif any(fid==m.feature_id and iou(box,m.tight_box)>=0.5 for fid,box in yolo_boxes):
+                        # 同一特征已被 YOLO 框覆盖：保留 YOLO，不重复提交 GLM 同框。
+                        continue
+                    quality=assess_meta(m)
                     cid='crop:'+image+':'+m.crop_id
                     image_item=self._art(cid+':pixels','crop_pixels',m.png,[image],image_id=image)
                     items.append(image_item)
                     metadata={'identity_required': True} if kind=='feature' else {}
+                    metadata.update({'box_source':'yolo' if kind=='detect' else 'glm',
+                        'box_quality':quality['status'],'box_quality_score':quality['score'],
+                        'box_quality_flags':quality['flags'],'box_quality_metrics':quality['metrics']})
                     if m.raw.get('det_score') is not None:
                         metadata['det_score']=m.raw.get('det_score')
                         metadata['det_confidence']=m.raw.get('det_confidence')
@@ -896,7 +1014,12 @@ class WorkflowSession:
                     cid=replacements[m.crop_id]
                 image_item=self._art(cid+':pixels','crop_pixels',m.png,parents,image_id=image)
                 items.append(image_item)
+                quality=assess_meta(m)
                 metadata={'identity_required': True} if tool in {'locate_feature','needle_scan','feature_scan'} else {}
+                metadata.update({'box_source':'yolo' if tool in {'detect_fov_initial','detect_region'} else 'glm',
+                    'box_quality':quality['status'],'box_quality_score':quality['score'],
+                    'box_quality_flags':quality['flags'],'box_quality_metrics':quality['metrics'],
+                    'box_quality_retry':bool(target.get('box_quality_retry'))})
                 if m.raw.get('det_score') is not None:
                     metadata['det_score'] = m.raw.get('det_score')
                     metadata['det_confidence'] = m.raw.get('det_confidence')
@@ -976,7 +1099,10 @@ class WorkflowSession:
                                    confidence_source=doc.get('confidence_source'),
                                    confidence_score=doc.get('confidence_score')))
             meta=contracts.CropMeta.from_json(target['path'])
-            if target.get('identity_required'):
+            # YOLO 初检 crop 的 identity_required=False，但分类结果同样可以是规则证据。
+            # 只有“身份门要求”的 crop 才强制 fid==crop.feature_id；普通 YOLO crop 允许
+            # 高置信分类改判，否则这些 classification 永远进不了 B 规则。
+            if target.get('identity_required') or (fid and not doc.get('reject')):
                 min_conf=self.config.get('identity_min_confidence','medium')
                 allowed={'high'} if min_conf=='high' else (
                     {'high','medium'} if min_conf=='medium' else {'high','medium','low'})
@@ -988,10 +1114,13 @@ class WorkflowSession:
                     score={'high':0.90,'medium':0.65,'low':0.30}.get(confidence.lower(),0.0)
                 threshold=float(self.config.get('glm_identity_threshold',0.8))
                 confident=score >= threshold and not doc.get('reject')
+                same_feature = (fid == meta.feature_id)
                 items[-1]['identity_confidence']=confidence
                 items[-1]['glm_confidence_score']=round(score,4)
-                items[-1]['identity_verified'] = (fid == meta.feature_id
-                    and not doc.get('reject') and (confidence in allowed or confident))
+                items[-1]['identity_verified'] = bool(
+                    fid and not doc.get('reject')
+                    and same_feature
+                    and (confidence in allowed or confident))
                 items[-1]['identity_basis']=('glm_score>=%.2f' % threshold if confident
                                              else 'classifier_confidence')
                 items[-1]['identity_review'] = bool(items[-1]['identity_verified'] and confidence != 'high')
@@ -1003,7 +1132,15 @@ class WorkflowSession:
                     meta.stem,fid,label,'',meta.px_per_um,meta.tight_box,meta.tight_box_local,
                     meta.loose_box,meta.crop_size,meta.pad_info,meta.granularity)
                 p=root/(new_id+'.json');write_json(p,side)
-                items.append(self._art('crop:'+image+':'+new_id,'crop',p,[target['id'],cid],image_id=image))
+                new_crop_id='crop:'+image+':'+new_id
+                items.append(self._art(new_crop_id,'crop',p,[target['id'],cid],image_id=image))
+                # 改判后的同像素 crop 仍需要自己的 classification，否则规则看不到新 feature。
+                items.append(self._art('classification:'+new_crop_id,'classification',
+                    root/'classification.json',[new_crop_id],image_id=image,crop_id=new_id,
+                    feature_id=fid,label=label,glm_confidence=doc.get('glm_confidence'),
+                    yolo_confidence=doc.get('yolo_confidence'),confidence_source=doc.get('confidence_source'),
+                    confidence_score=doc.get('confidence_score'),identity_verified=True,
+                    identity_basis='reclassified_crop'))
         elif tool=='measure_instances':
             path=result['measurements'];parsed=list(contracts.iter_measurement_records(path))
             if not parsed:raise IntegrationError('EMPTY_MEASUREMENT','空测量不得提交为修复完成')

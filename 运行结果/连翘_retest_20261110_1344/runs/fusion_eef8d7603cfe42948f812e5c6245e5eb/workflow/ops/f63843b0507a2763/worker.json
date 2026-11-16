@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "needle_crystal_view_04_glm3df6d852daf1_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\de38a1180d30386d\\features\\crops\\needle_crystal_view_04_glm3df6d852daf1_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\de38a1180d30386d\\features\\crops\\needle_crystal_view_04_glm3df6d852daf1_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\view_04.tif",
+  "tight_box": [
+    1430.5,
+    1160.0,
+    1775.5,
+    1214.0
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\f63843b0507a2763\\classification",
+  "feature_hint": "目标正例：针晶可散在，也常多根成束、密集、相邻或连续分布；优先框可分辨的针状结晶及其集合，不因成簇、堆叠或相邻出现而排除。 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；表皮细胞：片状/多边形边界；导管：管腔/环纹/网纹；石细胞：厚壁/胞腔；分泌组织：油室/油管/腔隙内容物；簇晶/方晶/花粉粒仅作软负例",
+  "tight_box_local": [
+    24.5,
+    24.0,
+    369.5,
+    78.0
+  ]
+}

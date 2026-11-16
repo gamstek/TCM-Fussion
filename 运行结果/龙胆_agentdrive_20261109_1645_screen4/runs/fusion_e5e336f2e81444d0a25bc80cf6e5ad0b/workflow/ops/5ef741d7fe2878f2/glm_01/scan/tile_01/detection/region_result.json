@@ -1,0 +1,53 @@
+{
+  "dets": [
+    {
+      "label": "分泌组织",
+      "tight_bbox": [
+        1154.75,
+        240.25,
+        1354.25,
+        442.75
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "类圆形腔隙，腔内含黄棕色分泌物/油滴",
+      "source_tight_bbox": [
+        1188,
+        274,
+        1321,
+        409
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "分泌组织",
+      "tight_bbox": [
+        1206.75,
+        117.75,
+        1310.25,
+        233.25
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "含黄棕色颗粒状分泌物的圆形结构",
+      "source_tight_bbox": [
+        1224,
+        137,
+        1293,
+        214
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1024,
+    0,
+    2048,
+    768
+  ],
+  "feature_id": "secretory_tissue",
+  "engine": "glm_targeted",
+  "count": 2,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

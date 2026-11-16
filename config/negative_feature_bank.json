@@ -12,116 +12,245 @@
   },
   "features": {
     "fiber": {
-      "morphology": ["细长", "连续细胞壁", "胞腔", "两端渐尖", "表面较平滑"],
-      "counter_needle": ["无连续细胞壁", "无胞腔", "透明/半透明", "两端尖而无壁"],
+      "morphology": [
+        "细长",
+        "连续细胞壁",
+        "胞腔",
+        "两端渐尖",
+        "表面较平滑"
+      ],
+      "counter_needle": [
+        "无连续细胞壁",
+        "无胞腔",
+        "透明/半透明",
+        "两端尖而无壁"
+      ],
       "evidence": {
         "gt": 397,
         "miss": 80,
         "miss_rate": "20.2%",
         "fp": 112,
         "fp_rate": "25.5%",
-        "confusions": ["fiber→epidermis_cell:4", "fiber→stone_cell:4"]
+        "confusions": [
+          "fiber→epidermis_cell:4",
+          "fiber→stone_cell:4"
+        ]
       },
-      "negative_for": ["needle_crystal", "epidermis_cell", "vessel", "stone_cell", "secretory_tissue"],
+      "negative_for": [
+        "needle_crystal",
+        "epidermis_cell",
+        "vessel",
+        "stone_cell",
+        "secretory_tissue"
+      ],
       "priority": "P0"
     },
     "epidermis_cell": {
-      "morphology": ["片状/铺路石状", "多边形细胞边界", "细胞间连接", "常成片出现"],
-      "counter_needle": ["单个细长晶体", "无细胞边界", "无连续片层"],
+      "morphology": [
+        "片状/铺路石状",
+        "多边形细胞边界",
+        "细胞间连接",
+        "常成片出现"
+      ],
+      "counter_needle": [
+        "细长晶体",
+        "无细胞边界",
+        "无连续片层"
+      ],
       "evidence": {
         "gt": 81,
         "miss": 13,
         "miss_rate": "16.0%",
         "confusion_rate": "19.8%",
-        "confusions": ["epidermis_cell→fiber:5", "epidermis_cell→vessel:5"]
+        "confusions": [
+          "epidermis_cell→fiber:5",
+          "epidermis_cell→vessel:5"
+        ]
       },
-      "negative_for": ["needle_crystal", "fiber", "vessel", "stone_cell"],
+      "negative_for": [
+        "needle_crystal",
+        "fiber",
+        "vessel",
+        "stone_cell"
+      ],
       "priority": "P0"
     },
     "vessel": {
-      "morphology": ["管状", "明显管腔", "环纹/螺纹/网纹/孔纹壁", "可较宽"],
-      "counter_needle": ["实心细长针状", "无管腔", "无环纹/网纹壁"],
+      "morphology": [
+        "管状",
+        "明显管腔",
+        "环纹/螺纹/网纹/孔纹壁",
+        "可较宽"
+      ],
+      "counter_needle": [
+        "实心细长针状",
+        "无管腔",
+        "无环纹/网纹壁"
+      ],
       "evidence": {
         "gt": 24,
         "miss": 6,
         "miss_rate": "25.0%",
         "confusion_rate": "58.3%",
-        "confusions": ["vessel→fiber:5", "vessel→epidermis_cell:3", "vessel→stone_cell:3"]
+        "confusions": [
+          "vessel→fiber:5",
+          "vessel→epidermis_cell:3",
+          "vessel→stone_cell:3"
+        ]
       },
-      "negative_for": ["needle_crystal", "fiber", "epidermis_cell", "stone_cell"],
+      "negative_for": [
+        "needle_crystal",
+        "fiber",
+        "epidermis_cell",
+        "stone_cell"
+      ],
       "priority": "P0"
     },
     "stone_cell": {
-      "morphology": ["厚壁", "圆形/椭圆形/不规则", "明显胞腔", "壁厚而层纹"],
-      "counter_needle": ["细长", "两端尖", "无厚壁胞腔"],
+      "morphology": [
+        "厚壁",
+        "圆形/椭圆形/不规则",
+        "明显胞腔",
+        "壁厚而层纹"
+      ],
+      "counter_needle": [
+        "细长",
+        "两端尖",
+        "无厚壁胞腔"
+      ],
       "evidence": {
         "gt": 174,
         "miss": 95,
         "miss_rate": "54.6%",
         "fp": 57,
         "fp_rate": "43.2%",
-        "confusions": ["stone_cell→fiber:6", "stone_cell→secretory_tissue:3"]
+        "confusions": [
+          "stone_cell→fiber:6",
+          "stone_cell→secretory_tissue:3"
+        ]
       },
-      "negative_for": ["needle_crystal", "fiber", "epidermis_cell", "secretory_tissue"],
+      "negative_for": [
+        "needle_crystal",
+        "fiber",
+        "epidermis_cell",
+        "secretory_tissue"
+      ],
       "priority": "P0"
     },
     "secretory_tissue": {
-      "morphology": ["油室/油管/乳汁管", "腔隙或管状", "含黄色/颗粒状内容物", "边界可不规则"],
-      "counter_needle": ["单个针状晶体", "无腔隙", "无分泌物"],
+      "morphology": [
+        "油室/油管/乳汁管",
+        "腔隙或管状",
+        "含黄色/颗粒状内容物",
+        "边界可不规则"
+      ],
+      "counter_needle": [
+        "针状晶体",
+        "无腔隙",
+        "无分泌物"
+      ],
       "evidence": {
         "gt": 139,
         "miss": 92,
         "miss_rate": "66.2%",
         "fp": 40,
         "fp_rate": "47.1%",
-        "confusions": ["secretory_tissue→fiber:4", "secretory_tissue→other:4"]
+        "confusions": [
+          "secretory_tissue→fiber:4",
+          "secretory_tissue→other:4"
+        ]
       },
-      "negative_for": ["needle_crystal", "fiber", "stone_cell", "other"],
+      "negative_for": [
+        "needle_crystal",
+        "fiber",
+        "stone_cell",
+        "other"
+      ],
       "priority": "P0"
     },
     "other": {
-      "morphology": ["未归类组织/背景", "不应据此作阳性特征", "可能是混合结构"],
-      "counter_needle": ["明确针状晶体", "单一可辨目标"],
+      "morphology": [
+        "未归类组织/背景",
+        "不应据此作阳性特征",
+        "可能是混合结构"
+      ],
+      "counter_needle": [
+        "明确针状晶体",
+        "单一可辨目标"
+      ],
       "evidence": {
         "gt": 278,
         "miss": 101,
         "miss_rate": "36.3%",
         "fp": 129,
         "fp_rate": "41.3%",
-        "confusions": ["other→epidermis_cell:4"]
+        "confusions": [
+          "other→epidermis_cell:4"
+        ]
       },
-      "negative_for": ["needle_crystal", "secretory_tissue"],
+      "negative_for": [
+        "needle_crystal",
+        "secretory_tissue"
+      ],
       "priority": "P1",
       "warning": "只作 unknown/背景审计，不得把所有未分类结构强制归为阴性"
     },
     "cluster_crystal": {
-      "morphology": ["多个菱状小晶聚集", "团块/星状/簇状", "外缘有多个棱角"],
-      "counter_needle": ["单根细长", "两端尖", "无团块聚集"],
+      "morphology": [
+        "多个菱状小晶聚集",
+        "团块/星状/簇状",
+        "外缘有多个棱角"
+      ],
+      "counter_needle": [
+        "细长针状",
+        "两端尖",
+        "无团块聚集"
+      ],
       "evidence": {
         "gt": 161,
         "miss": 78,
         "miss_rate": "48.4%",
         "low_conf_recoverable": 52,
-        "confusions": ["类别混淆为 0"]
+        "confusions": [
+          "类别混淆为 0"
+        ]
       },
-      "negative_for": ["needle_crystal"],
+      "negative_for": [
+        "needle_crystal"
+      ],
       "priority": "P1",
       "warning": "漏检高，不应作为强负例压制；只用于防止簇晶被当针晶"
     },
     "single_crystal": {
-      "morphology": ["方晶/菱形", "有棱角", "非细长针状"],
-      "counter_needle": ["细长", "两端尖", "长宽比大"],
+      "morphology": [
+        "方晶/菱形",
+        "有棱角",
+        "非细长针状"
+      ],
+      "counter_needle": [
+        "细长",
+        "两端尖",
+        "长宽比大"
+      ],
       "evidence": {
         "gt": 67,
         "miss": 16,
         "miss_rate": "23.9%",
-        "confusions": ["single_crystal→needle_crystal:1"]
+        "confusions": [
+          "single_crystal→needle_crystal:1"
+        ]
       },
-      "negative_for": ["needle_crystal"],
+      "negative_for": [
+        "needle_crystal"
+      ],
       "priority": "P1"
     },
     "starch_grain": {
-      "morphology": ["圆形/卵形", "层纹/脐点", "颗粒状"],
+      "morphology": [
+        "圆形/卵形",
+        "层纹/脐点",
+        "颗粒状"
+      ],
       "evidence": {
         "gt": 305,
         "miss": 243,
@@ -133,54 +262,107 @@
       "warning": "主要问题是完全不响应/标注单元冲突，不是与针晶混淆；不要用负例掩盖召回问题"
     },
     "pollen_grain": {
-      "morphology": ["圆形", "外壁雕纹/萌发孔"],
-      "counter_needle": ["细长", "两端尖"],
+      "morphology": [
+        "圆形",
+        "外壁雕纹/萌发孔"
+      ],
+      "counter_needle": [
+        "细长",
+        "两端尖"
+      ],
       "evidence": {
         "gt": 22,
         "miss": 1,
         "miss_rate": "4.5%",
-        "confusions": ["类别混淆为 0"]
+        "confusions": [
+          "类别混淆为 0"
+        ]
       },
-      "negative_for": ["needle_crystal"],
+      "negative_for": [
+        "needle_crystal"
+      ],
       "priority": "P2",
       "warning": "可作为软负例，但本次数据不支持它是主要混淆源"
     }
   },
   "targets": {
     "needle_crystal": {
-      "hard_negatives": ["fiber", "epidermis_cell", "vessel", "stone_cell", "secretory_tissue"],
-      "soft_negatives": ["cluster_crystal", "single_crystal", "pollen_grain"],
-      "excluded": ["starch_grain"],
+      "hard_negatives": [
+        "fiber",
+        "epidermis_cell",
+        "vessel",
+        "stone_cell",
+        "secretory_tissue"
+      ],
+      "soft_negatives": [
+        "cluster_crystal",
+        "single_crystal",
+        "pollen_grain"
+      ],
+      "excluded": [
+        "starch_grain"
+      ],
       "prompt_text": "不要将纤维（连续细胞壁/胞腔）、表皮细胞（片状/多边形边界）、导管（管腔/环纹/网纹）、石细胞（厚壁/胞腔）、分泌组织（油室/油管/腔隙内容物）当作针晶；簇晶/方晶/花粉粒只作软负例。"
     },
     "fiber": {
-      "hard_negatives": ["epidermis_cell", "vessel", "stone_cell", "secretory_tissue"],
-      "soft_negatives": ["needle_crystal"],
+      "hard_negatives": [
+        "epidermis_cell",
+        "vessel",
+        "stone_cell",
+        "secretory_tissue"
+      ],
+      "soft_negatives": [
+        "needle_crystal"
+      ],
       "prompt_text": "不要将片状表皮、管状导管、厚壁石细胞或分泌组织当作纤维。"
     },
     "epidermis_cell": {
-      "hard_negatives": ["fiber", "vessel", "stone_cell"],
-      "soft_negatives": ["needle_crystal"],
-      "prompt_text": "不要将单根纤维、管状导管或厚壁石细胞当作表皮细胞片层。"
+      "hard_negatives": [
+        "fiber",
+        "vessel",
+        "stone_cell"
+      ],
+      "soft_negatives": [
+        "needle_crystal"
+      ],
+      "prompt_text": "不要将纤维、管状导管或厚壁石细胞当作表皮细胞片层。"
     },
     "vessel": {
-      "hard_negatives": ["fiber", "epidermis_cell", "stone_cell"],
-      "soft_negatives": ["needle_crystal"],
+      "hard_negatives": [
+        "fiber",
+        "epidermis_cell",
+        "stone_cell"
+      ],
+      "soft_negatives": [
+        "needle_crystal"
+      ],
       "prompt_text": "不要将无管腔的纤维、片状表皮或厚壁石细胞当作导管。"
     },
     "stone_cell": {
-      "hard_negatives": ["fiber", "epidermis_cell", "secretory_tissue"],
-      "soft_negatives": ["needle_crystal"],
+      "hard_negatives": [
+        "fiber",
+        "epidermis_cell",
+        "secretory_tissue"
+      ],
+      "soft_negatives": [
+        "needle_crystal"
+      ],
       "prompt_text": "不要将细长纤维、片状表皮或含分泌物腔隙当作石细胞。"
     },
     "secretory_tissue": {
-      "hard_negatives": ["fiber", "stone_cell", "other"],
-      "soft_negatives": ["needle_crystal"],
+      "hard_negatives": [
+        "fiber",
+        "stone_cell",
+        "other"
+      ],
+      "soft_negatives": [
+        "needle_crystal"
+      ],
       "prompt_text": "不要把纤维、石细胞或未分类背景当成油室/油管/乳汁管。"
     }
   },
   "sampling_guidance": {
-    "positive_crops": "单根完整可见的针晶 30-50；成簇中可辨单根 20-30；来自 train/dev，不用测试图",
+    "positive_crops": "完整针晶 30-50；成簇或相邻可辨针晶 20-30；来自 train/dev，不用测试图",
     "hard_negative_crops": "优先从误检 crop 取：纤维 30、石细胞 20、分泌组织 15、表皮 15、导管 10、other 20；必须含可见形态理由",
     "avoid": "不要把淀粉粒作为主要负例；它的问题是漏检/标注单元，不是针晶混淆；不要把整张组织图当负例",
     "audit_only": "P0 硬负例用于 candidate_audit / 提示；不要做全局类别抑制"

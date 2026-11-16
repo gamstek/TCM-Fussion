@@ -1,0 +1,31 @@
+{
+  "source_sha256": "ebe99a0272f600516c9d2e5f47007e9d5201f4c618afa9b9758753160a5cc978",
+  "image_size": [
+    502,
+    237
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "草酸钙簇晶",
+      "tight_bbox": [
+        93.1,
+        49.8,
+        407.0,
+        189.9
+      ],
+      "confidence": "medium",
+      "score": 0.5857,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ]
+}

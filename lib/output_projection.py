@@ -57,6 +57,29 @@ def _a_majority(a):
 def _detections(operations):
     rows = []
     for op in (operations or {}).values():
+        if op.get("tool") == "hybrid_scan":
+            root = Path((op.get("bundle") or {}).get("root") or "")
+            doc_path = root / "yolo" / "detection" / "crops.json"
+            if doc_path.is_file():
+                try:
+                    doc = read_json(doc_path)
+                except (OSError, ValueError):
+                    doc = {}
+                for det in doc.get("dets") or []:
+                    rows.append({"tool": "hybrid_scan", "label": det.get("label"),
+                                 "score": det.get("score"), "box": det.get("tight_bbox"),
+                                 "source_sha256": doc.get("source_sha256")})
+            feature_root = root / "features" / "crops"
+            if feature_root.is_dir():
+                for path in sorted(feature_root.glob("*.json")):
+                    try:
+                        doc = read_json(path)
+                    except (OSError, ValueError):
+                        continue
+                    rows.append({"tool": "hybrid_scan", "label": doc.get("object_label") or doc.get("feature_id"),
+                                 "score": doc.get("det_score"), "box": doc.get("tight_box"),
+                                 "source_sha256": doc.get("source_sha256")})
+            continue
         if op.get("tool") not in {"detect_fov_initial", "detect_region", "locate_feature"}:
             continue
         bundle = op.get("bundle") or {}

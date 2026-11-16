@@ -8,6 +8,7 @@
 - [yolo_annotation_audit_20261109_v2](yolo_annotation_audit_20261109_v2/)：E:\目标检测标注 的 14 类各 30 张 YOLO 审计样本（420 图 / 1307 GT），含逐框 manifest、crop、tissue negative、mismatch 和 missed GT；不是独立 P0 test。
 - [needle_exemplar_pool_20261109](needle_exemplar_pool_20261109/)：从 E 集人工 label 框生成的正例/负例候选池（117 针晶 + 209 组织），附 manifest；visibility 和 hard_negative 仍需人工审核，split 未独立。
 - [needle_auto_exemplar_pool_20261109](needle_auto_exemplar_pool_20261109/)：从全部 E 集 label + taxonomy JSON 自动整理；7,482 候选，自动筛选 50 正例 + 120 负例，附 `exemplar_bank.json`；标签为 auto_unreviewed，不可当独立 benchmark。
+- [cnn_probe_20261109](cnn_probe_20261109/)：14 类 ResNet18 在 21 个 hybrid crop 上的 CPU batch 探针（约 0.67 秒），用于验证接入形态，不是准确率验证。
 
 ## 当前命令
 

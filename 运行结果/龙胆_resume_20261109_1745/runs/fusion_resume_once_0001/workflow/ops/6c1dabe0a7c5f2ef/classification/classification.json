@@ -1,0 +1,44 @@
+{
+  "label": "草酸钙针晶",
+  "reject": "",
+  "raw_label": "草酸钙针晶",
+  "feature_id": "needle_crystal",
+  "second": "纤维",
+  "confidence": "medium",
+  "reason": "细长尖锐透明条束，无壁无胞腔，似成束针晶",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\view_04.jpg",
+  "focus": 636.4,
+  "sent_hw": [
+    768,
+    525
+  ],
+  "granularity": "bundle",
+  "confidence_score": 0.65,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "needle_crystal_view_04_glm0abfd40672a2_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_resume_20261109_1745\\runs\\fusion_resume_once_0001\\workflow\\ops\\1b3fbbea83eb960d\\features\\crops\\needle_crystal_view_04_glm0abfd40672a2_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm",
+  "cnn_score": 0.61401,
+  "cnn_entropy": 0.573929,
+  "cnn_topk": [
+    {
+      "class": "11_fiber",
+      "feature_id": "fiber",
+      "prob": 0.61401
+    },
+    {
+      "class": "08_stoma",
+      "feature_id": "stoma",
+      "prob": 0.109529
+    },
+    {
+      "class": "09_epidermis_cell",
+      "feature_id": "epidermis_cell",
+      "prob": 0.063534
+    }
+  ],
+  "cnn_fallback_reason": "low_confidence_or_other"
+}

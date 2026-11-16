@@ -1,0 +1,34 @@
+{
+  "source_sha256": "0bc71ad0646e14d3fc1bc90db830e0f9be70874231dbec70949f3046377685c4",
+  "image_size": [
+    3840,
+    2160
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "8b6496c2c3b64d9df96eb1eb1c95b9317ce97096ed44c698f01c803ea1438f04"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "纤维",
+      "tight_bbox": [
+        329.9,
+        29.1,
+        3803.4,
+        1887.0
+      ],
+      "confidence": "high",
+      "score": 0.8676,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ],
+  "engine": "yolo",
+  "count": 1,
+  "coordinate_system": "original_pixels"
+}

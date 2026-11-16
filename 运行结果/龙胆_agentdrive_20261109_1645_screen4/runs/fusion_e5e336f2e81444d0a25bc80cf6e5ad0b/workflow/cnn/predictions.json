@@ -1,0 +1,336 @@
+{
+  "schema": "cnn-classifier/v1",
+  "model": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计与权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+  "imgsz": 320,
+  "input_mode": "letterbox",
+  "classes": [
+    "00_cluster_crystal",
+    "01_single_crystal",
+    "02_needle_crystal",
+    "03_vessel",
+    "04_stone_cell",
+    "05_starch_grain",
+    "06_non_glandular_hair",
+    "07_secretory_tissue",
+    "08_stoma",
+    "09_epidermis_cell",
+    "10_hypha",
+    "11_fiber",
+    "12_pollen_grain",
+    "13_other"
+  ],
+  "rows": [
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:epidermis_cell_view_01_01",
+      "topk": [
+        {
+          "class": "09_epidermis_cell",
+          "feature_id": "epidermis_cell",
+          "prob": 0.852992
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.030714
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.01917
+        }
+      ],
+      "top1": "epidermis_cell",
+      "top1_class": "09_epidermis_cell",
+      "top1_prob": 0.852992,
+      "margin": 0.822278,
+      "entropy": 0.288802,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:needle_crystal_view_01_glm3667244f60f3_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.56459
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.060406
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.056027
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.56459,
+      "margin": 0.504184,
+      "entropy": 0.655119,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:needle_crystal_view_01_glm3667244f60f3_02",
+      "topk": [
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.584612
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.061804
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.061008
+        }
+      ],
+      "top1": "needle_crystal",
+      "top1_class": "02_needle_crystal",
+      "top1_prob": 0.584612,
+      "margin": 0.522807,
+      "entropy": 0.642809,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:needle_crystal_view_01_glm809388596c20_01",
+      "topk": [
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.41393
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.172747
+        },
+        {
+          "class": "12_pollen_grain",
+          "feature_id": "pollen_grain",
+          "prob": 0.063513
+        }
+      ],
+      "top1": "needle_crystal",
+      "top1_class": "02_needle_crystal",
+      "top1_prob": 0.41393,
+      "margin": 0.241183,
+      "entropy": 0.759495,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:needle_crystal_view_01_glm8a09306abb41_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.491652
+        },
+        {
+          "class": "10_hypha",
+          "feature_id": "hypha",
+          "prob": 0.16983
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.067141
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.491652,
+      "margin": 0.321823,
+      "entropy": 0.680385,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:secretory_tissue_view_01_glm0abfd40672a2_01",
+      "topk": [
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.180044
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.161933
+        },
+        {
+          "class": "09_epidermis_cell",
+          "feature_id": "epidermis_cell",
+          "prob": 0.121486
+        }
+      ],
+      "top1": "stone_cell",
+      "top1_class": "04_stone_cell",
+      "top1_prob": 0.180044,
+      "margin": 0.018111,
+      "entropy": 0.903198,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:secretory_tissue_view_01_glm3667244f60f3_01",
+      "topk": [
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.230327
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.225099
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.087823
+        }
+      ],
+      "top1": "secretory_tissue",
+      "top1_class": "07_secretory_tissue",
+      "top1_prob": 0.230327,
+      "margin": 0.005228,
+      "entropy": 0.862477,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:secretory_tissue_view_01_glm3667244f60f3_02",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.521761
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.100824
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.10021
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.521761,
+      "margin": 0.420937,
+      "entropy": 0.673374,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:secretory_tissue_view_01_glm809388596c20_01",
+      "topk": [
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.267428
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.213515
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.092535
+        }
+      ],
+      "top1": "secretory_tissue",
+      "top1_class": "07_secretory_tissue",
+      "top1_prob": 0.267428,
+      "margin": 0.053913,
+      "entropy": 0.853296,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:secretory_tissue_view_01_glm809388596c20_02",
+      "topk": [
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.274473
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.211432
+        },
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.134531
+        }
+      ],
+      "top1": "stone_cell",
+      "top1_class": "04_stone_cell",
+      "top1_prob": 0.274473,
+      "margin": 0.063041,
+      "entropy": 0.819874,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:secretory_tissue_view_01_glm809388596c20_03",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.498223
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.115499
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.073503
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.498223,
+      "margin": 0.382724,
+      "entropy": 0.695205,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_f60b7e565e0736f545bfb7f9385d8c3fe9565a15cf19d081b4b0908c7d1227ed:secretory_tissue_view_01_glm8a09306abb41_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.658545
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.053189
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.050512
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.658545,
+      "margin": 0.605355,
+      "entropy": 0.551063,
+      "source": "cnn"
+    }
+  ]
+}

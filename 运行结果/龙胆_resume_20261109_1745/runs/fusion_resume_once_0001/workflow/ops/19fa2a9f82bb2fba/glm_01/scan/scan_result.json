@@ -1,0 +1,35 @@
+{
+  "engine": "glm_full_scan",
+  "count": 1,
+  "tiles": [
+    [
+      0,
+      0,
+      1024,
+      768
+    ],
+    [
+      1024,
+      0,
+      2048,
+      768
+    ],
+    [
+      0,
+      768,
+      1024,
+      1536
+    ],
+    [
+      1024,
+      768,
+      2048,
+      1536
+    ]
+  ],
+  "roi": null,
+  "feature_id": "secretory_tissue",
+  "partial": false,
+  "errors": [],
+  "coordinate_system": "original_pixels"
+}

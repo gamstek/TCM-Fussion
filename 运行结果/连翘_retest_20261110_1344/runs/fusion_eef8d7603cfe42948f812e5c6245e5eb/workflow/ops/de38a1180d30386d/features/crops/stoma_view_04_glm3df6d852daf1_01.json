@@ -1,0 +1,40 @@
+{
+  "crop_id": "stoma_view_04_glm3df6d852daf1_01",
+  "png": "stoma_view_04_glm3df6d852daf1_01.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\view_04.tif",
+  "stem": "view_04",
+  "feature_id": "stoma",
+  "object_label": "气孔",
+  "herb": "",
+  "px_per_um": 15.55,
+  "tight_box": [
+    1054.0,
+    1184.75,
+    1264.0,
+    1288.25
+  ],
+  "tight_box_local": [
+    24.0,
+    24.75,
+    234.0,
+    128.25
+  ],
+  "loose_box": [
+    1030,
+    1160,
+    1288,
+    1312
+  ],
+  "crop_size": "258x152",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.65,
+  "det_confidence": "medium",
+  "source_tight_bbox": [
+    1089,
+    1202,
+    1229,
+    1271
+  ],
+  "locate_expand": 1.5
+}

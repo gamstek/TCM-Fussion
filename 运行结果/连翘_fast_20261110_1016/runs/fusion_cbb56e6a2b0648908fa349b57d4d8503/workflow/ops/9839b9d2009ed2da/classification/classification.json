@@ -1,0 +1,44 @@
+{
+  "label": "图像不可判",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "",
+  "confidence": "medium",
+  "reason": "图像严重虚焦，无法辨认结构",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\view_04.tif",
+  "focus": 173.1,
+  "sent_hw": [
+    523,
+    768
+  ],
+  "granularity": "instance",
+  "confidence_score": 0.65,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "stoma_view_04_glm059f3d033e13_02",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\runs\\fusion_cbb56e6a2b0648908fa349b57d4d8503\\workflow\\ops\\dda95f9d61553f48\\features\\crops\\stoma_view_04_glm059f3d033e13_02.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm",
+  "cnn_score": 0.650204,
+  "cnn_entropy": 0.571635,
+  "cnn_topk": [
+    {
+      "class": "13_other",
+      "feature_id": "other",
+      "prob": 0.650204
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.060091
+    },
+    {
+      "class": "02_needle_crystal",
+      "feature_id": "needle_crystal",
+      "prob": 0.043415
+    }
+  ],
+  "cnn_fallback_reason": "low_confidence_or_other"
+}

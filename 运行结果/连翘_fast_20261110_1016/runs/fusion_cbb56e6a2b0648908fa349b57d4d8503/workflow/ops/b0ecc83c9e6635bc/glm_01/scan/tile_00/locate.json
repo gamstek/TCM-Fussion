@@ -1,0 +1,18 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\view_03.tif",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\runs\\fusion_cbb56e6a2b0648908fa349b57d4d8503\\workflow\\ops\\b0ecc83c9e6635bc\\glm_01\\scan\\tile_00\\detection",
+  "roi": [
+    0,
+    0,
+    1920,
+    1080
+  ],
+  "feature_id": "needle_crystal",
+  "px_per_um": 15.55,
+  "locate_expand": 1.5,
+  "locate_min_box_side": 90,
+  "locate_min_roi_side": 256,
+  "feature_hint": "目标正例：针晶可散在，也常多根成束、密集、相邻或连续分布；优先框可分辨的针状结晶及其集合，不因成簇、堆叠或相邻出现而排除。 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；表皮细胞：片状/多边形边界；导管：管腔/环纹/网纹；石细胞：厚壁/胞腔；分泌组织：油室/油管/腔隙内容物；簇晶/方晶/花粉粒仅作软负例",
+  "existing_boxes": []
+}

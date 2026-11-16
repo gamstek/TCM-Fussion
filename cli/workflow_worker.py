@@ -70,6 +70,9 @@ def main(argv=None):
                                 'worth': bool(row.get('worth', True)),
                                 'reason': str(row.get('reason') or '')[:200]})
         ranking.sort(key=lambda item: item['score'], reverse=True)
+        limit=int(ctx.get('screen_max_rois') or 0)
+        if limit > 0:
+            ranking = ranking[:limit]
         write_json(out / 'screen.json', {'image_id': ctx.get('image_id'), 'feature_id': feature,
                                          'engine': 'glm_screen', 'sheet': str(out / 'sheet.jpg'),
                                          'rois': ranking})
@@ -96,28 +99,36 @@ def main(argv=None):
         from detect_core import detect_once
         from prompts import CLASSIFY_HINTS
         from ls_common import load_config, resolve_key
-        x1, y1, x2, y2 = ctx['roi']
+        x1, y1, x2, y2 = map(int, ctx['roi'])
         if not (0 <= x1 < x2 <= w and 0 <= y1 < y2 <= h and (x2-x1)*(y2-y1) < w*h):
             raise IntegrationError('ROI_INVALID', 'GLM 定向定位仅接受原图局部')
+        # 观察窗口至少 min_roi_side，避免在过小 ROI 内强迫模型给框。
+        min_roi = int(ctx.get('locate_min_roi_side') or 0)
+        rx1, ry1, rx2, ry2 = x1, y1, x2, y2
+        if min_roi > 0 and max(rx2-rx1, ry2-ry1) < min_roi:
+            cx, cy = (rx1+rx2)//2, (ry1+ry2)//2
+            rx1, rx2 = max(0, cx-min_roi//2), min(w, cx+min_roi//2)
+            ry1, ry2 = max(0, cy-min_roi//2), min(h, cy+min_roi//2)
         label = next((name for name, fid in FEATURE_ID.items() if fid == ctx['feature_id']), None)
         if label not in CLASSIFY_HINTS:
             raise IntegrationError('ACTION_DENIED', '该特征没有受信形态描述')
         prompt = (f'只检查所给局部是否可定位 {label}。形态：{CLASSIFY_HINTS[label]}。'
                   f'{ctx.get("feature_hint") or ""} '
                   '无法区分、目标截断或看不清时返回空 objects。'
+                  '如果局部没有目标，必须返回 {"objects":[]}；不得用背景纹理、色差、模糊边缘或相邻组织凑框。'
                   '列出所有可分辨的完整目标紧框，按置信度从高到低；不要为了凑数编造目标。'
                   '坐标相对所给局部归一化到0至1000。'
                   f'仅输出JSON：{{"objects":[{{"label":"{label}","bbox_2d":[x1,y1,x2,y2],'
                   '"confidence":"high 或 medium","morphology":"可见判别特征"}]}')
         cfg = load_config()
         response, error = detect_once(img, cfg['vlm'], resolve_key(cfg), prompt, {label},
-                                      region=ctx['roi'], max_side=1024, upscale=True)
+                                      region=[rx1, ry1, rx2, ry2], max_side=1024, upscale=True)
         if error:
             raise IntegrationError('DETECTION_FAILED', 'GLM 定向定位请求失败')
         dets = []
         for det in response['dets']:
             left, top, right, bottom = map(round, det['tight_bbox'])
-            if x1 < left < right < x2 and y1 < top < bottom < y2:
+            if rx1 < left < right < rx2 and ry1 < top < bottom < ry2:
                 dets.append({**det, 'tight_bbox': [left, top, right, bottom]})
         # 同一 ROI 内 GLM 可能重复给同一目标；保留置信度高的框，避免重复注入。
         dets.sort(key=lambda d: float(d.get('score') or 0), reverse=True)
@@ -137,6 +148,19 @@ def main(argv=None):
                 det['tight_bbox'] = [max(0.0, cx - bw / 2), max(0.0, cy - bh / 2),
                                      min(float(w), cx + bw / 2), min(float(h), cy + bh / 2)]
                 det['locate_expand'] = expand
+        min_side = int(ctx.get('locate_min_box_side') or 0)
+        if min_side > 0:
+            for det in dets:
+                bx1, by1, bx2, by2 = det['tight_bbox']
+                if max(bx2-bx1, by2-by1) >= min_side:
+                    continue
+                cx, cy = (bx1+bx2)/2.0, (by1+by2)/2.0
+                half = min_side/2.0
+                det['source_tight_bbox'] = det.get('source_tight_bbox') or det['tight_bbox']
+                det['tight_bbox'] = [max(0.0, cx-half), max(0.0, cy-half),
+                                     min(float(w), cx+half), min(float(h), cy+half)]
+                det['min_box_side'] = min_side
+                det['min_box_expanded'] = True
         result = {'dets': dets, 'roi': ctx['roi'], 'feature_id': ctx['feature_id']}
     else:
         result = read_json(ctx['boxes'])
@@ -149,7 +173,12 @@ def main(argv=None):
         detections, other = split_delivery(detections)
         write_json(out/'other_detections.json', {'dets':other})
     if initial:
-        ctx['px_per_um'] = lookup_px_per_um(ctx['source'], img) if detections else None
+        # 标定是检测后的可选增强；scalebar VLM 失败不得回滚已产出的 YOLO 框。
+        try:
+            ctx['px_per_um'] = lookup_px_per_um(ctx['source'], img) if detections else None
+        except Exception as exc:
+            ctx['px_per_um'] = None
+            print(f'[warn] 自动标定失败，保留检测框并置 px_per_um=None: {type(exc).__name__}: {exc}', flush=True)
     crops=out/'crops';crops.mkdir()
     from TCM_Fusion.lib.storage import digest
     count=0;replacements={};used_replacements=set();seen=list(ctx.get('existing_boxes',[]))

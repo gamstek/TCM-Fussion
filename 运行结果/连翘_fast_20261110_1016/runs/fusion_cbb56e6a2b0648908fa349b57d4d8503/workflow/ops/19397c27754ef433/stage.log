@@ -1,0 +1,1 @@
+[ WARN:0@0.017] global grfmt_tiff.cpp:122 cv::TIFF_Warning TIFFFetchNormalTag: ASCII value for tag "CameraSerialNumber" does not end in null byte. Forcing it to be null

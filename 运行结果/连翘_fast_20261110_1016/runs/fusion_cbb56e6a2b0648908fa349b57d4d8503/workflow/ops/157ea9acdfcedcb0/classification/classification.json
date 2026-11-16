@@ -1,0 +1,44 @@
+{
+  "label": "气孔",
+  "reject": "",
+  "raw_label": "气孔",
+  "feature_id": "stoma",
+  "second": "",
+  "confidence": "medium",
+  "reason": "两个半月形保卫细胞围成椭圆形结构",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\view_04.tif",
+  "focus": 261.2,
+  "sent_hw": [
+    358,
+    768
+  ],
+  "granularity": "instance",
+  "confidence_score": 0.65,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "stoma_view_04_glm059f3d033e13_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\runs\\fusion_cbb56e6a2b0648908fa349b57d4d8503\\workflow\\ops\\dda95f9d61553f48\\features\\crops\\stoma_view_04_glm059f3d033e13_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm",
+  "cnn_score": 0.439601,
+  "cnn_entropy": 0.755027,
+  "cnn_topk": [
+    {
+      "class": "11_fiber",
+      "feature_id": "fiber",
+      "prob": 0.439601
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.114327
+    },
+    {
+      "class": "13_other",
+      "feature_id": "other",
+      "prob": 0.109504
+    }
+  ],
+  "cnn_fallback_reason": "low_confidence_or_other"
+}

@@ -4,6 +4,7 @@ from pathlib import Path
 import contracts
 import paths
 from .controlled_process import run
+from .image_tiling import uniform_tiles
 from .storage import IntegrationError, read_json, write_json, file_hash, digest, project_path
 
 
@@ -28,13 +29,7 @@ class WorkflowBackend:
         def feature_hint(feature_id):
             override = session.config.get('feature_profiles') or {}
             profile = profile_for(feature_id, override)
-            text = hint_text(profile)
-            if feature_id == 'needle_crystal' and 'needle_crystal' not in override:
-                legacy = ' '.join(str(session.config.get(key) or '')
-                                  for key in ('needle_positive_hint', 'needle_negative_hint')).strip()
-                if legacy:
-                    text = legacy
-            return text
+            return hint_text(profile)
         if tool == 'roi_screen_batch':
             from concurrent.futures import ThreadPoolExecutor
             items=list(target.get('items') or [])
@@ -49,6 +44,7 @@ class WorkflowBackend:
                 write_json(ctx,{'tool':'roi_screen','source':str(item['source']),
                                 'regions':str(item['regions']),'feature_id':item.get('feature_id'),
                                 'image_id':item['image_id'],'output':str(sub/'result'),
+                                'screen_max_rois':int(session.config.get('screen_max_rois',4)),
                                 'feature_hint':feature_hint(item.get('feature_id'))})
                 run([str(session.python),'-X','utf8','-m','TCM_Fusion.cli.workflow_worker',
                      '--context',str(ctx)],context_path=context,timeout=session.remaining_seconds(),
@@ -64,6 +60,7 @@ class WorkflowBackend:
                              'regions': str(target['regions']),
                              'feature_id': target.get('feature_id'),
                              'image_id': target['image_id'], 'output': str(out),
+                             'screen_max_rois':int(session.config.get('screen_max_rois',4)),
                              'feature_hint': feature_hint(target.get('feature_id'))})
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
             return {'screen': str(out / 'screen.json')}
@@ -73,22 +70,30 @@ class WorkflowBackend:
                 feature_id = feature_id or 'needle_crystal'
             elif not isinstance(feature_id, str) or not feature_id.strip():
                 raise IntegrationError('FEATURE_SCAN_INPUT', 'feature_scan 必须显式提供 feature_id')
-            from concurrent.futures import ThreadPoolExecutor
-            from PIL import Image
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+            from PIL import Image, ImageFilter, ImageStat
             source = Path(target['source'])
             prefix = 'feature_scan' if tool == 'feature_scan' else 'needle_scan'
             with Image.open(source) as handle:
                 width, height = handle.size
             tile = max(256, min(2048, int(session.config.get(prefix + '_tile_size', 1024))))
             overlap = max(0.0, min(0.5, float(session.config.get(prefix + '_overlap', 0.15))))
-            step = max(128, int(tile * (1.0 - overlap)))
-            boxes = []
-            for y in range(0, max(1, height), step):
-                for x in range(0, max(1, width), step):
-                    x2, y2 = min(width, x + tile), min(height, y + tile)
-                    if x2 - x >= 128 and y2 - y >= 128:
-                        boxes.append([x, y, x2, y2])
-            boxes = boxes[:max(1, int(session.config.get(prefix + '_max_tiles', 9)))]
+            requested_tiles = int(target.get('max_tiles') or session.config.get(prefix + '_max_tiles', 4))
+            boxes = uniform_tiles(width, height, tile=tile, overlap=overlap,
+                                  max_tiles=max(1, requested_tiles))
+            policy = str(session.config.get(prefix + '_tile_policy', 'prescreen'))
+            if policy == 'prescreen' and len(boxes) > 1:
+                def score(box):
+                    try:
+                        with Image.open(source) as image:
+                            crop = image.crop(tuple(box)).convert('L')
+                            crop.thumbnail((128, 128))
+                            stat = ImageStat.Stat(crop)
+                            edge = ImageStat.Stat(crop.filter(ImageFilter.FIND_EDGES)).mean[0]
+                            return float(stat.stddev[0]) + 2.0 * float(edge)
+                    except Exception:
+                        return 0.0
+                boxes = sorted(boxes, key=score, reverse=True)
             out = work / 'scan'
             out.mkdir(parents=True, exist_ok=True)
             workers = max(1, min(int(session.config.get(prefix + '_concurrency', 2)), len(boxes)))
@@ -102,6 +107,8 @@ class WorkflowBackend:
                                  'feature_id': feature_id,
                                  'px_per_um': target.get('px_per_um'),
                                  'locate_expand': session.config.get('locate_expand', 1.5),
+                                 'locate_min_box_side': session.config.get('locate_min_box_side', 90),
+                                 'locate_min_roi_side': session.config.get('locate_min_roi_side', 256),
                                  'feature_hint': feature_hint(feature_id),
                                  'existing_boxes': []})
                 run([str(session.python), '-X', 'utf8', '-m', 'TCM_Fusion.cli.workflow_worker',
@@ -109,8 +116,35 @@ class WorkflowBackend:
                     timeout=session.remaining_seconds(), log_path=sub / 'stage.log',
                     cancel_event=session.cancel_event)
                 return sub / 'detection'
+            def has_crops(folder):
+                return (folder / 'crops').is_dir() and any((folder / 'crops').glob('*.json'))
+            errors = []
+            if policy == 'prescreen' and boxes:
+                # 先试扫最有纹理的 tile；无结果就停止，不再盲扫剩余 tile。
+                try:
+                    one((0, boxes[0]))
+                except Exception as exc:
+                    errors.append({'tile': 0, 'error': str(exc)[:200]})
+                if not has_crops(out / 'tile_00' / 'detection'):
+                    completion = out / 'scan_result.json'
+                    write_json(completion, {'engine': 'glm_full_scan', 'count': 0,
+                                            'tiles': boxes[:1], 'feature_id': feature_id,
+                                            'pilot': True, 'stopped': 'pilot_empty',
+                                            'errors': errors, 'coordinate_system': 'original_pixels'})
+                    return {'crops_dir': str(out / 'crops'), 'completion': str(completion),
+                            'tiles': boxes[:1], 'partial': bool(errors), 'errors': errors}
+                remaining = list(enumerate(boxes))[1:]
+            else:
+                remaining = list(enumerate(boxes))
             with ThreadPoolExecutor(max_workers=workers) as pool:
-                dirs = list(pool.map(one, enumerate(boxes)))
+                futures = {pool.submit(one, pair): pair[0] for pair in remaining}
+                for future in as_completed(futures):
+                    try:
+                        future.result()
+                    except Exception as exc:
+                        errors.append({'tile': futures[future], 'error': str(exc)[:200]})
+            # 超时的 tile 也可能已经写出部分 detection；不要因为一个 tile 丢弃全部。
+            dirs = sorted(p for p in out.glob('tile_*/detection') if p.is_dir())
             crops = out / 'crops'
             crops.mkdir(parents=True, exist_ok=True)
             count = 0
@@ -126,13 +160,22 @@ class WorkflowBackend:
             completion = out / 'scan_result.json'
             write_json(completion, {'engine': 'glm_full_scan', 'count': count,
                                     'tiles': boxes, 'roi': None, 'feature_id': feature_id,
+                                    'partial': bool(errors), 'errors': errors,
+                                    'tile_policy': policy,
                                     'coordinate_system': 'original_pixels'})
-            return {'crops_dir': str(crops), 'completion': str(completion), 'tiles': boxes}
+            return {'crops_dir': str(crops), 'completion': str(completion), 'tiles': boxes,
+                    'partial': bool(errors), 'errors': errors}
         if tool == 'hybrid_scan':
-            from concurrent.futures import ThreadPoolExecutor
+            from concurrent.futures import ThreadPoolExecutor, as_completed
             features = [str(x) for x in (target.get('features') or []) if str(x)]
             if not features:
                 raise IntegrationError('HYBRID_INPUT', 'hybrid_scan 没有 feature')
+            locate_cap = int(target.get('max_locate_calls') or 0)
+            if locate_cap > 0:
+                features = features[:max(1, locate_cap)]
+                per_feature_tiles = max(1, locate_cap // max(1, len(features)))
+            else:
+                per_feature_tiles = None
             source = Path(target['source'])
             yolo_target = {'id': target['id'] + ':yolo', 'image_id': target['image_id'],
                            'path': str(source), 'source': str(source), 'parents': target.get('parents', [])}
@@ -146,14 +189,30 @@ class WorkflowBackend:
                                   'kind': 'feature_scan', 'feature_id': fid,
                                   'parents': target.get('parents', []),
                                   'px_per_um': target.get('px_per_um')}
+                if per_feature_tiles:
+                    feature_target['max_tiles'] = per_feature_tiles
                 return fid, self.execute(session, 'feature_scan', feature_target,
                                          work / f'glm_{index:02d}', context)
             with ThreadPoolExecutor(max_workers=max(2, min(4, len(features) + 1))) as pool:
                 yolo_future = pool.submit(run_yolo)
-                feature_futures = [pool.submit(run_feature, pair)
-                                   for pair in enumerate(features)]
-                yolo_result = yolo_future.result()
-                feature_results = [future.result() for future in feature_futures]
+                feature_futures = {pool.submit(run_feature, pair): pair[1]
+                                   for pair in enumerate(features)}
+                yolo_result = None
+                feature_results = []
+                errors = []
+                for future in as_completed([yolo_future, *feature_futures]):
+                    try:
+                        value = future.result()
+                    except Exception as exc:
+                        errors.append({'phase': 'yolo' if future is yolo_future else 'feature',
+                                       'error': str(exc)[:200]})
+                        continue
+                    if future is yolo_future:
+                        yolo_result = value
+                    else:
+                        feature_results.append(value)
+            if not feature_results:
+                raise IntegrationError('HYBRID_EMPTY', 'hybrid_scan 没有可用 feature 结果')
             merged = work / 'features'
             crops = merged / 'crops'
             crops.mkdir(parents=True, exist_ok=True)
@@ -169,9 +228,11 @@ class WorkflowBackend:
                             count += 1
             completion = merged / 'scan_result.json'
             write_json(completion, {'engine': 'glm_full_scan', 'count': count,
-                                    'features': features, 'coordinate_system': 'original_pixels'})
-            return {'detections': yolo_result,
-                    'feature_scan': {'crops_dir': str(crops), 'completion': str(completion)}}
+                                    'features': features, 'partial': bool(errors),
+                                    'errors': errors, 'coordinate_system': 'original_pixels'})
+            return {'detections': yolo_result or {},
+                    'feature_scan': {'crops_dir': str(crops), 'completion': str(completion)},
+                    'partial': bool(errors), 'errors': errors}
         if tool in {'propose_regions', 'locate_feature'}:
             out = work / 'detection'
             ctx = work / 'recovery.json'
@@ -180,6 +241,8 @@ class WorkflowBackend:
                 data.update(roi=target['roi'], feature_id=target['feature_id'],
                             px_per_um=target.get('px_per_um'),
                             locate_expand=session.config.get('locate_expand', 1.5),
+                            locate_min_box_side=session.config.get('locate_min_box_side', 90),
+                            locate_min_roi_side=session.config.get('locate_min_roi_side', 256),
                             feature_hint=feature_hint(target['feature_id']),
                             existing_boxes=session.existing_boxes(target['image_id']))
             write_json(ctx, data)
@@ -243,9 +306,74 @@ class WorkflowBackend:
                 raise IntegrationError('AUDIT_INCOMPLETE','图片示例审计没有产出 audit.json')
             return {'audit':str(out/'audit.json'),'contact_sheet':str(out/'contact.jpg')}
         if tool=='classify_target':
-            # 单crop类别复核：复用检测侧 classify_crop（提示词/解析/白名单只此一份），
-            # 在子进程内跑，网络请求由 worker_bootstrap 的HTTP守卫按请求键记账。
+            # 单crop类别复核：CNN 批量初判，高置信直接落 classification；否则 GLM 兜底。
             meta=contracts.CropMeta.from_json(target['path'])
+            cnn_info=None
+            cnn_error=None
+            if session.config.get('cnn_weights') and session.config.get('cnn_meta'):
+                try:
+                    cache=session.root/'cnn'/'predictions.json'
+                    cnn_doc=read_json(cache) if cache.is_file() else None
+                    rows={str(row.get('id')):row for row in ((cnn_doc or {}).get('rows') or [])}
+                    if cnn_doc is None or target['id'] not in rows:
+                        # cache 只含首次批次的 crop；后续新 crop 到来时失效重跑。
+                        crops=[]
+                        for tid,crop in session.targets().items():
+                            if crop.get('kind')!='crop':
+                                continue
+                            m=contracts.CropMeta.from_json(crop['path'])
+                            crops.append({'id':tid,'png':str(m.png)})
+                        if not crops:
+                            raise IntegrationError('CNN_EMPTY','CNN 没有待分类 crop')
+                        weights=project_path(session.config.get('cnn_weights') or
+                            '分类器设计与权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/best.pt')
+                        cnn_meta=project_path(session.config.get('cnn_meta') or
+                            '分类器设计与权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/model_meta.json')
+                        if not weights.is_file() or not cnn_meta.is_file():
+                            raise IntegrationError('CNN_ASSET_MISSING','CNN 权重或 meta 缺失')
+                        cnn_output=session.root/'cnn'/'predictions.json'
+                        cnn_context=work/'cnn_context.json'
+                        write_json(cnn_context,{'crops':crops,'weights':str(weights),'meta':str(cnn_meta),
+                            'output':str(cnn_output),'batch_size':int(session.config.get('cnn_batch_size',16))})
+                        run([str(session.yolo_python),'-X','utf8','-m',
+                             'TCM_Fusion.cli.cnn_classifier_worker','--context',str(cnn_context)],
+                            context_path=context,timeout=session.remaining_seconds(),
+                            log_path=work/'cnn.log',cancel_event=session.cancel_event)
+                        if not cnn_output.is_file():
+                            raise IntegrationError('CNN_INCOMPLETE','CNN 没有产出 predictions.json')
+                        cnn_doc=read_json(cnn_output)
+                        rows={str(row.get('id')):row for row in (cnn_doc.get('rows') or [])}
+                    cnn_info=rows.get(target['id'])
+                    threshold=float(session.config.get('cnn_threshold',.75))
+                    entropy_limit=float(session.config.get('cnn_entropy_threshold',.8))
+                    if cnn_info:
+                        top1=str(cnn_info.get('top1') or '')
+                        prob=float(cnn_info.get('top1_prob') or 0)
+                        entropy=float(cnn_info.get('entropy') or 1)
+                        other_fallback=bool(session.config.get('cnn_other_fallback',True))
+                        direct=(top1 not in {'other',''} and prob>=threshold and entropy<=entropy_limit
+                                and not (other_fallback and top1=='other'))
+                        if direct:
+                            labels={}
+                            try:
+                                tax=read_json(Path(paths.PROJECT_ROOT)/'feature_taxonomy.json')
+                                labels={x.get('feature_id'):x.get('zh_name') for x in tax.get('features',[])}
+                            except Exception:
+                                pass
+                            out=work/'classification';out.mkdir(parents=True,exist_ok=True)
+                            doc={'label':labels.get(top1,top1),'raw_label':cnn_info.get('top1_class'),
+                                'feature_id':top1,'second':'','confidence':'high',
+                                'reason':'CNN 高置信初判','source':'cnn','focus':None,
+                                'sent_hw':None,'granularity':meta.granularity,
+                                'confidence_score':round(prob,6),'confidence_scale':'cnn_prob',
+                                'crop_id':meta.crop_id,'crop_png':str(meta.png),
+                                'glm_confidence':None,'yolo_confidence':None,'yolo_checked':False,
+                                'confidence_source':'cnn','cnn_score':round(prob,6),
+                                'cnn_entropy':round(entropy,6),'cnn_topk':cnn_info.get('topk') or []}
+                            write_json(out/'classification.json',doc)
+                            return {'classification':str(out)}
+                except Exception as exc:
+                    cnn_error=str(exc)[:240]
             ctx={'tool':tool,'crop_id':meta.crop_id,'crop_json':str(target['path']),
                  'crop_png':str(meta.png),'source':meta.source_image_path,
                  'tight_box':meta.tight_box,'output':str(work/'classification'),
@@ -301,6 +429,13 @@ class WorkflowBackend:
                     doc['yolo_checked']=False
                     doc['yolo_error']=str(exc)[:200]
                     doc['confidence_source']='glm'
+                if cnn_info:
+                    doc['cnn_score']=cnn_info.get('top1_prob')
+                    doc['cnn_entropy']=cnn_info.get('entropy')
+                    doc['cnn_topk']=cnn_info.get('topk') or []
+                    doc['cnn_fallback_reason']='low_confidence_or_other'
+                elif cnn_error:
+                    doc['cnn_error']=cnn_error
                 write_json(out/'classification.json',doc)
             return {'classification':str(out)}
         if tool=='segment_instance':

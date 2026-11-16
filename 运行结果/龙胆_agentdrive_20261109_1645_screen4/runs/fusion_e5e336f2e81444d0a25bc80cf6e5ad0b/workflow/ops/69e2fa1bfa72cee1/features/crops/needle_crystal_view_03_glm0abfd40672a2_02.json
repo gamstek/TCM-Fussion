@@ -1,0 +1,40 @@
+{
+  "crop_id": "needle_crystal_view_03_glm0abfd40672a2_02",
+  "png": "needle_crystal_view_03_glm0abfd40672a2_02.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\view_03.jpg",
+  "stem": "view_03",
+  "feature_id": "needle_crystal",
+  "object_label": "草酸钙针晶",
+  "herb": "",
+  "px_per_um": null,
+  "tight_box": [
+    376.25,
+    378.25,
+    698.75,
+    688.75
+  ],
+  "tight_box_local": [
+    24.25,
+    24.25,
+    346.75,
+    334.75
+  ],
+  "loose_box": [
+    352,
+    354,
+    722,
+    712
+  ],
+  "crop_size": "370x358",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.65,
+  "det_confidence": "medium",
+  "source_tight_bbox": [
+    430,
+    430,
+    645,
+    637
+  ],
+  "locate_expand": 1.5
+}

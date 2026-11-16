@@ -1,9 +1,0 @@
-{
-  "tool": "roi_screen",
-  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\view_04.jpg",
-  "regions": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\runs\\fusion_b2bb679600874325bdd0742f909420c4\\workflow\\ops\\0b81c531cf1ed3fc\\detection\\regions.json",
-  "feature_id": "needle_crystal",
-  "image_id": "img_a1526d00b37e3d4cb9ce0edac7fc1a9bbf9511b257a335454742d96e234f59f8",
-  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_泛化观测\\runs\\fusion_b2bb679600874325bdd0742f909420c4\\workflow\\ops\\af515dc6072f3275\\screening_batch\\04\\result",
-  "feature_hint": "目标正例：优先单根、细长、两端尖、透明或半透明、无连续细胞壁/胞腔的草酸钙针晶；成簇时只框可分辨的单根。 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；表皮细胞；花粉粒；其他结晶；纯组织区域"
-}

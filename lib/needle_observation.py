@@ -213,6 +213,51 @@ def _crop_records(directory, target_ids):
             # 兼容旧 needle_audit 消费方。
             row['needle_score'] = target_score if 'needle_crystal' in target_ids else None
             candidates.append(row)
+    # hybrid_scan 的 GLM crop 侧车不在 bundle.files 的顶层，直接读固定目录。
+    for operation in operations.values():
+        if operation.get('tool') != 'hybrid_scan':
+            continue
+        bundle = operation.get('bundle') or {}
+        root = Path(bundle.get('root') or '')
+        folder = root / 'features' / 'crops'
+        if not bundle.get('root') or not folder.is_dir():
+            continue
+        for path in sorted(folder.glob('*.json')):
+            try:
+                value = read_json(path)
+            except (OSError, ValueError):
+                continue
+            if not isinstance(value, dict):
+                continue
+            crop_id = value.get('crop_id')
+            if not crop_id or not value.get('feature_id'):
+                continue
+            det_score = value.get('det_score')
+            classification = classifications.get(crop_id) or {}
+            label = classification.get('feature_id') or ''
+            score = classification.get('confidence_score')
+            if classification:
+                target_score = float(score or 0) if label in target_ids else 0.0
+                negative_margin = target_score - (float(score or 0) if label and label not in target_ids else 0.0)
+                status = 'classified_target' if label in target_ids else 'classified_non_target'
+                audit_label = classification.get('label')
+            else:
+                target_score = None
+                negative_margin = None
+                high = isinstance(det_score, (int, float)) and det_score >= 0.8
+                status = 'high_score_unclassified' if high else 'low_score_unclassified'
+                audit_label = 'unknown'
+            try:
+                numeric_det = float(det_score) if det_score is not None else None
+            except (TypeError, ValueError):
+                numeric_det = None
+            candidates.append({'crop_id': crop_id,
+                'view': Path(str(value.get('source_image_path') or '')).stem,
+                'source': value.get('source_image_path'), 'feature_id': value.get('feature_id'),
+                'det_score': numeric_det, 'audit_label': audit_label,
+                'target_score': target_score, 'negative_margin': negative_margin,
+                'target_features': sorted(target_ids), 'status': status, 'non_blocking': True,
+                'needle_score': target_score if 'needle_crystal' in target_ids else None})
     unique = {}
     for path in masks:
         try:

@@ -1,0 +1,14 @@
+{
+  "dets": [],
+  "roi": [
+    1920,
+    0,
+    3840,
+    1080
+  ],
+  "feature_id": "stone_cell",
+  "engine": "glm_targeted",
+  "count": 0,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

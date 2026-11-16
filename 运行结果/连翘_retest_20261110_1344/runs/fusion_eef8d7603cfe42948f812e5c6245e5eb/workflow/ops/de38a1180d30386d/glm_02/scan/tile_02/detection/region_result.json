@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "气孔",
+      "tight_bbox": [
+        1054.0,
+        1184.75,
+        1264.0,
+        1288.25
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "椭圆形轮廓，周围有环状边缘，似保卫细胞围成的孔缝，但因位于组织内、细节不清",
+      "source_tight_bbox": [
+        1089,
+        1202,
+        1229,
+        1271
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    0,
+    1080,
+    1920,
+    2160
+  ],
+  "feature_id": "stoma",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

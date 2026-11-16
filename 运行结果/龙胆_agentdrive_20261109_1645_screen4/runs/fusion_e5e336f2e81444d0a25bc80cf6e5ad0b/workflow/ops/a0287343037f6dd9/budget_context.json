@@ -1,0 +1,14 @@
+{
+  "operation_key": "a0287343037f6dd923c68ef63c48838760d3b5b77693002e220ed957a0eca203",
+  "budget_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\runs\\fusion_e5e336f2e81444d0a25bc80cf6e5ad0b\\workflow\\resources.json",
+  "limits": {
+    "initialization": 6,
+    "recompute": 30,
+    "network": 200,
+    "planning": 60,
+    "observation": 40,
+    "total": 400,
+    "finalization": 1
+  },
+  "identity": "b4c3cf74f8d35348e301d55d4b5917d23b6353ad3adfd149c3dc88209f25cbe6"
+}

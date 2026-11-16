@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "石细胞",
+      "tight_bbox": [
+        2699.5,
+        1178.75,
+        2966.5,
+        1288.25
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "细胞壁显著增厚呈深色环状，中央胞腔小，外形类椭圆形，壁厚与胞腔对比明显",
+      "source_tight_bbox": [
+        2744,
+        1197,
+        2922,
+        1270
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1920,
+    1080,
+    3840,
+    2160
+  ],
+  "feature_id": "stone_cell",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

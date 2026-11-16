@@ -1,8 +1,0 @@
-{
-  "tool": "roi_screen",
-  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_af4149f1\\view_03.jpg",
-  "regions": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_af4149f1\\runs\\fusion_aab4b2b77e584804a5916d9c7a378c4b\\workflow\\ops\\cba8c99987b37b51\\detection\\regions.json",
-  "feature_id": "needle_crystal",
-  "image_id": "img_72bb5a368fc477d268422eb115d4850c45248d020b9f45a12e80dcc09e83796e",
-  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_af4149f1\\runs\\fusion_aab4b2b77e584804a5916d9c7a378c4b\\workflow\\ops\\bce9395c64e41e34\\screening"
-}

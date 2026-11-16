@@ -1,0 +1,17 @@
+{
+  "dets": [
+    {
+      "label": "其他",
+      "tight_bbox": [
+        1613.1,
+        285.8,
+        2629.4,
+        1995.2
+      ],
+      "confidence": "medium",
+      "score": 0.5379,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ]
+}

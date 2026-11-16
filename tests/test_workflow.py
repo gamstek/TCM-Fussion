@@ -112,6 +112,67 @@ class WorkflowTests(unittest.TestCase):
         self.assertTrue(any(a['tool'] == 'hybrid_scan'
                             for a in hybrid.legal_actions({'observations': []})))
 
+    def test_fast_path_keeps_yolo_and_delays_glm_until_classified(self):
+        fast = WorkflowRuntime([self.image], root=self.root / 'fast_task',
+                               sample_id='sample', a={},
+                               workflow_config={'max_recompute': 8,
+                                                'fast_yolo_stage2': True,
+                                                'hybrid_scan_enabled': True,
+                                                'feature_scan_features': ['needle_crystal']},
+                               simulation=True, backend=StageFixture())
+        image = next(iter(fast.images))
+        self.assertNotIn('hybrid_scan:' + image, fast.workflow.targets())
+        detect = next(a for a in fast.legal_actions({'observations': []})
+                      if a['tool'] == 'detect_fov_initial')
+        self.assertTrue(fast.tools.invoke(fast, detect, {'action': detect})['accepted'])
+        # YOLO crop 尚未分类，不允许提前走 GLM 兜底。
+        self.assertNotIn('hybrid_scan:' + image, fast.workflow.targets())
+        classify = next(a for a in fast.legal_actions({'observations': []})
+                        if a['tool'] == 'classify_target')
+        self.assertTrue(fast.tools.invoke(fast, classify, {'action': classify})['accepted'])
+        self.assertNotIn('hybrid_scan:' + image, fast.workflow.targets())
+        cls = [v for v in fast.workflow.store.current()['artifacts'].values()
+               if v.get('valid') and v.get('kind') == 'classification']
+        self.assertTrue(cls)
+        self.assertTrue(any(v.get('identity_verified') for v in cls))
+
+    def test_fast_required_coverage_combines_views(self):
+        second = self.root / 'second.png'
+        second.write_bytes(b'second-view')
+        runtime = WorkflowRuntime(
+            [self.image, second], root=self.root / 'multiview_task',
+            sample_id='sample', a={}, simulation=True, backend=StageFixture(),
+            workflow_config={'fast_yolo_stage2': True, 'hybrid_scan_enabled': True,
+                             'feature_scan_features': ['fiber']},
+        )
+        workflow = runtime.workflow
+        first_id, second_id = runtime.images
+        snapshot = workflow.store.current()
+        artifacts = snapshot['artifacts']
+        for image_id in runtime.images:
+            artifacts['detected:' + image_id] = {
+                'valid': True, 'kind': 'detection', 'image_id': image_id,
+            }
+        artifacts['classification:first'] = {
+            'valid': True, 'kind': 'classification', 'image_id': first_id,
+            'feature_id': 'fiber',
+        }
+        artifacts['classification:second'] = {
+            'valid': False, 'kind': 'classification', 'image_id': second_id,
+            'feature_id': 'stone_cell',
+        }
+        with patch.object(workflow.store, 'current', return_value=snapshot), \
+                patch.object(workflow, 'recovery_features', return_value=['fiber', 'stone_cell']):
+            self.assertFalse(workflow.coverage()['required_all'])
+            for image_id in runtime.images:
+                self.assertEqual(workflow.targets()['hybrid_scan:' + image_id]['features'],
+                                 ['stone_cell'])
+
+            artifacts['classification:second']['valid'] = True
+            self.assertTrue(workflow.coverage()['required_all'])
+            self.assertEqual(workflow.coverage()['missing_required'], [])
+            self.assertFalse(any(key.startswith('hybrid_scan:') for key in workflow.targets()))
+
     def test_nested_jsonschema_and_external_ref(self):
         schema={'type':'object','required':['x'],'additionalProperties':False,'properties':{
             'x':{'type':'array','items':{'type':'integer','minimum':1},'minItems':2}}}

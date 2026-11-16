@@ -1,0 +1,15 @@
+{
+  "tool": "classify_target",
+  "crop_id": "epidermis_cell_view_03_02",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\runs\\fusion_cbb56e6a2b0648908fa349b57d4d8503\\workflow\\ops\\a0d074033041bdb9\\detection\\crops\\epidermis_cell_view_03_02.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\runs\\fusion_cbb56e6a2b0648908fa349b57d4d8503\\workflow\\ops\\a0d074033041bdb9\\detection\\crops\\epidermis_cell_view_03_02.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\view_03.tif",
+  "tight_box": [
+    0.0,
+    69.2,
+    590.2,
+    1079.4
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_fast_20261110_1016\\runs\\fusion_cbb56e6a2b0648908fa349b57d4d8503\\workflow\\ops\\b7101408812f413a\\classification",
+  "feature_hint": "目标正例：表皮细胞：表面观呈多角形或类长方形的细胞，排列紧密成片，壁平直、波状弯曲或连珠状增厚；种皮来源者多呈红棕色或黄棕色 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；导管：管腔/环纹/网纹；石细胞：厚壁/胞腔"
+}

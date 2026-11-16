@@ -1,0 +1,14 @@
+{
+  "dets": [],
+  "roi": [
+    0,
+    0,
+    1920,
+    1080
+  ],
+  "feature_id": "needle_crystal",
+  "engine": "glm_targeted",
+  "count": 0,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

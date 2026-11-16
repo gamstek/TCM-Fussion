@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "stone_cell_view_04_glm53e654d2ac88_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\de38a1180d30386d\\features\\crops\\stone_cell_view_04_glm53e654d2ac88_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\de38a1180d30386d\\features\\crops\\stone_cell_view_04_glm53e654d2ac88_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\view_04.tif",
+  "tight_box": [
+    2699.5,
+    1178.75,
+    2966.5,
+    1288.25
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_retest_20261110_1344\\runs\\fusion_eef8d7603cfe42948f812e5c6245e5eb\\workflow\\ops\\5cceffcc0a269a08\\classification",
+  "feature_hint": "目标正例：石细胞：细胞壁显著增厚、中央胞腔小的厚壁细胞，外形类方形、类圆形、多角形、分枝状或波状弯曲，壁上可见层纹与孔沟 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；表皮细胞：片状/多边形边界；分泌组织：油室/油管/腔隙",
+  "tight_box_local": [
+    24.5,
+    24.75,
+    291.5,
+    134.25
+  ]
+}

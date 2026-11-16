@@ -1,0 +1,12 @@
+{
+  "schema": "code-signature-guard/v1",
+  "baseline": "be5cbc42998332aab4170c7601231e24af4affa725fface9f902560b72a00f2e",
+  "current": "be5cbc42998332aab4170c7601231e24af4affa725fface9f902560b72a00f2e",
+  "changed": false,
+  "changed_at": null,
+  "checks": 184,
+  "phase": "finish",
+  "where": null,
+  "started_at": "2026-11-09T16:46:29+0800",
+  "updated_at": "2026-11-09T17:16:44+0800"
+}
