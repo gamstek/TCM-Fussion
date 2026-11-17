@@ -17,6 +17,7 @@ from collections import Counter
 from pathlib import Path
 
 from .storage import read_json
+from .provisional_evidence import build as build_provisional
 
 STRONG_CONF = 0.6
 TIE_EPS = 1e-9
@@ -192,13 +193,33 @@ def project_output(sample_id, verdict, result, a):
                                                r.get("confidence") or 0), reverse=True)
             ranking = tied + [r for r in ranking if r not in ties]
             tie_break["applied"] = bool(ranking and ranking[0].get("id") == a_label)
-    top = ranking[0] if ranking else None
+    try:
+        provisional = build_provisional(verdict, result)
+    except Exception as exc:
+        # 暂定排序是旁路；失败不能改变正式交付。
+        provisional = {"schema": "provisional-ranking/v1", "error": f"{type(exc).__name__}: {exc}"}
+    formal_top = ranking[0] if ranking else None
+    top = formal_top
+    selection = 'formal'
+    if provisional.get('ranking') and formal_top:
+        prov_top = provisional['ranking'][0]
+        prov_id = prov_top.get('candidate_id')
+        has_partial = any(s.get('state') in {'DETECTED_PENDING', 'PARTIAL_MATCH'}
+                          for s in prov_top.get('criterion_states') or [])
+        # 正式未确认时，允许暂定排序成为交付层的 tentative 首选；
+        # 正式 verdict/support_count 不变，仍单独保留。
+        if (verdict.get('verdict') not in {'confirmed', 'probable', 'group_level'}
+                and prov_id and prov_id != formal_top.get('id') and has_partial):
+            candidate = next((r for r in ranking if r.get('id') == prov_id), None)
+            if candidate:
+                top = candidate
+                selection = 'provisional'
     ambiguous = [r for r in ranking[1:5] if top and abs((r.get("score") or 0) - (top.get("score") or 0)) <= TIE_EPS]
     status = {"confirmed": "confirmed", "probable": "probable",
               "group_level": "group_level"}.get(verdict.get("verdict"), "tentative")
     status_note = None
     needs_review = bool(verdict.get('needs_review') or result.get('needs_review')
-                        or status == 'tentative')
+                        or status == 'tentative' or selection == 'provisional')
     conclusion = verdict.get('conclusion')
     conclusion_id = conclusion.get('id') if isinstance(conclusion, dict) else conclusion
     if conclusion_id and top and conclusion_id != top.get('id'):
@@ -226,6 +247,14 @@ def project_output(sample_id, verdict, result, a):
                 missing.append({"feature_id": check.get("feature_id"), "state": "NOT_DETECTED"})
             elif check.get("state") not in {"IN_RANGE", "EXTREME", "NO_REF"}:
                 missing.append({"feature_id": check.get("feature_id"), "state": check.get("state")})
+    provisional['selection'] = selection
+    provisional['selected_candidate'] = top.get('id') if top else None
+    alternative_rows = []
+    if formal_top is not None and formal_top is not top:
+        alternative_rows.append(formal_top)
+    for row in ranking:
+        if row is not top and row is not formal_top:
+            alternative_rows.append(row)
     return {
         "schema": "diagnosis-output/v1",
         "sample_id": sample_id,
@@ -237,12 +266,17 @@ def project_output(sample_id, verdict, result, a):
             "a_probability": top.get("a_probability"),
             "b_confidence": top.get("b_confidence"),
             "fused_score": top.get("fused_score"),
+            "selection": selection,
+            "formal_score": top.get("score"),
+            "provisional_score": next((r.get('provisional_score') for r in provisional.get('ranking', [])
+                                       if r.get('candidate_id') == top.get('id')), None),
             "admission": verdict.get("candidate_admission", {}).get("decision"),
         },
         "candidate_admission": verdict.get("candidate_admission"),
+        "provisional": provisional,
         "alternatives": [{"id": r.get("id"), "display": r.get("display"),
                           "score": r.get("score"), "confidence": r.get("confidence")}
-                         for r in ranking[1:5]],
+                         for r in alternative_rows[:4]],
         "ambiguous_with": [r.get("id") for r in ambiguous],
         "tie_break": tie_break,
         "strong_observations": observations,
@@ -252,7 +286,6 @@ def project_output(sample_id, verdict, result, a):
         "review_required": needs_review,
         "final_assessment": result.get('final_assessment'),
         "judgement": (result.get('final_assessment') or {}).get('judgement'),
-        "needle_audit": result.get('needle_audit'),
         "feature_audit": result.get('feature_audit'),
         "image_exemplar_audits": _image_audits(result.get('operations')),
         "audit": {

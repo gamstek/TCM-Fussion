@@ -155,6 +155,72 @@ def validate_reply(packet, reply):
     return reply
 
 
+def _compact_fact(fact):
+    kind=fact.get('kind');data=copy.deepcopy(fact.get('data') or {})
+    if kind=='classification':
+        result=data.get('result') or {}
+        data={'artifact_id':data.get('artifact_id'),
+              'identity_verified':data.get('identity_verified'),
+              'label':result.get('label'),'feature_id':result.get('feature_id'),
+              'confidence':result.get('confidence'),'reject':result.get('reject'),
+              'reason':str(result.get('reason') or '')[:160]}
+    elif kind=='measurement_record':
+        record=copy.deepcopy(data.get('record') or {})
+        keep=('image_stem','instance_id','feature','calibration_px_per_um',
+              'calibration_status','feret_max_um','feret_min_um','mean_width_um',
+              'median_width_um','area_um2','n_components','flags','quality')
+        data={'record':{k:record.get(k) for k in keep if k in record},
+              'use_qualification':data.get('use_qualification')}
+    elif kind=='observation':
+        action=data.get('action') or {};result=data.get('result') or {}
+        data={'accepted':data.get('accepted'),'scope':data.get('scope'),
+              'action':{'tool':action.get('tool'),'args':{k:action.get('args',{}).get(k)
+                        for k in ('image_id','feature_id')}},
+              'result':{k:result.get(k) for k in ('ok','present','conf','reason')
+                        if k in result}}
+    elif kind=='operation':
+        data={k:data.get(k) for k in ('tool','status','error_code','repair_completed')}
+    elif kind=='quality_assessment':
+        data={'status':data.get('status'),
+              'findings':[f.get('code') for f in data.get('findings') or []]}
+    elif kind=='admitted_card':
+        data={k:data.get(k) for k in ('feature_id','state','present','reliability') if k in data}
+    return {**fact,'data':data}
+
+
+def compact_packet(packet, limit=120000):
+    """Lossless IDs, bounded model view; final_evidence.json keeps the full packet."""
+    model={k:copy.deepcopy(v) for k,v in packet.items()
+           if k not in {'artifact_index','rule_decision'}}
+    verdict=model.get('formal_verdict') or {}
+    if isinstance(verdict,dict):
+        model['formal_verdict']={k:copy.deepcopy(v) for k,v in verdict.items()
+                                 if k not in {'ranking'}}
+        model['formal_verdict']['ranking']=[{k:row.get(k) for k in
+            ('id','display','kind','verdict','confidence','support_count','needs_review')}
+            for row in verdict.get('ranking') or []]
+    model['facts']=[_compact_fact(f) for f in packet.get('facts') or []]
+    text=json.dumps(model,ensure_ascii=False)
+    if len(text)<=limit:return model
+    # Preserve fact IDs and candidate references; drop only bulky non-decision details.
+    for kind in ('a_prior','measurement_record','quality_assessment','classification',
+                 'observation','admitted_card','calibration','hypothesis'):
+        for fact in model['facts']:
+            if fact.get('kind')==kind:
+                fact['data']={k:v for k,v in fact.get('data',{}).items()
+                              if k in {'artifact_id','feature_id','label','identity_verified',
+                                       'image_stem','instance_id','calibration_px_per_um',
+                                       'calibration_status','use_qualification','state',
+                                       'present','reliability','accepted','scope','status'}}
+        text=json.dumps(model,ensure_ascii=False)
+        if len(text)<=limit:return model
+    model['facts']=[{'id':f['id'],'kind':f['kind'],
+                     'supports_candidate_ids':f.get('supports_candidate_ids',[]),
+                     'counters_candidate_ids':f.get('counters_candidate_ids',[]),
+                     'data':{}} for f in model['facts']]
+    return model
+
+
 def request_model(runtime, packet):
     from adjudicator import AdjudicatorClient
     from .hard_calls import post
@@ -164,7 +230,7 @@ def request_model(runtime, packet):
     if not client.api_key:
         raise IntegrationError('CONFIG_MISSING','缺收尾研判凭据')
     # Archive is lossless; never silently truncate the evidence to fit a model.
-    payload={k:v for k,v in packet.items() if k not in {'artifact_index','rule_decision'}}
+    payload=compact_packet(packet)
     text=json.dumps(payload,ensure_ascii=False)
     if len(text)>120000:
         raise IntegrationError('ASSESSMENT_CONTEXT_LIMIT','证据包超出单次文本研判上限，使用完整程序化汇总')
@@ -204,6 +270,11 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
         raise IntegrationError('SIMULATION_SCOPE','真实研判禁止注入模型替身')
     packet=build_packet(runtime,verdict,result)
     path=Path(directory)/'final_evidence.json';write_json(path,packet)
+    try:
+        from .provisional_evidence import build as build_provisional
+        provisional=build_provisional(verdict, {'valid_classifications':runtime.valid_classifications()})
+    except Exception as exc:
+        provisional={'schema':'provisional-ranking/v1','error':f'{type(exc).__name__}: {exc}'}
     reply=fallback_reply(packet);method='deterministic';usage=None;failure=None;proposal=None;validation_error=None
     enabled=responder is not None or runtime.workflow.limits.get('finalization',0)
     closed=read_json(runtime.workflow.budget_path).get('closed')
@@ -223,6 +294,10 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
                 validation_error=str(exc)
     if runtime.workflow.store.current()['version']!=packet['evidence_version']:
         packet=build_packet(runtime,verdict,result);write_json(path,packet)
+        try:
+            provisional=build_provisional(verdict, {'valid_classifications':runtime.valid_classifications()})
+        except Exception as exc:
+            provisional={'schema':'provisional-ranking/v1','error':f'{type(exc).__name__}: {exc}'}
         reply=fallback_reply(packet);method='deterministic';failure='EVIDENCE_CHANGED_DURING_FINALIZATION'
     facts={f['id']:f for f in packet['facts']};cid=reply['candidate_id']
     row=next((c for c in packet['candidates'] if c['id']==cid),{})
@@ -230,14 +305,31 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
     formal_id=conclusion.get('id') if isinstance(conclusion,dict) else conclusion
     authorized=bool(formal.get('verdict') in {'confirmed','probable','group_level'}
                     and not formal.get('needs_review') and cid and cid==formal_id)
+    selection='formal'
+    if not authorized and provisional.get('ranking'):
+        prov_top=provisional['ranking'][0]
+        has_partial=any(s.get('state') in {'DETECTED_PENDING','PARTIAL_MATCH'}
+                        for s in prov_top.get('criterion_states') or [])
+        if prov_top.get('candidate_id') != cid and has_partial:
+            cid=prov_top.get('candidate_id')
+            row=next((c for c in packet['candidates'] if c['id']==cid),row)
+            selection='provisional'
+            authorized=False
     positive=any(facts[ref]['kind']!='a_prior' for ref in reply['support_refs'])
     level=formal['verdict'] if authorized else 'tentative' if cid else 'undetermined'
     prefix={'confirmed':'现有合格证据确认：','probable':'现有证据较支持：',
-            'group_level':'现有证据可判至药材组：'}.get(level,'现有证据暂倾向：')
+            'group_level':'现有证据可判至药材组：'}.get(
+                level, '暂定排序倾向：' if selection=='provisional' else '现有证据暂倾向：')
     judgement=(prefix+row.get('display',cid)
                if cid else '现有证据不足以给出可靠的药材倾向')
     if cid and not authorized:
         judgement+='；尚不能确认，需要复核。' if positive else '；仅有A先验，缺少独立显微支持，不构成鉴定。'
+    if cid and not authorized:
+        pending=[s for r in provisional.get('ranking',[]) if r.get('candidate_id')==cid
+                 for s in r.get('pending_verification',[]) if s.get('role')=='required']
+        if pending:
+            judgement+=('；中间证据显示 ' + '、'.join(str(s.get('feature_id')) for s in pending)
+                        + ' 待核验，正式证据不足。')
     compared=list(dict.fromkeys([r['id'] for r in formal.get('ranking',[])]+([cid] if cid else [])))
     comparison=[]
     for identifier in compared:
@@ -251,12 +343,14 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
                              f['data'].get('state') not in {'IN_RANGE','EXTREME','NO_REF'}]})
     value={'schema':'final-assessment/v1','method':method,'simulation':runtime.simulation,
         'stop_reason':result.get('stop_reason'),'candidate_id':cid,'candidate_display':row.get('display'),
+        'selection':selection,
         'status':level,'judgement':judgement,'explanation':reply['explanation'],
         'supporting_evidence':[facts[x] for x in reply['support_refs']],
         'counterevidence':[facts[x] for x in reply['counter_refs']],
         'unresolved':[facts[x] for x in reply['unresolved_refs']],
         'formal_verdict':formal.get('verdict'),'formal_conclusion_id':formal_id,
         'candidate_comparison':comparison,'rule_notes':formal.get('notes',[]),
+        'provisional':provisional,
         'review_required':not authorized,'confidence_basis':{
             'rule_confidence':row.get('rule_confidence'),'calibrated_probability':None,
             'level':'high' if level=='confirmed' else 'medium' if authorized else 'low',

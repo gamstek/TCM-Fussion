@@ -1,0 +1,6 @@
+{
+  "tool": "detect_fov_initial",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野6_20261113_1409\\view_01.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野6_20261113_1409\\runs\\fusion_1e7a505033d4451890d735503e9d2357\\workflow\\ops\\fe15aaa25dc62b94\\detection",
+  "boxes": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野6_20261113_1409\\runs\\fusion_1e7a505033d4451890d735503e9d2357\\workflow\\ops\\fe15aaa25dc62b94\\boxes.json"
+}

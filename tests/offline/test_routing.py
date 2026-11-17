@@ -134,8 +134,10 @@ class RoutingTests(unittest.TestCase):
         async def check():
             async with connect_stdio(path) as tools:
                 specs=await tools.call('list_tools_registry')
-                self.assertEqual(len(specs['tools']),11)
+                self.assertEqual(len(specs['tools']),13)
                 self.assertIn('read_quality',{s['name'] for s in specs['tools']})
+                self.assertIn('read_action_catalog',{s['name'] for s in specs['tools']})
+                self.assertIn('read_evidence_detail',{s['name'] for s in specs['tools']})
                 result=await tools.read('read_evidence',{'offset':0,'limit':5},{})
                 self.assertIn('records',result)
                 self.assertTrue(all('herb' not in row for row in result['records']))

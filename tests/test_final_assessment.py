@@ -1,6 +1,7 @@
 """Closing judgement, provenance and shared budget; no live model requests."""
 import asyncio
 import copy
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -8,7 +9,7 @@ from unittest.mock import patch
 
 from TCM_Fusion.lib.storage import IntegrationError,read_json,write_json
 from TCM_Fusion.lib.workflow_runtime import WorkflowRuntime
-from TCM_Fusion.lib.final_assessment import build_packet,finalize,validate_reply,request_model
+from TCM_Fusion.lib.final_assessment import build_packet,compact_packet,finalize,validate_reply,request_model
 from TCM_Fusion.lib.agent_tools import LocalToolbox,FixtureBackend
 from TCM_Fusion.lib.react_graph import run_react,ScriptedPlanner
 from TCM_Fusion.tests.test_workflow import StageFixture
@@ -50,6 +51,22 @@ class FinalAssessmentTests(unittest.TestCase):
             self.assertEqual(value['new_image_calls'],0);self.assertTrue(value['review_required'])
         self.assertEqual(self.runtime.workflow.store.current()['version'],before)
         self.assertEqual(self.verdict,original)
+
+    def test_compact_packet_bounds_model_payload_and_keeps_refs(self):
+        facts=[{'id':f'observation:{i}','kind':'observation',
+                'data':{'accepted':True,'action':{'tool':'presence_check',
+                         'args':{'image_id':'img','feature_id':'f'}},
+                        'result':{'ok':True,'present':True,'reason':'x'*2000}},
+                'supports_candidate_ids':['c'],'counters_candidate_ids':[]}
+               for i in range(200)]
+        packet={'schema':'assessment-evidence/v1','sample_id':'s','evidence_version':'v',
+                'formal_verdict':{'ranking':[{'id':'c','checks':[{'feature_id':'f'}]*200}]},
+                'candidates':[{'id':'c'}],'facts':facts,'artifact_index':{'x':'y'*10000}}
+        model=compact_packet(packet)
+        self.assertLess(len(json.dumps(model,ensure_ascii=False)),120000)
+        self.assertEqual([f['id'] for f in model['facts']], [f['id'] for f in facts])
+        self.assertEqual(model['facts'][0]['supports_candidate_ids'],['c'])
+        self.assertNotIn('artifact_index',model)
 
     def test_injected_model_assessment_is_distinct_from_rule_confirmation(self):
         value=finalize(self.runtime,self.verdict,self.result,self.root/'model',responder=self.reply)

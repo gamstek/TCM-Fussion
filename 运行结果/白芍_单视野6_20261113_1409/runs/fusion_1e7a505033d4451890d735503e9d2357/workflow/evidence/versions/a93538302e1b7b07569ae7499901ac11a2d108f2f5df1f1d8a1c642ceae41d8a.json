@@ -1,0 +1,17 @@
+{
+  "identity": "ced82127b5f4e2d6afbd770ab2c56fc037bdcf94047d28e1a7b4eeb4e209d137",
+  "parent": "d11df5d91b27d3e3cdcabd9ffce2b813917b68bf7749c0765e470c4a2cb120b5",
+  "artifacts": {
+    "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13": {
+      "id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野6_20261113_1409\\view_01.jpg",
+      "sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "parents": [],
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "a93538302e1b7b07569ae7499901ac11a2d108f2f5df1f1d8a1c642ceae41d8a"
+}

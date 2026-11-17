@@ -1,0 +1,68 @@
+{
+  "crops": [
+    {
+      "id": "crop:img_0bc71ad0646e14d3fc1bc90db830e0f9be70874231dbec70949f3046377685c4:fiber_view_01_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\18f9adf63ad00426\\detection\\crops\\fiber_view_01_01.png"
+    },
+    {
+      "id": "crop:img_44e59470e3e3556dd374397194975c4f62717a55db77714867fa39e628728830:stone_cell_view_02_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\ab94aa31dcb4a483\\yolo\\detection\\crops\\stone_cell_view_02_01.png"
+    },
+    {
+      "id": "crop:img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5:epidermis_cell_view_03_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\14722656bb92d5f4\\detection\\crops\\epidermis_cell_view_03_02.png"
+    },
+    {
+      "id": "crop:img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5:fiber_view_03_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\14722656bb92d5f4\\detection\\crops\\fiber_view_03_01.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:fiber_view_04_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\yolo\\detection\\crops\\fiber_view_04_01.png"
+    },
+    {
+      "id": "crop:img_44e59470e3e3556dd374397194975c4f62717a55db77714867fa39e628728830:needle_crystal_view_02_glm53e654d2ac88_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\ab94aa31dcb4a483\\features\\crops\\needle_crystal_view_02_glm53e654d2ac88_01.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stoma_view_04_glm059f3d033e13_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stoma_view_04_glm059f3d033e13_01.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm059f3d033e13_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stone_cell_view_04_glm059f3d033e13_01.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm059f3d033e13_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stone_cell_view_04_glm059f3d033e13_02.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm059f3d033e13_03",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stone_cell_view_04_glm059f3d033e13_03.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm059f3d033e13_04",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stone_cell_view_04_glm059f3d033e13_04.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm220f18619613_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stone_cell_view_04_glm220f18619613_01.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm53e654d2ac88_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stone_cell_view_04_glm53e654d2ac88_01.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm53e654d2ac88_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stone_cell_view_04_glm53e654d2ac88_02.png"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm53e654d2ac88_03",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\1e12b9491cc66078\\features\\crops\\stone_cell_view_04_glm53e654d2ac88_03.png"
+    }
+  ],
+  "weights": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计与权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+  "meta": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计与权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\cnn\\predictions.json",
+  "batch_size": 16
+}

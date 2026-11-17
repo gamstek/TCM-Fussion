@@ -1,0 +1,71 @@
+{
+  "identity": "ced82127b5f4e2d6afbd770ab2c56fc037bdcf94047d28e1a7b4eeb4e209d137",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "白芍",
+    "茯苓",
+    "G3"
+  ],
+  "hypotheses": {
+    "白芍": {
+      "status": "investigating",
+      "reason": "以最有区分性的P0判据启动：簇晶（白芍/G1）与方晶（G3）互为竞争判据，茯苓菌丝为独立形态学通道；三者可在同一初检视野上并行推进定位与测量。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "茯苓": {
+      "status": "paused",
+      "reason": "当前唯一视野scene_check显示为结晶场景（游离大团块，无细胞网格），未见菌丝/菌团形态线索，暂停茯苓调查方向，不删除其证据资格",
+      "evidence_digest": "fa34dddffe3882a5588f2a0c762274467cc27eda45bf57de7937b3dbb05a7f3c",
+      "decision_source": "model"
+    },
+    "G3": {
+      "status": "investigating",
+      "reason": "以最有区分性的P0判据启动：簇晶（白芍/G1）与方晶（G3）互为竞争判据，茯苓菌丝为独立形态学通道；三者可在同一初检视野上并行推进定位与测量。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "以最有区分性的P0判据启动：簇晶（白芍/G1）与方晶（G3）互为竞争判据，茯苓菌丝为独立形态学通道；三者可在同一初检视野上并行推进定位与测量。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "以最有区分性的P0判据启动：簇晶（白芍/G1）与方晶（G3）互为竞争判据，茯苓菌丝为独立形态学通道；三者可在同一初检视野上并行推进定位与测量。"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "以最有区分性的P0判据启动：簇晶（白芍/G1）与方晶（G3）互为竞争判据，茯苓菌丝为独立形态学通道；三者可在同一初检视野上并行推进定位与测量。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "茯苓",
+          "status": "paused",
+          "reason": "当前唯一视野scene_check显示为结晶场景（游离大团块，无细胞网格），未见菌丝/菌团形态线索，暂停茯苓调查方向，不删除其证据资格"
+        }
+      ],
+      "evidence_digest": "fa34dddffe3882a5588f2a0c762274467cc27eda45bf57de7937b3dbb05a7f3c",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

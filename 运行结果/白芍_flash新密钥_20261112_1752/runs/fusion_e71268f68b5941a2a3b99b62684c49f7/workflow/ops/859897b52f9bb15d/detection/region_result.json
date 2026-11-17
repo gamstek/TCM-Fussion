@@ -1,0 +1,14 @@
+{
+  "dets": [],
+  "roi": [
+    1839,
+    1228,
+    2159,
+    1585
+  ],
+  "feature_id": "cluster_crystal",
+  "engine": "glm_targeted",
+  "count": 0,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

@@ -1,0 +1,16 @@
+{
+  "crops": [
+    {
+      "id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野6_20261113_1409\\runs\\fusion_1e7a505033d4451890d735503e9d2357\\workflow\\ops\\fe15aaa25dc62b94\\detection\\crops\\cluster_crystal_view_01_01.png"
+    },
+    {
+      "id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野6_20261113_1409\\runs\\fusion_1e7a505033d4451890d735503e9d2357\\workflow\\ops\\fe15aaa25dc62b94\\detection\\crops\\cluster_crystal_view_01_02.png"
+    }
+  ],
+  "weights": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计与权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+  "meta": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计与权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野6_20261113_1409\\runs\\fusion_1e7a505033d4451890d735503e9d2357\\workflow\\cnn\\predictions.json",
+  "batch_size": 16
+}

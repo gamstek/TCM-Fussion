@@ -1,8 +1,0 @@
-{
-  "job_id": "fusion_resume_once_0001",
-  "sample_id": "resume_20261109_1730",
-  "status": "running",
-  "stage": "workflow_agent",
-  "config_sha256": "resume",
-  "result": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_resume_20261109_1745\\runs\\fusion_resume_once_0001\\fusion.json"
-}

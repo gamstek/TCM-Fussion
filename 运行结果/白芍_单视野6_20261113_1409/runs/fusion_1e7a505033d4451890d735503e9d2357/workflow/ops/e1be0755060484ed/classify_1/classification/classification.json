@@ -1,0 +1,39 @@
+{
+  "label": "草酸钙簇晶",
+  "raw_label": "00_cluster_crystal",
+  "feature_id": "cluster_crystal",
+  "second": "",
+  "confidence": "high",
+  "reason": "CNN 高置信初判",
+  "source": "cnn",
+  "focus": null,
+  "sent_hw": null,
+  "granularity": "instance",
+  "confidence_score": 0.873642,
+  "confidence_scale": "cnn_prob",
+  "crop_id": "cluster_crystal_view_01_02",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野6_20261113_1409\\runs\\fusion_1e7a505033d4451890d735503e9d2357\\workflow\\ops\\fe15aaa25dc62b94\\detection\\crops\\cluster_crystal_view_01_02.png",
+  "glm_confidence": null,
+  "yolo_confidence": null,
+  "yolo_checked": false,
+  "confidence_source": "cnn",
+  "cnn_score": 0.873642,
+  "cnn_entropy": 0.262026,
+  "cnn_topk": [
+    {
+      "class": "00_cluster_crystal",
+      "feature_id": "cluster_crystal",
+      "prob": 0.873642
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.020125
+    },
+    {
+      "class": "01_single_crystal",
+      "feature_id": "single_crystal",
+      "prob": 0.017866
+    }
+  ]
+}

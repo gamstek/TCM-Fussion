@@ -24,12 +24,12 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
                           'detector_config':{'type':'string','minLength':1},
                           'python':{'type':'string','minLength':1},
                           'confidence':{'type':'number','exclusiveMinimum':0,'maximum':1}}},
-    'execution':{'enum':['shadow','active']},
+    'execution':{'const':'active'},
     'p0_priority':{'type':'boolean'},
     'min_support_features':{'type':'integer','enum':[1,2]},
     'final_assessment_llm':{'type':'boolean'},
     'final_assessment_seconds':{'type':'number','exclusiveMinimum':0,'maximum':120},
-    'needle_audit':{'type':'boolean'},
+    'needle_audit':{'type':'boolean'},  # deprecated: 主链只写 feature_audit
     'feature_audit':{'type':'boolean'},
     'feature_audit_features':{'type':'array','items':{'type':'string'}},
     'image_exemplar_audit':{'type':'boolean'},
@@ -58,8 +58,25 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'screen_top_k':{'type':'integer','minimum':1,'maximum':6},
     'screen_max_rois':{'type':'integer','minimum':1,'maximum':20},
     'fast_yolo_stage2':{'type':'boolean'},
+    'early_verification':{'type':'boolean'},
+    'fast_recovery_selection':{'enum':['legacy_bundle','per_feature']},
+    'fast_recovery_roles':{'type':'array','minItems':1,'uniqueItems':True,
+                           'items':{'enum':['required','supporting']}},
     'fast_fallback_max_features':{'type':'integer','minimum':1,'maximum':4},
     'fast_fallback_max_locate_calls':{'type':'integer','minimum':1,'maximum':64},
+    'fast_classify_max_per_view':{'type':'integer','minimum':1,'maximum':32},
+    'classify_batch_enabled':{'type':'boolean'},
+    'context_compact':{'type':'boolean'},
+    'context_max_actions':{'type':'integer','minimum':5,'maximum':64},
+    'auto_measure_after_segment':{'type':'boolean'},
+    'auto_prepare_stage':{'type':'boolean'},
+    'candidate_group_verification':{'type':'boolean'},
+    'suppress_repeated_measurement':{'type':'boolean'},
+    'supporting_probe_total':{'type':'integer','minimum':0,'maximum':20},
+    'supporting_probe_per_candidate':{'type':'integer','minimum':1,'maximum':5},
+    'context_recent_observations':{'type':'integer','minimum':1,'maximum':32},
+    'context_recent_operations':{'type':'integer','minimum':1,'maximum':64},
+    'tool_timeout_seconds':{'type':'integer','minimum':30,'maximum':3600},
     'feature_scan_tile_policy':{'enum':['prescreen','full']},
     'screen_concurrency':{'type':'integer','minimum':1,'maximum':8},
     'needle_scan_enabled':{'type':'boolean'},
@@ -84,9 +101,11 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'locate_min_box_side':{'type':'integer','minimum':16,'maximum':1024},
     'locate_min_roi_side':{'type':'integer','minimum':64,'maximum':2048},
     'box_quality_enabled':{'type':'boolean'},
+    'box_quality_block_low_detail':{'type':'boolean'},
+    'igm_size':{'type':'string','pattern':'^[0-9]{3,4}x[0-9]{3,4}$'},
     'box_quality_retry':{'type':'boolean'},
     'enabled_tools':{'type':'array','uniqueItems':True,'items':{'enum':[
-        'detect_fov_initial','calibrate_fov','segment_instance','classify_target','measure_instances','detect_region',
+        'detect_fov_initial','calibrate_fov','segment_instance','classify_target','classify_crops_batch','measure_instances','detect_region',
         'propose_regions','roi_screen','roi_screen_batch','locate_feature','needle_scan','feature_scan','hybrid_scan','image_exemplar_audit']}},
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
@@ -123,19 +142,6 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
                              baseline=code_baseline if code_baseline is not None else runtime.workflow.code_signature)
     guard.check('workflow_start')
     write_json(directory/'b_snapshot.json',{'verdict':runtime.original,'provenance':'initial_rule_state_not_completed_b'})
-    if agent['workflow'].get('execution')=='shadow':
-        guard.check('shadow_start')
-        actions=runtime.legal_actions({'observations':[],'attempted':[]})
-        value={'schema':'ab-fusion/v2','route':'workflow_shadow','sample_id':runtime.sample_id,
-               'simulation':False,'real_model_validation':None,'needs_review':True,
-               'a':a,'routing':routing,'b':None,'b_executed':False,
-               'agent':{'executed':False,'actions':actions,'context':runtime.summary({'observations':[]}),
-                        'new_image_api_calls':0},'limitations':['仅计划，不执行B阶段或视觉补看；不能作为识别结果']}
-        write_json(directory/'fusion.json',value)
-        (directory/'report.md').write_text('# 工作流shadow计划\n\n只查询现有证据与合法动作；未执行视觉工具。\n',encoding='utf-8')
-        guard.finish()
-        job.update(status='completed',stage='done',needs_review=True,route='workflow_shadow')
-        write_json(status_path,job);return directory
     options={'max_requests':agent.get('judgement_request_budget',6),'max_steps':agent.get('max_steps',6),
              'planner_mode':agent.get('planner','llm'),'allow_network':config.get('allow_network',False),
              'trace_path':directory/'agent_trace.json'}
@@ -162,7 +168,7 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
         guard.stop()
     from .storage import read_json
     runtime.score(result['observations'])
-    if workflow.get('feature_audit', False) or workflow.get('needle_audit', False):
+    if workflow.get('feature_audit', False):
         try:
             from .needle_observation import build_feature_audit
             feature_ids = workflow.get('feature_audit_features') or [
@@ -171,13 +177,10 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
                 if row.get('feature_id')]
             feature_ids = [str(x) for x in feature_ids if str(x)]
             result['feature_audit']=build_feature_audit(directory, feature_ids=feature_ids)
-            if 'needle_crystal' in feature_ids:
-                result['needle_audit']=result['feature_audit']
         except Exception as exc:
             # 旁路审计失败不得改变原裁决或关闭任务。
             result['feature_audit']={'schema':'feature-audit/v1','non_blocking':True,
                                      'error':f'{type(exc).__name__}: {exc}'}
-            result['needle_audit']=result['feature_audit']
     guard.check('before_fusion')
     if runtime.workflow.purpose_quality():
         from .purpose_evidence import project
@@ -194,6 +197,8 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
                   resources=read_json(runtime.workflow.budget_path),
                   blocked_tools=runtime.workflow.blocked_tools(),
                   operations=read_json(runtime.workflow.operations)['entries'])
+    # 暂定排序/报告只读当前有效证据快照，不读取历史 operation 中的失效分类。
+    result['valid_classifications']=runtime.valid_classifications()
     import contracts
     verdict={'sample_id':runtime.sample_id,**copy.deepcopy(result['decision']),'needs_review':result['needs_review'],
              'source_images':[str(v['path']) for v in runtime.images.values()],

@@ -260,6 +260,160 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(any(e.get('policy')=='yolo_initial_and_raw_observation' for e in trace['events']))
         self.assertEqual(trace['stop_reason'], 'planner_request_review')
 
+    def _early_runtime(self, **options):
+        class MatchingStage(StageFixture):
+            def execute(self, session, tool, target, work, context):
+                if tool == 'classify_target':
+                    folder = work / 'classification'
+                    write_json(folder / 'classification.json', {
+                        'crop_id': target.get('crop_id'), 'feature_id': 'single_crystal',
+                        'label': '草酸钙方晶', 'confidence': 'high', 'reason': '明确替身',
+                        'reject': None})
+                    return {'classification': str(folder)}
+                if tool == 'feature_scan':
+                    folder = work / 'scan/crops'
+                    folder.mkdir(parents=True)
+                    completion = work / 'scan/scan_result.json'
+                    write_json(completion, {'feature_id': target['feature_id'], 'count': 0})
+                    return {'crops_dir': str(folder), 'completion': str(completion)}
+                return super().execute(session, tool, target, work, context)
+        config = {'agent_policy': 'adaptive_v2', 'fast_yolo_stage2': True,
+                  'fast_recovery_selection': 'per_feature', 'agent_driven_coverage': True,
+                  'targeted_recovery': True, 'early_verification': True,
+                  'max_planning': 8, **options}
+        runtime = self.runtime(**config)
+        runtime.workflow.backend = MatchingStage()
+        runtime.a = {'status': 'ok', 'fold_rankings': [[
+            {'label': '枳壳', 'probability': .5}, {'label': '白芍', 'probability': .3},
+            {'label': '知母', 'probability': .2}]] * 5}
+        for tool in ('detect_fov_initial', 'classify_target'):
+            action = next(a for a in runtime.workflow.propose() if a['tool'] == tool)
+            self.assertEqual(runtime.workflow.execute(action)['status'], 'done')
+        return runtime
+
+    async def test_early_menu_keeps_segment_while_other_required_are_missing(self):
+        runtime = self._early_runtime()
+        menus = []
+        class Planner:
+            def choose(self, context):
+                menus.append(copy.deepcopy(context))
+                selected = next((a for a in context['actions'] if a['tool'] == 'segment_instance'),
+                                context['actions'][0])
+                return {'action_id': selected['action_id'], 'decision_summary': '核验现有判据'}, None
+        toolbox = LocalToolbox(runtime, ledger_path=self.root/'early_ledger.json', backend=FixtureBackend())
+        trace = await run_react(runtime, toolbox, planner=Planner(), planner_mode='scripted', max_steps=1)
+        tools = {a['tool'] for a in menus[0]['actions']}
+        self.assertIn('segment_instance', tools)
+        self.assertIn('feature_scan', tools)
+        self.assertFalse(menus[0]['coverage']['required_all'])
+        self.assertTrue(any(e.get('tool') == 'segment_instance' for e in trace['events']))
+        self.assertTrue(any(e.get('phase') == 'planning_menu' for e in trace['events']))
+
+    async def test_early_menu_still_allows_model_to_choose_scan(self):
+        runtime = self._early_runtime()
+        observed = []
+        class Planner:
+            def choose(self, context):
+                observed.append(copy.deepcopy(context))
+                selected = next(a for a in context['actions'] if a['tool'] == 'feature_scan')
+                return {'action_id': selected['action_id'],
+                        'decision_summary': '当前补查竞争候选有价值，暂缓现有实例核验'}, None
+        trace = await run_react(runtime, LocalToolbox(runtime, ledger_path=self.root/'scan_ledger.json',
+                               backend=FixtureBackend()), planner=Planner(), planner_mode='scripted', max_steps=1)
+        self.assertTrue(observed[0]['verification_opportunities'])
+        self.assertTrue(any(e.get('tool') == 'feature_scan' for e in trace['events']))
+        self.assertFalse(any(e.get('tool') == 'segment_instance' for e in trace['events']))
+
+    async def test_early_measurement_is_offered_without_clearing_scan_queue(self):
+        runtime = self._early_runtime()
+        segment = next(a for a in runtime.workflow.propose() if a['tool'] == 'segment_instance')
+        self.assertEqual(runtime.workflow.execute(segment)['status'], 'done')
+        menus = []
+        class Planner:
+            def choose(self, context):
+                menus.append(copy.deepcopy(context))
+                selected = next(a for a in context['actions'] if a['tool'] == 'measure_instances')
+                return {'action_id': selected['action_id'], 'decision_summary': '完成真实量化'}, None
+        trace = await run_react(runtime, LocalToolbox(runtime, ledger_path=self.root/'measure_ledger.json',
+                               backend=FixtureBackend()), planner=Planner(), planner_mode='scripted', max_steps=1)
+        opportunities = menus[0]['verification_opportunities']
+        self.assertEqual(opportunities[0]['tool'], 'measure_instances')
+        self.assertIn('G3', {c['candidate_id'] for c in opportunities[0]['criteria']})
+        self.assertTrue(any(a['tool'] == 'feature_scan' for a in menus[0]['actions']))
+        self.assertTrue(any(e.get('tool') == 'measure_instances' for e in trace['events']))
+
+    async def test_early_advice_does_not_promote_unrelated_instance(self):
+        runtime = self._early_runtime()
+        runtime.a = {'status': 'ok', 'fold_rankings': [[{'label': '知母', 'probability': 1.0}]] * 5}
+        actions = runtime.legal_actions({'observations': [], 'attempted': []})
+        self.assertTrue(any(a['tool'] == 'segment_instance' for a in actions))
+        self.assertEqual(runtime.verification_opportunities(actions), [])
+
+    async def test_early_advice_does_not_invent_unavailable_action(self):
+        runtime = self._early_runtime()
+        actions = [a for a in runtime.legal_actions({'observations': [], 'attempted': []})
+                   if a['tool'] not in {'segment_instance', 'measure_instances'}]
+        self.assertEqual(runtime.verification_opportunities(actions), [])
+
+    async def test_early_advice_checks_full_quantification_budget(self):
+        runtime = self._early_runtime()
+        actions = runtime.legal_actions({'observations': [], 'attempted': []})
+        self.assertTrue(runtime.verification_opportunities(actions, {'recompute': 2, 'total': 2, 'network': 0}))
+        self.assertEqual(runtime.verification_opportunities(actions, {'recompute': 1, 'total': 1, 'network': 0}), [])
+
+    async def test_early_initial_detection_remains_available(self):
+        runtime = self.runtime(agent_policy='adaptive_v2', early_verification=True,
+                               agent_driven_coverage=True, max_planning=4)
+        menus = []
+        class Planner:
+            def choose(self, context):
+                menus.append([a['tool'] for a in context['actions']])
+                return {'action_id': context['actions'][0]['action_id']}, None
+        await run_react(runtime, LocalToolbox(runtime, ledger_path=self.root/'init_ledger.json',
+                        backend=FixtureBackend()), planner=Planner(), planner_mode='scripted', max_steps=1)
+        self.assertEqual(menus[0], ['detect_fov_initial', 'finish', 'request_review'])
+
+    async def test_early_mode_off_preserves_legacy_coverage_filter(self):
+        runtime = self._early_runtime(early_verification=False)
+        menus = []
+        class Planner:
+            def choose(self, context):
+                menus.append([a['tool'] for a in context['actions']])
+                return {'action_id': context['actions'][0]['action_id']}, None
+        await run_react(runtime, LocalToolbox(runtime, ledger_path=self.root/'old_ledger.json',
+                        backend=FixtureBackend()), planner=Planner(), planner_mode='scripted', max_steps=1)
+        self.assertNotIn('segment_instance', menus[0])
+        self.assertIn('feature_scan', menus[0])
+
+    async def test_early_resolved_dimensions_do_not_recommend_repeat_measurement(self):
+        runtime = self._early_runtime()
+        actions = runtime.legal_actions({'observations': [], 'attempted': []})
+        decision = {'ranking': [{'id': 'G3', 'checks': [
+            {'feature_id': 'single_crystal', 'present': True, 'state': 'IN_RANGE'}]}]}
+        before = runtime.workflow.store.current()['version']
+        self.assertEqual(runtime.verification_opportunities(actions, decision=decision), [])
+        self.assertEqual(runtime.workflow.store.current()['version'], before)
+
+    async def test_early_opportunity_uses_model_menu_short_id(self):
+        from types import SimpleNamespace
+        from TCM_Fusion.lib.react_graph import LLMPlanner
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.client = SimpleNamespace(model='fixture', timeout_s=10)
+        planner.config = {}
+        action = {'action_id': 'long-action-identifier', 'tool': 'segment_instance',
+                  'args': {'target_id': 'crop:fixture'}}
+        context = {'actions': [action], 'stop_advisory': {}, 'parallel_observations': [],
+                   'action_objectives': {}, 'verification_opportunities': [
+                       {'action_id': action['action_id'], 'tool': action['tool']} ]}
+        def post(payload, timeout):
+            body = json.loads(payload['messages'][1]['content'])
+            self.assertEqual(body['actions'][0]['action_id'], 'A1')
+            self.assertEqual(body['verification_opportunities'][0]['action_id'], 'A1')
+            return {'choices': [{'message': {'content': '{"action_id":"A1"}'}}]}
+        with patch('TCM_Fusion.lib.hard_calls.post', side_effect=post):
+            reply, usage = planner.choose(context)
+        self.assertEqual(reply['action_id'], action['action_id'])
+
     async def test_v2_p0_gap_is_advisory_and_keeps_independent_checks_available(self):
         runtime = self.runtime(agent_policy='adaptive_v2', targeted_recovery=True)
         runtime.a = {'status': 'ok', 'ranking': [{'label': '龙胆', 'probability': .99},
@@ -507,11 +661,17 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(before,r.workflow.store.current()['version'])
 
     async def test_independent_measurement_and_observation_are_concurrent(self):
+        import threading
         r=self.runtime(max_parallel=2)
         intervals={}
+        measurement_started=threading.Event();observation_started=threading.Event()
         class SlowStage(StageFixture):
             def execute(self,s,tool,target,work,context):
-                if tool=='measure_instances':intervals['m_start']=time.monotonic();time.sleep(.2)
+                if tool=='measure_instances':
+                    intervals['m_start']=time.monotonic();measurement_started.set()
+                    if not observation_started.wait(5):
+                        raise AssertionError('measurement ran without a concurrent observation')
+                    time.sleep(.03)  # Keep the interval wider than a Windows clock tick.
                 result=super().execute(s,tool,target,work,context)
                 if tool=='measure_instances':intervals['m_end']=time.monotonic()
                 return result
@@ -522,7 +682,10 @@ class AdaptiveWorkflowTests(unittest.IsolatedAsyncioTestCase):
         r.a={'status':'ok','ranking':[{'label':'广藿香','probability':.6},{'label':'淫羊藿','probability':.4}]}
         class SlowFixture(FixtureBackend):
             def call(self,*args):
-                intervals['o_start']=time.monotonic();time.sleep(.15)
+                intervals['o_start']=time.monotonic();observation_started.set()
+                if not measurement_started.wait(5):
+                    raise AssertionError('observation ran without concurrent measurement')
+                time.sleep(.03)
                 result=super().call(*args);intervals['o_end']=time.monotonic();return result
         tools=LocalToolbox(r,ledger_path=self.root/'ledger.json',backend=SlowFixture())
         trace=await run_react(r,tools,planner_mode='heuristic',max_steps=2,max_requests=5)

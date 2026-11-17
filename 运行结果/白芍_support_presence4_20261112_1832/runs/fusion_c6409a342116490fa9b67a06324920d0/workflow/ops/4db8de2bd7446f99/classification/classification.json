@@ -1,0 +1,20 @@
+{
+  "label": "草酸钙簇晶",
+  "reject": "",
+  "raw_label": "草酸钙簇晶",
+  "feature_id": "cluster_crystal",
+  "second": "疑似待定",
+  "confidence": "medium",
+  "reason": "多角星状团块，棱角短钝，半透明",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\view_04.jpg",
+  "focus": 272.8,
+  "sent_hw": [
+    768,
+    740
+  ],
+  "granularity": "instance",
+  "confidence_score": 0.65,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "cluster_crystal_view_04_03",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\runs\\fusion_c6409a342116490fa9b67a06324920d0\\workflow\\ops\\de5ddca798e6081b\\detection\\crops\\cluster_crystal_view_04_03.png"
+}

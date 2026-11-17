@@ -1,0 +1,132 @@
+"""Per-action supporting budgets and presence context compaction; no model API."""
+import tempfile
+import unittest
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+
+from TCM_Fusion.lib.agent_tools import FixtureBackend, LocalToolbox
+from TCM_Fusion.lib.probe_budget import describe, check_reservation
+from TCM_Fusion.lib.react_graph import compact_round_context
+from TCM_Fusion.lib.resource_budget import reserve
+from TCM_Fusion.lib.storage import IntegrationError, read_json, write_json
+from TCM_Fusion.lib.workflow_runtime import WorkflowRuntime
+from TCM_Fusion.tests.test_workflow import StageFixture
+
+
+class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.image = self.root / 'fov.png'; self.image.write_bytes(b'explicit-offline-image')
+        self.a = {'status': 'ok', 'ranking': [{'label': '白芍', 'probability': .6},
+                                            {'label': 'G1', 'probability': .4}]}
+        self.runtime = WorkflowRuntime(
+            [self.image], root=self.root / 'workflow', sample_id='probe-budget-test',
+            a=self.a, simulation=True, backend=StageFixture(), workflow_config={
+                'agent_policy': 'adaptive_v2', 'supporting_probe_total': 6,
+                'supporting_probe_per_candidate': 2, 'max_observations': 10,
+                'max_planning': 10, 'max_api_calls': 40, 'max_resource_units': 100})
+        self.backend = FixtureBackend()
+        self.toolbox = LocalToolbox(self.runtime, ledger_path=self.root / 'observations.json',
+                                    max_requests=10, backend=self.backend)
+
+    def presence_actions(self):
+        return [a for a in self.runtime.legal_actions({'observations': [], 'attempted': []})
+                if a['tool'] == 'presence_check' and describe(self.runtime, a)]
+
+    async def test_proposals_do_not_spend_budget(self):
+        before = read_json(self.runtime.workflow.budget_path)
+        first, second = self.presence_actions(), self.presence_actions()
+        self.assertEqual(first, second)
+        self.assertEqual(before, read_json(self.runtime.workflow.budget_path))
+
+    async def test_presence_shadow_is_compacted_before_model_context(self):
+        self.runtime.workflow.config['context_compact'] = True
+        shadow = {
+            'policy_version': 'presence_localization_shadow_v1',
+            'localization': 'valid', 'quality': 'usable', 'identity': 'pending',
+            'state': 'present_pending', 'findings': ['small_box'],
+            'usage_eligibility': {'presence': False, 'length': False},
+            'source_tight_bbox': [1, 2, 30, 40], 'crop_bbox': [0, 0, 50, 60],
+            'quality_diagnostic': {'metrics': {'large': 'x' * 5000}},
+            'artifacts': {'target_png': '/very/long/path/target.png'},
+            'transform': {'scale_xy': [2, 2], 'padding_xy': [0, 0]},
+            'spatial_agreement': [
+                {'artifact_id': 'crop-1', 'feature_id': 'cluster_crystal',
+                 'iou': 0.8, 'possible_duplicate': True,
+                 'possible_identity_conflict': False, 'identity_inference': False}],
+        }
+        context = {'previous_observations': [{'presence_localization': shadow}]}
+        compacted = compact_round_context(context, self.runtime.workflow)
+        value = compacted['previous_observations'][0]['presence_localization']
+        self.assertTrue(value['compacted'])
+        self.assertEqual(value['spatial_agreement']['count'], 1)
+        self.assertTrue(value['spatial_agreement']['possible_duplicate'])
+        self.assertNotIn('artifacts', value)
+        self.assertNotIn('transform', value)
+        self.assertEqual(value['quality_diagnostic']['summary'], 'details_in_diagnostic_json')
+        self.assertIn('artifacts', shadow)
+        self.assertEqual(len(shadow['quality_diagnostic']['metrics']['large']), 5000)
+
+    async def test_same_probe_is_deduped_but_candidate_morph_is_allowed(self):
+        actions = self.presence_actions()
+        first = next(a for a in actions if a['args'].get('feature_id'))
+        first_probe = describe(self.runtime, first)
+        second_probe = {**first_probe, 'key': 'different-morph-question'}
+        reserve(self.runtime.workflow.budget_path, 'observation', 'dedupe-first',
+                self.runtime.workflow.limits, extra_pool='network', probe=first_probe)
+        book = read_json(self.runtime.workflow.budget_path)
+        # Exact same physical question remains deduped.
+        self.assertEqual(check_reservation(book, first_probe), 'PROBE_ALREADY_ATTEMPTED')
+        # A different candidate morphology on the same image/feature is a
+        # different question and must remain available for candidate-group review.
+        self.assertIsNone(check_reservation(book, second_probe))
+
+    async def test_shared_reservation_is_atomic_across_competing_callers(self):
+        first = describe(self.runtime, self.presence_actions()[0])
+        first['total_limit'] = 1
+        second = {**first, 'key': 'different-question'}
+        def charge(index):
+            try:
+                reserve(self.runtime.workflow.budget_path, 'observation', 'atomic-' + str(index),
+                        self.runtime.workflow.limits, extra_pool='network',
+                        probe=[first, second][index])
+                return 'OK'
+            except IntegrationError as exc:
+                return exc.code
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            codes = list(pool.map(charge, [0, 1]))
+        self.assertEqual(codes.count('OK'), 1)
+        book = read_json(self.runtime.workflow.budget_path)
+        self.assertEqual(len(book['supporting_probes']), 1)
+        self.assertEqual(book['used']['observation'], 1)
+        self.assertEqual(book['used']['network'], 1)
+
+    def scan_runtime(self):
+        class EmptyScan(StageFixture):
+            def execute(stage, session, tool, target, work, context):
+                if tool in {'detect_fov_initial', 'feature_scan'}:
+                    folder = work / 'output/crops'; folder.mkdir(parents=True)
+                    completion = folder.parent / 'completion.json'
+                    write_json(completion, {'count': 0, 'feature_id': target.get('feature_id')})
+                    return {'crops_dir': str(folder), 'completion': str(completion)}
+                return super().execute(session, tool, target, work, context)
+        return WorkflowRuntime(
+            [self.image], root=self.root / 'scan-workflow', sample_id='scan-budget',
+            a=self.a, simulation=True, backend=EmptyScan(), workflow_config={
+                'agent_policy': 'adaptive_v2', 'supporting_probe_total': 1,
+                'supporting_probe_per_candidate': 2, 'fast_yolo_stage2': True,
+                'fast_recovery_selection': 'per_feature', 'fast_fallback_max_features': 4,
+                'fast_fallback_max_locate_calls': 16, 'feature_scan_enabled': True,
+                'max_api_calls': 40, 'max_resource_units': 100})
+
+    async def test_presence_and_feature_scan_share_quota(self):
+        runtime = self.scan_runtime()
+        tools = LocalToolbox(runtime, ledger_path=self.root / 'shared-quota.json', backend=FixtureBackend())
+        presence = next(a for a in runtime.legal_actions({'observations': []})
+                        if a['tool'] == 'presence_check' and describe(runtime, a))
+        result = await tools.observe(presence)
+        self.assertTrue(result['accepted'])
+        offers = runtime.legal_actions({'observations': [result], 'attempted': [presence['action_id']]})
+        self.assertFalse(any(a['tool'] == 'feature_scan' and describe(runtime, a) for a in offers))
+        self.assertEqual(len(read_json(runtime.workflow.budget_path)['supporting_probes']), 1)

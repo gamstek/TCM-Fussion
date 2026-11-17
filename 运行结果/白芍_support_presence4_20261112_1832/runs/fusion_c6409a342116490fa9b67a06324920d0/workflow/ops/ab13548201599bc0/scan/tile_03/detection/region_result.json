@@ -1,0 +1,14 @@
+{
+  "dets": [],
+  "roi": [
+    1920,
+    1080,
+    3840,
+    2160
+  ],
+  "feature_id": "vessel",
+  "engine": "glm_targeted",
+  "count": 0,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

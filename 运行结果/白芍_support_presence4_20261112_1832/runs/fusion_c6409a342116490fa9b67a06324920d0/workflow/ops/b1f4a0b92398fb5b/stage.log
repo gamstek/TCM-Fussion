@@ -1,0 +1,12 @@
+[info] crop 1 个 | 源图 1 张 ['view_04'] | 药材 [''] | 输出 D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_support_presence4_20261112_1832\runs\fusion_c6409a342116490fa9b67a06324920d0\workflow\ops\b1f4a0b92398fb5b\segmentation
+
+[1/1] starch_grain_view_04_glm809388596c20_01 | feature=starch_grain | px_per_um=11.65
+[结果] starch_grain_view_04_glm809388596c20_01: mask 370x336 | 占比 0.213 | 连通域 4 | 阈值 125.0 | invert=False | 状态 review  ⚠需人工确认 | 框先验: 丢邻粒 0 块, 裁 0px
+[输出] D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_support_presence4_20261112_1832\runs\fusion_c6409a342116490fa9b67a06324920d0\workflow\ops\b1f4a0b92398fb5b\segmentation\igm\starch_grain_view_04_glm809388596c20_01
+  ⚠ IGM 状态 review → 需人工复核该 mask（极性冲突=False、中心块/框=0.234、框外占比=0.1675）
+
+[done] 实例 1 个 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_support_presence4_20261112_1832\runs\fusion_c6409a342116490fa9b67a06324920d0\workflow\ops\b1f4a0b92398fb5b\segmentation\masks
+       IGM 原始产物 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_support_presence4_20261112_1832\runs\fusion_c6409a342116490fa9b67a06324920d0\workflow\ops\b1f4a0b92398fb5b\segmentation\igm
+       实例清单 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_support_presence4_20261112_1832\runs\fusion_c6409a342116490fa9b67a06324920d0\workflow\ops\b1f4a0b92398fb5b\segmentation\instances.json
+       （几何测量）--masks "D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_support_presence4_20261112_1832\runs\fusion_c6409a342116490fa9b67a06324920d0\workflow\ops\b1f4a0b92398fb5b\segmentation\masks"
+[warn] 1 个 crop 的 mask 状态非 ok：这些实例在判药侧会被整条丢弃（不计证据），需人工复核：['starch_grain_view_04_glm809388596c20_01']

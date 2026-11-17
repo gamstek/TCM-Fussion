@@ -55,9 +55,9 @@ def profile_checks(sections=('vlm',)):
 
 
 def planner_preflight(config):
-    """新workflow真实LLM启动前检查；shadow、CPU/heuristic路径不受模型凭据约束。"""
+    """新workflow真实LLM启动前检查；CPU/heuristic路径不受模型凭据约束。"""
     agent=config.get('agent',{});workflow=agent.get('workflow',{})
-    if workflow.get('execution')=='shadow' or agent.get('planner','llm')!='llm':
+    if agent.get('planner','llm')!='llm':
         return {'ready':True,'required':False,'checks':[],'network_tested':False}
     checks=profile_checks(('vlm',))
     return {'ready':all(c['ok'] for c in checks),'required':True,'checks':checks,'network_tested':False}

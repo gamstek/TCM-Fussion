@@ -1,0 +1,33 @@
+{
+  "crop_id": "cluster_crystal_view_04_03",
+  "png": "cluster_crystal_view_04_03.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_ev1_20261111_125716\\view_04.jpg",
+  "stem": "view_04",
+  "feature_id": "cluster_crystal",
+  "object_label": "草酸钙簇晶",
+  "herb": "",
+  "px_per_um": 11.65,
+  "tight_box": [
+    936.3,
+    1158.4,
+    1076.4,
+    1305.2
+  ],
+  "tight_box_local": [
+    24.299999999999955,
+    24.40000000000009,
+    164.4000000000001,
+    171.20000000000005
+  ],
+  "loose_box": [
+    912,
+    1134,
+    1100,
+    1329
+  ],
+  "crop_size": "188x195",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.2789,
+  "det_confidence": "low"
+}

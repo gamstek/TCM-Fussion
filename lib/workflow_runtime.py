@@ -460,9 +460,155 @@ class WorkflowRuntime(EvidenceRuntime):
             return self.tools.validate(action,self)
         return super().validate_action(action)
 
+    def valid_classifications(self):
+        """Classifications in the current valid evidence snapshot, not history."""
+        rows = []
+        for value in self.workflow.store.current()['artifacts'].values():
+            if not value.get('valid') or value.get('kind') != 'classification':
+                continue
+            try:
+                doc = read_json(value['path'])
+            except (OSError, ValueError):
+                continue
+            rows.append({'crop_id': doc.get('crop_id') or value.get('crop_id'),
+                         'feature_id': str(doc.get('feature_id') or value.get('feature_id') or ''),
+                         'label': doc.get('label'), 'reject': doc.get('reject'),
+                         'confidence': str(doc.get('confidence') or value.get('identity_confidence') or '').lower(),
+                         'confidence_source': doc.get('confidence_source'),
+                         'reason': str(doc.get('reason') or ''),
+                         'confidence_score': doc.get('confidence_score'),
+                         'identity_verified': bool(value.get('identity_verified'))})
+        return rows
+
+    def provisional_state(self, decision):
+        from .provisional_evidence import build
+        valid = self.valid_classifications()
+        return build(decision, {'valid_classifications': valid})
+
+    def required_states(self, provisional):
+        """Candidate-level required states derived from the same provisional rows."""
+        out = []
+        gaps = {}
+        for row in provisional.get('ranking') or []:
+            states = []
+            for state in row.get('criterion_states') or []:
+                if state.get('role') != 'required':
+                    continue
+                states.append({'feature_id': state.get('feature_id'),
+                               'state': state.get('state'),
+                               'provisional_weight': state.get('weight') if state.get('state') == 'VERIFIED_MATCH' else
+                                   {'DETECTED_PENDING': 0.5, 'PARTIAL_MATCH': 0.25}.get(state.get('state'), 0.0),
+                               'instance_ids': state.get('instance_ids') or [],
+                               'formal_state': state.get('formal_state')})
+                if state.get('state') != 'VERIFIED_MATCH':
+                    gaps.setdefault(state.get('feature_id'), []).append(row.get('candidate_id'))
+            out.append({'candidate_id': row.get('candidate_id'),
+                        'display': row.get('display'),
+                        'required_states': states,
+                        'pending': [s['feature_id'] for s in states
+                                    if s['state'] in {'DETECTED_PENDING', 'PARTIAL_MATCH', 'CONFLICT', 'UNKNOWN'}]})
+        discriminating = [{'feature_id': fid, 'candidate_ids': sorted(set(cids))}
+                          for fid, cids in gaps.items()]
+        return out, discriminating
+
+    def verification_opportunities(self, actions, budget=None, *, decision=None):
+        """Advisory only: existing lawful tools for unresolved candidate dimensions.
+
+        This read neither grants tool eligibility nor upgrades formal evidence.
+        All candidates in the active scope are considered, not just A top1.
+        """
+        snapshot = self.workflow.store.current()
+        artifacts = snapshot['artifacts']
+        targets = self.workflow.targets()
+        active = set(self.candidate_interest()['ids'])
+        candidates = [row for row in self.kb.candidates() if row['id'] in active]
+        checks = {(row['id'], check['feature_id']): check
+                  for row in (decision or {}).get('ranking', [])
+                  for check in row.get('checks', [])}
+        opportunities = []
+        for action in actions:
+            tool = action['tool']
+            if tool not in {'segment_instance', 'measure_instances'}:
+                continue
+            target_id = action.get('args', {}).get('target_id')
+            target = targets.get(target_id)
+            if not target:
+                continue
+            crop = artifacts.get(target.get('crop_id'), {}) if tool == 'measure_instances' else target
+            if not crop.get('valid'):
+                continue
+            try:
+                meta = contracts.CropMeta.from_json(crop['path'])
+            except (OSError, ValueError, contracts.ContractError):
+                continue
+            criteria = []
+            for row in candidates:
+                for criterion in row['criteria']:
+                    if criterion['feature'] != meta.feature_id or not isinstance(criterion.get('quant'), dict):
+                        continue
+                    check = checks.get((row['id'], meta.feature_id), {})
+                    if check.get('present') and check.get('state') in {'IN_RANGE', 'EXTREME', 'OUT_OF_RANGE'}:
+                        continue  # an already-resolved dimension does not justify repeat measurement
+                    criteria.append({'candidate_id': row['id'], 'role': criterion['role'],
+                                     'quant': criterion['quant'], 'morph': criterion.get('morph'),
+                                     'state': check.get('state', 'UNKNOWN')})
+            if not criteria:
+                continue
+            steps = 2 if tool == 'segment_instance' else 1
+            network = int(tool == 'segment_instance' and not self.simulation)
+            if budget is not None and (budget.get('recompute', 0) < steps
+                                      or budget.get('total', 0) < steps + network
+                                      or budget.get('network', 0) < network):
+                continue
+            classification = artifacts.get('classification:' + crop['id'], {})
+            identity = bool(classification.get('valid') and classification.get('identity_verified')
+                            and classification.get('feature_id') == meta.feature_id)
+            opportunities.append({'action_id': action['action_id'], 'tool': tool,
+                                  'target_id': target_id, 'feature_id': meta.feature_id,
+                                  'image_id': crop['image_id'], 'criteria': criteria,
+                                  'identity_verified': identity,
+                                  'identity_basis': 'classification' if identity else 'existing_runtime_admission',
+                                  'evidence_version': snapshot['version'],
+                                  'required_recompute_steps': steps,
+                                  'next_tool': 'measure_instances' if tool == 'segment_instance' else None,
+                                  'advisory_only': True, 'changes_formal_eligibility': False})
+        return sorted(opportunities, key=lambda row: (
+            row['tool'] != 'measure_instances',
+            not any(c['role'] == 'required' for c in row['criteria']),
+            not row['identity_verified'], row['target_id']))
+
+    def supporting_states(self, provisional, observation_states=None):
+        """Candidate-level supporting rows; advisory for search breadth, not evidence."""
+        checks={}
+        for obs in observation_states or []:
+            fid=obs.get('feature_id')
+            checks.setdefault(fid,[]).append(obs)
+        out=[]
+        for row in provisional.get('ranking') or []:
+            for state in row.get('criterion_states') or []:
+                if state.get('role') != 'supporting':
+                    continue
+                fid=state.get('feature_id');observed=checks.get(fid) or []
+                if any(o.get('state')=='present' for o in observed):check_state='checked_present'
+                elif any(o.get('state')=='absent' for o in observed):check_state='checked_negative'
+                elif observed:check_state='unreadable_or_failed'
+                else:check_state='unchecked'
+                out.append({'candidate_id': row.get('candidate_id'),
+                            'feature_id': fid,
+                            'state': state.get('state'),
+                            'formal_state': state.get('formal_state'),
+                            'instance_ids': state.get('instance_ids') or [],
+                            'check_state': check_state,
+                            'checks': len(observed),
+                            'present': state.get('state') == 'VERIFIED_MATCH'})
+        return out
+
     def summary(self,state):
         result=super().summary(state)
         from .storage import read_json
+        scored=self.score(state.get('observations', []))
+        provisional=self.provisional_state(scored['decision'])
+        required, gaps=self.required_states(provisional)
         focus=self.p0_focus()
         result['p0_focus']=focus
         result['hypothesis_catalog']=[{
@@ -496,6 +642,18 @@ class WorkflowRuntime(EvidenceRuntime):
                                                  'identity_verified':v.get('identity_verified')}
             for v in self.workflow.store.current()['artifacts'].values()
             if v['valid'] and v['kind']=='classification']
+        result['workflow']['provisional']=provisional
+        result['workflow']['required_states']=required
+        result['workflow']['supporting_states']=self.supporting_states(provisional, result.get('observation_states'))
+        result['workflow']['supporting_gaps']=[row for row in result['workflow']['supporting_states']
+                                               if not row['present']]
+        result['workflow']['discriminating_gaps']=gaps
+        if self.workflow.config.get('fast_recovery_selection') == 'per_feature':
+            result['workflow']['recovery_options']=self.workflow.recovery_options()
+            result['workflow']['recovery_policy']=(
+                '每个 feature_scan 动作只查 target_id 中显式指定的一类微粒；'
+                'required/supporting 共用定位方法，criteria 给出关联候选。'
+                '选项不是强制任务；未检出不是阴性，supporting 不替代 required。')
         if self.workflow.config.get('targeted_recovery', False):
             result['workflow']['recovery_regions'] = [
                 {'target_id': t['id'], 'image_stem': Path(t['source']).stem,

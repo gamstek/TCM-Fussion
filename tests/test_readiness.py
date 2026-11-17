@@ -58,10 +58,8 @@ class ReadinessTests(unittest.TestCase):
         self.assertIn('CREDENTIAL_AMBIGUOUS',codes);self.assertIn('CONFIG_ENDPOINT_INVALID',codes)
         self.assertNotIn('DIFFERENT_FAKE_KEY',json.dumps(checks))
 
-    def test_shadow_and_offline_cpu_do_not_require_credentials(self):
-        self.config['agent']['workflow']['execution']='shadow'
-        self.assertTrue(planner_preflight(self.config)['ready'])
-        self.config['agent']['workflow']['execution']='active';self.config['agent']['planner']='heuristic'
+    def test_offline_cpu_does_not_require_credentials(self):
+        self.config['agent']['planner']='heuristic'
         self.assertTrue(planner_preflight(self.config)['ready'])
 
     def test_failed_preflight_never_starts_runtime_or_mcp(self):

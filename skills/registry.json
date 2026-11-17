@@ -52,7 +52,8 @@
       "needle_scan",
       "feature_scan",
       "hybrid_scan",
-      "image_exemplar_audit"
+      "image_exemplar_audit",
+      "classify_crops_batch"
     ],
     "purpose": "按前置条件修复已绑定样品工件；不产生模型自报尺寸"
   }

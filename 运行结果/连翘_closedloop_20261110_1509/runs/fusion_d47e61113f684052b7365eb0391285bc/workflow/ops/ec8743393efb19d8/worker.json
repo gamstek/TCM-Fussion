@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "cluster_crystal_view_03_glm220f18619613_02",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\35f0277a53191421\\features\\crops\\cluster_crystal_view_03_glm220f18619613_02.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\35f0277a53191421\\features\\crops\\cluster_crystal_view_03_glm220f18619613_02.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_03.tif",
+  "tight_box": [
+    1748.75,
+    447.25,
+    1864.25,
+    547.75
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\ec8743393efb19d8\\classification",
+  "feature_hint": "目标正例：草酸钙簇晶：由许多或少量菱状小晶聚集成的团块，外形呈近圆形、不规则团块状、星状或簇状，外缘由多个尖角或短钝棱角组成，明场下半透明",
+  "tight_box_local": [
+    24.75,
+    24.25,
+    140.25,
+    124.75
+  ]
+}

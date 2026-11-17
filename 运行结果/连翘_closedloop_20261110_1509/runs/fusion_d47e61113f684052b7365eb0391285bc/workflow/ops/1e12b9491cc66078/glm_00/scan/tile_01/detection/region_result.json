@@ -1,0 +1,91 @@
+{
+  "dets": [
+    {
+      "label": "石细胞",
+      "tight_bbox": [
+        2231.0,
+        757.75,
+        2729.0,
+        1005.25
+      ],
+      "confidence": "high",
+      "score": 0.92,
+      "morphology": "壁显著增厚，胞腔小，呈椭圆形",
+      "source_tight_bbox": [
+        2314,
+        799,
+        2646,
+        964
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "石细胞",
+      "tight_bbox": [
+        2827.75,
+        672.5,
+        3081.25,
+        879.5
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "壁厚、胞腔小的圆形厚壁细胞",
+      "source_tight_bbox": [
+        2870,
+        707,
+        3039,
+        845
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "石细胞",
+      "tight_bbox": [
+        3005.25,
+        930.75,
+        3315.75,
+        1100.25
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "壁显著增厚，胞腔小，边缘完整",
+      "source_tight_bbox": [
+        3057,
+        959,
+        3264,
+        1072
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "石细胞",
+      "tight_bbox": [
+        1881.0,
+        942.5,
+        2439.0,
+        1071.5
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "长椭圆形厚壁细胞，胞腔小，部分截断",
+      "source_tight_bbox": [
+        1974,
+        964,
+        2346,
+        1050
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1920,
+    0,
+    3840,
+    1080
+  ],
+  "feature_id": "stone_cell",
+  "engine": "glm_targeted",
+  "count": 4,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

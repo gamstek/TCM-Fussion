@@ -1,0 +1,253 @@
+{
+  "identity": "62df7dc9912a4fc678967ac90af946a3db91ff1b5e17ef41b7b8c75f7300a17a",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "连翘",
+    "黄芩",
+    "黄芪",
+    "诃子",
+    "栀子",
+    "厚朴",
+    "G1"
+  ],
+  "hypotheses": {
+    "连翘": {
+      "status": "investigating",
+      "reason": "A折多视野Top1反复出现，fiber判据未核验，维持调查",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "黄芩": {
+      "status": "investigating",
+      "reason": "fiber形态与连翘不同，需下一轮只读量化比对",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "黄芪": {
+      "status": "paused",
+      "reason": "多折支持弱于连翘，且fiber判据与黄芩/连翘同特征，先集中核验两者后再决定",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "诃子": {
+      "status": "investigating",
+      "reason": "石细胞与纤维是当前候选的主要区分判据；完成A5身份核验后，下一轮以只读动作核对其形态与量化判据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "栀子": {
+      "status": "investigating",
+      "reason": "石细胞与纤维是当前候选的主要区分判据；完成A5身份核验后，下一轮以只读动作核对其形态与量化判据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "厚朴": {
+      "status": "investigating",
+      "reason": "石细胞与纤维是当前候选的主要区分判据；完成A5身份核验后，下一轮以只读动作核对其形态与量化判据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "A4/A5 石细胞分类完成后，下一轮用只读动作核对：黄芩/连翘的 fiber 判据差异，以及 G1（簇晶类）是否可能解释 view_02 的针晶/结晶线索；本轮仅提名，不构成证据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "fiber为这些候选的共同required判据，view_04视野的hybrid_scan可提供区分性量化证据，下一轮以只读动作核对测量与形态判据。"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "fiber为这些候选的共同required判据，view_04视野的hybrid_scan可提供区分性量化证据，下一轮以只读动作核对测量与形态判据。"
+        },
+        {
+          "candidate_id": "黄芪",
+          "status": "investigating",
+          "reason": "fiber为这些候选的共同required判据，view_04视野的hybrid_scan可提供区分性量化证据，下一轮以只读动作核对测量与形态判据。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "诃子",
+          "status": "investigating",
+          "reason": "石细胞与纤维是当前候选的主要区分判据；完成A5身份核验后，下一轮以只读动作核对其形态与量化判据。"
+        },
+        {
+          "candidate_id": "栀子",
+          "status": "investigating",
+          "reason": "石细胞与纤维是当前候选的主要区分判据；完成A5身份核验后，下一轮以只读动作核对其形态与量化判据。"
+        },
+        {
+          "candidate_id": "厚朴",
+          "status": "investigating",
+          "reason": "石细胞与纤维是当前候选的主要区分判据；完成A5身份核验后，下一轮以只读动作核对其形态与量化判据。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "石细胞分类完成后，用只读动作核对黄芩/连翘的fiber判据；G1（簇晶）可核查是否存在非候选簇晶类药材。"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "石细胞分类完成后，用只读动作核对黄芩/连翘的fiber判据；G1（簇晶）可核查是否存在非候选簇晶类药材。"
+        },
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "石细胞分类完成后，用只读动作核对黄芩/连翘的fiber判据；G1（簇晶）可核查是否存在非候选簇晶类药材。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "A4/A5 石细胞分类完成后，下一轮用只读动作核对：黄芩/连翘的 fiber 判据差异，以及 G1（簇晶类）是否可能解释 view_02 的针晶/结晶线索；本轮仅提名，不构成证据。"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "A4/A5 石细胞分类完成后，下一轮用只读动作核对：黄芩/连翘的 fiber 判据差异，以及 G1（簇晶类）是否可能解释 view_02 的针晶/结晶线索；本轮仅提名，不构成证据。"
+        },
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "A4/A5 石细胞分类完成后，下一轮用只读动作核对：黄芩/连翘的 fiber 判据差异，以及 G1（簇晶类）是否可能解释 view_02 的针晶/结晶线索；本轮仅提名，不构成证据。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "维持假设：fiber为其required判据，view_01/view_03的fiber crop分类结果将提供核验依据。"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "维持假设：与连翘共用fiber判据，靠分类后的形态（梭形、壁厚、孔沟细）与量化区分。"
+        },
+        {
+          "candidate_id": "黄芪",
+          "status": "investigating",
+          "reason": "维持假设：fiber required，其纵裂纹/须状端形态可在分类证据中核验。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "三者shared fiber判据为required，view_01分类结果将给出第二视野存在性证据；不预设结论。"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "三者shared fiber判据为required，view_01分类结果将给出第二视野存在性证据；不预设结论。"
+        },
+        {
+          "candidate_id": "黄芪",
+          "status": "investigating",
+          "reason": "三者shared fiber判据为required，view_01分类结果将给出第二视野存在性证据；不预设结论。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "下一步只读核验纤维尺寸与形态，区分黄芩（宽9~33μm梭形）、连翘（短梭形纵横交错）、黄芪（纵裂纹须状）等候选"
+        },
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "下一步只读核验纤维尺寸与形态，区分黄芩（宽9~33μm梭形）、连翘（短梭形纵横交错）、黄芪（纵裂纹须状）等候选"
+        },
+        {
+          "candidate_id": "黄芪",
+          "status": "investigating",
+          "reason": "下一步只读核验纤维尺寸与形态，区分黄芩（宽9~33μm梭形）、连翘（短梭形纵横交错）、黄芪（纵裂纹须状）等候选"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "连翘",
+          "status": "investigating",
+          "reason": "A折多视野Top1反复出现，fiber判据未核验，维持调查"
+        },
+        {
+          "candidate_id": "黄芩",
+          "status": "investigating",
+          "reason": "fiber形态与连翘不同，需下一轮只读量化比对"
+        },
+        {
+          "candidate_id": "黄芪",
+          "status": "paused",
+          "reason": "多折支持弱于连翘，且fiber判据与黄芩/连翘同特征，先集中核验两者后再决定"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

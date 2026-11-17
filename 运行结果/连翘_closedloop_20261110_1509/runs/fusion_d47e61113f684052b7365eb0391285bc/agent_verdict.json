@@ -1,0 +1,1367 @@
+{
+  "sample_id": "closedloop_20261110_1509",
+  "verdict": "insufficient_evidence",
+  "conclusion": null,
+  "alternatives": [
+    {
+      "id": "诃子",
+      "kind": "herb",
+      "display": "诃子",
+      "score": 0.059216,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "fiber",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维淡黄色，成束，纵横交错排列或与石细胞、木化厚壁细胞相连结",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "stone_cell",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "与纤维相连的石细胞/木化厚壁细胞，长至130μm",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 14,
+            "max": 40,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "cluster_crystal",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "草酸钙簇晶（补充）",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 5,
+            "max": 40,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "fiber",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.098693,
+      "b_confidence": 0.0,
+      "fused_score": 0.059216,
+      "b_score": -0.06
+    },
+    {
+      "id": "甘草",
+      "kind": "herb",
+      "display": "甘草",
+      "score": 0.040354,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "crystal_fiber",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维束周围薄壁细胞含草酸钙方晶，形成晶纤维",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 8,
+            "max": 14,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "crystal_fiber",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.067257,
+      "b_confidence": 0.0,
+      "fused_score": 0.040354,
+      "b_score": -0.06
+    },
+    {
+      "id": "龙胆",
+      "kind": "herb",
+      "display": "龙胆",
+      "score": 0.021874,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "needle_crystal",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "薄壁细胞含细小草酸钙针晶",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "epidermis_cell",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "外皮层细胞类纺锤形分隔成扁方形小细胞；内皮层细胞类长方形，纵隔壁连珠状增厚",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "needle_crystal",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.036457,
+      "b_confidence": 0.0,
+      "fused_score": 0.021874,
+      "b_score": -0.24
+    },
+    {
+      "id": "黄芩",
+      "kind": "herb",
+      "display": "黄芩",
+      "score": 0.01619,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "fiber",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维淡黄色，梭形，壁厚，孔沟细，长60～250μm",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 9,
+            "max": 33,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "fiber",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.026983,
+      "b_confidence": 0.0,
+      "fused_score": 0.01619,
+      "b_score": -0.06
+    }
+  ],
+  "ranking": [
+    {
+      "id": "连翘",
+      "kind": "herb",
+      "display": "连翘",
+      "score": 0.407667,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "fiber",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "内果皮纤维上下层纵横交错，纤维短梭形（药典未给本特征μm数值；教材口径直径24～32μm 仅作参考，不作量化判据）",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "fiber",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.679445,
+      "b_confidence": 0.0,
+      "fused_score": 0.407667,
+      "b_score": -0.06
+    },
+    {
+      "id": "诃子",
+      "kind": "herb",
+      "display": "诃子",
+      "score": 0.059216,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "fiber",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维淡黄色，成束，纵横交错排列或与石细胞、木化厚壁细胞相连结",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "stone_cell",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "与纤维相连的石细胞/木化厚壁细胞，长至130μm",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 14,
+            "max": 40,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "cluster_crystal",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "草酸钙簇晶（补充）",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 5,
+            "max": 40,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "fiber",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.098693,
+      "b_confidence": 0.0,
+      "fused_score": 0.059216,
+      "b_score": -0.06
+    },
+    {
+      "id": "甘草",
+      "kind": "herb",
+      "display": "甘草",
+      "score": 0.040354,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "crystal_fiber",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维束周围薄壁细胞含草酸钙方晶，形成晶纤维",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 8,
+            "max": 14,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "crystal_fiber",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.067257,
+      "b_confidence": 0.0,
+      "fused_score": 0.040354,
+      "b_score": -0.06
+    },
+    {
+      "id": "龙胆",
+      "kind": "herb",
+      "display": "龙胆",
+      "score": 0.021874,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "needle_crystal",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "薄壁细胞含细小草酸钙针晶",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "epidermis_cell",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "外皮层细胞类纺锤形分隔成扁方形小细胞；内皮层细胞类长方形，纵隔壁连珠状增厚",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "needle_crystal",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.036457,
+      "b_confidence": 0.0,
+      "fused_score": 0.021874,
+      "b_score": -0.24
+    },
+    {
+      "id": "黄芩",
+      "kind": "herb",
+      "display": "黄芩",
+      "score": 0.01619,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "fiber",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维淡黄色，梭形，壁厚，孔沟细，长60～250μm",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 9,
+            "max": 33,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "fiber",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.026983,
+      "b_confidence": 0.0,
+      "fused_score": 0.01619,
+      "b_score": -0.06
+    },
+    {
+      "id": "黄芪",
+      "kind": "herb",
+      "display": "黄芪",
+      "score": 0.011059,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "fiber",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维成束或散离，壁厚，表面有纵裂纹，初生壁常与次生壁分离，两端断裂成须状或较平截",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 8,
+            "max": 30,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "fiber",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.018432,
+      "b_confidence": 0.0,
+      "fused_score": 0.011059,
+      "b_score": -0.06
+    },
+    {
+      "id": "厚朴",
+      "kind": "herb",
+      "display": "厚朴",
+      "score": 0.009905,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "stone_cell",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "石细胞分枝状，壁厚，层纹明显",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 11,
+            "max": 65,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "fiber",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维甚多，壁甚厚，有的波浪形或一边锯齿状",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 15,
+            "max": 32,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "secretory_tissue",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "油细胞含黄棕色油状物（直径50～85μm）",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 50,
+            "max": 85,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "stone_cell",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.016509,
+      "b_confidence": 0.0,
+      "fused_score": 0.009905,
+      "b_score": -0.24
+    },
+    {
+      "id": "麻黄",
+      "kind": "herb",
+      "display": "麻黄",
+      "score": 0.003211,
+      "score_max": 0.5,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "stoma",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "气孔特异，保卫细胞侧面观呈哑铃状",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "stoma",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.06,
+      "conf_denom": 0.5,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.005352,
+      "b_confidence": 0.0,
+      "fused_score": 0.003211,
+      "b_score": -0.06
+    },
+    {
+      "id": "栀子",
+      "kind": "herb",
+      "display": "栀子",
+      "score": 0.000679,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "stone_cell",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "种皮石细胞黄色或淡棕色，多破碎，长多角形/长方形/不规则，壁厚，有大的圆形纹孔，胞腔棕红色，长至230μm",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 60,
+            "max": 112,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "fiber",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "内果皮纤维细长梭形，直径约10μm、长约至110μm（补充）",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": null,
+            "max": 10,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "cluster_crystal",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "草酸钙簇晶（补充）",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 19,
+            "max": 34,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "stone_cell",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.001131,
+      "b_confidence": 0.0,
+      "fused_score": 0.000679,
+      "b_score": -0.24
+    }
+  ],
+  "notes": [
+    "候选池为空或最高分候选无有效支持分（<0.50）"
+  ],
+  "support_feature_count": 0,
+  "needs_review": true,
+  "source_images": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_01.tif",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_02.tif",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_03.tif",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_04.tif"
+  ],
+  "agent": {
+    "mode": "workflow_react",
+    "vlm_calls": 1,
+    "planning_calls": 29,
+    "identity_review": true
+  },
+  "candidate_scope": {
+    "scope": "open_strict",
+    "a_topk_ids": [
+      "诃子",
+      "黄芩",
+      "连翘",
+      "甘草",
+      "厚朴",
+      "栀子",
+      "龙胆",
+      "黄芪",
+      "麻黄"
+    ],
+    "kept_ids": [
+      "甘草",
+      "诃子",
+      "黄芩",
+      "连翘",
+      "麻黄",
+      "黄芪",
+      "厚朴",
+      "龙胆",
+      "栀子"
+    ],
+    "dropped": [
+      {
+        "id": "辣蓼",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "青黛",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "槟榔",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "蝉蜕",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "穿心莲",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大青叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "地黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "滑石",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "牡蛎",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "秦皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "石膏",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "水牛角",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "雄黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "郁金",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "泽泻",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "当归",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "艾叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "板蓝根",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "薄荷",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "荜茇",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "柴胡",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "川楝子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "防风",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "广藿香",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "红花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄柏",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄连",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "金银花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "荆芥",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桔梗",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "菊花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "苦参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "莱菔子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麦芽",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "牵牛子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桑白皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "使君子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "葶苈子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "菟丝子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "王不留行",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "乌梅",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "香附",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "益母草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "茵陈",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "白头翁",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "鱼腥草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "茯苓",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大腹皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "淡竹叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "木香",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G1",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G2",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G3",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G4",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "白芍",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桂枝",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "虎杖",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "苦杏仁",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "马齿苋",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "肉桂",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "山楂",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "射干",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "五味子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "玄参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "淫羊藿",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "知母",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "党参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "猪苓",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麦冬",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大黄",
+        "reason": "not_in_a_topk"
+      }
+    ],
+    "policy": "A Top-K 为 Plan B 重点；非 A 仅在 open_strict 且 required+supporting 全部符合时保留"
+  },
+  "fusion_weights": {
+    "a": 0.6,
+    "b": 0.4,
+    "a_folds": 20
+  },
+  "fusion_policy": "A 先验 + B 证据加权；B verdict/证据状态不由 A 改写",
+  "candidate_admission": {
+    "available": false,
+    "decision": "verify",
+    "fallback": true,
+    "reason": "rule evidence requires review; no model admission requested",
+    "decision_source": "runtime_precondition"
+  }
+}

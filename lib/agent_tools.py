@@ -9,6 +9,7 @@ import copy
 import json
 import re
 import time
+import threading
 from urllib.error import HTTPError
 from pathlib import Path
 
@@ -23,12 +24,28 @@ class LiveBackend:
     def __init__(self):
         from agent_loop import VLMClient
         class StrictClient(VLMClient):
+            def presence_check(client, feature_zh, morph_hint, image_path):
+                value = super().presence_check(feature_zh, morph_hint, image_path)
+                if value.get('ok') and client.presence_proposal is not None:
+                    value['localization_proposal'] = client.presence_proposal
+                return value
+
             def _encode_image(client, image_path):
                 return client.encoded_image
 
             # 原presence_check把字符串"false"转为True；在原解析之前严格拦截。
             def _post(client, payload):
                 from .hard_calls import post
+                context = getattr(client, 'observation_context', {})
+                if client.expected_tool == 'presence_check' and context.get('model_input_size'):
+                    width, height = context['model_input_size']
+                    payload = copy.deepcopy(payload)
+                    payload['messages'][0]['content'].append({'type': 'text', 'text':
+                        f'本次发送的图像宽{width}、高{height}像素。定位为可选线索，'
+                        '不要为了输出框而猜测。有把握指出疑似目标位置时，可在同一JSON中增加 '
+                        '"box":{"bbox":[x1,y1,x2,y2],"coordinate_space":"model_input_pixels"}；'
+                        '坐标必须基于实际收到的这张图，从左上角起按像素计。'
+                        '无法定位则省略box；定位不能替代present/conf/reason，也不要生成尺寸或标定。'})
                 if client.expected_tool == "scene_check" and client.scene_reasoning_effort:
                     payload = {**payload, "reasoning_effort": client.scene_reasoning_effort}
                 client.diagnostics["stage"] = "http_request"
@@ -68,6 +85,9 @@ class LiveBackend:
                         raise IntegrationError("MODEL_FIELD_INVALID", "conf 缺失或越界")
                     if client.expected_tool == "presence_check" and not isinstance(obj.get("present"), bool):
                         raise IntegrationError("MODEL_FIELD_INVALID", "present 须为布尔值")
+                    if client.expected_tool == 'presence_check':
+                        from .presence_localization import sanitize_proposal
+                        client.presence_proposal = sanitize_proposal(obj.get('box'))
                     return body
                 except json.JSONDecodeError:
                     client.failure = IntegrationError("MODEL_JSON_INVALID", "视觉模型 JSON 无法解析")
@@ -83,6 +103,7 @@ class LiveBackend:
         if not self.client.api_key:
             raise IntegrationError("CONFIG_MISSING", "缺VLM凭据")
         self.client.last_usage = None
+        self.client.presence_proposal = None
 
     def call(self, runtime, action, path):
         from .hard_calls import encode_image
@@ -90,11 +111,16 @@ class LiveBackend:
         self.client.last_usage = None
         self.client.expected_tool = action["tool"]
         self.client.failure = None
+        self.client.presence_proposal = None
+        self.client.observation_context = {}
         self.client.diagnostics = {"stage": "image_encode"}
         timeout = self.client.timeout_s
         deadline = time.monotonic() + timeout
         self.client.encoded_image = encode_image(path, min(timeout, self.IMAGE_ENCODE_MAX_SECONDS))
         try:
+            if action['tool'] == 'presence_check':
+                from .presence_localization import observation_context
+                self.client.observation_context = observation_context(path, self.client.encoded_image)
             for attempt in (1, 2):
                 self.client.timeout_s = deadline - time.monotonic()
                 if self.client.timeout_s <= 0:
@@ -178,6 +204,7 @@ class LocalToolbox:
     async def read(self, name, args, state):
         return self.runtime.tools.read(self.runtime, name, args, state)
 
+
     async def observe(self, action):
         from .ledger_lock import acquire, release
         async with self.lock:
@@ -191,19 +218,47 @@ class LocalToolbox:
             finally:
                 release(handle)
         if pending.get('cache_hit'):return pending
-        record=await self._run_observation(action,pending)
+        try:
+            record=await self._run_observation(action,pending)
+        except asyncio.CancelledError:
+            record = {**pending, 'accepted': False, 'status': 'cancelled',
+                      'error_code': 'OBSERVATION_CANCELLED',
+                      'result': {'ok': False, 'error_code': 'OBSERVATION_CANCELLED'}}
+            await asyncio.shield(self._persist_observation(action, record))
+            raise
+        except Exception as exc:
+            code = 'INPUT_CHANGED' if isinstance(exc, OSError) else getattr(exc, 'code', 'OBSERVATION_FAILED')
+            record = {**pending, 'accepted': False, 'status': 'failed', 'error_code': code,
+                      'result': {'ok': False, 'error_code': code}}
+        await self._persist_observation(action, record)
+        return record
+
+    async def _persist_observation(self, action, record):
+        """Write terminal accounting even after close, never accept late evidence."""
+        from .ledger_lock import acquire, release
         async with self.lock:
             handle=await asyncio.to_thread(acquire,self.ledger_path)
             try:
                 self.ledger=read_json(self.ledger_path)
-                self.ledger['entries'][action['action_id']]=record
-                write_json(self.ledger_path,self.ledger)
+                workflow = getattr(self.runtime, 'workflow', None)
+                budget_handle = await asyncio.to_thread(acquire, workflow.budget_path) if workflow is not None else None
+                try:
+                    self._invalidate_closed_observation(record, workflow)
+                    try:self.runtime.validate_action(action)
+                    except (IntegrationError, OSError):
+                        record.update(accepted=False, status='failed', error_code='INPUT_CHANGED',
+                                      result={'ok': False, 'error_code': 'INPUT_CHANGED'})
+                        if 'presence_localization' in record:
+                            record['presence_localization'].update(state='unknown', localization='invalid',
+                                                                   ineligible_reason='INPUT_CHANGED')
+                    # Terminal accounting is allowed after close; late evidence is not.
+                    self.ledger['entries'][action['action_id']]=record
+                    write_json(self.ledger_path,self.ledger)
+                finally:
+                    if budget_handle is not None:release(budget_handle)
             finally:release(handle)
-        return record
 
     def _prepare_observation(self, action):
-        if getattr(self.runtime,'workflow',None) is not None and self.runtime.workflow.config.get('execution')=='shadow':
-            raise IntegrationError('ACTION_DENIED','workflow shadow禁止新视觉观察')
         path = self.runtime.validate_action(action)
         key = self.runtime.action(action["tool"], action["args"], action["skill"])["action_id"]
         if key != action.get("action_id"):
@@ -223,7 +278,8 @@ class LocalToolbox:
         # 调用前写pending。崩溃/重启不自动重发，失败结果也入去重账本。
         workflow = getattr(self.runtime, "workflow", None)
         if workflow is not None:
-            workflow.charge("observation", "observation:"+key)
+            from .probe_budget import describe
+            workflow.charge("observation", "observation:"+key, probe=describe(self.runtime, action))
         pending = {"action_id": key, "accepted": False, "result": {"ok": False},
                    "action": copy.deepcopy(action),
                    "status": "pending", "cache_hit": False, "new_requests": 1}
@@ -234,6 +290,10 @@ class LocalToolbox:
 
     async def _run_observation(self,action,pending):
         workflow=getattr(self.runtime,'workflow',None)
+        stop_code = self._observation_stop_code(workflow)
+        if stop_code:
+            return {**pending, 'accepted': False, 'status': 'failed', 'new_requests': 0,
+                    'error_code': stop_code, 'result': {'ok': False, 'error_code': stop_code}}
         path=self.runtime.validate_action(action)
         backend = None
         try:
@@ -260,8 +320,73 @@ class LocalToolbox:
             record["new_requests"] = client.diagnostics.get("attempts", record["new_requests"])
         try:
             self.runtime.validate_action(action)  # 观察期间改图，结果不可用
-        except IntegrationError:
+        except (IntegrationError, OSError):
             record.update(accepted=False, result={"ok": False, "error": "INPUT_CHANGED"})
-        if workflow is not None and workflow.remaining_seconds()<=0.1:
-            record.update(accepted=False,status='late',result={'ok':False,'error':'WORKFLOW_TIMEOUT'})
+        self._invalidate_closed_observation(record, workflow)
+        if action['tool'] == 'presence_check' and record.get('accepted'):
+            from .presence_localization import assess_presence
+            image = self.runtime.images[action['args']['image_id']]
+            context = getattr(client, 'observation_context', {})
+            cancelled = threading.Event()
+            try:
+                record['presence_localization'] = await asyncio.to_thread(
+                    assess_presence, record['result'], path=path,
+                    expected_sha256=image['sha256'], feature_id=action['args']['feature_id'],
+                    context=context, output_dir=self.ledger_path.parent / 'presence_localizations' / action['action_id'],
+                    existing=self._presence_spatial_context(action),
+                    can_publish=lambda: not cancelled.is_set() and self._observation_stop_code(workflow) is None)
+            except asyncio.CancelledError:
+                cancelled.set()
+                raise
+            except Exception:
+                # Optional diagnostics must not erase a valid legacy P1/C observation.
+                record['presence_localization'] = {'policy_version': 'presence_localization_shadow_v1',
+                    'mode': 'shadow', 'state': 'unknown', 'findings': ['LOCALIZATION_DIAGNOSTIC_FAILED'],
+                    'legacy_presence_unchanged': True}
+            try:
+                self.runtime.validate_action(action)
+            except (IntegrationError, OSError):
+                record.update(accepted=False, result={'ok': False, 'error': 'INPUT_CHANGED'})
+                record['presence_localization'].update(state='unknown', localization='invalid')
+        self._invalidate_closed_observation(record, workflow)
         return record
+
+    @staticmethod
+    def _observation_stop_code(workflow):
+        if workflow is None:
+            return None
+        if workflow.cancel_event.is_set():
+            return 'WORKFLOW_CANCELLED'
+        budget = read_json(workflow.budget_path)
+        if budget.get('closed'):
+            return 'WORKFLOW_CLOSED'
+        if time.time() >= budget['deadline']:
+            return 'WORKFLOW_TIMEOUT'
+        return None
+
+    def _invalidate_closed_observation(self, record, workflow):
+        code = self._observation_stop_code(workflow)
+        if code:
+            record.update(accepted=False, status='late', error_code=code,
+                          result={'ok': False, 'error_code': code})
+            if 'presence_localization' in record:
+                record['presence_localization'].update(state='unknown', localization='invalid',
+                                                       ineligible_reason=code)
+
+    def _presence_spatial_context(self, action):
+        """Read current formal crop geometry; overlap never deletes/approves a hint."""
+        workflow = getattr(self.runtime, 'workflow', None)
+        if workflow is None:
+            return []
+        import contracts
+        rows = []
+        for identifier, artifact in workflow.store.current()['artifacts'].items():
+            if (not artifact.get('valid') or artifact.get('kind') != 'crop'
+                    or artifact.get('image_id') != action['args']['image_id']):
+                continue
+            try:
+                meta = contracts.CropMeta.from_json(artifact['path'])
+                rows.append({'id': identifier, 'box': meta.tight_box, 'feature_id': meta.feature_id})
+            except (OSError, ValueError, KeyError, TypeError):
+                continue
+        return rows

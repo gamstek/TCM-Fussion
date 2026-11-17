@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "starch_grain_view_01_glm8a09306abb41_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野16_20261116_0910\\runs\\fusion_a2908ffa2aa741a0b2a8706f4d994ff3\\workflow\\ops\\6eeba19113e48599\\scan\\crops\\starch_grain_view_01_glm8a09306abb41_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野16_20261116_0910\\runs\\fusion_a2908ffa2aa741a0b2a8706f4d994ff3\\workflow\\ops\\6eeba19113e48599\\scan\\crops\\starch_grain_view_01_glm8a09306abb41_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野16_20261116_0910\\view_01.jpg",
+  "tight_box": [
+    1157.75,
+    845.25,
+    1525.25,
+    1305.75
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野16_20261116_0910\\runs\\fusion_a2908ffa2aa741a0b2a8706f4d994ff3\\workflow\\ops\\adaf54f5fda8cb71\\classification",
+  "feature_hint": "目标正例：淀粉粒：类球形或多角形的颗粒，表面可见脐点（点状、裂缝状、人字状或星状）及隐约层纹；亦见由数个分粒聚合成多瓣状的复粒",
+  "tight_box_local": [
+    24.75,
+    24.25,
+    392.25,
+    484.75
+  ]
+}

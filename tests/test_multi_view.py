@@ -181,7 +181,7 @@ class MultiViewTests(unittest.TestCase):
         self.assertEqual(new['glm_identity_threshold'], .8)
         self.assertEqual(new['glm_locate_threshold'], .8)
         self.assertEqual(new['locate_expand'], 1.5)
-        self.assertTrue(new['needle_audit'])
+        self.assertNotIn('needle_audit', new)
         self.assertIn('针晶', new['feature_profiles']['needle_crystal']['positive'])
         self.assertNotIn('needle_positive_hint', new)
         self.assertNotIn('needle_negative_hint', new)

@@ -1,6 +1,6 @@
 """真实入口：项目根 python -m TCM_Fusion.cli.main run|doctor|selftest|multi-view。
 
-five-view 是兼容别名；任意数量原图统一走 lib.multi_view。离线命令统一在 cli.offline。
+是兼容别名；任意数量原图统一走 lib.multi_view。离线命令统一在 cli.offline。
 """
 from __future__ import annotations
 import argparse

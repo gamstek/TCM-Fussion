@@ -1,0 +1,2 @@
+﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity
+12109489760001,view_03__cluster_crystal__inst12109489760001.png,cluster_crystal_view_03_01,D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_support_presence4_20261112_1832\view_03.jpg,cluster_crystal,草酸钙簇晶,,"[24, 24, 391, 380]",11.65,ok,0.500248,instance

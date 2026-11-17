@@ -6,6 +6,7 @@ import argparse
 from pathlib import Path
 
 from PIL import Image
+import numpy as np
 
 from TCM_Fusion.lib.image_exemplar_audit import build_contact_sheet, normalize_audit
 from TCM_Fusion.lib.storage import IntegrationError, read_json, write_json
@@ -29,7 +30,9 @@ def main(argv=None):
     from ls_common import load_config, resolve_key
     from vlm_api import call_vlm, encode_jpeg_b64, parse_vlm_json
     with Image.open(sheet) as image:
-        b64, _ = encode_jpeg_b64(image.convert('RGB'), max_side=1600, quality=90)
+        # encode_jpeg_b64 按 BGR 处理；PIL 给的是 RGB，逐通道翻转后再编码。
+        b64, _ = encode_jpeg_b64(np.asarray(image.convert('RGB'))[:, :, ::-1].copy(),
+                                 max_side=1600, quality=90)
     feature_id = str(ctx.get('feature_id') or 'needle_crystal')
     prompt = (
         '这是一张显微图片示例对照拼图。TARGET 是待审计的裁图；'

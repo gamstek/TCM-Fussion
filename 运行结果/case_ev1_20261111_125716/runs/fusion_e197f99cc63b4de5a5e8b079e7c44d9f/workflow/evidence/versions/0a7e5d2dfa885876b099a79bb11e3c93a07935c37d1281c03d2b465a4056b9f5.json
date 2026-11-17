@@ -1,0 +1,44 @@
+{
+  "identity": "db9013c6945ca0952389db0fe6b0698e81e2f92f0377d14b1cda5ae4565d02f5",
+  "parent": "38c3c602b2464b99353e35e05eaba510d9b055fa1a824c6d3f9875280be33018",
+  "artifacts": {
+    "img_07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16": {
+      "id": "img_07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_ev1_20261111_125716\\view_01.tif",
+      "sha256": "07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16",
+      "parents": [],
+      "image_id": "img_07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16",
+      "valid": true
+    },
+    "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13": {
+      "id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_ev1_20261111_125716\\view_02.jpg",
+      "sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "parents": [],
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "valid": true
+    },
+    "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710": {
+      "id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_ev1_20261111_125716\\view_03.jpg",
+      "sha256": "a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "parents": [],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "valid": true
+    },
+    "img_8e0b339ab08188a63ee01c8d69ca9e3cb94e39f29ee19b729ccdc71d53ab1e9e": {
+      "id": "img_8e0b339ab08188a63ee01c8d69ca9e3cb94e39f29ee19b729ccdc71d53ab1e9e",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_ev1_20261111_125716\\view_04.jpg",
+      "sha256": "8e0b339ab08188a63ee01c8d69ca9e3cb94e39f29ee19b729ccdc71d53ab1e9e",
+      "parents": [],
+      "image_id": "img_8e0b339ab08188a63ee01c8d69ca9e3cb94e39f29ee19b729ccdc71d53ab1e9e",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "0a7e5d2dfa885876b099a79bb11e3c93a07935c37d1281c03d2b465a4056b9f5"
+}

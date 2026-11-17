@@ -87,7 +87,7 @@ class CodeSignatureGuardTest(unittest.TestCase):
                 "agent": {"mode": "active", "planner": "heuristic", "transport": "local",
                           "image_roots": [str(image)], "max_steps": 2,
                           "candidate_policy": {"top_k": 3},
-                          "workflow": {"execution": "shadow",
+                          "workflow": {"execution": "active",
                                        "python": ".venv/vision/Scripts/python.exe",
                                        "max_seconds": 30}},
             }

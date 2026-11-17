@@ -1,0 +1,72 @@
+{
+  "dets": [
+    {
+      "label": "淀粉粒",
+      "tight_bbox": [
+        683.25,
+        1089.0,
+        1005.75,
+        1377.0
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "不规则多角形颗粒，可见隐约层纹",
+      "source_tight_bbox": [
+        737,
+        1137,
+        952,
+        1329
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "淀粉粒",
+      "tight_bbox": [
+        686.0,
+        1052.75,
+        932.0,
+        1144.25
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "椭圆形小颗粒，表面可见裂缝状特征",
+      "source_tight_bbox": [
+        727,
+        1068,
+        891,
+        1129
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "淀粉粒",
+      "tight_bbox": [
+        782.75,
+        1283.0,
+        1060.25,
+        1421.0
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "椭圆形颗粒，隐约可见脐点",
+      "source_tight_bbox": [
+        829,
+        1306,
+        1014,
+        1398
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    0,
+    768,
+    1024,
+    1536
+  ],
+  "feature_id": "starch_grain",
+  "engine": "glm_targeted",
+  "count": 3,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

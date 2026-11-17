@@ -1,0 +1,119 @@
+{
+  "identity": "c6b732381eeff87d558756cb05457164df96271e3cb9482d1d8a6ce33cb08d8c",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "茯苓",
+    "郁金",
+    "G3",
+    "白芍",
+    "G1"
+  ],
+  "hypotheses": {
+    "茯苓": {
+      "status": "investigating",
+      "reason": "若fiber阳性且壁厚微木化、具大圆形纹孔，可推进白芍与G1的区分；若阴性，则对G1的cork_cell再查一次后评估停止。",
+      "evidence_digest": "0b1687bb828770cf5560adc487dec6f169fa14a025abb707ca6eef81bfce6d8b",
+      "decision_source": "model"
+    },
+    "郁金": {
+      "status": "investigating",
+      "reason": "G3的single_crystal为本轮扫描对象；郁金的gelatinized_starch是C级required，下一轮用存在性检查区分；白芍与G1的区分依赖cork_cell/fiber等P1 supporting，可在方晶扫描后视结果决定是否继续。",
+      "evidence_digest": "58b0a5608c320b1e86e1bec6b7e0015c3ddc81f8f62618401f91d986a822cf76",
+      "decision_source": "model"
+    },
+    "G3": {
+      "status": "investigating",
+      "reason": "G3的single_crystal为本轮扫描对象；郁金的gelatinized_starch是C级required，下一轮用存在性检查区分；白芍与G1的区分依赖cork_cell/fiber等P1 supporting，可在方晶扫描后视结果决定是否继续。",
+      "evidence_digest": "58b0a5608c320b1e86e1bec6b7e0015c3ddc81f8f62618401f91d986a822cf76",
+      "decision_source": "model"
+    },
+    "白芍": {
+      "status": "investigating",
+      "reason": "若fiber阳性且壁厚微木化、具大圆形纹孔，可推进白芍与G1的区分；若阴性，则对G1的cork_cell再查一次后评估停止。",
+      "evidence_digest": "0b1687bb828770cf5560adc487dec6f169fa14a025abb707ca6eef81bfce6d8b",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "若fiber阳性且壁厚微木化、具大圆形纹孔，可推进白芍与G1的区分；若阴性，则对G1的cork_cell再查一次后评估停止。",
+      "evidence_digest": "0b1687bb828770cf5560adc487dec6f169fa14a025abb707ca6eef81bfce6d8b",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "若hypha阴性，下一轮核验郁金gelatinized_starch（C级required）与G3 single_crystal（P0缺口），继续用存在性检查在候选间区分，而非重复测量已IN_RANGE的簇晶。"
+        },
+        {
+          "candidate_id": "郁金",
+          "status": "investigating",
+          "reason": "若hypha阴性，下一轮核验郁金gelatinized_starch（C级required）与G3 single_crystal（P0缺口），继续用存在性检查在候选间区分，而非重复测量已IN_RANGE的簇晶。"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "若hypha阴性，下一轮核验郁金gelatinized_starch（C级required）与G3 single_crystal（P0缺口），继续用存在性检查在候选间区分，而非重复测量已IN_RANGE的簇晶。"
+        }
+      ],
+      "evidence_digest": "58b0a5608c320b1e86e1bec6b7e0015c3ddc81f8f62618401f91d986a822cf76",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "G3的single_crystal为本轮扫描对象；郁金的gelatinized_starch是C级required，下一轮用存在性检查区分；白芍与G1的区分依赖cork_cell/fiber等P1 supporting，可在方晶扫描后视结果决定是否继续。"
+        },
+        {
+          "candidate_id": "郁金",
+          "status": "investigating",
+          "reason": "G3的single_crystal为本轮扫描对象；郁金的gelatinized_starch是C级required，下一轮用存在性检查区分；白芍与G1的区分依赖cork_cell/fiber等P1 supporting，可在方晶扫描后视结果决定是否继续。"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "G3的single_crystal为本轮扫描对象；郁金的gelatinized_starch是C级required，下一轮用存在性检查区分；白芍与G1的区分依赖cork_cell/fiber等P1 supporting，可在方晶扫描后视结果决定是否继续。"
+        }
+      ],
+      "evidence_digest": "58b0a5608c320b1e86e1bec6b7e0015c3ddc81f8f62618401f91d986a822cf76",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "若fiber阳性且壁厚微木化、具大圆形纹孔，可推进白芍与G1的区分；若阴性，则对G1的cork_cell再查一次后评估停止。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "若fiber阳性且壁厚微木化、具大圆形纹孔，可推进白芍与G1的区分；若阴性，则对G1的cork_cell再查一次后评估停止。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "若fiber阳性且壁厚微木化、具大圆形纹孔，可推进白芍与G1的区分；若阴性，则对G1的cork_cell再查一次后评估停止。"
+        }
+      ],
+      "evidence_digest": "0b1687bb828770cf5560adc487dec6f169fa14a025abb707ca6eef81bfce6d8b",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

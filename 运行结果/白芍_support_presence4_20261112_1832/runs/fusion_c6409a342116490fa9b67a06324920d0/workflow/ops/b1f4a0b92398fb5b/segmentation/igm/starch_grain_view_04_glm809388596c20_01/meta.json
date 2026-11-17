@@ -1,0 +1,141 @@
+{
+  "image": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\runs\\fusion_c6409a342116490fa9b67a06324920d0\\workflow\\ops\\b1f4a0b92398fb5b\\crops\\starch_grain_view_04_glm809388596c20_01.png",
+  "image_hw": [
+    336,
+    370
+  ],
+  "stem": "starch_grain_view_04_glm809388596c20_01",
+  "prompt": "请完成图像的二值分割任务（只有一个前景和一个背景的图像分割），图中的前景是淀粉粒：类球形或多角形的颗粒，表面可见脐点（点状、裂缝状、人字状或星状）及隐约层纹；亦见由数个分粒聚合成多瓣状的复粒。\n只分割位于画面中央的那一个目标：画面边缘、四角出现的其他同类实体属于背景，不要分割、不要补全、不要描出轮廓。\n请严格按图中所见该实体的实际轮廓，把它从背景中完整分割出来，保留原本形状，不要简化和复杂化，不要凭空生成图中不存在的实体。\n输出二值掩码图：前景为纯白色，背景为纯黑色，不做灰度渐变、不画轮廓线。\n背景必须整幅均匀纯黑：不允许出现半幅灰/白背景，也不允许出现对角或渐变的明暗分界。\n不要添加任何文字、数字、水印、标识、logo、边框或装饰元素。",
+  "prompt_source": "模板+本体表(starch_grain)",
+  "feature": "starch_grain",
+  "feature_desc": "淀粉粒：类球形或多角形的颗粒，表面可见脐点（点状、裂缝状、人字状或星状）及隐约层纹；亦见由数个分粒聚合成多瓣状的复粒",
+  "model": "doubao-seedream-5-0-flash-260915",
+  "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+  "size_requested": "2048x2048",
+  "size_mode": "cli:--size",
+  "size_note": null,
+  "pad_ratio": 0.0918,
+  "input_sent": "input_sent.jpg",
+  "input_sent_hw": [
+    2048,
+    2048
+  ],
+  "gen_hw": [
+    2048,
+    2048
+  ],
+  "letterbox": {
+    "out_w": 2048,
+    "out_h": 2048,
+    "content_w": 2048,
+    "content_h": 1860,
+    "top_ratio": 0.0458984375,
+    "left_ratio": 0.0,
+    "cw_ratio": 1.0,
+    "ch_ratio": 0.908203125,
+    "scale": 5.535135
+  },
+  "key_source": "igm.api_key",
+  "threshold": 125.0,
+  "invert": false,
+  "polarity_note": "极性探针取亮侧；四角不齐（3/4 亮）→ 环带判据：环带均值49.9 vs 全图54.2（相对 -0.08，门槛 0.2）→ invert=False",
+  "mask_source": "gray",
+  "polarity_hint": false,
+  "polarity_conflict": false,
+  "box": [
+    24,
+    24,
+    347,
+    312
+  ],
+  "box_margin_ratio": 0.1,
+  "box_keep_overlap": 0.5,
+  "box_iou": 0.2261,
+  "fg_outside_box_ratio": 0.1675,
+  "center_comp_ratio": 0.234,
+  "box_association": "region_component",
+  "association_version": "association-policy-v1-trial",
+  "center_region_box": [
+    104,
+    96,
+    266,
+    240
+  ],
+  "center_region_hit": true,
+  "association_candidates": 3,
+  "association_method": "ambiguous",
+  "associated_bbox_ratio": 0.0,
+  "associated_comp_ratio": 0.0,
+  "associated_touches_border": false,
+  "association_valid": false,
+  "association_status": "review",
+  "association_reasons": [
+    "ASSOCIATION_AMBIGUOUS"
+  ],
+  "association_trace": [
+    {
+      "rule": "unique",
+      "matched": false,
+      "reasons": [
+        "NOT_SINGLE_COMPONENT"
+      ]
+    },
+    {
+      "rule": "multipart",
+      "matched": false,
+      "reasons": [
+        "NOT_MULTIPART"
+      ]
+    },
+    {
+      "rule": "dominant",
+      "matched": false,
+      "reasons": [
+        "FEATURE_NOT_ELIGIBLE",
+        "SHAPE_NOT_ELIGIBLE"
+      ]
+    },
+    {
+      "rule": "ambiguous",
+      "matched": true,
+      "reasons": []
+    }
+  ],
+  "dominance": {
+    "components": 3,
+    "total_area": 25549,
+    "selected_area": 25549,
+    "dropped_area": 0,
+    "dropped_area_ratio": 0.0,
+    "largest_share": 0.8515401776977573,
+    "second_share": 0.07937688363536734,
+    "dropped_components": 0,
+    "center_hit": true,
+    "tight_overlap": 1.0
+  },
+  "width_only": false,
+  "association_dropped_components": 0,
+  "association_dropped_px": 0,
+  "review_reason_codes": [
+    "TARGET_ASSOCIATION_AMBIGUOUS_OR_TOO_SMALL",
+    "POSSIBLE_TRUNCATION",
+    "FOREGROUND_OUTSIDE_BOX",
+    "ASSOCIATION_AMBIGUOUS"
+  ],
+  "dropped_components": 0,
+  "dropped_px": 0,
+  "clipped_px": 0,
+  "max_hole_ratio": 0.0,
+  "hole_fill": "all",
+  "area_ratio": 0.212926,
+  "n_components": 4,
+  "status": "review",
+  "mask_hw": [
+    336,
+    370
+  ],
+  "size_match": true,
+  "revised_prompt": null,
+  "elapsed_s": 15.7,
+  "note": "IGM 是现役图像分割通路的产物（非预标注件）；status!=ok 的实例在判药侧被整条丢弃，尺寸量值仅在 status==ok 时可用"
+}

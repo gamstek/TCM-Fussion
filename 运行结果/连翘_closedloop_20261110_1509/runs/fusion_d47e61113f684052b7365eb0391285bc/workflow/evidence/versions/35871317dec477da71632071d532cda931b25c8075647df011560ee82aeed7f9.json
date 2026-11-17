@@ -1,0 +1,44 @@
+{
+  "identity": "62df7dc9912a4fc678967ac90af946a3db91ff1b5e17ef41b7b8c75f7300a17a",
+  "parent": "a0e11753b4cab64bf8ba7275d9c8a7d6899fcbcffeb57f0fc10f38cb5941a6ba",
+  "artifacts": {
+    "img_0bc71ad0646e14d3fc1bc90db830e0f9be70874231dbec70949f3046377685c4": {
+      "id": "img_0bc71ad0646e14d3fc1bc90db830e0f9be70874231dbec70949f3046377685c4",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_01.tif",
+      "sha256": "0bc71ad0646e14d3fc1bc90db830e0f9be70874231dbec70949f3046377685c4",
+      "parents": [],
+      "image_id": "img_0bc71ad0646e14d3fc1bc90db830e0f9be70874231dbec70949f3046377685c4",
+      "valid": true
+    },
+    "img_44e59470e3e3556dd374397194975c4f62717a55db77714867fa39e628728830": {
+      "id": "img_44e59470e3e3556dd374397194975c4f62717a55db77714867fa39e628728830",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_02.tif",
+      "sha256": "44e59470e3e3556dd374397194975c4f62717a55db77714867fa39e628728830",
+      "parents": [],
+      "image_id": "img_44e59470e3e3556dd374397194975c4f62717a55db77714867fa39e628728830",
+      "valid": true
+    },
+    "img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5": {
+      "id": "img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_03.tif",
+      "sha256": "4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5",
+      "parents": [],
+      "image_id": "img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5",
+      "valid": true
+    },
+    "img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f": {
+      "id": "img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_04.tif",
+      "sha256": "c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f",
+      "parents": [],
+      "image_id": "img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "35871317dec477da71632071d532cda931b25c8075647df011560ee82aeed7f9"
+}

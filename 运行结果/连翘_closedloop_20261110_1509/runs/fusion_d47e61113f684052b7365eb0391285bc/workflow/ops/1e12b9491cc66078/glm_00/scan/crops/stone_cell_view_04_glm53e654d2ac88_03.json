@@ -1,0 +1,40 @@
+{
+  "crop_id": "stone_cell_view_04_glm53e654d2ac88_03",
+  "png": "stone_cell_view_04_glm53e654d2ac88_03.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_04.tif",
+  "stem": "view_04",
+  "feature_id": "stone_cell",
+  "object_label": "石细胞",
+  "herb": "",
+  "px_per_um": 15.55,
+  "tight_box": [
+    3024.0,
+    1159.5,
+    3114.0,
+    1249.5
+  ],
+  "tight_box_local": [
+    24.0,
+    24.5,
+    114.0,
+    114.5
+  ],
+  "loose_box": [
+    3000,
+    1135,
+    3138,
+    1273
+  ],
+  "crop_size": "138x138",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.65,
+  "det_confidence": "low",
+  "source_tight_bbox": [
+    3053,
+    1192,
+    3085,
+    1217
+  ],
+  "locate_expand": 1.5
+}

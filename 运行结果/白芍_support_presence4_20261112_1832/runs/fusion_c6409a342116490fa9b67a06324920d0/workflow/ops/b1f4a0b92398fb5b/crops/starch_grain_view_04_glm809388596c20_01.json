@@ -1,0 +1,40 @@
+{
+  "crop_id": "starch_grain_view_04_glm809388596c20_01",
+  "png": "starch_grain_view_04_glm809388596c20_01.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\view_04.jpg",
+  "stem": "view_04",
+  "feature_id": "starch_grain",
+  "object_label": "淀粉粒",
+  "herb": "",
+  "px_per_um": 11.65,
+  "tight_box": [
+    683.25,
+    1089.0,
+    1005.75,
+    1377.0
+  ],
+  "tight_box_local": [
+    24.25,
+    24.0,
+    346.75,
+    312.0
+  ],
+  "loose_box": [
+    659,
+    1065,
+    1029,
+    1401
+  ],
+  "crop_size": "370x336",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.65,
+  "det_confidence": "medium",
+  "source_tight_bbox": [
+    737,
+    1137,
+    952,
+    1329
+  ],
+  "locate_expand": 1.5
+}

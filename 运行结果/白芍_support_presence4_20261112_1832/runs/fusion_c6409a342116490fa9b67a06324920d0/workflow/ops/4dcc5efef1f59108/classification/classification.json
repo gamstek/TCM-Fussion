@@ -1,0 +1,44 @@
+{
+  "label": "图像不可判",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "",
+  "confidence": "medium",
+  "reason": "图像虚焦，无壁无棱角无法辨认",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\view_04.jpg",
+  "focus": 404.0,
+  "sent_hw": [
+    287,
+    768
+  ],
+  "granularity": "instance",
+  "confidence_score": 0.65,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "starch_grain_view_04_glm809388596c20_02",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\runs\\fusion_c6409a342116490fa9b67a06324920d0\\workflow\\ops\\02a47ffb2efaaf1a\\scan\\crops\\starch_grain_view_04_glm809388596c20_02.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm",
+  "cnn_score": 0.644102,
+  "cnn_entropy": 0.558444,
+  "cnn_topk": [
+    {
+      "class": "13_other",
+      "feature_id": "other",
+      "prob": 0.644102
+    },
+    {
+      "class": "02_needle_crystal",
+      "feature_id": "needle_crystal",
+      "prob": 0.081571
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.062702
+    }
+  ],
+  "cnn_fallback_reason": "low_confidence_or_other"
+}

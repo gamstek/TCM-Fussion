@@ -1,0 +1,44 @@
+{
+  "label": "图像不可判",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "",
+  "confidence": "high",
+  "reason": "图像虚焦模糊，无锐利边界或结晶形态",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_01.tif",
+  "focus": 106.7,
+  "sent_hw": [
+    446,
+    768
+  ],
+  "granularity": "instance",
+  "confidence_score": 0.9,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "needle_crystal_view_01_glm059f3d033e13_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\db12a320c352510c\\features\\crops\\needle_crystal_view_01_glm059f3d033e13_01.png",
+  "glm_confidence": "high",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm",
+  "cnn_score": 0.329014,
+  "cnn_entropy": 0.808487,
+  "cnn_topk": [
+    {
+      "class": "13_other",
+      "feature_id": "other",
+      "prob": 0.329014
+    },
+    {
+      "class": "10_hypha",
+      "feature_id": "hypha",
+      "prob": 0.121695
+    },
+    {
+      "class": "01_single_crystal",
+      "feature_id": "single_crystal",
+      "prob": 0.121225
+    }
+  ],
+  "cnn_fallback_reason": "low_confidence_or_other"
+}

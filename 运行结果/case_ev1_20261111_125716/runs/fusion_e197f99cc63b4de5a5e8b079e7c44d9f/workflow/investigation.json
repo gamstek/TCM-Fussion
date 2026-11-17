@@ -1,0 +1,153 @@
+{
+  "identity": "db9013c6945ca0952389db0fe6b0698e81e2f92f0377d14b1cda5ae4565d02f5",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "白芍",
+    "G4",
+    "G1"
+  ],
+  "hypotheses": {
+    "白芍": {
+      "status": "investigating",
+      "reason": "三候选均处investigating：白芍需更多簇晶尺寸实例；G1需定性簇晶确认及淀粉粒/导管差异；G4针晶假设未见，若本轮尺寸持续支持白芍可考虑暂停G4",
+      "evidence_digest": "ecacfa80a4b1d2ab02ae2060e4415f87f0d64041657a28e22134d898f54017b9",
+      "decision_source": "model"
+    },
+    "G4": {
+      "status": "investigating",
+      "reason": "三候选均处investigating：白芍需更多簇晶尺寸实例；G1需定性簇晶确认及淀粉粒/导管差异；G4针晶假设未见，若本轮尺寸持续支持白芍可考虑暂停G4",
+      "evidence_digest": "ecacfa80a4b1d2ab02ae2060e4415f87f0d64041657a28e22134d898f54017b9",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "三候选均处investigating：白芍需更多簇晶尺寸实例；G1需定性簇晶确认及淀粉粒/导管差异；G4针晶假设未见，若本轮尺寸持续支持白芍可考虑暂停G4",
+      "evidence_digest": "ecacfa80a4b1d2ab02ae2060e4415f87f0d64041657a28e22134d898f54017b9",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍/G1共享cluster_crystal这一P0判据，与G4/知母的needle_crystal直接互斥可区分；后续对检出视野screen/locate优先核查这两类结晶形态"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "白芍/G1共享cluster_crystal这一P0判据，与G4/知母的needle_crystal直接互斥可区分；后续对检出视野screen/locate优先核查这两类结晶形态"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "白芍/G1共享cluster_crystal这一P0判据，与G4/知母的needle_crystal直接互斥可区分；后续对检出视野screen/locate优先核查这两类结晶形态"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "下一轮对已检出crop优先screen簇晶与针晶形态；提名仅用于扩展调查方向，不构成证据"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "下一轮对已检出crop优先screen簇晶与针晶形态；提名仅用于扩展调查方向，不构成证据"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "下一轮对已检出crop优先screen簇晶与针晶形态；提名仅用于扩展调查方向，不构成证据"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "本轮为只读→测量的核验步骤；若测量结果落入白芍判据范围将支持白芍，若显著偏离则继续查G1与G4针晶假设"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "本轮为只读→测量的核验步骤；若测量结果落入白芍判据范围将支持白芍，若显著偏离则继续查G1与G4针晶假设"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "本轮为只读→测量的核验步骤；若测量结果落入白芍判据范围将支持白芍，若显著偏离则继续查G1与G4针晶假设"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "簇晶尺寸已支持白芍且不与G1的定性判据冲突；需通过更多实例测量与G1专属supporting特征（淀粉粒、导管）区分白芍与G1，并核查G4针晶假设是否应在其他视野补查。"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "簇晶尺寸已支持白芍且不与G1的定性判据冲突；需通过更多实例测量与G1专属supporting特征（淀粉粒、导管）区分白芍与G1，并核查G4针晶假设是否应在其他视野补查。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "簇晶尺寸已支持白芍且不与G1的定性判据冲突；需通过更多实例测量与G1专属supporting特征（淀粉粒、导管）区分白芍与G1，并核查G4针晶假设是否应在其他视野补查。"
+        }
+      ],
+      "evidence_digest": "2af0276d210288ed2a34cfbfd394a31169c2945e78517d8689693787b9f6a8a2",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "三候选均处investigating：白芍需更多簇晶尺寸实例；G1需定性簇晶确认及淀粉粒/导管差异；G4针晶假设未见，若本轮尺寸持续支持白芍可考虑暂停G4"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "三候选均处investigating：白芍需更多簇晶尺寸实例；G1需定性簇晶确认及淀粉粒/导管差异；G4针晶假设未见，若本轮尺寸持续支持白芍可考虑暂停G4"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "三候选均处investigating：白芍需更多簇晶尺寸实例；G1需定性簇晶确认及淀粉粒/导管差异；G4针晶假设未见，若本轮尺寸持续支持白芍可考虑暂停G4"
+        }
+      ],
+      "evidence_digest": "ecacfa80a4b1d2ab02ae2060e4415f87f0d64041657a28e22134d898f54017b9",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

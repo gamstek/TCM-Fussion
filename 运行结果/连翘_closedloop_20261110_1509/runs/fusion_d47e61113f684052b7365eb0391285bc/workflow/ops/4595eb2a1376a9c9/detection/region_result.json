@@ -1,0 +1,14 @@
+{
+  "dets": [],
+  "roi": [
+    237,
+    0,
+    3840,
+    1979
+  ],
+  "feature_id": "fiber",
+  "engine": "glm_targeted",
+  "count": 0,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

@@ -20,6 +20,48 @@ def read_builtin(runtime, name, args, state):
         offset, limit = args['offset'], args['limit']
         # records在runtime构造时已去除真值herb；不读取attributes或labels。
         result = {'records': runtime.records[offset:offset+limit], 'total': len(runtime.records)}
+    elif name == 'read_action_catalog':
+        offset,limit=args.get('offset',0),args.get('limit',100)
+        workflow=getattr(runtime,'workflow',None)
+        actions=workflow.propose() if workflow is not None else runtime.legal_actions(state)
+        items=[]
+        for action in actions:
+            a=action.get('args') or {}
+            items.append({'action_id':action.get('action_id'),'tool':action.get('tool'),
+                          'target_id':a.get('target_id'),'feature_id':a.get('feature_id'),
+                          'image_id':a.get('image_id'),'cost':runtime.tools.get(action.get('tool')).budget_class
+                          if action.get('tool') in runtime.tools.specs else None})
+        return {**common,'total':len(items),'offset':offset,'limit':limit,
+                'actions':items[offset:offset+limit],
+                'note':'只读动作目录；选择仍受当前合法集合、前置条件和预算约束'}
+    elif name == 'read_evidence_detail':
+        kind=args.get('kind');offset=args.get('offset',0);limit=args.get('limit',20)
+        workflow=getattr(runtime,'workflow',None)
+        if workflow is None:
+            raise IntegrationError('EVIDENCE_SCOPE','没有工作流证据可展开')
+        if kind=='classifications':
+            rows=[]
+            for v in workflow.store.current()['artifacts'].values():
+                if v.get('valid') and v.get('kind')=='classification':
+                    doc=read_json(v['path'])
+                    rows.append({'crop_id':v.get('crop_id'),'feature_id':v.get('feature_id'),
+                                 'label':doc.get('label'),'confidence':doc.get('confidence'),
+                                 'reject':doc.get('reject'),'identity_verified':v.get('identity_verified')})
+        elif kind=='operations':
+            rows=list(read_json(workflow.operations)['entries'].values())
+        elif kind=='quality':
+            rows=[workflow.assessment(v) for v in workflow.store.current()['artifacts'].values()
+                  if v.get('valid') and v.get('kind')=='segmentation' and v.get('assessment_id')]
+        elif kind=='measurements':
+            rows=[]
+            for v in workflow.store.current()['artifacts'].values():
+                if v.get('valid') and v.get('kind')=='measurement':
+                    rows.append({'artifact_id':v['id'],'crop_id':v.get('crop_id'),
+                                 'feature_id':v.get('feature_id'),'path':v.get('path')})
+        else:
+            raise IntegrationError('EVIDENCE_SCOPE','未知证据类型')
+        return {**common,'kind':kind,'total':len(rows),'offset':offset,'limit':limit,
+                'rows':rows[offset:offset+limit]}
     elif name == 'list_features':
         result = {'features': {fid: vars(card) for fid,card in scored['cards'].items()}}
     elif name == 'query_criteria':

@@ -1,0 +1,492 @@
+{
+  "schema": "cnn-classifier/v1",
+  "model": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计与权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+  "imgsz": 320,
+  "input_mode": "letterbox",
+  "classes": [
+    "00_cluster_crystal",
+    "01_single_crystal",
+    "02_needle_crystal",
+    "03_vessel",
+    "04_stone_cell",
+    "05_starch_grain",
+    "06_non_glandular_hair",
+    "07_secretory_tissue",
+    "08_stoma",
+    "09_epidermis_cell",
+    "10_hypha",
+    "11_fiber",
+    "12_pollen_grain",
+    "13_other"
+  ],
+  "rows": [
+    {
+      "id": "crop:img_0bc71ad0646e14d3fc1bc90db830e0f9be70874231dbec70949f3046377685c4:fiber_view_01_01",
+      "topk": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.809129
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.034942
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.025455
+        }
+      ],
+      "top1": "fiber",
+      "top1_class": "11_fiber",
+      "top1_prob": 0.809129,
+      "margin": 0.774187,
+      "entropy": 0.360781,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_44e59470e3e3556dd374397194975c4f62717a55db77714867fa39e628728830:stone_cell_view_02_01",
+      "topk": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.775593
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.036631
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.035276
+        }
+      ],
+      "top1": "fiber",
+      "top1_class": "11_fiber",
+      "top1_prob": 0.775593,
+      "margin": 0.738961,
+      "entropy": 0.409112,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5:epidermis_cell_view_03_02",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.477545
+        },
+        {
+          "class": "10_hypha",
+          "feature_id": "hypha",
+          "prob": 0.080981
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.071603
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.477545,
+      "margin": 0.396563,
+      "entropy": 0.726198,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5:fiber_view_03_01",
+      "topk": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.827898
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.029352
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.022137
+        }
+      ],
+      "top1": "fiber",
+      "top1_class": "11_fiber",
+      "top1_prob": 0.827898,
+      "margin": 0.798546,
+      "entropy": 0.334456,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:fiber_view_04_01",
+      "topk": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.79923
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.043522
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.028598
+        }
+      ],
+      "top1": "fiber",
+      "top1_class": "11_fiber",
+      "top1_prob": 0.79923,
+      "margin": 0.755708,
+      "entropy": 0.370156,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_44e59470e3e3556dd374397194975c4f62717a55db77714867fa39e628728830:needle_crystal_view_02_glm53e654d2ac88_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.384839
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.115979
+        },
+        {
+          "class": "00_cluster_crystal",
+          "feature_id": "cluster_crystal",
+          "prob": 0.079393
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.384839,
+      "margin": 0.26886,
+      "entropy": 0.812738,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stoma_view_04_glm059f3d033e13_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.480452
+        },
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.136451
+        },
+        {
+          "class": "00_cluster_crystal",
+          "feature_id": "cluster_crystal",
+          "prob": 0.063839
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.480452,
+      "margin": 0.344001,
+      "entropy": 0.715446,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm059f3d033e13_01",
+      "topk": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.311355
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.129433
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.111512
+        }
+      ],
+      "top1": "fiber",
+      "top1_class": "11_fiber",
+      "top1_prob": 0.311355,
+      "margin": 0.181922,
+      "entropy": 0.852335,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm059f3d033e13_02",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.49281
+        },
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.068276
+        },
+        {
+          "class": "00_cluster_crystal",
+          "feature_id": "cluster_crystal",
+          "prob": 0.06571
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.49281,
+      "margin": 0.424534,
+      "entropy": 0.730058,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm059f3d033e13_03",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.656479
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.060548
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.043575
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.656479,
+      "margin": 0.595931,
+      "entropy": 0.56348,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm059f3d033e13_04",
+      "topk": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.464543
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.111306
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.083348
+        }
+      ],
+      "top1": "fiber",
+      "top1_class": "11_fiber",
+      "top1_prob": 0.464543,
+      "margin": 0.353237,
+      "entropy": 0.738178,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm220f18619613_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.325778
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.132174
+        },
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.103069
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.325778,
+      "margin": 0.193604,
+      "entropy": 0.840936,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm53e654d2ac88_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.470454
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.172411
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.062555
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.470454,
+      "margin": 0.298043,
+      "entropy": 0.707395,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm53e654d2ac88_02",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.606999
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.07583
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.063903
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.606999,
+      "margin": 0.531169,
+      "entropy": 0.608362,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_c385efd0b0be8d35e7a27795a00ac0b76003c2c4d6824701aba9cd7f331a377f:stone_cell_view_04_glm53e654d2ac88_03",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.528927
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.123559
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.056493
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.528927,
+      "margin": 0.405368,
+      "entropy": 0.676861,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_0bc71ad0646e14d3fc1bc90db830e0f9be70874231dbec70949f3046377685c4:needle_crystal_view_01_glm059f3d033e13_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.329014
+        },
+        {
+          "class": "10_hypha",
+          "feature_id": "hypha",
+          "prob": 0.121695
+        },
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.121225
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.329014,
+      "margin": 0.207319,
+      "entropy": 0.808487,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5:cluster_crystal_view_03_glm220f18619613_01",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.715655
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.067306
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.038268
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.715655,
+      "margin": 0.648349,
+      "entropy": 0.480169,
+      "source": "cnn"
+    },
+    {
+      "id": "crop:img_4fa3ac901010cf1fcef72eebb4de2abc89123db8050c6b8c032652782541aab5:cluster_crystal_view_03_glm220f18619613_02",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.524424
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.137674
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.058985
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.524424,
+      "margin": 0.38675,
+      "entropy": 0.675651,
+      "source": "cnn"
+    }
+  ]
+}

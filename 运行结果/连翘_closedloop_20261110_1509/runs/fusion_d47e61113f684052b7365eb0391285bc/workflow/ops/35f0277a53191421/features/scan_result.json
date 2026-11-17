@@ -1,0 +1,12 @@
+{
+  "engine": "glm_full_scan",
+  "count": 2,
+  "features": [
+    "needle_crystal",
+    "stoma",
+    "cluster_crystal"
+  ],
+  "partial": false,
+  "errors": [],
+  "coordinate_system": "original_pixels"
+}

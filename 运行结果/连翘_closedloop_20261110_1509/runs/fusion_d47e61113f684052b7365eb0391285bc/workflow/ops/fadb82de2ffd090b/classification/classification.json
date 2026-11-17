@@ -1,0 +1,44 @@
+{
+  "label": "草酸钙簇晶",
+  "reject": "",
+  "raw_label": "草酸钙簇晶",
+  "feature_id": "cluster_crystal",
+  "second": "",
+  "confidence": "medium",
+  "reason": "团块状多晶聚集，边缘有钝棱角",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\view_03.tif",
+  "focus": 63.4,
+  "sent_hw": [
+    735,
+    768
+  ],
+  "granularity": "clump",
+  "confidence_score": 0.65,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "cluster_crystal_view_03_glm220f18619613_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc\\workflow\\ops\\35f0277a53191421\\features\\crops\\cluster_crystal_view_03_glm220f18619613_01.png",
+  "glm_confidence": "medium",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm",
+  "cnn_score": 0.715655,
+  "cnn_entropy": 0.480169,
+  "cnn_topk": [
+    {
+      "class": "13_other",
+      "feature_id": "other",
+      "prob": 0.715655
+    },
+    {
+      "class": "02_needle_crystal",
+      "feature_id": "needle_crystal",
+      "prob": 0.067306
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.038268
+    }
+  ],
+  "cnn_fallback_reason": "low_confidence_or_other"
+}

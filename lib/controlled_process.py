@@ -34,13 +34,30 @@ def safe_log(path, env):
 
 
 def kill_tree(p):
-    """受控子进程通用终止原语；取消不代表远端退费。"""
+    """Bound tree termination, then immediately kill/reap a surviving worker.
+
+Windows taskkill can return a failure without stopping the process. Do not
+spend the old five-second grace period waiting for a worker still running.
+Tree termination remains best effort if the OS denies taskkill; a surviving
+parent is an explicit failure rather than a silently successful cleanup.
+"""
+    if p.poll() is not None:
+        return
     if os.name=='nt':
-        subprocess.run(['taskkill','/PID',str(p.pid),'/T','/F'],capture_output=True)
+        try:
+            subprocess.run(['taskkill','/PID',str(p.pid),'/T','/F'],capture_output=True,timeout=1.5)
+        except (subprocess.TimeoutExpired,OSError):
+            pass
     else:
         try:os.killpg(p.pid,signal.SIGKILL)
         except ProcessLookupError:pass
-    p.wait()
+    if p.poll() is None:
+        try:p.kill()
+        except OSError:
+            if p.poll() is None:raise
+    try:p.wait(timeout=1)
+    except subprocess.TimeoutExpired as exc:
+        raise IntegrationError('PROCESS_TERMINATION_FAILED','worker未在清理时限内退出') from exc
 
 
 def run(argv, *, context_path, timeout, log_path, cancel_event=None):

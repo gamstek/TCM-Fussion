@@ -4,6 +4,17 @@ import json
 from jsonschema import Draft202012Validator
 from .storage import IntegrationError, digest
 
+# Optional presence hints are diagnostic metadata, not a CropMeta delivery contract.
+# Keep their response schema here with the tool's other schema validation.
+PRESENCE_BOX_SCHEMA = {
+    'type': 'object', 'required': ['bbox', 'coordinate_space'],
+    'properties': {
+        'bbox': {'type': 'array', 'minItems': 4, 'maxItems': 4,
+                 'items': {'type': 'number'}},
+        'coordinate_space': {'const': 'model_input_pixels'},
+    }, 'additionalProperties': False,
+}
+
 @dataclass(frozen=True)
 class ToolSpec:
     name: str
@@ -61,9 +72,18 @@ class ToolRegistry:
         from .tool_builtins import read_builtin
         for name,fields in [('read_evidence',{'offset':'integer','limit':'integer'}),('list_features',{}),
             ('query_criteria',{'candidate_id':'string'}),('read_scale',{}),('list_fovs',{}),('criteria_diff',{}),
-            ('list_artifacts',{}),('read_artifact_status',{}),('read_quality',{})]:
+            ('list_artifacts',{}),('read_artifact_status',{}),('read_quality',{}),('read_action_catalog',{'offset':'integer','limit':'integer'}),('read_evidence_detail',{'kind':'string','offset':'integer','limit':'integer'})]:
             self.register_handler(name,lambda r,a,s,n=name:read_builtin(r,n,a,s))
             schema=object_schema(fields)
+            if name=='read_action_catalog':
+                schema={'type':'object','properties':{'offset':{'type':'integer','minimum':0},
+                    'limit':{'type':'integer','minimum':1,'maximum':200}},'additionalProperties':False}
+            if name=='read_evidence_detail':
+                schema={'type':'object','properties':{
+                    'kind':{'enum':['classifications','operations','quality','measurements']},
+                    'offset':{'type':'integer','minimum':0},
+                    'limit':{'type':'integer','minimum':1,'maximum':50}},
+                    'required':['kind'],'additionalProperties':False}
             if name=='read_evidence':
                 schema['properties']={'offset':{'type':'integer','minimum':0},
                                       'limit':{'type':'integer','minimum':1,'maximum':50}}
@@ -127,7 +147,19 @@ class ToolRegistry:
     def invoke(self,runtime,action,state=None):
         spec=self.validate(action,runtime,state)
         result=self.handlers[spec.handler_id](runtime,action['args'],{**(state or {}),'action':action})
+        import inspect
+        if inspect.isawaitable(result):
+            if inspect.iscoroutine(result):result.close()
+            raise IntegrationError('ASYNC_TOOL_REQUIRED', '该工具必须走异步执行入口')
         if not self.validate_result(runtime,action,result):raise IntegrationError('TOOL_OUTPUT_INVALID','输出校验失败')
+        return result
+    async def invoke_async(self, runtime, action, state=None):
+        import inspect
+        spec = self.validate(action, runtime, state)
+        result = self.handlers[spec.handler_id](runtime, action['args'], {**(state or {}), 'action': action})
+        if inspect.isawaitable(result):result = await result
+        if not self.validate_result(runtime, action, result):
+            raise IntegrationError('TOOL_OUTPUT_INVALID', '异步工具输出校验失败')
         return result
     def read(self,runtime,name,args,state):
         spec=self.get(name)

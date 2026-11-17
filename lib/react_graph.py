@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import copy
 import json
+from collections import Counter
 import re
 import time
 from pathlib import Path
@@ -70,6 +71,11 @@ class LLMPlanner:
                                enumerate(context.get("parallel_observations", []), 1)})
             aliases = {identifier: option for option, identifier in option_ids.items()}
             context = {**context,
+                       **({"verification_opportunities": [
+                           {**row, "action_id": aliases[row["action_id"]]}
+                           for row in context["verification_opportunities"]
+                           if row.get("action_id") in aliases]}
+                          if "verification_opportunities" in context else {}),
                        "actions": [{**action, "action_id": aliases[action["action_id"]]}
                                    for action in context["actions"]],
                        "parallel_observations": [
@@ -95,6 +101,9 @@ class LLMPlanner:
                         "暂停或撤销只改变调查方向，不删除证据、不证明药材不存在。"
                         "P0缺口仅是建议，不是强制任务；你决定继续、暂停、撤销、改查或复核。"
                         "场景自由文本中的类别描述只是待核验线索，不是已确认的特征身份。"
+                        "presence_localization为定位影子诊断：几何合法不等于身份已确认，"
+                        "小框、贴边和重叠只作线索；无框或定位失败不等于目标不存在。"
+                        "按当前证据缺口自行决定是否定位或核验，不必对每个presence阳性重复调用GLM。"
                         "read_results是历史查询，stale=true时不得当成当前状态。"
                         "标定以当前evidence.workflow.calibration为准，卡片UNCAL不等于当前没有标定。"
                         "收到反思后，应说明维持或修正哪个假设、下一动作预期解决什么；"
@@ -179,6 +188,159 @@ def _resolve_planner_action(reply, choices, eligible):
     ]}
 
 
+def compact_skills(runtime):
+    """Skill IDs and purposes only; full SKILL.md is available through get_skill."""
+    return {row.get('id'): row.get('purpose') for row in runtime.skills.list()}
+
+
+def compact_evidence(evidence):
+    """Keep decision facts; drop repetitive raw operation/classification ledgers."""
+    evidence=copy.deepcopy(evidence or {})
+    workflow=evidence.get('workflow') or {}
+    operations=workflow.pop('operations',[]) or []
+    classifications=workflow.pop('classifications',[]) or []
+    quality=workflow.pop('quality_assessments',[]) or []
+    reviews=workflow.pop('segmentation_reviews',[]) or []
+    workflow['operation_summary']={
+        'count':len(operations),
+        'by_tool':dict(Counter((row.get('tool') or '') for row in operations)),
+        'failed':[{'tool':row.get('tool'),'error_code':row.get('error_code')}
+                  for row in operations if row.get('status')=='failed'][-4:]}
+    active_features={row.get('feature_id') for row in (workflow.get('required_states') or [])}
+    active_features |= {row.get('feature_id') for row in (workflow.get('supporting_states') or [])}
+    workflow['classification_summary']={
+        'count':len(classifications),
+        'by_feature':dict(Counter((row.get('feature_id') or 'unclassified') for row in classifications)),
+        'verified':[{'crop_id':row.get('crop_id'),'feature_id':row.get('feature_id')}
+                    for row in classifications if row.get('identity_verified')][-8:],
+        'active_unverified':[{'crop_id':row.get('crop_id'),'feature_id':row.get('feature_id'),
+                              'label':row.get('label')} for row in classifications
+                             if row.get('feature_id') in active_features
+                             and not row.get('identity_verified')][:12]}
+    workflow['quality_summary']={
+        'count':len(quality),
+        'findings':[f.get('code') for row in quality for f in (row.get('findings') or [])][-12:]}
+    workflow['segmentation_review_summary']={'count':len(reviews),
+        'statuses':dict(Counter((row.get('status') or row.get('quality') or '') for row in reviews))}
+    workflow['evidence_index']={
+        'operations_total':len(operations),
+        'operation_tools':dict(Counter((row.get('tool') or '') for row in operations)),
+        'classifications_total':len(classifications),
+        'classification_features':dict(Counter((row.get('feature_id') or 'unclassified') for row in classifications)),
+        'unverified_classifications':sum(1 for row in classifications if not row.get('identity_verified')),
+        'quality_total':len(quality),
+        'review_total':len(reviews),
+        'detail_access':['read_action_catalog','read_evidence','read_evidence_detail','read_artifact_status','read_quality','list_artifacts'],
+        'note':'索引只省略重复原文；当前候选判据、冲突、待核验和关键实例仍在上文'}
+    workflow.pop('hypothesis_catalog',None)
+    workflow.pop('recovery_options',None)
+    evidence['workflow']=workflow
+    evidence.pop('hypothesis_catalog',None)
+    evidence.pop('criteria_diff',None) if False else None
+    return evidence
+
+
+def compact_feedback(events, limit=4):
+    rows=[];seen=set()
+    for event in reversed(events):
+        feedback=event.get('feedback') if isinstance(event,dict) else None
+        if not feedback:continue
+        key=(feedback.get('problem_id'),feedback.get('failure_code'),
+             tuple(feedback.get('new_features') or []),tuple(feedback.get('new_counterevidence') or []))
+        if key in seen:continue
+        seen.add(key);rows.append(feedback)
+        if len(rows)>=limit:break
+    return list(reversed(rows))
+
+
+def compact_action_menu(actions, limit=20):
+    """Bound model-visible actions; full legal menu stays in choices for validation."""
+    stops=[a for a in actions if a.get('tool') in {'finish','request_review'}]
+    actionable=[a for a in actions if a not in stops]
+    rank={'measure_instances':0,'segment_instance':1,'classify_crops_batch':2,'classify_target':2,'read_action_catalog':2,
+          'feature_scan':3,'locate_feature':4,'detect_region':4,'detect_fov_initial':5,
+          'calibrate_fov':6,'hybrid_scan':6,'needle_scan':6,'propose_regions':7}
+    actionable=sorted(enumerate(actionable),key=lambda pair:(rank.get(pair[1].get('tool'),8),pair[0]))
+    visible=[row for _,row in actionable[:max(1,int(limit))]]+stops
+    return visible,{'total':len(actions),'shown':len(visible),'omitted':max(0,len(actions)-len(visible)),
+                    'hint':'完整合法动作仍在 choices；本轮只展示按候选/成本排序的高价值子集'}
+
+
+def model_action_menu(runtime, actions, limit=20):
+    if getattr(runtime, 'simulation', False):
+        return actions, {'total':len(actions),'shown':len(actions),'omitted':0,
+                         'hint':'simulation keeps full menu for fixture compatibility'}
+    return compact_action_menu(actions, limit)
+
+
+def compact_presence_localization(value):
+    """Keep decision-relevant shadow state; full diagnostics stay in the ledger."""
+    if not isinstance(value, dict):
+        return value
+    compact = {k: value.get(k) for k in (
+        'policy_version', 'mode', 'feature_id', 'localization', 'quality',
+        'identity', 'state', 'findings', 'verification_basis', 'usage_eligibility',
+        'observation_scope', 'source_tight_bbox', 'crop_bbox',
+        'legacy_presence_unchanged') if k in value}
+    spatial = value.get('spatial_agreement') or []
+    rows = [row for row in spatial if isinstance(row, dict)]
+    if rows:
+        compact['spatial_agreement'] = {
+            'count': len(rows),
+            'possible_duplicate': any(row.get('possible_duplicate') for row in rows),
+            'possible_identity_conflict': any(row.get('possible_identity_conflict') for row in rows),
+            'max_iou': max((row.get('iou') or 0) for row in rows),
+        }
+    if value.get('quality_diagnostic'):
+        compact['quality_diagnostic'] = {'summary': 'details_in_diagnostic_json'}
+    compact['compacted'] = True
+    return compact
+
+
+def compact_round_context(context, workflow):
+    """Trim repeated history only; key evidence and legal actions stay visible."""
+    config = getattr(workflow, 'config', {}) if workflow is not None else {}
+    if not config.get('context_compact', False):
+        return context
+    context = dict(context)
+    recent_obs = max(1, int(config.get('context_recent_observations', 6)))
+    observations = list(context.get('previous_observations') or [])
+    compacted = []
+    for observation in observations:
+        if isinstance(observation, dict) and observation.get('presence_localization'):
+            observation = dict(observation)
+            observation['presence_localization'] = compact_presence_localization(
+                observation['presence_localization'])
+        compacted.append(observation)
+    observations = compacted
+    if len(observations) > recent_obs:
+        observations = observations[-recent_obs:]
+    context['previous_observations'] = observations
+    evidence = context.get('evidence')
+    if isinstance(evidence, dict):
+        evidence = dict(evidence)
+        wf = dict(evidence.get('workflow') or {})
+        operations = list(wf.get('operations') or [])
+        recent_ops = max(1, int(config.get('context_recent_operations', 8)))
+        if len(operations) > recent_ops:
+            wf['operations'] = operations[-recent_ops:]
+        wf['operations_total'] = len(operations)
+        wf['operations_omitted'] = max(0, len(operations) - len(wf.get('operations') or []))
+        evidence['workflow'] = wf
+        context['evidence'] = evidence
+    rejected = list(context.get('rejected_proposals') or [])
+    if len(rejected) > 4:
+        context['rejected_proposals'] = rejected[-4:]
+    context['context_meta'] = {'schema': 'round-context/v1',
+        'previous_observations_total': len(observations),
+        'previous_observations_shown': len(context.get('previous_observations') or []),
+        'rejected_proposals_total': len(rejected),
+        'rejected_proposals_shown': len(context.get('rejected_proposals') or []),
+        'presence_diagnostics_compacted': True,
+        'full_history': 'available through agent_trace/operations; not repeated every turn'}
+    return context
+
+
 def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 planner_mode="llm", trace_path=None, allow_network=False, no_gain_limit=2,
                 planning_instruction=DEFAULT_INSTRUCTION):
@@ -214,6 +376,11 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 for row in state.get('read_results',[])]
 
     def assess(state):
+        # A terminal act result (plan transport/pending failure) must survive the
+        # act -> assess edge. Recomputing done here would resume the graph and can
+        # loop on a pending/failed plan until the recursion limit.
+        if state.get('done') and state.get('stop_reason'):
+            return state
         scored = runtime.score(state.get("observations", []))
         pending = state.get('pending_hypothesis_updates', [])
         if pending:
@@ -261,15 +428,76 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         fast_mode = bool(workflow is not None and workflow.config.get('fast_yolo_stage2', False))
         if workflow is not None and workflow.config.get('agent_driven_coverage', False):
             try:
-                cov_for_veto = workflow.coverage()
                 if fast_mode:
-                    missing_useful = bool(cov_for_veto.get('missing_required'))
+                    provisional = runtime.provisional_state(scored['decision'])
+                    missing_useful = any(
+                        state.get('state') != 'VERIFIED_MATCH'
+                        for row in (provisional.get('ranking') or [])
+                        for state in (row.get('criterion_states') or [])
+                        if state.get('role') == 'required')
                 else:
-                    missing_useful = bool(cov_for_veto.get('missing_useful'))
+                    missing_useful = bool(workflow.coverage().get('missing_useful'))
             except Exception:
                 missing_useful = False
+        supporting_incomplete = False
+        if workflow is not None and fast_mode:
+            try:
+                provisional = runtime.provisional_state(scored['decision'])
+                observed = []
+                for observation in state.get('observations') or []:
+                    action = observation.get('action') or {}
+                    result = observation.get('result') or {}
+                    if action.get('tool') == 'presence_check':
+                        valid = (observation.get('accepted') and result.get('ok') is True
+                                 and result.get('conf', 0) >= 0.5)
+                        observed.append({'image_id': action.get('args', {}).get('image_id'),
+                                         'feature_id': action.get('args', {}).get('feature_id'),
+                                         'state': ('present' if result.get('present') else 'absent')
+                                                  if valid else 'unknown'})
+                support_rows = runtime.supporting_states(provisional, observed)
+                unchecked = {row['feature_id'] for row in support_rows
+                             if not row.get('present') and row.get('check_state') == 'unchecked'}
+                support_actions = {a.get('args', {}).get('feature_id') for a in actions
+                                   if a.get('tool') in {'feature_scan','presence_check','locate_feature'}}
+                supporting_incomplete = bool(unchecked & support_actions)
+            except Exception:
+                supporting_incomplete = False
+        candidate_group_incomplete = False
+        if workflow is not None and workflow.config.get('candidate_group_verification', False):
+            try:
+                attempted_features = set()
+                for observation in state.get('observations') or []:
+                    action = observation.get('action') or {}
+                    fid = (action.get('args') or {}).get('feature_id')
+                    if fid: attempted_features.add(fid)
+                for row in read_json(workflow.operations).get('entries', {}).values():
+                    fid = row.get('feature_id')
+                    if fid: attempted_features.add(fid)
+                legal_features = {(a.get('args') or {}).get('feature_id') for a in actions}
+                ranking = scored['decision'].get('ranking') or []
+                candidates = {c['id']: c for c in runtime.kb.candidates()}
+                for row in ranking[1:]:
+                    if float(row.get('confidence') or 0) <= 0:
+                        continue
+                    candidate = candidates.get(row.get('id'))
+                    if not candidate: continue
+                    checks = {c.get('feature_id'): c for c in (row.get('checks') or [])}
+                    for criterion in candidate.get('criteria') or []:
+                        if criterion.get('role') != 'required': continue
+                        fid = criterion.get('feature')
+                        check = checks.get(fid) or {}
+                        if check.get('present') is True or check.get('state') not in (None, 'NOT_DETECTED', 'UNCAL'):
+                            continue
+                        if fid in attempted_features: continue
+                        if fid in legal_features:
+                            candidate_group_incomplete = True
+                            break
+                    if candidate_group_incomplete: break
+            except Exception:
+                candidate_group_incomplete = False
         adaptive=workflow is not None and workflow.config.get('agent_policy')=='adaptive_v1'
-        failed_action = bool(state['events'] and state['events'][-1].get('accepted') is False)
+        failed_action = bool(state['events'] and (state['events'][-1].get('accepted') is False
+                                                  or state['events'][-1].get('child_failed') is True))
         if (adaptive or autonomous) and (state.get('no_gain',0)>=no_gain_limit or
                                         (autonomous and failed_action)) and (autonomous or not state.get('reflection_applied')):
             from .action_feedback import reflection_card
@@ -281,7 +509,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         veto = [name for name, blocked in (
             ("mandatory_context_incomplete", mandatory or failed_scene or missing_fov),
             ("pending_repair", pending_repair), ("evidence_requires_review", need),
-            ("useful_coverage_incomplete", missing_useful)) if blocked]
+            ("useful_coverage_incomplete", missing_useful),
+            ("candidate_group_incomplete", candidate_group_incomplete)) if blocked]
         if workflow is not None and workflow.remaining_seconds() <= 0.1:
             reason = "workflow_deadline"
         elif (autonomous and workflow.limits.get('finalization',0) and
@@ -297,6 +526,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 reason = "no_legal_action"
             if not veto:
                 advisory = {"recommend": "finish", "why": "sufficient_evidence"}
+            elif candidate_group_incomplete:
+                advisory = {"recommend": "continue", "why": "candidate_group_gap"}
+            elif supporting_incomplete:
+                advisory = {"recommend": "continue", "why": "supporting_gap_available"}
             elif top_complete or state["no_gain"] >= no_gain_limit:
                 advisory = {"recommend": "review", "why": (
                     "top_required_complete_review" if top_complete else "no_gain_streak")}
@@ -361,7 +594,51 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     and (not network or remaining["network"] > 0))
         return True
 
+    def auto_prepare_action(state, eligible):
+        """Deterministic view preparation after detection; no model planning.
+
+        Fast path always classifies YOLO crops and completes mandatory scene
+        context before candidate exploration. These are not evidence decisions.
+        """
+        if workflow is None or not workflow.config.get('auto_prepare_stage', False):
+            return None
+        remaining = remaining_budget()
+        for tool in ('classify_crops_batch', 'scene_check'):
+            for action in eligible:
+                if action.get('tool') == tool and affordable(action, remaining):
+                    return action
+        return None
+
+    def decision_signature(state):
+        """Digest only decision-relevant evidence; ignore operation/version churn."""
+        decision = state.get('decision') or {}
+        ranking = []
+        for row in decision.get('ranking') or []:
+            checks = []
+            for check in row.get('checks') or []:
+                checks.append({
+                    'feature_id': check.get('feature_id'),
+                    'role': check.get('role'),
+                    'present': check.get('present'),
+                    'state': check.get('state'),
+                    'n_instances': check.get('n_instances'),
+                    'quant_note': check.get('quant_note'),
+                })
+            ranking.append({
+                'id': row.get('id'),
+                'confidence': row.get('confidence'),
+                'score': row.get('score'),
+                'support_count': row.get('support_count'),
+                'checks': checks,
+            })
+        return digest({
+            'verdict': decision.get('verdict'),
+            'conclusion': decision.get('conclusion'),
+            'ranking': ranking,
+        })
+
     async def autonomous_think(state, eligible, stop):
+        observation_choices = list(eligible)  # Preserve legal observations before initialization menu narrowing.
         events = list(state["events"])
         planning = state["planning_requests"]
         requests = state["requests"]
@@ -372,6 +649,18 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                             workflow.config.get('agent_driven_coverage', False))
         fast_mode = bool(workflow is not None and
                          workflow.config.get('fast_yolo_stage2', False))
+        early_verification = bool(workflow is not None and
+                                  workflow.config.get('early_verification', False))
+        # Deterministic view preparation runs without a planning request.
+        auto = auto_prepare_action(state, eligible)
+        if auto is not None:
+            events.append({'phase': 'auto_prepare', 'tool': auto['tool'],
+                           'action_id': auto['action_id'], 'planning_skipped': True})
+            update = {'selected': auto, 'events': events,
+                      'requests': state['requests'],
+                      'planning_requests': state['planning_requests']}
+            persist({**state, **update})
+            return update
         # 原图先走 YOLO 初检，随后才向模型开放视觉复核和补救。
         coverage = []
         if workflow is not None and workflow.config.get('hybrid_scan_enabled', False):
@@ -424,7 +713,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             if (cov.get('detected_all')
                     and not (cov.get('required_all') if fast_mode else cov.get('useful_all'))):
                 if fast_mode:
-                    missing = {row['image_id'] for row in (cov.get('missing_required') or [])}
+                    missing = {row['image_id'] for row in (cov.get('missing_required_views') or [])}
                 else:
                     missing = set(cov.get('missing_useful') or [])
                 try:
@@ -462,12 +751,28 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             except Exception:
                 cov_now = {}
             coverage_complete = cov_now.get('required_all' if fast_mode else 'useful_all')
-            if (cov_now.get('detected_all') and not coverage_complete
+            if early_verification:
+                # Initialization can still finish first; after that, missing
+                # criteria must not hide existing lawful verification actions.
+                initial = [a for a in eligible if a['tool'] == 'detect_fov_initial'
+                           and affordable(a, remaining_budget())]
+                if not cov_now.get('detected_all') and initial:
+                    eligible = initial
+                    forced_coverage = initial
+                else:
+                    forced_coverage = []
+            elif (cov_now.get('detected_all') and not coverage_complete
                     and forced_coverage):
                 eligible = forced_coverage
             coverage = []
         observations = [a for a in eligible if a["tool"] in {"presence_check", "scene_check"}
                         and any(a["args"]["image_id"] == c["args"]["target_id"] for c in coverage)]
+        if early_verification and not agent_driven:
+            initial = [a for a in eligible if a['tool'] == 'detect_fov_initial'
+                       and affordable(a, remaining_budget())]
+            eligible = initial or eligible
+            coverage = []
+            forced_coverage = initial
         if coverage:
             eligible, stop = coverage, []
         for _ in range(2):
@@ -486,25 +791,44 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             planning += 1
             requests += 1
             current_budget = remaining_budget()
-            choices = [a for a in eligible if affordable(a, current_budget)] + stop
+            blocked_version = state.get('stop_blocked_version')
+            evidence_version = (workflow.store.current()['version'] if workflow is not None else None)
+            blocked_steps = state.get('stop_blocked_steps', -1)
+            blocked_digest = state.get('stop_blocked_digest')
+            blocked_decision = state.get('stop_blocked_decision')
+            blocked_veto = tuple(sorted(state.get('stop_blocked_veto') or []))
+            current_veto = tuple(sorted(state.get('finish_veto') or []))
+            decision_changed = (blocked_decision is not None
+                                and decision_signature(state) != blocked_decision)
+            veto_changed = current_veto != blocked_veto
+            cooldown = (blocked_version == evidence_version or
+                        state.get('steps', 0) <= blocked_steps or
+                        (not decision_changed and not veto_changed))
+            stop_now = [] if cooldown else stop
+            choices = [a for a in eligible if affordable(a, current_budget)] + stop_now
             parallel = []
-            if (coverage and workflow.config.get("max_parallel", 2) == 2 and state["steps"]+2 <= max_steps
+            initial_choices = [a for a in choices if a['tool'] == 'detect_fov_initial']
+            independent_observations = [a for a in observation_choices if a['tool'] in {'presence_check', 'scene_check'}]
+            if (initial_choices and workflow.config.get("max_parallel", 2) == 2 and state["steps"]+2 <= max_steps
                     and current_budget["total"] >= 4 and current_budget["network"] >= 2):
-                parallel = [a for a in observations if affordable(a, current_budget)
-                            and any(a["args"]["image_id"] == c.get("args", {}).get("target_id") for c in choices)]
+                parallel = [a for a in independent_observations if affordable(a, current_budget)
+                            and any(a["args"]["image_id"] == c.get("args", {}).get("target_id") for c in initial_choices)]
             from .action_feedback import objective
+            model_actions, menu_meta = model_action_menu(
+                runtime, choices, int((getattr(workflow, 'config', {}) or {}).get('context_max_actions', 20)))
             context = {
-                "actions": choices, "evidence": runtime.summary(state),
+                "actions": model_actions, "evidence": compact_evidence(runtime.summary(state)),
                 "parallel_observations": parallel,
                 "planning_instruction": planning_instruction,
-                "previous_observations": state["observations"], "read_results": read_context(state),
-                "action_objectives": {a["action_id"]: objective(a) for a in choices if "args" in a},
+                "previous_observations": state["observations"], "read_results": read_context(state)[-4:],
+                "action_objectives": {a["action_id"]: objective(a) for a in model_actions if "args" in a},
                 "stop_advisory": state["stop_advisory"], "finish_veto": state["finish_veto"],
                 "remaining_budget": current_budget, "rejected_proposals": rejected,
                 "rejection_details": rejection_details,
                 "task_reflection": state.get("reflection"),
-                "recent_action_feedback": [e["feedback"] for e in events if "feedback" in e][-4:],
-                "skills": {s["id"]: runtime.skills.get(s["id"]) for s in runtime.skills.list()},
+                "recent_action_feedback": compact_feedback(events),
+                "skills": compact_skills(runtime),
+                "action_menu_meta": menu_meta,
             }
             focus = getattr(runtime, "p0_focus", lambda: None)()
             if focus:
@@ -518,7 +842,40 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             context["agent_driven_coverage"] = agent_driven
             context["remaining_seconds"] = (round(workflow.remaining_seconds(), 1)
                                              if workflow is not None else None)
-            if agent_driven:
+            if early_verification:
+                opportunities = runtime.verification_opportunities(
+                    choices, current_budget, decision=state['decision'])
+                context['verification_opportunities'] = opportunities
+                shown={a['action_id'] for a in context['actions']}
+                for row in opportunities:
+                    if row.get('action_id') not in shown:
+                        context['actions'].append(row);shown.add(row.get('action_id'))
+                context['action_menu_meta']['shown']=len(context['actions'])
+                context['supporting_gaps'] = (context.get('evidence') or {}).get('workflow', {}).get('supporting_gaps') or []
+                context['planning_instruction'] = planning_instruction + (
+                    ' 初检后保留全部合法动作；不要等待全部crop分类或补扫完成才核验已有实例。'
+                    'verification_opportunities仅列出与活动候选定量判据相关、前置条件已满足且预算可完成的动作。'
+                    '优先评估合格mask的测量，以及身份可信实例的分割→测量；'
+                    '在decision_summary说明本轮能解决哪个候选分歧。'
+                    '若仍选择分类或补扫，说明其为何比现有核验更有价值。'
+                    '这些是建议，不是强制顺序；可查竞争候选，不因未检出排除药材。'
+                    '不要为刷新首次测量时间而处理无关实例，也不要为覆盖每张图而重复同一判据。')
+                if context['supporting_gaps']:
+                    context['planning_instruction'] += (
+                        ' 当前仍有未完成的 supporting 判据；required 完成不等于 supporting 已查完。'
+                        '若这些 supporting 有合法实例或适合视野，优先评估一次小范围核验；'
+                        '再次测量同一 required 特征必须说明它还能解决什么新问题，不能只因数值已有就重复测量。'
+                        'supporting_gaps 只是调查建议，不授予证据资格，也不要求全部查完。'
+                        'check_state=checked_negative 表示当前视野已查未见，不等于全样本不存在；'
+                        'unreadable_or_failed 不是阴性；优先补 unchecked 或可修复的合法机会，'
+                        '不要反复重试同一失败依赖。')
+                events.append({'phase': 'planning_menu', 'policy': 'early_verification_v1',
+                               'evidence_version': context['evidence']['workflow']['evidence_version'],
+                               'action_keys': [a['tool'] + '|' + str(a.get('args', {}).get('target_id') or
+                                              a.get('args', {}).get('feature_id') or '') for a in choices],
+                               'verification_action_ids': [row['action_id'] for row in opportunities],
+                               'verification_keys': [row['tool'] + '|' + row['target_id'] for row in opportunities]})
+            elif agent_driven:
                 context["planning_instruction"] = planning_instruction + (
                     " coverage/missing_useful 只是观察，不是强制路线：自行选择当前最值得的工具，"
                     "优先让每个视野至少有一个非空 feature 的 classification；"
@@ -526,6 +883,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     "只要 missing_useful 非空且预算/时间仍允许，先补其他缺失视野；"
                     "stage2/CNN 很快，空白框也应先识别而不是先丢弃；"
                     "同时参考 remaining_budget/remaining_seconds，避免耗尽时间。")
+            context = compact_round_context(context, workflow)
             persist({**state, "events": events, "requests": requests, "planning_requests": planning})
             usage = None
             try:
@@ -550,7 +908,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             elif chosen["tool"] == "finish" and state["finish_veto"]:
                 error = "finish_veto"
             elif (chosen["tool"] == "request_review"
-                  and "useful_coverage_incomplete" in state["finish_veto"]):
+                  and any(x in state["finish_veto"] for x in
+                          ("useful_coverage_incomplete", "candidate_group_incomplete"))):
                 error = "finish_veto"
             is_stop = chosen is not None and chosen["tool"] in {"finish", "request_review"}
             recommend_stop = state["stop_advisory"]["recommend"] != "continue"
@@ -587,6 +946,12 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                "reason": error, "usage": usage, "decision_source": planner_source,
                                "rejection_detail": detail, "remaining_budget": current_budget,
                                "finish_veto": state["finish_veto"] if error == "finish_veto" else []})
+                if error == "finish_veto":
+                    state = {**state, "stop_blocked_version": evidence_version,
+                             "stop_blocked_steps": state.get('steps', 0),
+                             "stop_blocked_digest": state.get('evidence_digest'),
+                             "stop_blocked_decision": decision_signature(state),
+                             "stop_blocked_veto": tuple(sorted(state.get('finish_veto') or []))}
                 continue
             parallel_id = reply.get("parallel_observation_id")
             companion = next((a for a in parallel if a["action_id"] == parallel_id
@@ -603,6 +968,11 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                'updates':updates,'is_evidence':False,'applies':'after_current_action'})
             update = {"selected": chosen, "events": events, "requests": requests, "planning_requests": planning,
                       "parallel_observation": companion,
+                      "stop_blocked_version": state.get("stop_blocked_version"),
+                      "stop_blocked_steps": state.get("stop_blocked_steps", -1),
+                      "stop_blocked_digest": state.get("stop_blocked_digest"),
+                      "stop_blocked_decision": state.get("stop_blocked_decision"),
+                      "stop_blocked_veto": state.get("stop_blocked_veto"),
                       "pending_hypothesis_updates": updates or [],
                       "pending_legacy_nomination": legacy_nomination,
                       "pending_hypothesis_basis": state['evidence_digest'] if updates else '',
@@ -648,6 +1018,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 {"phase": "thought", "decision_summary": "先完成强制结晶场景检查", "action_id": actions[0]["action_id"]}]}
         eligible = list(actions) if autonomous else actions[:64] if runtime.candidate_policy else actions[:3]
         if runtime.candidate_policy:
+            # New catalog/detail readers stay registered for explicit MCP use but are
+            # not auto-injected into the ReAct menu until their transport is validated.
             queries = [("read_evidence", {"offset": 0, "limit": 20}),
                        ("list_features", {}), ("read_scale", {}), ("list_fovs", {}), ("criteria_diff", {}), ("list_artifacts", {}), ("read_artifact_status", {})]
             if getattr(runtime,'workflow',None) is not None and runtime.workflow.purpose_quality():queries.append(('read_quality',{}))
@@ -690,16 +1062,21 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 try:
                     if planner_box[0] is None:
                         planner_box[0] = LLMPlanner() if planner_mode == "llm" else ScriptedPlanner()
-                    context = {"actions": eligible+stop, "evidence": runtime.summary(state),
+                    model_actions, menu_meta = model_action_menu(
+                        runtime, eligible+stop, int((getattr(workflow, 'config', {}) or {}).get('context_max_actions', 20)))
+                    context = {"actions": model_actions,
+                               "evidence": compact_evidence(runtime.summary(state)),
                                "planning_instruction": planning_instruction,
-                               "skills": {s["id"]: runtime.skills.get(s["id"]) for s in runtime.skills.list()},
+                               "skills": compact_skills(runtime),
+                               "action_menu_meta": menu_meta,
                                "previous_observations": state["observations"],
-                               "read_results": read_context(state),
+                               "read_results": read_context(state)[-4:],
                                "remaining_requests_after_plan": max_requests-requests}
                     context['task_reflection']=state.get('reflection')
-                    context['recent_action_feedback']=[e['feedback'] for e in state['events'] if 'feedback' in e][-4:]
+                    context['recent_action_feedback']=compact_feedback(state['events'])
                     from .action_feedback import objective
-                    context['action_objectives']={a['action_id']:objective(a) for a in eligible}
+                    context['action_objectives']={a['action_id']:objective(a) for a in model_actions}
+                    context = compact_round_context(context, workflow)
                     if workflow is not None and hasattr(planner_box[0], "client"):
                         cap = workflow.config.get("max_call_seconds", 600)
                         planner_box[0].client.timeout_s = min(workflow.remaining_seconds(), float(cap))
@@ -846,6 +1223,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                        "new_requests": result.get("new_requests")}
         if "diagnostics" in result:
             observation["diagnostics"] = result["diagnostics"]
+        if 'presence_localization' in result:
+            observation['presence_localization'] = result['presence_localization']
         if accepted and getattr(runtime,'workflow',None) is not None:
             runtime.workflow.confirm_identity(action,observation['result'])
         after = runtime.score(state["observations"]+[observation])

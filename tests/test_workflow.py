@@ -5,6 +5,8 @@ import csv
 import json
 import sys
 import tempfile
+import subprocess
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -14,8 +16,10 @@ from TCM_Fusion.lib.storage import IntegrationError, digest, file_hash, read_jso
 from TCM_Fusion.lib.tool_registry import ToolSpec, validate_arguments
 from TCM_Fusion.lib.evidence_store import EvidenceStore
 from TCM_Fusion.lib.workflow_runtime import WorkflowRuntime
+from TCM_Fusion.lib.workflow_backend import WorkflowBackend
+from TCM_Fusion.lib.controlled_process import kill_tree
 from TCM_Fusion.lib.agent_tools import LocalToolbox, FixtureBackend
-from TCM_Fusion.lib.react_graph import run_react
+from TCM_Fusion.lib.react_graph import run_react, compact_action_menu, compact_feedback
 from TCM_Fusion.lib.artifact_index import ArtifactIndex
 from TCM_Fusion.lib.resource_budget import install_http_guard
 
@@ -135,6 +139,309 @@ class WorkflowTests(unittest.TestCase):
                if v.get('valid') and v.get('kind') == 'classification']
         self.assertTrue(cls)
         self.assertTrue(any(v.get('identity_verified') for v in cls))
+
+    def test_hybrid_reuses_same_yolo_crop_and_keeps_classification_valid(self):
+        fast = WorkflowRuntime([self.image], root=self.root / 'reuse_task', sample_id='sample',
+                               a={}, simulation=True, backend=StageFixture(),
+                               workflow_config={'fast_yolo_stage2': True, 'hybrid_scan_enabled': True})
+        image = next(iter(fast.images))
+        detect = next(a for a in fast.legal_actions({'observations': []})
+                      if a['tool'] == 'detect_fov_initial')
+        detected = fast.tools.invoke(fast, detect, {'action': detect})
+        self.assertTrue(detected['accepted'])
+        classify = next(a for a in fast.legal_actions({'observations': []})
+                        if a['tool'] == 'classify_target')
+        self.assertTrue(fast.tools.invoke(fast, classify, {'action': classify})['accepted'])
+        before = next(v for v in fast.workflow.store.current()['artifacts'].values()
+                      if v.get('kind') == 'classification' and v.get('valid'))
+        source = fast.workflow.store.current()['artifacts']
+        crop = next(v for v in source.values() if v.get('kind') == 'crop' and v.get('valid'))
+        detect_folder = Path(detected['bundle']['root']) / 'detection' / 'crops'
+        feature_folder = self.root / 'empty_feature_crops'
+        feature_folder.mkdir()
+        completion = self.root / 'empty_feature_done.json'
+        write_json(completion, {'count': 0})
+        target = {'id': 'hybrid_scan:' + image, 'kind': 'hybrid_scan', 'image_id': image,
+                  'source': str(self.image), 'parents': [image], 'box_quality_retry': False}
+        fast.workflow.accept('hybrid_scan', target,
+                             {'detections': {'crops_dir': str(detect_folder),
+                                             'completion': str(Path(detected['bundle']['root']) / 'done.json')},
+                              'feature_scan': {'crops_dir': str(feature_folder),
+                                               'completion': str(completion)}},
+                             fast.workflow.store.current()['version'])
+        after = next(v for v in fast.workflow.store.current()['artifacts'].values()
+                     if v.get('id') == before['id'])
+        self.assertTrue(after['valid'])
+        self.assertEqual(crop['id'], next(v['id'] for v in fast.workflow.store.current()['artifacts'].values()
+                                          if v.get('kind') == 'crop' and v.get('valid')))
+
+    def _generic_recovery_runtime(self, labels=('白芍',), **config):
+        runtime = self.runtime(fast_yolo_stage2=True, targeted_recovery=True,
+                               fast_recovery_selection='per_feature',
+                               fast_fallback_max_features=3,
+                               fast_fallback_max_locate_calls=12,
+                               feature_scan_max_tiles=4, **config)
+        runtime.a = {'status': 'ok', 'fold_rankings': [
+            [{'label': label, 'probability': 1 / len(labels)} for label in labels]] * 5}
+        for image in runtime.images:
+            done = self.root / (image + '_detected.json')
+            write_json(done, {'count': 0})
+            workflow = runtime.workflow
+            artifact = workflow._art('detected:' + image, 'detection', done,
+                                     [image], image_id=image)
+            workflow.store.commit(workflow.store.current()['version'], [artifact])
+        return runtime
+
+    def test_generic_white_peony_exposes_supporting_without_needle(self):
+        runtime = self._generic_recovery_runtime()
+        workflow = runtime.workflow
+        before = workflow.store.current()['version']
+        targets = workflow.targets()
+        scans = [t for t in targets.values() if t.get('kind') == 'feature_scan']
+        self.assertEqual({t['feature_id'] for t in scans},
+                         {'cluster_crystal', 'starch_grain', 'vessel', 'fiber'})
+        self.assertFalse(any(t.get('kind') == 'hybrid_scan' for t in targets.values()))
+        self.assertTrue(all(len(t['criteria']) == 1 for t in scans))
+        self.assertEqual(workflow.store.current()['version'], before)
+        offered = [a for a in workflow.propose() if a['tool'] == 'feature_scan']
+        self.assertEqual(len(offered), 4)  # menu options are not truncated to the spend cap
+        self.assertFalse(workflow.coverage()['required_all'])
+
+    def test_generic_competitor_needle_has_candidate_basis(self):
+        runtime = self._generic_recovery_runtime(('白芍', '知母'))
+        options = {o['feature_id']: o for o in runtime.workflow.recovery_options()}
+        self.assertEqual(options['needle_crystal']['criteria'],
+                         [{'candidate_id': '知母', 'role': 'required'}])
+        self.assertEqual(options['vessel']['criteria'],
+                         [{'candidate_id': '白芍', 'role': 'supporting'}])
+
+    def test_generic_non_needle_candidate_uses_its_own_required(self):
+        runtime = self._generic_recovery_runtime(('连翘',))
+        options = runtime.workflow.recovery_options()
+        self.assertTrue(any(o['feature_id'] == 'fiber'
+                            and {'candidate_id': '连翘', 'role': 'required'} in o['criteria']
+                            for o in options))
+        self.assertNotIn('needle_crystal', {o['feature_id'] for o in options})
+
+    def test_generic_roles_can_limit_supporting_without_needle_fallback(self):
+        runtime = self._generic_recovery_runtime(fast_recovery_roles=['supporting'])
+        features = {t['feature_id'] for t in runtime.workflow.targets().values()
+                    if t.get('kind') == 'feature_scan'}
+        self.assertEqual(features, {'starch_grain', 'vessel', 'fiber'})
+
+    def test_generic_no_candidate_does_not_invent_feature(self):
+        runtime = self._generic_recovery_runtime()
+        runtime.a = {}
+        self.assertEqual(runtime.workflow.recovery_options(), [])
+        self.assertFalse(any(t.get('kind') == 'feature_scan'
+                             for t in runtime.workflow.targets().values()))
+
+    def test_generic_paused_candidate_removes_exclusive_needle(self):
+        runtime = self._generic_recovery_runtime(('白芍', '知母'))
+        interest = runtime.candidate_interest()
+        with patch.object(runtime, 'candidate_interest',
+                          return_value={**interest, 'ids': ['白芍'], 'inactive_ids': ['知母']}):
+            self.assertNotIn('needle_crystal',
+                             {o['feature_id'] for o in runtime.workflow.recovery_options()})
+
+    def test_generic_spend_caps_count_pending_and_failed_attempts(self):
+        runtime = self._generic_recovery_runtime()
+        workflow = runtime.workflow
+        image = next(iter(runtime.images))
+        prefix = 'feature_scan:' + image + ':'
+        entries = {'a': {'tool': 'feature_scan', 'target_id': prefix + 'fiber',
+                         'status': 'failed', 'scan_tiles_reserved': 4},
+                   'b': {'tool': 'feature_scan', 'target_id': prefix + 'vessel',
+                         'status': 'pending', 'scan_tiles_reserved': 4}}
+        write_json(workflow.operations, {'entries': entries})
+        scans = [t for t in workflow.targets().values() if t.get('kind') == 'feature_scan']
+        self.assertEqual({t['feature_id'] for t in scans}, {'cluster_crystal', 'starch_grain'})
+        self.assertTrue(all(t['max_tiles'] == 4 for t in scans))
+        entries['c'] = {'tool': 'feature_scan', 'target_id': prefix + 'cluster_crystal',
+                        'status': 'done', 'scan_tiles_reserved': 4}
+        write_json(workflow.operations, {'entries': entries})
+        self.assertFalse(any(t.get('kind') == 'feature_scan'
+                             for t in workflow.targets().values()))
+
+    def test_generic_reserves_only_remaining_locate_budget(self):
+        runtime = self._generic_recovery_runtime()
+        workflow = runtime.workflow
+        workflow.config['fast_fallback_max_locate_calls'] = 5
+        image = next(iter(runtime.images))
+        write_json(workflow.operations, {'entries': {'a': {
+            'tool': 'feature_scan', 'target_id': 'feature_scan:' + image + ':fiber',
+            'status': 'done', 'scan_tiles_reserved': 4}}})
+        scans = [t for t in workflow.targets().values() if t.get('kind') == 'feature_scan']
+        self.assertTrue(scans)
+        self.assertTrue(all(t['max_tiles'] == 1 for t in scans))
+
+    def test_generic_feature_backend_forwards_requested_id_and_hint(self):
+        from PIL import Image
+        from TCM_Fusion.lib.workflow_backend import WorkflowBackend
+        runtime = self._generic_recovery_runtime()
+        Image.new('RGB', (300, 300), 'white').save(self.image)
+        workflow = runtime.workflow
+        workflow.config['feature_scan_tile_policy'] = 'full'
+        seen = []
+        def worker(cmd, **kwargs):
+            ctx = read_json(cmd[cmd.index('--context') + 1])
+            seen.append(ctx)
+            (Path(ctx['output']) / 'crops').mkdir(parents=True)
+        with patch('TCM_Fusion.lib.workflow_backend.run', side_effect=worker):
+            for fid in ('fiber', 'vessel', 'stone_cell', 'starch_grain', 'needle_crystal'):
+                target = {'source': str(self.image), 'feature_id': fid, 'max_tiles': 1}
+                result = WorkflowBackend().execute(workflow, 'feature_scan', target,
+                                                    self.root / ('scan_' + fid), None)
+                self.assertEqual(read_json(result['completion'])['feature_id'], fid)
+                self.assertEqual(seen[-1]['feature_id'], fid)
+                self.assertTrue(seen[-1]['feature_hint'])
+                if fid != 'needle_crystal':
+                    self.assertNotIn('针晶可散在', seen[-1]['feature_hint'])
+
+    def test_generic_unknown_feature_is_rejected_before_image_work(self):
+        from TCM_Fusion.lib.workflow_backend import WorkflowBackend
+        with self.assertRaises(IntegrationError) as raised:
+            WorkflowBackend().execute(self.runtime().workflow, 'feature_scan',
+                                      {'feature_id': 'not_supported'}, self.root / 'bad_scan', None)
+        self.assertEqual(raised.exception.code, 'FEATURE_SCAN_INPUT')
+        self.assertFalse((self.root / 'bad_scan').exists())
+
+    def test_generic_selected_feature_is_executed_and_empty_is_not_evidence(self):
+        runtime = self._generic_recovery_runtime()
+        workflow = runtime.workflow
+        selected = []
+        class EmptyScan:
+            def execute(self, session, tool, target, work, context):
+                self_tool = tool
+                if self_tool != 'feature_scan':
+                    raise AssertionError(self_tool)
+                selected.append(target['feature_id'])
+                folder = work / 'scan/crops'
+                folder.mkdir(parents=True)
+                completion = work / 'scan/scan_result.json'
+                write_json(completion, {'feature_id': target['feature_id'], 'count': 0})
+                return {'crops_dir': str(folder), 'completion': str(completion)}
+        workflow.backend = EmptyScan()
+        for fid in ('vessel', 'fiber'):
+            action = next(a for a in workflow.propose() if a['tool'] == 'feature_scan'
+                          and a['args']['target_id'].endswith(':' + fid))
+            result = workflow.execute(action)
+            self.assertEqual(result['status'], 'done')
+            self.assertEqual(result['feature_id'], fid)
+            self.assertEqual(result['scan_tiles_reserved'], 4)
+        self.assertEqual(selected, ['vessel', 'fiber'])
+        artifacts = workflow.store.current()['artifacts']
+        image = next(iter(runtime.images))
+        self.assertTrue(artifacts['scanned:' + image + ':vessel']['valid'])
+        self.assertTrue(artifacts['scanned:' + image + ':fiber']['valid'])
+        self.assertEqual(workflow.store.verified_records(), [])
+        self.assertFalse(workflow.coverage()['required_all'])
+
+    def test_generic_rejects_result_for_a_different_feature(self):
+        runtime = self._generic_recovery_runtime()
+        workflow = runtime.workflow
+        target = next(t for t in workflow.targets().values()
+                      if t.get('kind') == 'feature_scan' and t['feature_id'] == 'vessel')
+        folder = self.root / 'wrong_feature/crops'
+        folder.mkdir(parents=True)
+        completion = folder.parent / 'scan_result.json'
+        write_json(completion, {'feature_id': 'needle_crystal', 'count': 0})
+        before = workflow.store.current()['version']
+        with self.assertRaises(IntegrationError) as raised:
+            workflow.accept('feature_scan', target,
+                            {'crops_dir': str(folder), 'completion': str(completion)}, before)
+        self.assertEqual(raised.exception.code, 'FEATURE_SCAN_SCOPE')
+        self.assertEqual(workflow.store.current()['version'], before)
+
+    def test_generic_classification_cap_does_not_make_recovery_unreachable(self):
+        runtime = self._generic_recovery_runtime()
+        workflow = runtime.workflow
+        snapshot = workflow.store.current()
+        image = next(iter(runtime.images))
+        arts = snapshot['artifacts']
+        for i in range(4):
+            cid = 'crop:ordinary:' + str(i)
+            arts[cid] = {'valid': True, 'kind': 'crop', 'image_id': image}
+            if i < 3:
+                arts['classification:' + cid] = {
+                    'valid': True, 'kind': 'classification', 'image_id': image,
+                    'feature_id': 'cluster_crystal'}
+        with patch.object(workflow.store, 'current', return_value=snapshot):
+            self.assertTrue(workflow.fast_recovery_targets(arts))
+            arts['crop:ordinary:3']['identity_required'] = True
+            self.assertEqual(workflow.fast_recovery_targets(arts), {})
+            arts['crop:ordinary:3'].pop('identity_required')
+            arts['classification:crop:ordinary:2']['valid'] = False
+            self.assertEqual(workflow.fast_recovery_targets(arts), {})
+            arts['classification:crop:ordinary:2']['valid'] = True
+            arts['crop:ordinary:0']['identity_required'] = True
+            # Match propose()'s existing per-view counter, which also includes
+            # already-classified identity_required crops; unresolved ones still block.
+            self.assertTrue(workflow.fast_recovery_targets(arts))
+
+    def test_classify_crops_batch_preserves_success_when_one_item_fails(self):
+        original = WorkflowBackend.execute
+        def routed(backend, session, tool, target, work, context):
+            if tool == 'classify_target':
+                if target['id'] == 'bad':
+                    raise IntegrationError('CLASSIFY_FAILED', 'simulated one-crop failure')
+                return {'classification': 'ok'}
+            return original(backend, session, tool, target, work, context)
+        with tempfile.TemporaryDirectory() as tmp, patch.object(WorkflowBackend, 'execute', routed):
+            session = type('Session', (), {'python': 'python'})()
+            result = WorkflowBackend().execute(
+                session, 'classify_crops_batch',
+                {'crops': [{'id': 'ok'}, {'id': 'bad'}]}, Path(tmp), {})
+        self.assertEqual([row['crop_id'] for row in result['classifications']], ['ok'])
+        self.assertEqual([row['crop_id'] for row in result['failures']], ['bad'])
+        self.assertEqual(result['failures'][0]['error_code'], 'CLASSIFY_FAILED')
+
+    def test_kill_tree_is_bounded_when_child_ignores_termination(self):
+        child = subprocess.Popen(['python', '-c', 'import time; time.sleep(30)'])
+        started = time.monotonic()
+        kill_tree(child)
+        self.assertLess(time.monotonic() - started, 10)
+        self.assertIsNotNone(child.poll())
+
+    def test_context_action_menu_is_bounded_and_keeps_stops(self):
+        actions=[{'action_id':f'a{i}','tool':'feature_scan' if i else 'detect_fov_initial',
+                  'args':{'target_id':str(i)}} for i in range(80)]
+        actions += [{'action_id':'finish','tool':'finish'},{'action_id':'review','tool':'request_review'}]
+        visible,meta=compact_action_menu(actions,20)
+        self.assertLessEqual(len(visible),22)
+        self.assertEqual({a['tool'] for a in visible if a['tool'] in {'finish','request_review'}},
+                         {'finish','request_review'})
+        self.assertEqual(meta['total'],82)
+        self.assertGreater(meta['omitted'],0)
+
+    def test_context_feedback_deduplicates_same_problem(self):
+        events=[{'feedback':{'problem_id':'x','failure_code':None,'new_features':[],
+                             'new_counterevidence':[]}} for _ in range(6)]
+        self.assertEqual(len(compact_feedback(events)),1)
+
+    def test_classify_crops_batch_is_declared_in_workflow_repair_skill(self):
+        registry = json.loads((Path(paths.PROJECT_ROOT) / 'TCM_Fusion' / 'skills' / 'registry.json')
+                              .read_text(encoding='utf-8'))
+        skill = next(row for row in registry if row['id'] == 'workflow_repair')
+        self.assertIn('classify_crops_batch', skill['tools'])
+
+    def test_action_timeline_records_offer_select_finish(self):
+        runtime = self.runtime()
+        action = next(a for a in runtime.legal_actions({'observations': []})
+                      if a['tool'] == 'detect_fov_initial')
+        self.assertTrue(runtime.tools.invoke(runtime, action, {'action': action})['accepted'])
+        path = runtime.workflow.timeline_path
+        self.assertTrue(path.is_file())
+        doc = json.loads(path.read_text(encoding='utf-8'))
+        row = next(v for v in doc['actions'].values()
+                   if v.get('tool') == action['tool'] and v.get('target_id') == action['args']['target_id'])
+        self.assertIsNotNone(row['first_offered_at'])
+        self.assertIsNotNone(row['selected_at'])
+        self.assertIsNotNone(row['started_at'])
+        self.assertIsNotNone(row['ended_at'])
+        self.assertEqual(row['status'], 'done')
+        self.assertGreaterEqual(row['offer_to_select_s'], 0)
+        self.assertGreaterEqual(row['execution_s'], 0)
 
     def test_fast_required_coverage_combines_views(self):
         second = self.root / 'second.png'
@@ -680,23 +987,15 @@ class WorkflowTests(unittest.TestCase):
         with self.assertRaises(IntegrationError):r.workflow.charge('observation','observe')
         self.assertEqual(read_json(r.workflow.budget_path)['used']['network'],1)
 
-    def test_shadow_generates_plan_but_refuses_execution(self):
-        backend=StageFixture();r=self.runtime(backend,execution='shadow')
-        action=r.workflow.propose()[0]
-        with self.assertRaises(IntegrationError):r.tools.invoke(r,action)
-        self.assertEqual(backend.calls,[])
-        from TCM_Fusion.lib.pipeline import run_pipeline,validate_config
-        config={'sample_id':'shadow','allow_network':False,
+    def test_shadow_execution_is_removed(self):
+        from TCM_Fusion.lib.pipeline import validate_config
+        config={'sample_id':'shadow-removed','allow_network':False,
                 'a':{'mode':'unavailable','required':False},
                 'b':{'mode':'run','input_mode':'images','input':str(self.root),'enable_vlm':False},
-                'agent':{'mode':'active','planner':'llm','image_roots':[str(self.image)],
+                'agent':{'mode':'active','planner':'heuristic','image_roots':[str(self.image)],
                          'workflow':{'execution':'shadow'}}}
-        directory=run_pipeline(config,base=self.root/'runs')
-        value=read_json(directory/'fusion.json')
-        self.assertEqual(value['route'],'workflow_shadow');self.assertFalse(value['agent']['executed'])
-        self.assertEqual(value['agent']['actions'][0]['tool'],'detect_fov_initial')
-        config['allow_recorded']=True;config['a']={'mode':'recorded','record':'unused'}
-        with self.assertRaises(IntegrationError):validate_config(config)
+        with self.assertRaises(IntegrationError):
+            validate_config(config)
 
     def test_transport_failure_retains_valid_state_and_requires_review(self):
         class BrokenTransport:

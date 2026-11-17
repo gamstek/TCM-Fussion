@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\.venv\\yolo\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "TCM_Fusion.cli.cnn_classifier_worker",
+    "--context",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野16_20261116_0910\\runs\\fusion_a2908ffa2aa741a0b2a8706f4d994ff3\\workflow\\ops\\52b7f4592144b5e7\\classify_0\\cnn_context.json"
+  ],
+  "timeout_seconds": 180.0
+}

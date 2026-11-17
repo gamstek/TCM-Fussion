@@ -1,0 +1,44 @@
+{
+  "identity": "3c6ec691e6e5e021b0bedb509847df4b6e6bb746209239afd2bfdf6097341a7e",
+  "parent": "0af1d09031b2e55dfc0e9400d992de8d244507f0dbff666edbdb5d0101eac81a",
+  "artifacts": {
+    "img_07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16": {
+      "id": "img_07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\view_01.tif",
+      "sha256": "07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16",
+      "parents": [],
+      "image_id": "img_07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16",
+      "valid": true
+    },
+    "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13": {
+      "id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\view_02.jpg",
+      "sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "parents": [],
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "valid": true
+    },
+    "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710": {
+      "id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\view_03.jpg",
+      "sha256": "a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "parents": [],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "valid": true
+    },
+    "img_8e0b339ab08188a63ee01c8d69ca9e3cb94e39f29ee19b729ccdc71d53ab1e9e": {
+      "id": "img_8e0b339ab08188a63ee01c8d69ca9e3cb94e39f29ee19b729ccdc71d53ab1e9e",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_support_presence4_20261112_1832\\view_04.jpg",
+      "sha256": "8e0b339ab08188a63ee01c8d69ca9e3cb94e39f29ee19b729ccdc71d53ab1e9e",
+      "parents": [],
+      "image_id": "img_8e0b339ab08188a63ee01c8d69ca9e3cb94e39f29ee19b729ccdc71d53ab1e9e",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "fc3566018f378f924ffa2e31bd7f48dfc02280bcae6ad45f52e7daba9fe80b11"
+}

@@ -299,10 +299,6 @@ def build_feature_audit(directory, *, feature_ids=None, out_dir=None):
         'instances': instances,
     }
     write_json(out / 'feature_audit.json', result)
-    if 'needle_crystal' in feature_ids:
-        compat = directory / 'needle_audit'
-        compat.mkdir(parents=True, exist_ok=True)
-        write_json(compat / 'needle_audit.json', result)
     return result
 
 

@@ -1,0 +1,8 @@
+{
+  "schema": "multi-view-interface/v1",
+  "dry_run": false,
+  "base": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509",
+  "stage": "done",
+  "status": "completed",
+  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\连翘_closedloop_20261110_1509\\runs\\fusion_d47e61113f684052b7365eb0391285bc"
+}

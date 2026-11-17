@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "淀粉粒",
+      "tight_bbox": [
+        1157.75,
+        845.25,
+        1525.25,
+        1305.75
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "类球形颗粒，隐约可见层纹及点状脐点，位于组织内部",
+      "source_tight_bbox": [
+        1219,
+        922,
+        1464,
+        1229
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1024,
+    768,
+    2048,
+    1536
+  ],
+  "feature_id": "starch_grain",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

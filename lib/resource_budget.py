@@ -4,7 +4,7 @@ from .ledger_lock import acquire, release
 from .storage import IntegrationError, read_json, write_json, digest
 
 
-def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool=None):
+def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool=None, probe=None):
     handle=acquire(path)
     try:
         value=read_json(path)
@@ -16,6 +16,10 @@ def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool
         if extra_pool:
             reservations.append((extra_pool, 'api:' + key))
         if any(k in value['entries'] for _, k in reservations):return False
+        if probe is not None:
+            from .probe_budget import check_reservation
+            code = check_reservation(value, probe)
+            if code:raise IntegrationError(code, 'supporting探查重复或额度耗尽')
         held = max(0, limits.get('finalization',0)-value['used'].get('finalization',0))
         if pool != 'finalization' and held:
             network_after = value['used'].get('network',0)+sum(p=='network' for p,_ in reservations)
@@ -28,6 +32,9 @@ def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool
         for p, k in reservations:
             value['used'][p]=value['used'].get(p,0)+1
             value['entries'][k]={'pool':p,'status':'pending',**(metadata or {})}
+        if probe is not None:
+            value.setdefault('supporting_probes', {})[probe['key']] = {
+                **probe, 'reservation_owner': key, 'pool': pool}
         write_json(path,value)
         return True
     finally:release(handle)

@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "气孔",
+      "tight_bbox": [
+        2847.0,
+        354.0,
+        3105.0,
+        564.0
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "表皮上可见一个椭圆形小孔结构，中央孔缝清晰，但周围保卫细胞的半月形轮廓分辨不清",
+      "source_tight_bbox": [
+        2890,
+        389,
+        3062,
+        529
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1920,
+    0,
+    3840,
+    1080
+  ],
+  "feature_id": "stoma",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

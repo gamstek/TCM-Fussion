@@ -94,7 +94,7 @@ def validate_config(config):
     if agent.get("mode") == "active":
         if "workflow" not in agent:
             raise IntegrationError("CONFIG_INVALID", "主动模式必须提供 agent.workflow；旧运行器已退役")
-        if (not config.get("allow_network", False) and agent.get('workflow',{}).get('execution')!='shadow'
+        if (not config.get("allow_network", False)
             and ("workflow" not in agent or agent.get("planner", "llm") != "heuristic")):
             raise IntegrationError("NETWORK_DISABLED", "主动模式须显式允许联网")
         if not isinstance(agent.get("image_roots"), list) or not agent["image_roots"]:
@@ -303,7 +303,7 @@ def doctor(config):
             check("B部分工件目录", project_path(b["run_dir"]).is_dir(), "workflow不要求完成manifest")
         else:
             check("B完成manifest", (project_path(b["run_dir"])/"run_manifest.json").is_file(), b["run_dir"])
-    if workflow is not None and workflow.get('execution')!='shadow':
+    if workflow is not None:
         from .adapters import interpreter
         py=interpreter(cfg["agent"]["workflow"].get("python"))
         probe=subprocess.run([py,"-X","utf8","-c","import cv2,numpy; print('ok')"],

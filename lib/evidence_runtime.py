@@ -150,18 +150,72 @@ class EvidenceRuntime:
         selected = [candidates[x] for x in selected_ids if x in candidates]
         required_sets = [{c["feature"] for c in row["criteria"] if c["role"] == "required"} for row in selected]
         common = set.intersection(*required_sets) if required_sets else set()
+        workflow = getattr(self, 'workflow', None)
+        from .probe_budget import enabled as plans_enabled, available as probe_available
+        unified_probes = plans_enabled(self)
+        wf_config = getattr(workflow, 'config', {}) or {}
+        support_total_cap = int(wf_config.get('supporting_probe_total', 0) or 0)
+        support_per_candidate = max(1, int(wf_config.get('supporting_probe_per_candidate', 2) or 2))
+        support_total = 0
+        support_used = {}
+        support_seen = set()
+        if support_total_cap and not unified_probes:
+            for obs in state.get('observations', []):
+                action = obs.get('action') or {}
+                if action.get('tool') != 'presence_check':
+                    continue
+                fid = (action.get('args') or {}).get('feature_id')
+                cids = {row['id'] for row in selected
+                        for c in row['criteria'] if c.get('feature') == fid and c.get('role') == 'supporting'}
+                if not cids:
+                    continue
+                support_total += 1
+                support_seen.add(fid)
+                for cid in cids:
+                    support_used[cid] = support_used.get(cid, 0) + 1
+            if workflow is not None:
+                for row in read_json(workflow.operations).get('entries', {}).values():
+                    if row.get('tool') != 'feature_scan':
+                        continue
+                    cids = {c.get('candidate_id') for c in (row.get('criteria') or [])
+                            if c.get('role') == 'supporting'}
+                    if not cids:
+                        continue
+                    support_total += 1
+                    support_seen.add(row.get('feature_id'))
+                    for cid in cids:
+                        support_used[cid] = support_used.get(cid, 0) + 1
         for candidate_rank, candidate in enumerate(selected):
             for criterion in candidate["criteria"]:
                 fid = criterion["feature"]
-                if (criterion["role"] != "required" or self.kb.tier(fid) not in {"P1", "C"}
+                role = criterion.get("role")
+                if role not in {"required", "supporting"}:
+                    continue
+                if (self.kb.tier(fid) not in {"P1", "C"}
                         or (fid in cards and cards[fid].present)):
                     continue
+                if role == 'supporting' and support_total_cap and not unified_probes:
+                    if fid in support_seen or support_total >= support_total_cap:
+                        continue
+                    if support_used.get(candidate["id"], 0) >= support_per_candidate:
+                        continue
                 for identifier in sorted(self.images):
+                    if role == 'supporting' and fid in support_seen and not unified_probes:
+                        break
                     args = {"image_id": identifier, "feature_id": fid,
                             "morph_hint": criterion.get("morph") or ""}
                     action = self.action("presence_check", args, "differential_presence",
-                                         priority=(fid in common, candidate_rank, fid, identifier, args["morph_hint"]))
+                                         priority=(role == "required", fid in common, candidate_rank,
+                                                   fid, identifier, args["morph_hint"]))
                     if action["action_id"] not in attempted:
+                        if unified_probes and not probe_available(self, action):
+                            continue
+                        if role == 'supporting' and support_total_cap and not unified_probes:
+                            if support_total >= support_total_cap or support_used.get(candidate["id"], 0) >= support_per_candidate:
+                                continue
+                            support_total += 1
+                            support_seen.add(fid)
+                            support_used[candidate["id"]] = support_used.get(candidate["id"], 0) + 1
                         actions.append(action)
         unique = {a["action_id"]: a for a in actions}
         ranked = sorted(unique.values(), key=lambda a: a["priority"])
@@ -184,11 +238,11 @@ class EvidenceRuntime:
             raise IntegrationError("INPUT_CHANGED", "观察前原图内容已变更")
         if tool == "presence_check":
             fid = args.get("feature_id")
-            allowed = any(c["feature"] == fid and c["role"] == "required"
+            allowed = any(c["feature"] == fid and c["role"] in {"required", "supporting"}
                           and (c.get("morph") or "") == args.get("morph_hint", "")
                           for row in self.kb.candidates() for c in row["criteria"])
             if self.kb.tier(fid) not in {"P1", "C"} or not allowed:
-                raise IntegrationError("ACTION_DENIED", "禁止P0或非知识库required检查")
+                raise IntegrationError("ACTION_DENIED", "禁止P0或非知识库判据检查")
         return image["path"]
 
     def validate_observation(self, action, result):
@@ -220,6 +274,8 @@ class EvidenceRuntime:
                                 "checks": [{k: c.get(k) for k in ("feature_id", "state", "role")}
                                            for c in r["checks"]]} for r in d.get("ranking", [])[:3]]}
         return {"sample_id": self.sample_id, "decision": compact,
+                'presence_localizations': [o['presence_localization'] for o in state.get('observations', [])
+                                           if 'presence_localization' in o][-8:],
                 'observation_states':scored.get('observation_states',[]),'unobserved_state':'unknown',
                 "evidence_digest": scored["evidence_digest"],
                 "cards": {fid: {"present": c.present, "n_measured": c.n_instances,
