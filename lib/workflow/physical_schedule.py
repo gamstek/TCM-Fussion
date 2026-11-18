@@ -236,13 +236,20 @@ def fence_locked(session,reason):
     book = read_json(session.operations)
     changed = False
     for row in book['entries'].values():
-        if row.get('epoch') and row['status'] == 'pending':
+        if row['status'] != 'pending':
+            continue
+        if row.get('epoch'):
             if not _recover(session,row):
                 revoke_operation(session.budget_path,row['operation_key'])
                 _failed(row,'BRANCH_REVOKED')
                 row.update(phase='revoked', revoke_reason=reason)
+        else:
+            # 没有提交回执，保留预约和未知远端结果，禁止自动重发。
+            _failed(row, 'WORKFLOW_RESULT_UNKNOWN')
+            row.update(revoke_reason=reason)
+        if not row.get('automatic'):
             session.record_finished(row,row['status'],row.get('error_code'))
-            changed = True
+        changed = True
     if changed:
         write_json(session.operations,book)
         session._write_instance_index(book)

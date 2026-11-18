@@ -527,6 +527,80 @@ class WorkflowTests(WorkflowFixture, unittest.TestCase):
         self.assertTrue(any(a['tool'] == 'detect_fov_initial' for a in actions))
         self.assertFalse(any(a['tool'] == 'segment_instance' and
                              a['args'].get('target_id') == crop['id'] for a in actions))
+        for field in ('box_quality', 'box_source', 'box_quality_metrics'):
+            self.assertEqual(flow.targets()[crop['id']].get(field), crop.get(field))
+        self.assertTrue(execute('classify_target')['accepted'])
+        self.assertTrue(flow.store.current()['artifacts'][key]['valid'])
+        self.assertTrue(any(a['tool'] == 'segment_instance' and a['args']['target_id'] == crop['id']
+                            for a in flow.propose()))
+
+    def test_calibration_keeps_blank_crop_out_of_segmentation(self):
+        from PIL import Image
+
+        class Blank(StageFixture):
+            def execute(stage, session, tool, target, work, context):
+                result = super().execute(session, tool, target, work, context)
+                if tool == 'detect_fov_initial':
+                    Image.new('RGB', (8, 8), 'white').save(Path(result['crops_dir']) / 'crop.png')
+                return result
+
+        flow = self.runtime(backend=Blank(scale=None)).workflow
+        for tool in ('detect_fov_initial', 'calibrate_fov'):
+            action = next(a for a in flow.propose() if a['tool'] == tool)
+            self.assertTrue(flow.execute(action)['accepted'])
+            crop = next(t for t in flow.targets().values() if t['kind'] == 'crop')
+            self.assertEqual(crop['box_quality'], 'blank')
+            self.assertFalse(flow.crop_segmentation_admission(crop)['allowed'])
+        self.assertFalse(any(a['tool'] == 'segment_instance' for a in flow.propose()))
+
+    def test_low_confidence_reclassification_is_only_a_candidate(self):
+        class LowConfidence(StageFixture):
+            def execute(stage, session, tool, target, work, context):
+                result = super().execute(session, tool, target, work, context)
+                if tool == 'classify_target':
+                    path = Path(result['classification']) / 'classification.json'
+                    doc = read_json(path)
+                    write_json(path, {**doc, 'confidence': 'low', 'confidence_score': 0.30})
+                return result
+
+        runtime = self.runtime(backend=LowConfidence(classification_feature='fiber'),
+                               identity_min_confidence='medium', glm_identity_threshold=0.8)
+        for tool in ('detect_fov_initial', 'classify_target'):
+            flow = runtime.workflow
+            self.assertTrue(flow.execute(next(a for a in flow.propose() if a['tool'] == tool))['accepted'])
+        row, = runtime.valid_classifications()
+        self.assertEqual(row['feature_id'], 'fiber')
+        self.assertFalse(row['identity_verified'])
+        self.assertFalse(any('__as_fiber' in key for key in runtime.workflow.targets()))
+
+    def test_cancelled_serial_stage_has_a_terminal_record(self):
+        class Cancelled(StageFixture):
+            def execute(stage, session, tool, target, work, context):
+                raise asyncio.CancelledError()
+
+        flow = self.runtime(backend=Cancelled(), physical_parallel=True).workflow
+        action = next(a for a in flow.propose() if a['tool'] == 'detect_fov_initial')
+        with self.assertRaises(asyncio.CancelledError):
+            flow.execute(action)
+        flow.close('cancelled')
+        row, = read_json(flow.operations)['entries'].values()
+        self.assertEqual((row['status'], row['error_code']), ('failed', 'WORKFLOW_CANCELLED'))
+        self.assertTrue(read_json(flow.budget_path)['closed'])
+
+    def test_close_fences_late_serial_stage(self):
+        class Late(StageFixture):
+            def execute(stage, session, tool, target, work, context):
+                result = super().execute(session, tool, target, work, context)
+                session.close('deadline')
+                return result
+
+        flow = self.runtime(backend=Late(), physical_parallel=False).workflow
+        action = next(a for a in flow.propose() if a['tool'] == 'detect_fov_initial')
+        before = flow.store.current()['version']
+        row = flow.execute(action)
+        self.assertEqual((row['status'], row['error_code']), ('failed', 'WORKFLOW_RESULT_UNKNOWN'))
+        self.assertEqual(flow.store.current()['version'], before)
+        self.assertEqual(next(iter(read_json(flow.operations)['entries'].values())), row)
 
     def test_paused_exclusive_crop_branch_is_hidden_but_shared_feature_survives(self):
         r=self.runtime(agent_policy='adaptive_v2',targeted_recovery=True)

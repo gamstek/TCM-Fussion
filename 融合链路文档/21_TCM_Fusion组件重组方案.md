@@ -65,7 +65,8 @@
 | --- | --- |
 | `feature_scan_tile_size`、`feature_scan_overlap` | 旧配置继续通过 schema。当前均匀分块由原图尺寸和分块上限决定，参数从新模板移除。 |
 | `feature_scan_tile_policy`、`feature_scan_concurrency` | 后端通过组合键读取，保留 `full`、`prescreen` 与并发限制。 |
-| `feature_scan_enabled`、`hybrid_scan_enabled` | 旧字段仍可读取，新任务用 `fast_recovery_selection` 与合法工具配置控制补扫。 |
+| `feature_scan_enabled` | 默认开启。设为 false 后移除逐类补扫和旧配置的合并补扫动作。 |
+| `hybrid_scan_enabled` | 用于读取历史配置。补扫模式按 `fast_recovery_selection` 和合法工具配置决定。 |
 | `auto_prepare_stage`、`auto_required_measurement` | 旧字段继续兼容。模型按合法菜单选择调查，同一对象合格分割后的自动测量仍由 `auto_measure_after_segment` 控制。 |
 | `cnn_other_fallback` | 兼容旧配置。CNN 的 other 不作为身份确认。 |
 | `feature_audit` | 通用特征旁路审计开关。指定 `feature_audit_features` 可限定审计类别。 |

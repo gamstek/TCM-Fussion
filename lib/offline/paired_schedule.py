@@ -26,6 +26,11 @@ def token_counts(usages, expected):
             'complete': expected is not None and len(known) == expected}
 
 
+def first_contrast_event(events):
+    """从新旧轨迹中读取首个绑定证据的区分事件。"""
+    return next((event for event in events if event['phase'] == 'first_qualified_contrast'), None)
+
+
 def inspect_run(run):
     case = run.parent.parent
     proof = read_json(case / 'input_proof.json')
@@ -140,7 +145,7 @@ def inspect_run(run):
                       for e in events if e['phase']=='thought'),
                   no_gain_actions=sum(a['useful'] is False for a in actions),
                   attributable_investigations=graded, thoughts_without_action_gain=no_gain,
-                  first_contrast=next((e for e in events if e['phase']=='first_qualified_contrast'), None),
+                  first_contrast=first_contrast_event(events),
                   tokens=tokens, known_tokens=sum(v['reported_tokens'] for v in tokens.values()),
                   token_complete=all(v['complete'] for v in tokens.values()),
                   worker_http=dict(Counter(r['status'] for r in workers)), closed=resources['closed'],

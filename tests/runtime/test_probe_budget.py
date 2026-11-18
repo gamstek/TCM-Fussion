@@ -145,6 +145,11 @@ class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
                 'fast_fallback_max_locate_calls': 16, 'feature_scan_enabled': True,
                 'max_api_calls': 40, 'max_resource_units': 100, **config})
 
+    def test_disabled_feature_scan_is_absent_from_menu(self):
+        runtime = self.scan_runtime(feature_scan_enabled=False)
+        self.initialize(runtime)
+        self.assertFalse(any(a['tool'] == 'feature_scan' for a in runtime.workflow.propose()))
+
     def initialize(self, runtime):
         action = next(a for a in runtime.workflow.propose() if a['tool'] == 'detect_fov_initial')
         self.assertEqual(runtime.workflow.execute(action)['status'], 'done')

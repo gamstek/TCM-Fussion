@@ -42,6 +42,28 @@ class D3Tests(fixtures.D3Fixture, unittest.TestCase):
         _,_,second=compact(context,cursor)
         self.assertEqual(second['after']['unit'],'utf8_json_bytes_not_tokens')
 
+    def test_binding_prefers_current_identity_to_stale_equivalent_alias(self):
+        r = self.detected()
+        flow = r.workflow
+        flow.execute(self.action(r, 'classify_target'))
+        snapshot = flow.store.current()
+        crop = next(row for row in snapshot['artifacts'].values() if row['kind'] == 'crop')
+        identity = snapshot['artifacts']['classification:' + crop['id']]
+        alias = fixtures.InstanceFixture.alias(self, r, crop, name='aa')
+        alias_identity = flow._art('classification:' + alias['id'], 'classification', identity['path'],
+                                   [alias['id']], image_id=crop['image_id'],
+                                   feature_id=identity['feature_id'], identity_verified=True)
+        flow.store.commit(flow.store.current()['version'], [alias_identity])
+        flow.store.commit(flow.store.current()['version'], [{**alias, 'box_quality_retry': True}])
+        stale = flow.store.current()['artifacts'][alias_identity['id']]
+        self.assertFalse(stale['valid'])
+        self.assertTrue(stale['identity_verified'])
+        goal = self.goal(r)
+        chosen, _ = bind(r, goal['instance_ref'])
+        self.assertEqual(chosen['id'], crop['id'])
+        plan = compile_goal(r, goal, self.action(r, 'segment_instance'))
+        self.assertEqual(plan['bound_crop_id'], crop['id'])
+
     def test_explicit_current_detail_read_is_not_silently_removed(self):
         full={'rows':[{'reason':'x'*9000}], 'kind':'provisional'}
         context={'evidence':{},'actions':[],'read_results':[{'stale':False,'result':full}]}

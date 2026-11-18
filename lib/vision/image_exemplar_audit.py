@@ -56,27 +56,30 @@ def build_contact_sheet(target, positives, negatives, output, *, target_label='T
     return output
 
 
-def normalize_audit(parsed, *, target_id=None, positive_count=0, negative_count=0, feature_id='needle_crystal'):
+def normalize_audit(parsed, *, feature_id, target_id=None, positive_count=0, negative_count=0):
     """把 VLM JSON 规范成稳定 schema；不在这里做通过/拒绝。"""
     def number(value, default=0.0):
         try:
             return max(0.0, min(1.0, float(value)))
         except (TypeError, ValueError):
             return default
-    value = parsed if isinstance(parsed, dict) else {}
-    target = value.get('target_score', value.get('needle_score'))
-    needle = number(target)
+    if not isinstance(feature_id, str) or not feature_id.strip():
+        raise ValueError('审计缺少目标 feature_id')
+    if not isinstance(parsed, dict) or 'target_score' not in parsed:
+        raise ValueError('审计缺少 target_score')
+    value = parsed
+    target_score = number(value['target_score'])
     negative = number(value.get('negative_similarity'))
     margin = value.get('negative_margin')
     try:
         margin = float(margin)
     except (TypeError, ValueError):
-        margin = needle - negative
-    result = {
+        margin = target_score - negative
+    return {
         'schema': 'image-exemplar-audit/v2',
         'target_id': target_id,
-        'feature_id': str(feature_id or value.get('feature_id') or 'unknown'),
-        'target_score': round(needle, 4),
+        'feature_id': feature_id.strip(),
+        'target_score': round(target_score, 4),
         'negative_similarity': round(negative, 4),
         'negative_margin': round(max(-1.0, min(1.0, margin)), 4),
         'audit_label': str(value.get('audit_label') or 'unknown')[:80],
@@ -87,7 +90,3 @@ def normalize_audit(parsed, *, target_id=None, positive_count=0, negative_count=
         'review_status': 'auto_unreviewed',
         'non_blocking': True,
     }
-    # 兼容旧针晶消费方。
-    if result['feature_id'] == 'needle_crystal':
-        result['needle_score'] = result['target_score']
-    return result

@@ -11,13 +11,14 @@
 """
 import copy
 import time
+from asyncio import CancelledError
 from pathlib import Path
 import contracts
 import paths
 from TCM_Fusion.lib.workflow.adapters import interpreter
 from TCM_Fusion.lib.evidence.evidence_store import EvidenceStore
 from TCM_Fusion.lib.runtime.ledger_lock import acquire, release
-from TCM_Fusion.lib.runtime.resource_budget import close_budget, reserve
+from TCM_Fusion.lib.runtime.resource_budget import close_budget, reserve, revoke_operation
 from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, project_path, read_json, write_json, finite_number
 from TCM_Fusion.lib.workflow.workflow_backend import WorkflowBackend
 from TCM_Fusion.lib.vision.box_quality import assess_meta
@@ -196,9 +197,8 @@ class WorkflowSession:
         handle = acquire(self.operations)
         try:
             close_budget(self.budget_path, reason)
-            if self.config.get('physical_parallel'):
-                from TCM_Fusion.lib.workflow.physical_schedule import fence_locked
-                fence_locked(self, reason)
+            from TCM_Fusion.lib.workflow.physical_schedule import fence_locked
+            fence_locked(self, reason)
         finally:
             release(handle)
 
@@ -468,9 +468,10 @@ class WorkflowSession:
                     key='classify_batch:'+image
                     targets[key]={'id':key,'kind':'classify_batch','image_id':image,
                                   'crops':pending,'parents':[image]}
-        if self.config.get('fast_recovery_selection', 'legacy_bundle') == 'per_feature':
+        scan_enabled = self.config.get('feature_scan_enabled', True)
+        if scan_enabled and self.config.get('fast_recovery_selection', 'legacy_bundle') == 'per_feature':
             targets.update(self.fast_recovery_targets(arts))
-        else:
+        elif scan_enabled:
             # Compatibility: 旧配置仍保留每图一次 required 合并补扫。
             operations=read_json(self.operations)['entries']
             required=[]
@@ -713,12 +714,17 @@ class WorkflowSession:
                        'model_config':self.runtime.config_identity,'backend':self.code_signature})
 
     def operation_key(self,tool,target):
-        return digest({'tool':tool,'identity':self.identity,'target':target['id'],
-            'roi':target.get('roi'),'deps':self._dependency_rows(tool,target)})
+        identity = {'tool': tool, 'identity': self.identity, 'target': target['id'],
+                    'roi': target.get('roi'), 'deps': self._dependency_rows(tool, target)}
+        if tool == 'classify_target' and target.get('classification_recheck'):
+            identity['classification_recheck'] = target['classification_recheck']
+        return digest(identity)
 
     def semantic_attempt(self, tool, target):
         """D1 内部尝试身份；不代替权限、预算或跨阶段 contracts 校验。"""
         parameters = {}
+        if tool == 'classify_target' and target.get('classification_recheck'):
+            parameters['classification_recheck'] = target['classification_recheck']
         if tool == 'measure_instances':
             plan = self.review_measure_plan(target) or {}
             parameters = {k: plan.get(k) for k in ('component_ids', 'component_policy')}
@@ -744,8 +750,8 @@ class WorkflowSession:
         handle = acquire(self.operations)
         try:
             doc = read_json(self.operations)
-            if any(row.get('semantic_key') == semantic['semantic_key']
-                   for row in doc['entries'].values()):
+            if read_json(self.budget_path).get('closed') or any(
+                    row.get('semantic_key') == semantic['semantic_key'] for row in doc['entries'].values()):
                 return parent
             row = {**semantic, 'operation_key': key, 'tool': 'measure_instances',
                    'target_id': target['id'], 'status': 'pending', 'accepted': False,
@@ -754,27 +760,8 @@ class WorkflowSession:
             self._write_instance_index(doc)
         finally:
             release(handle)
-        measure_started = time.monotonic()
-        try:
-            work.mkdir(parents=True, exist_ok=False)
-            context = self.worker_context(work, key)
-            result = self.backend.execute(self, 'measure_instances', target, work, context)
-            if self.remaining_seconds() <= 0.1 or read_json(self.budget_path).get('closed'):
-                raise IntegrationError('WORKFLOW_TIMEOUT', '自动测量迟到结果不提交')
-            parent = self.accept('measure_instances', target, result, parent)
-            from TCM_Fusion.lib.evidence.stage_recording import bundle
-            row.update(status='done', accepted=True, evidence_version=parent, bundle=bundle(result, work))
-        except Exception as exc:
-            code = getattr(exc, 'code', 'WORKFLOW_STAGE_FAILED')
-            row.update(status='failed', error_code=code, error_kind=stage_error_kind(code))
-        row['latency_ms'] = round((time.monotonic()-measure_started)*1000,3)
-        handle = acquire(self.operations)
-        try:
-            doc = read_json(self.operations); doc['entries'][key] = row
-            write_json(self.operations, doc); self._write_instance_index(doc)
-        finally:
-            release(handle)
-        return parent
+        record, _ = self._run_serial_stage(row, target, work, parent=parent)
+        return record.get('evidence_version', parent)
 
     def review_measure_allowed(self):
         """外部 review 决策选择 split/diagnostic 时，允许一次诊断测量绕过 review 门。"""
@@ -1246,38 +1233,75 @@ class WorkflowSession:
                                criteria=target.get('criteria') or [])
             doc['entries'][key]=pending;write_json(self.operations,doc)
             self._write_instance_index(doc)
+            self.record_selected(pending)
         finally:release(h)
-        self.record_selected({'tool':tool,'target_id':target['id'],'action_id':action.get('action_id')})
-        # Windows默认路径长度有限；完整键仍在账本，目录短键冲突时拒绝覆盖。
-        work=self.root/'ops'/key[:16]
-        try:
-            work.mkdir(parents=True,exist_ok=False)
-            context = self.worker_context(work, key)
-            fingerprint=self.dependency_fingerprint(tool,target)
-            before_progress=self.progress_signature()
-            result=self.backend.execute(self,tool,target,work,context)
-            if self.remaining_seconds()<=0.1 or read_json(self.budget_path).get('closed'):
-                raise IntegrationError('WORKFLOW_TIMEOUT','任务已截止，迟到工件只审计不提交')
-            from TCM_Fusion.lib.evidence.stage_recording import bundle
-            recorded=bundle(result,work)
-            if self.dependency_fingerprint(tool,target)!=fingerprint:
-                raise IntegrationError('EVIDENCE_STALE','执行期间相关依赖变化，结果只保留审计，不提交')
-            version=self.accept(tool,target,result,self.store.current()['version'])
-            record={**pending,'status':'done','accepted':True,
-                    'repair_completed':self.progress_signature()!=before_progress and result.get('quality')!='review',
-                    'evidence_version':version,'dependency_fingerprint':fingerprint,'bundle':recorded}
-        except Exception as exc:
-            code=getattr(exc,'code','WORKFLOW_STAGE_FAILED')
-            record={**pending,'status':'failed','error_code':code,'error_kind':stage_error_kind(code)}
-        h=acquire(self.operations)
-        try:
-            doc=read_json(self.operations);doc['entries'][key]=record;write_json(self.operations,doc)
-            self._write_instance_index(doc)
-        finally:release(h)
-        self.record_finished({'tool':tool,'target_id':target['id'],'action_id':action.get('action_id')}, record.get('status','failed'), record.get('error_code'))
+        # Windows 默认路径长度有限，完整操作键仍保存在账本中。
+        record, result = self._run_serial_stage(pending, target, self.root / 'ops' / key[:16])
+        if record['accepted'] and tool == 'segment_instance':
+            version = self._measure_after_segment(target, result, record['evidence_version'])
+            return {**record, 'evidence_version': version}
         return record
 
-    def accept(self,tool,target,result,parent,*,receipt=None):
+    def _run_serial_stage(self, row, target, work, *, parent=None):
+        """在锁外执行 worker。发布工件与登记终态在同一把操作锁内完成。"""
+        from TCM_Fusion.lib.evidence.stage_recording import bundle
+        from TCM_Fusion.lib.workflow.physical_schedule import check_live
+
+        key, tool = row['operation_key'], row['tool']
+        started = time.monotonic()
+        exception = None
+        result = None
+        try:
+            check_live(self)
+            work.mkdir(parents=True, exist_ok=False)
+            fingerprint = self.dependency_fingerprint(tool, target)
+            result = self.backend.execute(self, tool, target, work, self.worker_context(work, key))
+            recorded = bundle(result, work)
+        except (Exception, CancelledError) as exc:
+            exception = exc
+
+        handle = acquire(self.operations)
+        try:
+            book = read_json(self.operations)
+            record = book['entries'][key]
+            if record['status'] == 'pending':
+                if exception is None:
+                    try:
+                        check_live(self)
+                        if self.dependency_fingerprint(tool, target) != fingerprint:
+                            raise IntegrationError('EVIDENCE_STALE', '执行期间相关依赖变化，结果只保留审计')
+                        before = self.progress_signature()
+                        version = self.accept(tool, target, result, parent or self.store.current()['version'],
+                                              auto_measure=False)
+                        record.update(status='done', accepted=True, evidence_version=version,
+                                      repair_completed=self.progress_signature() != before and result.get('quality') != 'review',
+                                      dependency_fingerprint=fingerprint, bundle=recorded)
+                        if tool == 'feature_scan':
+                            from TCM_Fusion.lib.evidence.search_ledger import scan_coverage
+                            status, coverage = scan_coverage(record)
+                            record['scan_coverage'] = {**coverage, 'status': status}
+                    except (Exception, CancelledError) as exc:
+                        exception = exc
+                if exception is not None:
+                    code = ('WORKFLOW_CANCELLED' if isinstance(exception, CancelledError)
+                            else getattr(exception, 'code', 'WORKFLOW_STAGE_FAILED'))
+                    record.update(status='failed', error_code=code, error_kind=stage_error_kind(code))
+                    if code == 'WORKFLOW_CANCELLED':
+                        revoke_operation(self.budget_path, key)
+                record['ended_at'] = time.time()
+                if row.get('automatic'):
+                    record['latency_ms'] = round((time.monotonic() - started) * 1000, 3)
+                write_json(self.operations, book)
+                self._write_instance_index(book)
+                if not row.get('automatic'):
+                    self.record_finished(row, record['status'], record.get('error_code'))
+        finally:
+            release(handle)
+        if isinstance(exception, CancelledError):
+            raise exception
+        return record, result
+
+    def accept(self,tool,target,result,parent,*,receipt=None,auto_measure=True,classification_source='classify_target'):
         image=target['image_id'];items=[];rows=[];replace=[]
         if tool=='hybrid_scan':
             detections=result.get('detections') or {}
@@ -1319,6 +1343,7 @@ class WorkflowSession:
                     image_item=self._art(cid+':pixels','crop_pixels',m.png,[image],image_id=image)
                     items.append(image_item)
                     metadata=self._crop_metadata(m,quality,kind=kind,target=target)
+                    metadata['detection_tool'] = tool
                     items.append(self._art(cid,'crop',m.json_path,[image,image_item['id']],
                                            image_id=image,**metadata))
                 marker=('detected:'+image if kind=='detect' else 'scanned:'+image)
@@ -1348,6 +1373,7 @@ class WorkflowSession:
                 metadata=self._crop_metadata(m,quality,
                     kind='feature' if tool in {'locate_feature','feature_scan'} else 'detect',
                     target=target)
+                metadata['detection_tool'] = tool
                 items.append(self._art(cid,'crop',m.json_path,[image,image_item['id']],image_id=image,
                                        **metadata))
             marker=('detected:'+image if tool=='detect_fov_initial' else
@@ -1367,18 +1393,27 @@ class WorkflowSession:
             if not is_trusted_status(value.get('status')) or not finite_number(value.get('px_per_um'),minimum=1e-12):
                 raise IntegrationError('SCALE_UNTRUSTED','无可信检测侧标定')
             items.append(self._art('scale:'+image,'scale',result['scale'],[image],image_id=image,px_per_um=value['px_per_um']))
-            # 在独立工作目录写新crop侧车；原B及旧sidecar只读。
-            for cid,v in self.store.current()['artifacts'].items():
-                if v['kind']=='crop' and v['valid'] and v['image_id']==image:
-                    m=contracts.CropMeta.from_json(v['path']);side=copy.deepcopy(m.raw);side['px_per_um']=value['px_per_um']
-                    side['png']=str(Path(m.png).resolve())
-                    # 写侧仍由contracts唯一构造，不复制业务契约键表。
-                    side=contracts.crop_sidecar(m.crop_id,str(Path(m.png).resolve()),m.source_image_path,m.stem,
-                        m.feature_id,m.object_label,'',value['px_per_um'],m.tight_box,m.tight_box_local,m.loose_box,
-                        m.crop_size,m.pad_info,m.granularity)
-                    p=Path(result['scale']).parent/(m.crop_id+'.json');write_json(p,side)
-                    items.append(self._art(cid,'crop',p,v['parents'],image_id=image,
-                                           identity_required=v.get('identity_required', False)))
+            artifacts = self.store.current()['artifacts']
+            for cid, crop in artifacts.items():
+                if crop['kind'] != 'crop' or not crop['valid'] or crop['image_id'] != image:
+                    continue
+                # 改判裁图由原分类派生。原分类失效时它也失效，由复核结果重新生成。
+                if any(artifacts[p]['kind'] == 'classification' for p in crop['parents']):
+                    continue
+                meta = contracts.CropMeta.from_json(crop['path'])
+                if meta.px_per_um == value['px_per_um']:
+                    continue
+                side = {**meta.raw, 'px_per_um': value['px_per_um'], 'png': str(Path(meta.png).resolve())}
+                path = Path(result['scale']).parent / (meta.crop_id + '.json')
+                write_json(path, side)
+                updated = {**crop, 'path': str(path.resolve()), 'sha256': file_hash(path)}
+                updated.pop('valid')
+                previous_identity = artifacts.get('classification:' + cid, {})
+                if previous_identity.get('valid'):
+                    # 已提交身份失效时允许一次新核验，失败或未知的旧请求仍受原去重约束。
+                    updated['classification_recheck'] = digest(
+                        [crop.get('classification_recheck'), crop['sha256'], updated['sha256']])
+                items.append(updated)
         elif tool=='segment_instance':
             root=Path(result['segmentation']);doc=read_json(root/'instances.json')
             if not doc.get('instances'):raise IntegrationError('EMPTY_MASK','无分割实例')
@@ -1420,7 +1455,8 @@ class WorkflowSession:
                 if not crop:continue
                 try:
                     parent=self.accept('classify_target',crop,
-                                       {'classification':item['classification']},parent)
+                                       {'classification':item['classification']},parent,
+                                       classification_source='classify_crops_batch')
                     committed+=1
                 except IntegrationError:
                     continue
@@ -1435,7 +1471,7 @@ class WorkflowSession:
             cid='classification:'+target['id']
             items.append(self._art(cid,'classification',root/'classification.json',[target['id']],
                                    image_id=image,crop_id=target.get('crop_id') or target['id'],
-                                   feature_id=fid,label=label,
+                                   feature_id=fid,label=label,classification_tool=classification_source,
                                    glm_confidence=doc.get('glm_confidence'),
                                    yolo_confidence=doc.get('yolo_confidence'),
                                    confidence_source=doc.get('confidence_source'),
@@ -1443,9 +1479,10 @@ class WorkflowSession:
                                    review_required=bool(doc.get('reject') == 'pending_review'),
                                    review_reason=doc.get('reason') if doc.get('reject') == 'pending_review' else None))
             meta=contracts.CropMeta.from_json(target['path'])
-            # YOLO 初检 crop 的 identity_required=False，但分类结果同样可以是规则证据。
+            # 原裁图与改判裁图共用同一次分类的置信度判定。
             # 只有“身份门要求”的 crop 才强制 fid==crop.feature_id；普通 YOLO crop 允许
             # 高置信分类改判，否则这些 classification 永远进不了 B 规则。
+            qualified = False
             if target.get('identity_required') or (fid and not doc.get('reject')):
                 min_conf=self.config.get('identity_min_confidence','medium')
                 allowed={'high'} if min_conf=='high' else (
@@ -1458,33 +1495,32 @@ class WorkflowSession:
                     score={'high':0.90,'medium':0.65,'low':0.30}.get(confidence.lower(),0.0)
                 threshold=float(self.config.get('glm_identity_threshold',0.8))
                 confident=score >= threshold and not doc.get('reject')
-                same_feature = (fid == meta.feature_id)
+                qualified = bool(fid and not doc.get('reject') and (confidence in allowed or confident))
                 items[-1]['identity_confidence']=confidence
                 items[-1]['glm_confidence_score']=round(score,4)
-                items[-1]['identity_verified'] = bool(
-                    fid and not doc.get('reject')
-                    and same_feature
-                    and (confidence in allowed or confident))
+                items[-1]['identity_verified'] = qualified and fid == meta.feature_id
                 items[-1]['identity_basis']=('glm_score>=%.2f' % threshold if confident
                                              else 'classifier_confidence')
                 items[-1]['identity_review'] = bool(items[-1]['identity_verified'] and confidence != 'high')
             # 复核出的类别与crop不同：写一份**同像素、只改类别**的侧车，作为可重新分割的新目标。
             # 原crop与其掩码一律保留，失败/冲突仍可回溯；不是原地改写契约。
-            if not target.get('identity_required') and fid and fid!=meta.feature_id:
+            if not target.get('identity_required') and qualified and fid != meta.feature_id:
                 new_id=f"{meta.crop_id}__as_{fid}"
                 side=contracts.crop_sidecar(new_id,str(Path(meta.png).resolve()),meta.source_image_path,
                     meta.stem,fid,label,'',meta.px_per_um,meta.tight_box,meta.tight_box_local,
                     meta.loose_box,meta.crop_size,meta.pad_info,meta.granularity)
                 p=root/(new_id+'.json');write_json(p,side)
                 new_crop_id='crop:'+image+':'+new_id
-                items.append(self._art(new_crop_id,'crop',p,[target['id'],cid],image_id=image))
-                # 改判后的同像素 crop 仍需要自己的 classification，否则规则看不到新 feature。
-                items.append(self._art('classification:'+new_crop_id,'classification',
-                    root/'classification.json',[new_crop_id],image_id=image,crop_id=new_id,
-                    feature_id=fid,label=label,glm_confidence=doc.get('glm_confidence'),
-                    yolo_confidence=doc.get('yolo_confidence'),confidence_source=doc.get('confidence_source'),
-                    confidence_score=doc.get('confidence_score'),identity_verified=True,
-                    identity_basis='reclassified_crop'))
+                reviewed = items[-1]
+                alias_crop = {**target, **self._art(new_crop_id, 'crop', p, [target['id'], cid],
+                                                     image_id=image, identity_required=True)}
+                alias_crop.pop('valid', None)
+                alias_crop.pop('classification_recheck', None)
+                alias_crop['reclassified_from'] = target['id']
+                items.append(alias_crop)
+                items.append({**reviewed, 'id': 'classification:' + new_crop_id, 'parents': [new_crop_id],
+                              'crop_id': new_id, 'identity_verified': True,
+                              'identity_review': reviewed['identity_confidence'] != 'high'})
         elif tool=='measure_instances':
             path=result['measurements'];parsed=list(contracts.iter_measurement_records(path))
             if not parsed:raise IntegrationError('EMPTY_MEASUREMENT','空测量不得提交为修复完成')
@@ -1524,8 +1560,14 @@ class WorkflowSession:
                                       before_publish=lambda:check_live(self))['version']
         else:
             version=self.store.commit(parent,items,rows,replace)['version']
-        if (tool=='segment_instance' and (target.get('measure_if') or self.config.get('auto_measure_after_segment', False))
-                and result.get('quality')=='valid'):
+        if tool == 'segment_instance' and auto_measure:
+            return self._measure_after_segment(target, result, version)
+        return version
+
+    def _measure_after_segment(self, target, result, version):
+        image = target['image_id']
+        if ((target.get('measure_if') or self.config.get('auto_measure_after_segment', False))
+                and result.get('quality') == 'valid'):
             scale=self.store.current()['artifacts'].get('scale:'+image,{})
             if scale.get('valid'):
                 seg_target={'id':'seg:'+target['id'],'kind':'segmentation','image_id':image,
@@ -1547,7 +1589,8 @@ class WorkflowSession:
         semantic = self.semantic_attempt('classify_target', target)
         for row in read_json(self.operations).get('entries', {}).values():
             if row.get('tool') == 'classify_target' and (
-                    row.get('target_id') == target['id'] and not row.get('semantic_key') or semantic and
+                    row.get('target_id') == target['id'] and not row.get('semantic_key')
+                     and not target.get('classification_recheck') or semantic and
                     row.get('semantic_key') == semantic['semantic_key']) \
                     and row.get('status') in {'done', 'failed', 'pending'}:
                 return True

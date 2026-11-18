@@ -53,6 +53,13 @@ class PlanningChoicesTests(unittest.TestCase):
             self.assertIn(g['goal']['semantic_task'],{'verify_identity','measure_length'})
         self.assertLessEqual(len(view['execution_options']['goals']),12)
 
+    def test_same_action_uses_separate_primary_and_companion_short_ids(self):
+        shared = {'action_id': 'canonical', 'tool': 'presence_check'}
+        view, lookup = model_view({'actions': [shared], 'parallel_observations': [shared]})
+        self.assertEqual(view['actions'][0]['action_id'], 'A1')
+        self.assertEqual(view['parallel_observations'][0]['action_id'], 'O1')
+        self.assertEqual(lookup, {'A1': 'canonical', 'O1': 'canonical'})
+
     def test_actual_llm_payload_uses_primary_goal_selector_and_maps_back(self):
         c=self.context(self.detected(),semantic_options=[{'old':'duplicate'}],semantic_goal_contract={})
         p=LLMPlanner.__new__(LLMPlanner);p.client=SimpleNamespace(model='fixture',timeout_s=2);p.config={}

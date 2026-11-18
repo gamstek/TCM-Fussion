@@ -12,6 +12,8 @@ observations 之上保持只读，真正的原子执行控制仍由 probe_budget
 - 调用方 「lib/agent/react_graph.py」、「tests/runtime/test_probe_budget.py」。
 - 直接依赖 「lib/runtime/storage.py」。
 """
+from pathlib import Path
+
 from TCM_Fusion.lib.runtime.storage import read_json
 
 
@@ -41,6 +43,43 @@ def _presence_result(state, probe):
     return 'running', {}
 
 
+def scan_coverage(operation):
+    """报告成功、失败与未尝试的原图分块，兼容旧补扫回执。"""
+    if operation.get('status') == 'failed':
+        return 'failed', {'error': operation.get('error_code')}
+    if operation.get('status') != 'done':
+        return 'running', {}
+    if operation.get('scan_coverage'):
+        coverage = operation['scan_coverage']
+        return coverage['status'], coverage
+
+    bundle = operation.get('bundle') or {}
+    relative = (bundle.get('paths') or {}).get('completion')
+    if not relative or not bundle.get('root'):
+        return 'unavailable', {'error': 'SCAN_COVERAGE_UNKNOWN'}
+    try:
+        doc = read_json(Path(bundle['root']) / relative)
+    except (OSError, ValueError):
+        return 'unavailable', {'error': 'SCAN_COVERAGE_UNKNOWN'}
+    if not isinstance(doc, dict) or not isinstance(doc.get('tiles'), list):
+        return 'unavailable', {'error': 'SCAN_COVERAGE_UNKNOWN'}
+
+    tiles = doc['tiles']
+    errors = doc.get('errors') or []
+    failed = {row.get('tile') for row in errors}
+    successful = [box for index, box in enumerate(tiles) if index not in failed]
+    planned = doc.get('planned_tiles', None if doc.get('pilot') else tiles)
+    unsearched = [box for box in planned if box not in tiles] if planned is not None else None
+    incomplete = bool(errors or unsearched or doc.get('partial') or (planned is None and doc.get('pilot')))
+    if not successful and not doc.get('count'):
+        status = 'failed'
+    else:
+        status = 'partial' if incomplete else 'shareable'
+    return status, {'status': status, 'crop_count': doc.get('count'), 'successful_tiles': successful,
+                    'failed_tiles': [box for index, box in enumerate(tiles) if index in failed],
+                    'unsearched_tiles': unsearched}
+
+
 def _scan_result(runtime, probe):
     target_id = probe.get('target_id')
     if not target_id:
@@ -53,12 +92,7 @@ def _scan_result(runtime, probe):
                  and row.get('image_id') == probe.get('image_id'))]
     if not rows:
         return 'running', {}
-    latest = rows[-1]
-    if latest.get('status') == 'failed':
-        return 'failed', {'error': latest.get('error_code')}
-    if latest.get('status') == 'done':
-        return 'shareable', {'status': 'done'}
-    return 'running', {}
+    return scan_coverage(rows[-1])
 
 
 def summary(runtime, state, limit=8):

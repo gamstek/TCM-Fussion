@@ -66,11 +66,8 @@ class WorkflowBackend:
             prefix = 'feature_scan'
             with Image.open(source) as handle:
                 width, height = handle.size
-            tile = max(256, min(2048, int(session.config.get(prefix + '_tile_size', 1024))))
-            overlap = max(0.0, min(0.5, float(session.config.get(prefix + '_overlap', 0.15))))
             requested_tiles = int(target.get('max_tiles') or session.config.get(prefix + '_max_tiles', 4))
-            boxes = uniform_tiles(width, height, tile=tile, overlap=overlap,
-                                  max_tiles=max(1, requested_tiles))
+            boxes = uniform_tiles(width, height, max_tiles=max(1, requested_tiles))
             policy = str(session.config.get(prefix + '_tile_policy', 'prescreen'))
             if policy == 'prescreen' and len(boxes) > 1:
                 def score(box):
@@ -119,10 +116,11 @@ class WorkflowBackend:
                     completion = out / 'scan_result.json'
                     write_json(completion, {'engine': 'glm_full_scan', 'count': 0,
                                             'tiles': boxes[:1], 'feature_id': feature_id,
-                                            'pilot': True, 'stopped': 'pilot_empty',
+                                            'pilot': True, 'stopped': 'pilot_failed' if errors else 'pilot_empty',
+                                            'planned_tiles': boxes, 'partial': bool(errors) or len(boxes) > 1,
                                             'errors': errors, 'coordinate_system': 'original_pixels'})
                     return {'crops_dir': str(out / 'crops'), 'completion': str(completion),
-                            'tiles': boxes[:1], 'partial': bool(errors), 'errors': errors}
+                            'tiles': boxes[:1], 'partial': bool(errors) or len(boxes) > 1, 'errors': errors}
                 remaining = list(enumerate(boxes))[1:]
             else:
                 remaining = list(enumerate(boxes))
@@ -149,7 +147,7 @@ class WorkflowBackend:
                             count += 1
             completion = out / 'scan_result.json'
             write_json(completion, {'engine': 'glm_full_scan', 'count': count,
-                                    'tiles': boxes, 'roi': None, 'feature_id': feature_id,
+                                    'tiles': boxes, 'planned_tiles': boxes, 'roi': None, 'feature_id': feature_id,
                                     'partial': bool(errors), 'errors': errors,
                                     'tile_policy': policy,
                                     'coordinate_system': 'original_pixels'})

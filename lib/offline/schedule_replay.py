@@ -15,6 +15,7 @@ import re
 from tempfile import TemporaryDirectory
 
 from TCM_Fusion.lib.evidence.evidence_store import EvidenceStore
+from TCM_Fusion.lib.offline.paired_schedule import first_contrast_event
 from TCM_Fusion.lib.runtime.storage import (
     IntegrationError, digest, fingerprint, read_json, write_json,
 )
@@ -38,6 +39,7 @@ def baseline(run):
             resources['closed'], '基线需要已经关闭并完成的真实任务')
     require(head == trace['evidence_version'] == packet['evidence_version'], '终态证据版本不一致')
     events = trace['events']
+    first_contrast = first_contrast_event(events) or {}
     plans = [e for e in events if e['phase'] == 'planning_timing']
     require(len(plans) == trace['planning_requests'], '规划计时覆盖不完整')
     timeline = read_json(run / 'workflow/action_timeline.json')['actions'].values()
@@ -75,8 +77,9 @@ def baseline(run):
         'initial_detection_timings': [{k: row.get(k) for k in ('target_id', 'status', 'offer_to_select_s',
                                                                 'execution_s')} for row in timeline
                                      if row['tool'] == 'detect_fov_initial' and row.get('selected_at')],
-        'first_discriminating_evidence_seconds': None,
-        'first_discriminating_evidence_note': '历史记录缺少绑定合格区分事实的统一时间戳',
+        'first_discriminating_evidence_seconds': first_contrast.get('elapsed_from_react_start'),
+        'first_discriminating_evidence_note': ('自 ReAct 启动计时'
+            if first_contrast.get('elapsed_from_react_start') is not None else '记录中缺少合格区分事件计时'),
         'candidate': (output['top_candidate'] or {}).get('id'), 'status': output['status'],
         'review_required': output['review_required'], 'review_reasons': final['review_reasons'],
         'criterion_states': states, 'unmapped': len(audit['unmapped']),

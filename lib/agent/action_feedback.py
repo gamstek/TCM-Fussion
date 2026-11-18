@@ -57,7 +57,7 @@ def evaluate(before,after,action,*,accepted,capability_changed=False,result=None
         bool(set(fids)&set(before.get('required',{}).get(cid,[]))) for cid,fids in support_changes.items())
     primary_progress=primary_progress or any(cid+':'+fid in counters for cid in before.get('primary_ids',[])
                                            for fid in before.get('required',{}).get(cid,[]))
-    return {**objective(action),'accepted':bool(accepted),'new_features':new,
+    feedback = {**objective(action),'accepted':bool(accepted),'new_features':new,
             'new_counterevidence':[action.get('args',{}).get('feature_id')] if negative else [],
             'resolved_criteria':resolved,'candidate_order_changed':before['ranking']!=after['ranking'],
             'capability_progress':bool(capability_changed),'useful':useful,
@@ -67,6 +67,9 @@ def evaluate(before,after,action,*,accepted,capability_changed=False,result=None
             'interpretation':'支持增加/顺序变化不自动代表候选已区分；局部阴性不是标本排除',
             'latency_ms':round(elapsed_ms,2),'failure_code':result.get('error_code'),
             'continue_reason':'有效证据或能力进展' if useful else '无已验证进展；换路线或停止'}
+    if result.get('scan_coverage'):
+        feedback['scan_coverage'] = result['scan_coverage']
+    return feedback
 
 
 def reflection_card(events):

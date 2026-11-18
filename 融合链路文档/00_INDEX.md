@@ -70,8 +70,6 @@ planner = llm
 transport = mcp
 
 fast_yolo_stage2 = true
-auto_prepare_stage = false
-auto_required_measurement = false
 auto_measure_after_segment = true
 suppress_repeated_measurement = true
 candidate_group_verification = true

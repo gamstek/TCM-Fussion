@@ -75,6 +75,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'context_compact':{'type':'boolean'},
     'context_max_actions':{'type':'integer','minimum':5,'maximum':64},
     'auto_measure_after_segment':{'type':'boolean'},
+    # 保留历史配置的类型校验，当前调查顺序由 ReAct 选择。
     'auto_prepare_stage':{'type':'boolean'},
     'auto_required_measurement':{'type':'boolean'},
     'candidate_group_verification':{'type':'boolean'},
@@ -90,6 +91,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'feature_scan_tile_policy':{'enum':['prescreen','full']},
     'feature_scan_enabled':{'type':'boolean'},
     'feature_scan_features':{'type':'array','items':{'type':'string'}},
+    # 仅兼容历史配置。当前全幅均匀分块使用 max_tiles。
     'feature_scan_tile_size':{'type':'integer','minimum':256,'maximum':2048},
     'feature_scan_overlap':{'type':'number','minimum':0,'maximum':0.5},
     'feature_scan_max_tiles':{'type':'integer','minimum':1,'maximum':50},
@@ -251,7 +253,8 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
     write_json(directory/'agent_trace.json',result)
     write_json(directory/'agent_verdict.json',verdict)
     fusion=fuse(a,verdict,knowledge_base(),config.get('aliases'));fusion['needs_review']=result['needs_review'] or fusion['needs_review'];fusion['candidate_admission']=admission
-    output=project_output(runtime.sample_id,verdict,result,a)
+    output=project_output(runtime.sample_id,verdict,result,a,
+                          artifacts=runtime.workflow.store.current()['artifacts'])
     write_json(directory/'output.json',output)
     value={'schema':'ab-fusion/v2','route':'workflow_agent','simulation':False,'real_model_validation':None,
            'sample_id':runtime.sample_id,'routing':routing,'a':a,'diagnostic_only':diagnostic,

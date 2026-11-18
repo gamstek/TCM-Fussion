@@ -457,18 +457,25 @@ class WorkflowRuntime(EvidenceRuntime):
     def valid_classifications(self):
         """Classifications in the current valid evidence snapshot, not history."""
         rows = []
-        for value in self.workflow.store.current()['artifacts'].values():
+        artifacts = self.workflow.store.current()['artifacts']
+        for value in artifacts.values():
             if not value.get('valid') or value.get('kind') != 'classification':
                 continue
             try:
                 doc = read_json(value['path'])
             except (OSError, ValueError):
                 continue
-            rows.append({'crop_id': doc.get('crop_id') or value.get('crop_id'),
+            crop = artifacts.get((value.get('parents') or [''])[0], {})
+            alias = crop.get('reclassified_from') or value.get('identity_basis') == 'reclassified_crop'
+            rows.append({'crop_id': value.get('crop_id') if alias else (doc.get('crop_id') or value.get('crop_id')),
+                         'classification_id': value['id'], 'image_id': value.get('image_id'),
+                         'tool': value.get('classification_tool'),
                          'feature_id': str(doc.get('feature_id') or value.get('feature_id') or ''),
                          'label': doc.get('label'), 'reject': doc.get('reject'),
                          'confidence': str(doc.get('confidence') or value.get('identity_confidence') or '').lower(),
                          'confidence_source': doc.get('confidence_source'),
+                         'glm_confidence': doc.get('glm_confidence'),
+                         'yolo_confidence': doc.get('yolo_confidence'),
                          'reason': str(doc.get('reason') or ''),
                          'confidence_score': doc.get('confidence_score'),
                          'identity_verified': bool(value.get('identity_verified'))})

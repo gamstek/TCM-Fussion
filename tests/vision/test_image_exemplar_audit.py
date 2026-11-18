@@ -35,18 +35,19 @@ class ImageExemplarAuditTests(unittest.TestCase):
             sheet = build_contact_sheet(target, [pos], [neg], root / 'contact.jpg')
             self.assertTrue(sheet.is_file())
             self.assertGreater(sheet.stat().st_size, 0)
-            result = normalize_audit({'needle_score': 0.8, 'negative_similarity': 0.3,
+            result = normalize_audit({'target_score': 0.8, 'negative_similarity': 0.3,
                                       'audit_label': 'needle_crystal', 'confidence': 'medium'},
-                                     target_id='crop:x', positive_count=1, negative_count=1)
-            self.assertEqual(result['needle_score'], 0.8)
+                                     feature_id='needle_crystal', target_id='crop:x', positive_count=1, negative_count=1)
+            self.assertEqual(result['target_score'], 0.8)
+            self.assertNotIn('needle_score', result)
             self.assertEqual(result['negative_margin'], 0.5)
             self.assertEqual(result['review_status'], 'auto_unreviewed')
             self.assertTrue(result['non_blocking'])
 
     def test_scores_are_clamped(self):
-        result = normalize_audit({'needle_score': 2, 'negative_similarity': -1,
-                                  'negative_margin': 9}, positive_count=1, negative_count=1)
-        self.assertEqual(result['needle_score'], 1.0)
+        result = normalize_audit({'target_score': 2, 'negative_similarity': -1,
+                                  'negative_margin': 9}, feature_id='fiber', positive_count=1, negative_count=1)
+        self.assertEqual(result['target_score'], 1.0)
         self.assertEqual(result['negative_similarity'], 0.0)
         self.assertEqual(result['negative_margin'], 1.0)
 
@@ -57,6 +58,12 @@ class ImageExemplarAuditTests(unittest.TestCase):
         self.assertEqual(result['feature_id'], 'fiber')
         self.assertEqual(result['target_score'], 0.7)
         self.assertNotIn('needle_score', result)
+
+    def test_legacy_needle_score_does_not_set_a_new_audit_score(self):
+        with self.assertRaisesRegex(ValueError, 'target_score'):
+            normalize_audit({'needle_score': 0.86}, feature_id='fiber')
+        with self.assertRaisesRegex(ValueError, 'feature_id'):
+            normalize_audit({'target_score': 0.86}, feature_id='')
 
     def test_generic_bank_has_14_targets_and_fiber_entry(self):
         path = Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/feature_exemplar_bank.json'

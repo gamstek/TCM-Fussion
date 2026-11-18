@@ -19,7 +19,10 @@ from __future__ import annotations
 from collections import Counter
 from pathlib import Path
 
+import contracts
+
 from TCM_Fusion.lib.evidence.evidence_projection import supports_criterion
+from TCM_Fusion.lib.evidence.search_ledger import scan_coverage
 from TCM_Fusion.lib.runtime.storage import finite_number, read_json
 from TCM_Fusion.lib.evidence.provisional_evidence import build as build_provisional
 
@@ -59,9 +62,35 @@ def _a_majority(a):
     return label, count, total
 
 
-def _detections(operations):
+def _detections(operations, artifacts):
+    if artifacts is not None:
+        rows = []
+        for item in artifacts.values():
+            if not item['valid'] or item['kind'] != 'crop' or not item.get('detection_tool'):
+                continue
+            if item.get('reclassified_from'):
+                continue
+            meta = contracts.CropMeta.from_json(item['path'])
+            image_id = item.get('image_id')
+            rows.append({'tool': item['detection_tool'], 'label': meta.object_label,
+                         'feature_id': meta.feature_id, 'crop_id': meta.crop_id,
+                         'artifact_id': item['id'], 'image_id': image_id,
+                         'score': item.get('det_score'), 'box': meta.tight_box,
+                         'source_sha256': artifacts.get(image_id, {}).get('sha256'),
+                         'box_quality': item.get('box_quality')})
+        return rows
+
     rows = []
     for op in (operations or {}).values():
+        if op.get('tool') == 'feature_scan':
+            bundle = op.get('bundle') or {}
+            folder = (bundle.get('paths') or {}).get('crops_dir')
+            if folder and bundle.get('root'):
+                for meta in contracts.load_crop_metas(str(Path(bundle['root']) / folder)):
+                    rows.append({'tool': 'feature_scan', 'label': meta.object_label, 'feature_id': meta.feature_id,
+                                 'crop_id': meta.crop_id, 'image_id': op.get('image_id'),
+                                 'score': meta.raw.get('det_score'), 'box': meta.tight_box})
+            continue
         if op.get("tool") == "hybrid_scan":
             root = Path((op.get("bundle") or {}).get("root") or "")
             doc_path = root / "yolo" / "detection" / "crops.json"
@@ -111,23 +140,26 @@ def _detections(operations):
 def _classifications(operations):
     rows = []
     for op in (operations or {}).values():
-        if op.get("tool") != "classify_target":
+        tool = op.get('tool')
+        bundle = op.get('bundle') or {}
+        if tool == 'classify_crops_batch':
+            folders = [row['classification'] for row in bundle.get('classifications', [])
+                       if row.get('status') == 'done']
+        elif tool == 'classify_target':
+            folders = [(bundle.get('paths') or {}).get('classification', 'classification')]
+        else:
             continue
-        bundle = op.get("bundle") or {}
-        root = Path(bundle.get("root") or "")
-        doc_path = root / "classification" / "classification.json"
-        if not doc_path.is_file():
+        if not bundle.get('root'):
             continue
-        try:
-            doc = read_json(doc_path)
-        except (OSError, ValueError):
-            continue
-        rows.append({"crop_id": doc.get("crop_id"), "label": doc.get("label"),
-                     "reject": doc.get("reject"), "confidence": doc.get("confidence"),
-                     "feature_id": doc.get("feature_id"), "reason": doc.get("reason"),
-                     "glm_confidence": doc.get("glm_confidence"),
-                     "yolo_confidence": doc.get("yolo_confidence"),
-                     "confidence_source": doc.get("confidence_source")})
+        root = Path(bundle['root'])
+        fields = ('crop_id', 'label', 'reject', 'confidence', 'feature_id', 'reason',
+                  'glm_confidence', 'yolo_confidence', 'confidence_source')
+        for folder in folders:
+            try:
+                doc = read_json(root / folder / 'classification.json')
+            except (OSError, ValueError):
+                continue
+            rows.append({'tool': tool, **{key: doc.get(key) for key in fields}})
     return rows
 
 
@@ -141,8 +173,11 @@ def _image_audits(operations):
         if not path.is_file(): continue
         try: doc=read_json(path)
         except (OSError,ValueError): continue
+        target_score = doc.get('target_score')
+        if target_score is None and doc.get('feature_id') == 'needle_crystal':
+            target_score = doc.get('needle_score')
         rows.append({'target_id':doc.get('target_id'),'feature_id':doc.get('feature_id'),
-                     'target_score':doc.get('target_score'),'needle_score':doc.get('needle_score'),
+                     'target_score':target_score,
                      'negative_similarity':doc.get('negative_similarity'),
                      'negative_margin':doc.get('negative_margin'),'audit_label':doc.get('audit_label'),
                      'confidence':doc.get('confidence'),'reason':doc.get('reason'),
@@ -189,7 +224,7 @@ def _supporting_candidates(ranking, feature_id):
     return names[:5]
 
 
-def project_output(sample_id, verdict, result, a):
+def project_output(sample_id, verdict, result, a, *, artifacts=None):
     ranking = list(verdict.get("ranking") or [])
     a_label, a_count, a_total = _a_majority(a)
     tie_break = {"applied": False, "a_majority": a_label,
@@ -265,8 +300,17 @@ def project_output(sample_id, verdict, result, a):
     for row in observations:
         row["supporting_candidates"] = (_supporting_candidates(ranking, row.get("feature_id"))
                                         if row["present"] is True else [])
-    detections = _detections(result.get("operations"))
-    classifications = _classifications(result.get("operations"))
+    operations = result.get('operations') or {}
+    detections = _detections(operations, artifacts)
+    classifications = result.get('valid_classifications')
+    if classifications is None:
+        classifications = _classifications(operations)
+    feature_scans = []
+    for operation in operations.values():
+        if operation.get('tool') == 'feature_scan':
+            status, summary = scan_coverage(operation)
+            feature_scans.append({'target_id': operation.get('target_id'), 'image_id': operation.get('image_id'),
+                                  'feature_id': operation.get('feature_id'), **summary, 'status': status})
     missing = []
     if top:
         for check in top.get("checks") or []:
@@ -295,6 +339,7 @@ def project_output(sample_id, verdict, result, a):
             "verified_feature_count": (assessment.get('confidence_basis') or {}).get('verified_feature_count'),
             "a_probability": top.get("a_probability"),
             "b_confidence": top.get("b_confidence"),
+            "rule_score": top.get("b_score", top.get("score")),
             "fused_score": top.get("fused_score"),
             "selection": selection,
             "formal_score": top.get("score"),
@@ -312,6 +357,7 @@ def project_output(sample_id, verdict, result, a):
         "strong_observations": observations,
         "detections": detections,
         "classifications": classifications,
+        "feature_scans": feature_scans,
         "missing_required": missing,
         "review_required": needs_review,
         "final_assessment": result.get('final_assessment'),

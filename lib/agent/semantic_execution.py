@@ -59,7 +59,11 @@ def bind(runtime, instance_ref):
     signatures = {digest([b['crop_sha256'], b['feature_id'], b['geometry'], b['px_per_um']]) for _, b in matches}
     if len(signatures) != 1:
         raise IntegrationError('SEMANTIC_BINDING_AMBIGUOUS', '同一实例存在非等价裁图或身份多解')
-    verified = [(c, b) for c, b in matches if snap['artifacts'].get('classification:'+c['id'], {}).get('identity_verified')]
+    verified = []
+    for crop, bound in matches:
+        identity = snap['artifacts'].get('classification:' + crop['id'], {})
+        if identity.get('valid') and identity.get('identity_verified') and identity.get('feature_id') == bound['feature_id']:
+            verified.append((crop, bound))
     crop, bound = min(verified or matches, key=lambda row: row[0]['id'])
     return crop, bound
 

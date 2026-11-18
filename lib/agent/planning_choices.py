@@ -132,11 +132,12 @@ def attach(runtime, context, *, can_pair, targets=None):
 def model_view(context):
     """短编号只在一次请求内有效；返回送模副本及短编号反解，保持原上下文不变。"""
     out = copy.deepcopy(context)
-    ids = {f'A{i}':a['action_id'] for i,a in enumerate(out['actions'],1)}
-    ids.update({f'O{i}':a['action_id'] for i,a in enumerate(out.get('parallel_observations',[]),1)})
-    aliases = {value:key for key,value in ids.items()}
-    for field in ('actions','parallel_observations'):
-        out[field] = [{**a,'action_id':aliases[a['action_id']]} for a in out.get(field,[])]
+    actions = {f'A{i}': a for i, a in enumerate(out['actions'], 1)}
+    observations = {f'O{i}': a for i, a in enumerate(out.get('parallel_observations', []), 1)}
+    ids = {key: action['action_id'] for key, action in {**actions, **observations}.items()}
+    aliases = {ids[key]: key for key in (*observations, *actions)}
+    out['actions'] = [{**action, 'action_id': key} for key, action in actions.items()]
+    out['parallel_observations'] = [{**action, 'action_id': key} for key, action in observations.items()]
     out['action_objectives'] = {aliases[k]:v for k,v in out.get('action_objectives',{}).items() if k in aliases}
     if 'action_state' in out:
         out['action_state'] = {aliases[k]: v for k,v in out['action_state'].items() if k in aliases}

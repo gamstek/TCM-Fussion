@@ -14,8 +14,12 @@
 - 统一执行见 tests/README.md。
 """
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
+import contracts
 from TCM_Fusion.lib.decision.output_projection import project_output
+from TCM_Fusion.lib.runtime.storage import write_json
 from TCM_Fusion.tests.support.result_builders import _a_prediction, _verdict, _result
 
 
@@ -35,6 +39,36 @@ class OutputProjectionTest(unittest.TestCase):
         self.assertEqual(out["strong_observations"][1]["scope"], "observed_fov_only")
         self.assertEqual(out["strong_observations"][1]["qualification"], "presence_only")
         self.assertEqual(out["strong_observations"][1]["supporting_candidates"], [])
+
+    def test_projection_uses_current_crops_and_batch_identity_with_scan_coverage(self):
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            path = root / 'crop.json'
+            write_json(path, contracts.crop_sidecar('crop', str(root / 'crop.png'), str(root / 'view.png'),
+                'view', 'fiber', '纤维', '', 2, [0, 0, 8, 8], [0, 0, 8, 8], [0, 0, 8, 8], '8x8'))
+            tile_a, tile_b, tile_c = [0, 0, 8, 8], [8, 0, 16, 8], [16, 0, 24, 8]
+            write_json(root / 'scan.json', {'tiles': [tile_a, tile_b], 'planned_tiles': [tile_a, tile_b, tile_c],
+                        'errors': [{'tile': 1}], 'count': 1})
+            result = _result()
+            result['operations'] = {'scan': {'tool': 'feature_scan', 'status': 'done', 'image_id': 'image:1',
+                'bundle': {'root': str(root), 'paths': {'completion': 'scan.json'}}}}
+            result['valid_classifications'] = [{'crop_id': 'crop', 'tool': 'classify_crops_batch',
+                                                'feature_id': 'fiber', 'identity_verified': True}]
+            verdict = _verdict()
+            verdict['ranking'] = [{**verdict['ranking'][0], 'score': 0.3, 'fused_score': 0.3, 'b_score': -0.24}]
+            crop = {'id': 'crop:1', 'valid': True, 'kind': 'crop', 'image_id': 'image:1',
+                    'path': str(path), 'detection_tool': 'feature_scan'}
+            output = project_output('case', verdict, result, _a_prediction(),
+                                    artifacts={'crop:1': crop, 'old': {**crop, 'valid': False}})
+            self.assertEqual([row['tool'] for row in output['detections']], ['feature_scan'])
+            self.assertEqual(output['classifications'], result['valid_classifications'])
+            scan, = output['feature_scans']
+            self.assertEqual(scan['status'], 'partial')
+            self.assertEqual(scan['successful_tiles'], [tile_a])
+            self.assertEqual(scan['failed_tiles'], [tile_b])
+            self.assertEqual(scan['unsearched_tiles'], [tile_c])
+            self.assertEqual(output['top_candidate']['rule_score'], -0.24)
+            self.assertEqual(output['top_candidate']['fused_score'], 0.3)
 
     def test_confirmed_maps_to_confirmed(self):
         verdict = _verdict()

@@ -23,6 +23,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--context', required=True)
     ctx = read_json(parser.parse_args(argv).context)
+    feature_id = ctx.get('feature_id')
+    if not isinstance(feature_id, str) or not feature_id.strip():
+        raise IntegrationError('AUDIT_TARGET_MISSING', '审计缺少目标 feature_id')
+    feature_id = feature_id.strip()
     target = Path(ctx['target'])
     positives = [Path(x) for x in ctx.get('positives') or []]
     negatives = [Path(x) for x in ctx.get('negatives') or []]
@@ -33,14 +37,13 @@ def main(argv=None):
     out = Path(ctx['output'])
     out.mkdir(parents=True, exist_ok=True)
     sheet = build_contact_sheet(target, positives, negatives, out / 'contact.jpg',
-                                target_label=ctx.get('target_label') or 'needle_crystal')
+                                target_label=ctx.get('target_label') or feature_id)
     from ls_common import load_config, resolve_key
     from vlm_api import call_vlm, encode_jpeg_b64, parse_vlm_json
     with Image.open(sheet) as image:
         # encode_jpeg_b64 按 BGR 处理；PIL 给的是 RGB，逐通道翻转后再编码。
         b64, _ = encode_jpeg_b64(np.asarray(image.convert('RGB'))[:, :, ::-1].copy(),
                                  max_side=1600, quality=90)
-    feature_id = str(ctx.get('feature_id') or 'needle_crystal')
     prompt = (
         '这是一张显微图片示例对照拼图。TARGET 是待审计的裁图；'
         'P 开头的是已标注的正例（目标微粒）；N 开头的是已标注的负例（易混组织/其他微粒）。'
@@ -59,11 +62,11 @@ def main(argv=None):
         raise IntegrationError('AUDIT_VLM_FAILED', f'图片示例审计请求失败: {error or "unknown"}')
     try:
         parsed = parse_vlm_json(text)
+        result = normalize_audit(parsed, target_id=ctx.get('target_id'),
+                                 positive_count=len(positives), negative_count=len(negatives),
+                                 feature_id=feature_id)
     except Exception as exc:
         raise IntegrationError('AUDIT_OUTPUT_INVALID', f'图片示例审计解析失败: {exc}') from exc
-    result = normalize_audit(parsed, target_id=ctx.get('target_id'),
-                             positive_count=len(positives), negative_count=len(negatives),
-                             feature_id=feature_id)
     result['target'] = str(target)
     result['contact_sheet'] = str(sheet)
     write_json(out / 'audit.json', result)
