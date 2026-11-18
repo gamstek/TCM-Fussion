@@ -6,6 +6,7 @@ react_graph最终仍逐项校验并晚绑定。model_view仅作短编号映射�
 
 主要定义：
 - attach。给当前实际可见动作建立目标/问题入口；不把菜单外动作偷偷加进来。
+- decision_fields / decision_instruction。按当轮菜单给出可用的决策格式，正常规划与格式修正共用。
 - model_view。短编号只在一次请求内有效；返回送模副本及短编号反解，保持原上下文不变。
 - decode。只展开模型明确选择的模式；不按优先级代选、不补第二个问题。
 - diagnose。错误只留数量、已知命名空间与有限短编号；不保存无效自由值。
@@ -129,6 +130,61 @@ def attach(runtime, context, *, can_pair, targets=None):
     return out
 
 
+def decision_fields(context):
+    """列出当前菜单可表达的主选择和字段，用于正常规划与格式修正。"""
+    offers = context.get('execution_options') or {}
+    fields = {'action': ['kind', 'action_id']}
+    if offers.get('goals'):
+        fields['instance_goal'] = ['kind', 'goal_id']
+    if offers.get('questions') and offers.get('max_questions', 1):
+        fields['observe_questions'] = ['kind', 'question_ids']
+    if offers.get('physical_groups', offers.get('physical_pairs')):
+        fields['physical_group'] = ['kind', 'action_ids']
+    return fields
+
+
+def decision_instruction(context):
+    """展示实际有入口的决策格式。具体编号见同一份菜单。"""
+    modes = decision_fields(context)
+    offers = context.get('execution_options') or {}
+    lines = [
+        '只返回一个JSON对象，按证据选择本轮可用格式，顶层decision_summary说明为何值得做或停止。',
+        '单步 {"decision":{"kind":"action","action_id":"A编号"}} 从 actions 选择一个动作，补扫和局部重检也从这里选。',
+    ]
+    if 'instance_goal' in modes:
+        lines.append(
+            '语义目标 {"decision":{"kind":"instance_goal","goal_id":"G编号"}} 只用 execution_options.goals 的 goal_id。'
+            '说明希望获得的合格量纲及为何可连续执行。verify_identity只核验身份。'
+            '执行器逐项绑定当前工件，各阶段照常消耗对应额度。量纲目标遇身份、质量或标定失败交回ReAct。'
+        )
+    if 'observe_questions' in modes:
+        limit = min(offers.get('max_questions', 1), len(offers['questions']))
+        count = '1项' if limit == 1 else f'1至{limit}项不同的观察'
+        lines.append(
+            '观察组 {"decision":{"kind":"observe_questions","question_ids":["Q编号"]}} '
+            f'只用 execution_options.questions 的 question_id，选{count}。'
+            'A/O编号用于动作，Q编号用于问题。若第二项依赖第一项结果，先做单步。'
+            '独立执行后当轮汇总，同源观察不能视为统计独立。'
+            'shared_consumers列出共用该问题的候选，存在性观察仍需结合各候选的形态和尺寸判据。'
+        )
+    if 'physical_group' in modes:
+        group_rule = (
+            '在 physical_groups 的同一工具组中从不同 views 各选一个，共2至limit项。'
+            if offers.get('physical_groups') else '从 physical_pairs 选已有动作对。'
+        )
+        lines.append(
+            '物理并发 {"decision":{"kind":"physical_group","action_ids":["A编号","另一A编号"]}} '
+            + group_rule + '各项都值得立即执行时才选。'
+        )
+    if context.get('parallel_observations') and any(
+            action['tool'] == 'detect_fov_initial' for action in context.get('actions', [])):
+        lines.append(
+            '若有独立原图核验，单步初检可选填 parallel_observation_id，'
+            '从 parallel_observations 选与初检同视野的O编号。YOLO负责出框。'
+        )
+    return ' '.join(lines)
+
+
 def model_view(context):
     """短编号只在一次请求内有效；返回送模副本及短编号反解，保持原上下文不变。"""
     out = copy.deepcopy(context)
@@ -163,6 +219,8 @@ def model_view(context):
         # 已在主选择表关联动作，不再重复两套无关联长ID菜单/契约。
         for field in ('semantic_options','semantic_goal_contract','parallel_questions'):
             out.pop(field,None)
+    if out.get('format_feedback'):
+        out['format_feedback']['allowed_decision_keys'] = decision_fields(out)
     workflow = (out.get('evidence') or {}).get('workflow') or {}
     comparison = workflow.get('comparison_problems') or {}
     if 'entry_path_details' in comparison:

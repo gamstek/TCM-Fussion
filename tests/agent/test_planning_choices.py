@@ -282,6 +282,55 @@ class PlanningChoicesTests(unittest.TestCase):
         self.assertEqual(reply['partial_choice_rejection']['replacement_questions_chosen'],0)
         self.assertNotIn('old-invalid-value',str(reply));self.assertEqual(reply['partial_choice_rejection']['extra_planning_requests'],0)
 
+    def test_llm_advertises_current_modes_in_system_prompt_and_retry(self):
+        actions = [
+            {'action_id': 'one', 'tool': 'detect_fov_initial'},
+            {'action_id': 'two', 'tool': 'detect_fov_initial'},
+            {'action_id': 'presence', 'tool': 'presence_check'},
+            {'action_id': 'identity', 'tool': 'classify_target'},
+            {'action_id': 'review', 'tool': 'request_review'},
+        ]
+        offers = {
+            'questions': [{'question_id': 'question:local', 'action_id': 'presence'}], 'max_questions': 2,
+            'goals': [{'goal_id': 'goal:identity', 'entry_action_id': 'identity',
+                       'goal': {'semantic_task': 'verify_identity'}}],
+            'physical_groups': [{'tool': 'detect_fov_initial', 'views': [['one'], ['two']], 'limit': 2}],
+        }
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.client = SimpleNamespace(model='fixture', timeout_s=1)
+        planner.config = {}
+        body = {'choices': [{'message': {'content': '{"decision":{"kind":"action","action_id":"A5"}}'}}]}
+        cases = ((offers, {'action', 'instance_goal', 'observe_questions', 'physical_group'}),
+                 ({'questions': [], 'max_questions': 2, 'goals': []}, {'action'}))
+        for menu, enabled in cases:
+            with self.subTest(modes=enabled):
+                context = {'actions': actions, 'stop_advisory': {}, 'execution_options': menu,
+                           'format_feedback': {'reason': 'PLANNER_QUESTION_UNAVAILABLE'}}
+                with patch('TCM_Fusion.lib.runtime.hard_calls.post', return_value=body) as post:
+                    reply, _ = planner.choose(context)
+                self.assertEqual(reply['action_id'], 'review')
+                system, user = post.call_args.args[0]['messages']
+                text = system['content']
+                sent = json.loads(user['content'])
+                self.assertEqual(set(sent['format_feedback']['allowed_decision_keys']), enabled)
+                for mode in ('action', 'instance_goal', 'observe_questions', 'physical_group'):
+                    self.assertEqual(f'"kind":"{mode}"' in text, mode in enabled)
+                self.assertEqual([a['tool'] for a in sent['actions']], [a['tool'] for a in actions])
+                if 'observe_questions' in enabled:
+                    self.assertIn('选1项', text)
+
+    def test_non_observation_action_ids_in_question_group_are_rejected(self):
+        ctx = {'actions': [{'action_id': 'A1', 'tool': 'feature_scan'},
+                           {'action_id': 'A2', 'tool': 'feature_scan'}],
+               'execution_options': {'max_questions': 2, 'questions': []}}
+        reply = {'decision': {'kind': 'observe_questions', 'question_ids': ['A1', 'A2']}}
+        with self.assertRaises(IntegrationError) as caught:
+            decode(reply, ctx)
+        self.assertEqual(caught.exception.code, 'PLANNER_QUESTION_UNAVAILABLE')
+        decoded = decode({'decision': {'kind': 'action', 'action_id': 'A1'}}, ctx)
+        self.assertEqual(decoded['action_id'], 'A1')
+        self.assertNotIn('physical_partner_ids', decoded)
+
     def test_invalid_llm_choice_retains_real_usage_and_safe_diagnostic(self):
         c=self.context(self.detected());p=LLMPlanner.__new__(LLMPlanner)
         p.client=SimpleNamespace(model='fixture',timeout_s=1);p.config={}

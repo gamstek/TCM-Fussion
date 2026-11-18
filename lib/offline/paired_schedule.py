@@ -2,16 +2,18 @@
 校验像素、冷启动来源及 D4 开关，对旧报告保留当时可核实的字段。输出逐案数据，
 不把缺失的 token 当作零，不把一次配对用于推断总体识别准确率。
 
-主要定义：inspect_run 提取单案事实；compare 将单步对照、并发组和可选历史案
-按输入顺序对齐，并验证当前两组除 D4 外配置一致。
+主要定义：inspect_run 提取单案事实，包括无增益动作实际得到的诊断结果。
+compare 将单步对照、并发组和可选历史案按输入顺序对齐，并校验配置一致性。
 
 关联：cli.offline 的 schedule-compare；消费实际入口的 job、trace、证据包、
 资源账本与 A 推理工件。不会发起模型请求或改变任何证据。
 """
-from collections import Counter
+import re
+from collections import Counter, defaultdict, deque
 from pathlib import Path
 
-from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, read_json
+from TCM_Fusion.lib.evidence.search_ledger import scan_coverage
+from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, finite_number, read_json
 
 
 def require(condition, message):
@@ -31,7 +33,86 @@ def first_contrast_event(events):
     return next((event for event in events if event['phase'] == 'first_qualified_contrast'), None)
 
 
+def _recorded_object(run, path):
+    """读取运行根内的可选诊断工件，容许旧记录缺件。"""
+    if not path:
+        return {}
+    path = Path(path).resolve()
+    if not path.is_relative_to(run):
+        return {}
+    try:
+        value = read_json(path)
+    except (OSError, ValueError):
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _classification_outcome(run, operation):
+    version = operation.get('evidence_version')
+    if not isinstance(version, str) or not re.fullmatch(r'[0-9a-f]{64}', version):
+        return 'classification_recorded'
+    path = run / 'workflow' / 'evidence' / 'versions' / (version + '.json')
+    arts = _recorded_object(run, path).get('artifacts', {})
+    crop_id = operation.get('target_id', '')
+    crop = arts.get(crop_id, {})
+    classification = arts.get('classification:' + crop_id, {})
+    if classification.get('valid') and classification.get('identity_verified'):
+        return 'identity_verified'
+    reported = _recorded_object(run, classification.get('path'))
+    if reported.get('reject'):
+        return 'identity_unresolved'
+    expected = _recorded_object(run, crop.get('path')).get('feature_id')
+    if expected and reported.get('feature_id') and reported['feature_id'] != expected:
+        return 'classifier_reported_different_feature'
+    return 'classification_recorded'
+
+
+def _action_outcome(run, tool, event, observation):
+    """按本次回执记录结果，供离线反思复核。"""
+    detail = event.get('result') or {}
+    if detail.get('cache_hit') or observation.get('cache_hit'):
+        return 'previous_result_reused'
+    if event.get('accepted') is False:
+        return 'action_failed'
+    if event.get('accepted') is not True:
+        return 'outcome_unrecorded'
+
+    if tool == 'scene_check':
+        return 'scene_examined'
+    if tool == 'presence_check':
+        doc = observation.get('result') or {}
+        if doc.get('ok') is True and finite_number(doc.get('conf'), 0.5, 1.0):
+            if doc.get('present') is True:
+                return 'presence_reported'
+            if doc.get('present') is False:
+                return 'not_seen_in_view'
+        return 'presence_unresolved'
+    if tool == 'classify_target':
+        return _classification_outcome(run, detail)
+    bundle = detail.get('bundle') or {}
+    if tool == 'segment_instance' and bundle.get('quality') == 'review':
+        return 'mask_review_required'
+    if tool == 'image_exemplar_audit':
+        return 'exemplar_audit_recorded'
+    if tool in {'feature_scan', 'detect_region'}:
+        relative = (bundle.get('paths') or {}).get('completion')
+        completion = Path(bundle['root']) / relative if bundle.get('root') and relative else None
+        doc = _recorded_object(run, completion)
+        if tool == 'detect_region' and doc.get('count') == 0:
+            return 'region_examined_without_replacement'
+        if tool == 'feature_scan':
+            status, info = scan_coverage(detail) if doc or detail.get('scan_coverage') else ('unavailable', {})
+            if status == 'failed':
+                return 'scan_failed'
+            if status == 'partial':
+                return 'scan_partial'
+            if status == 'shareable' and info.get('crop_count') == 0:
+                return 'scan_completed_without_crops'
+    return 'action_completed'
+
+
 def inspect_run(run):
+    run = run.resolve()
     case = run.parent.parent
     proof = read_json(case / 'input_proof.json')
     views = [v['sha256'] for v in proof['views']]
@@ -89,18 +170,25 @@ def inspect_run(run):
                               else None if final.get('model_failure') else 0),
         'worker_http': token_counts([r.get('usage') for r in workers], len(workers) if has_worker_tracking else None)}
     actions = []
-    obs_by_id = {o['action']['action_id']: o['action'] for o in observations}
+    observations_by_id = defaultdict(deque)
+    for observation in observations:
+        observations_by_id[observation['action']['action_id']].append(observation)
     for event in events:
         if event['phase'] not in {'recompute','action_observation'}:
             continue
         detail = event.get('result') or {}
-        observed = obs_by_id.get(event.get('action_id'), {})
+        observed_rows = observations_by_id.get(event.get('action_id')) if event['phase'] == 'action_observation' else None
+        observation = observed_rows.popleft() if observed_rows else {}
+        observed = observation.get('action') or {}
         feedback = event.get('feedback') or {}
-        actions.append({'tool': event.get('tool') or observed.get('tool'), 'accepted': event.get('accepted'),
+        tool = event.get('tool') or observed.get('tool')
+        actions.append({'tool': tool, 'accepted': event.get('accepted'),
                         'action_id': event.get('action_id') or detail.get('action_id'),
                         'target': detail.get('target_id') or observed.get('args', {}).get('image_id'),
                         'feature': observed.get('args', {}).get('feature_id') or detail.get('feature_id'),
-                        'useful': feedback.get('useful'), 'new_features': feedback.get('new_features', []),
+                        'useful': feedback.get('useful'), 'outcome': _action_outcome(run, tool, event, observation),
+                        'error_code': event.get('error_code') or feedback.get('failure_code'),
+                        'new_features': feedback.get('new_features', []),
                         'new_local_absence': feedback.get('new_counterevidence', []),
                         'qualified_counters': feedback.get('qualified_counter_changes', [])})
     thoughts = [e for e in events if e['phase'] == 'thought']
@@ -117,6 +205,7 @@ def inspect_run(run):
             semantic_children[current_goal] = children
             current_goal = None
     graded, no_gain = 0, 0
+    no_gain_outcomes = Counter()
     for thought in thoughts:
         ids = [thought['action_id'], *thought.get('physical_partner_ids', [])]
         if thought.get('parallel_observation_id'):
@@ -128,7 +217,9 @@ def inspect_run(run):
         feedback = [actions_by_id.get(aid, {}).get('useful') for aid in ids]
         if all(type(value) is bool for value in feedback):
             graded += 1
-            no_gain += not any(feedback)
+            if not any(feedback):
+                no_gain += 1
+                no_gain_outcomes.update(actions_by_id[aid]['outcome'] for aid in ids)
     audit = final.get('candidate_audit')
     ops = read_json(run / 'workflow/operations.json')['entries'].values()
     head = read_json(run / 'workflow/evidence/head.json')['version']
@@ -145,6 +236,7 @@ def inspect_run(run):
                       for e in events if e['phase']=='thought'),
                   no_gain_actions=sum(a['useful'] is False for a in actions),
                   attributable_investigations=graded, thoughts_without_action_gain=no_gain,
+                  no_gain_action_outcomes=dict(no_gain_outcomes),
                   first_contrast=first_contrast_event(events),
                   tokens=tokens, known_tokens=sum(v['reported_tokens'] for v in tokens.values()),
                   token_complete=all(v['complete'] for v in tokens.values()),
