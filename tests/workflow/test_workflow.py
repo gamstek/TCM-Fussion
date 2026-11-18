@@ -501,6 +501,33 @@ class WorkflowTests(WorkflowFixture, unittest.TestCase):
         current=r.summary(state)['workflow']['calibration']
         self.assertTrue(any(row.get('valid') and row.get('px_per_um')==2 for row in current['scales']))
 
+    def test_recalibration_invalidates_identity_before_segmentation(self):
+        other = self.root / 'other.png'
+        other.write_bytes(b'other-simulation-fov')
+        runtime = WorkflowRuntime([self.image, other], root=self.root / 'task', sample_id='sample',
+                                  a={}, workflow_config={'max_recompute': 8, 'agent_policy': 'adaptive_v2'},
+                                  simulation=True, backend=StageFixture(scale=None))
+        flow = runtime.workflow
+
+        def execute(tool):
+            return flow.execute(next(a for a in flow.propose() if a['tool'] == tool))
+
+        execute('detect_fov_initial')
+        head = flow.store.current()
+        crop = next(v for v in head['artifacts'].values() if v['kind'] == 'crop')
+        flow.store.commit(head['version'], [{**crop, 'identity_required': True}])
+        execute('classify_target')
+        key = 'classification:' + crop['id']
+        self.assertTrue(flow.store.current()['artifacts'][key]['identity_verified'])
+        execute('calibrate_fov')
+        stale = flow.store.current()['artifacts'][key]
+        self.assertFalse(stale['valid'])
+        self.assertTrue(stale['identity_verified'])
+        actions = runtime.legal_actions({'observations': []})
+        self.assertTrue(any(a['tool'] == 'detect_fov_initial' for a in actions))
+        self.assertFalse(any(a['tool'] == 'segment_instance' and
+                             a['args'].get('target_id') == crop['id'] for a in actions))
+
     def test_paused_exclusive_crop_branch_is_hidden_but_shared_feature_survives(self):
         r=self.runtime(agent_policy='adaptive_v2',targeted_recovery=True)
         r.a={'status':'ok','fold_rankings':[[{'label':'秦皮','probability':1.0}]]*5}

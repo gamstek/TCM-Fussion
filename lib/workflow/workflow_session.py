@@ -889,6 +889,9 @@ class WorkflowSession:
             elif t['kind']=='crop':
                 crops.append(t)
                 classification=arts.get('classification:'+tid,{})
+                # 标定重写侧车后，历史分类仍保留身份字段。只有当前有效版本可以授权分割。
+                if not classification.get('valid'):
+                    classification = {}
                 fast_classify_cap=max(1,int(self.config.get('fast_classify_max_per_view',3)))
                 classified_in_view=sum(1 for v in arts.values()
                     if v.get('valid') and v.get('kind')=='classification'
