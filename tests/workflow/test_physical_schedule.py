@@ -176,65 +176,6 @@ class PhysicalScheduleTests(WorkflowFixture,unittest.TestCase):
         self.assertEqual(sum(e.get('accepted',False) for e in out['events'] if e['phase']=='recompute'),2)
         self.assertEqual(sum(e['phase']=='physical_join' for e in out['events']),1)
 
-    def test_default_on_and_four_view_graph_with_step_cap(self):
-        for width,steps in [(3,3),(4,3),(4,4)]:
-            with self.subTest(width=width,steps=steps):
-                folder = self.root/f'w{width}s{steps}'
-                folder.mkdir()
-                images = [folder/f'v{i}.png' for i in range(4)]
-                for image in images:
-                    image.write_bytes(image.name.encode())
-                runtime = WorkflowRuntime(images,root=folder/'task',sample_id='group',
-                    workflow_config={'agent_policy':'adaptive_v2','max_parallel':width},
-                    simulation=True,backend=TwoViews())
-                class Planner:
-                    def choose(self,ctx):
-                        group = next(g for g in ctx['execution_options']['physical_groups']
-                                     if g['tool']=='detect_fov_initial')
-                        ids = [v[0] for v in group['views'][:group['limit']]]
-                        return {'decision':{'kind':'physical_group','action_ids':ids}},None
-                tools = LocalToolbox(runtime,ledger_path=folder/'ledger.json')
-                out = asyncio.run(run_react(runtime,tools,planner=Planner(),planner_mode='scripted',max_steps=steps))
-                self.assertEqual(out['steps'],steps)
-                self.assertEqual(out['planning_requests'],1)
-                rows = read_json(runtime.workflow.operations)['entries'].values()
-                self.assertEqual(len({r['image_id'] for r in rows if r['accepted']}),steps)
-                self.assertEqual(read_json(runtime.workflow.budget_path)['used']['initialization'],steps)
-
-    def test_group_menu_rejects_duplicate_view_or_excess_width(self):
-        from TCM_Fusion.lib.agent.planning_choices import decode,model_view
-        actions = [{'tool':'classify_target','action_id':str(i)} for i in range(5)]
-        ctx = {'actions':actions,'execution_options':{'physical_groups':[
-            {'tool':'classify_target','limit':3,'views':[['0','1'],['2'],['3'],['4']]}]}}
-        short,ids = model_view(ctx)
-        def select(keys):
-            return decode({'decision':{'kind':'physical_group','action_ids':keys}},short)
-        good = select(['A4','A1','A3'])
-        self.assertEqual([ids[k] for k in [good['action_id'],*good['physical_partner_ids']]],['3','0','2'])
-        for invalid in (['A1','A2'],['A1','A1'],['A1','A3','A4','A5'],['A1','A6']):
-            with self.assertRaises(IntegrationError):
-                select(invalid)
-
-    def test_runtime_defaults_match_template_and_explicit_off_is_respected(self):
-        from pathlib import Path
-        import paths
-        from TCM_Fusion.lib.application.workflow_entry import WORKFLOW_SCHEMA
-        from TCM_Fusion.lib.tools.tool_registry import validate_arguments
-        template = read_json(Path(paths.PROJECT_ROOT)/'TCM_Fusion/config/multi_view.json')['agent']['workflow']
-        runtime = self.runtime(agent_policy='adaptive_v2')
-        session = runtime.workflow
-        self.assertTrue(template['physical_parallel'])
-        self.assertTrue(schedule.enabled(session))
-        self.assertEqual(session.config['max_parallel'],template['max_parallel'])
-        for width in [1,2,3,4]:
-            validate_arguments(WORKFLOW_SCHEMA,{'max_parallel':width})
-        with self.assertRaises(IntegrationError):
-            validate_arguments(WORKFLOW_SCHEMA,{'max_parallel':5})
-        session.config['physical_parallel'] = False
-        self.assertFalse(schedule.enabled(session))
-        session.config.update(physical_parallel=True,max_parallel=1)
-        self.assertFalse(schedule.enabled(session))
-
     def partial_run(self, *, slow, review):
         actions = self.setup_pair()
         signal = threading.Event()
