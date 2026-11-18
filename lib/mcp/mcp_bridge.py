@@ -117,6 +117,13 @@ def make_server(context_path):
             return {'action_id':action.get('action_id'),'accepted':False,'status':'failed',
                     'repair_completed':False,'error_code':exc.code}
 
+    from TCM_Fusion.lib.workflow.physical_schedule import enabled
+    if getattr(runtime,'workflow',None) and enabled(runtime.workflow):
+        @server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=True))
+        async def prepare_reserved_stage(key: str, epoch: str) -> dict:
+            """仅执行协调者已经绑定并预约的物理阶段，回执不推进证据头。"""
+            return await toolbox.prepare_stage(key, epoch)
+
     @server.resource("microscope://skills")
     def skill_resource() -> str:
         return json.dumps(runtime.skills.list(), ensure_ascii=False)
@@ -146,6 +153,9 @@ class MCPToolbox:
 
     async def recompute(self, action):
         return await self.call("recompute_tool", {"action": action})
+
+    async def prepare_stage(self, key, epoch):
+        return await self.call("prepare_reserved_stage", {"key":key, "epoch":epoch})
 
     async def read(self, name, args, state):
         return await self.call("read_tool", {"name": name, "arguments": args})

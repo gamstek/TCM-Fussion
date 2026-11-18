@@ -125,7 +125,7 @@ def attach(runtime, context, *, can_pair, targets=None):
                         'cost_note':'上界已扣既有自动测量；不减少必需视觉调用，失败回交，不保证节省'})
     out['execution_options'] = {'goals':goals[:12], 'questions':questions,
         'max_questions':2 if can_pair else 1,
-        'choice_note':'三种模式平等可选；观察结果会改变下一问题时选单步；review仍可选'}
+        'choice_note':'仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选'}
     return out
 
 
@@ -148,6 +148,8 @@ def model_view(context):
             out[field] = [{**r,'action_id':aliases[r['action_id']]}
                           for r in out[field] if r.get('action_id') in aliases]
     offers = out.get('execution_options') or {}
+    if 'physical_pairs' in offers:
+        offers['physical_pairs'] = [[aliases[a],aliases[b]] for a,b in offers['physical_pairs']]
     offers['goals'] = [{**g, 'goal_id':f'G{i}', 'entry_action_id':aliases[g['entry_action_id']]}
         for i,g in enumerate(offers.get('goals',[]),1) if g['entry_action_id'] in aliases]
     offers['questions'] = [{**q, 'question_id':f'Q{i}', 'canonical_question_id':q['question_id'],
@@ -202,6 +204,13 @@ def decode(reply, context):
     offers = context.get('execution_options') or {}
     if kind == 'action' and set(decision) == {'kind','action_id'}:
         value['action_id'] = decision['action_id']
+    elif kind == 'physical_pair' and set(decision) == {'kind','action_ids'}:
+        pair = decision['action_ids']
+        if (not isinstance(pair,list) or len(pair)!=2 or
+                pair not in offers.get('physical_pairs',[]) and pair[::-1] not in offers.get('physical_pairs',[]) or
+                any(k in value for k in ('semantic_goal','parallel_question_id','parallel_observation_id','physical_partner_id'))):
+            raise IntegrationError('PLANNER_CHOICE_INVALID','须选择本轮列出的独立物理动作对')
+        value['action_id'], value['physical_partner_id'] = pair
     elif kind == 'instance_goal' and set(decision) == {'kind','goal_id'}:
         goal = next((g for g in offers.get('goals',[]) if g['goal_id']==decision['goal_id']),None)
         if not goal:

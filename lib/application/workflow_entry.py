@@ -23,6 +23,7 @@ from TCM_Fusion.lib.decision.collaboration import fuse, knowledge_base
 
 WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'semantic_execution':{'type':'boolean'},
+    'physical_parallel':{'type':'boolean'},
     'python':{'type':'string'},
     'detector':{'enum':['yolo']},
     'targeted_recovery':{'type':'boolean'},

@@ -19,15 +19,23 @@ from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json, write_js
 _UNKNOWN_ON_CLOSE = 'WORKFLOW_CLOSED_WITHOUT_HTTP_RESULT'
 
 
-def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool=None, probe=None):
+def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool=None, probe=None,
+            partner_key=None):
     handle=acquire(path)
     try:
         value=read_json(path)
         if identity is not None and value['identity']!=identity:
             raise IntegrationError('BUDGET_SCOPE','预算样品不匹配')
         if value.get('closed'):raise IntegrationError('WORKFLOW_CLOSED','任务已结束，禁止新调用或迟到提交')
+        owner = (metadata or {}).get('operation_key')
+        if owner and value['entries'].get(owner,{}).get('revoked'):
+            raise IntegrationError('BRANCH_REVOKED','已撤销分支禁止新请求')
         if time.time()>value['deadline']:raise IntegrationError('WORKFLOW_TIMEOUT','任务时间预算耗尽')
         reservations = [(pool, key)]
+        if partner_key is not None:
+            if partner_key == key or extra_pool or probe:
+                raise IntegrationError('BUDGET_SCOPE','双阶段须为不同键、同一物理阶段池')
+            reservations.append((pool, partner_key))
         if extra_pool:
             reservations.append((extra_pool, 'api:' + key))
         if any(k in value['entries'] for _, k in reservations):return False
@@ -42,7 +50,7 @@ def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool
             if (network_after > limits['network']-held or
                     sum(value['used'].values())+len(reservations) > limits['total']-2*held):
                 raise IntegrationError('RESOURCE_BUDGET','保留收尾研判额度；停止追加调查')
-        if (any(value['used'].get(p,0)>=limits[p] for p, _ in reservations)
+        if (any(value['used'].get(p,0)+sum(r==p for r,_ in reservations)>limits[p] for p, _ in reservations)
                 or sum(value['used'].values()) + len(reservations) > limits['total']):
             raise IntegrationError('RESOURCE_BUDGET','资源预算耗尽')
         for p, k in reservations:
@@ -69,6 +77,21 @@ def finish_http(path,key,*,status,http_status=None,error_type=None):
         entry.update(status=status,http_status=http_status,error_type=error_type)
         write_json(path,value)
     finally:release(handle)
+
+
+def revoke_operation(path, key):
+    """隔离分支的新请求，保留在途 HTTP 的扣费和迟到回执。"""
+    handle = acquire(path)
+    try:
+        value = read_json(path)
+        if key in value['entries']:
+            value['entries'][key]['revoked'] = True
+        for entry in value['entries'].values():
+            if entry.get('operation_key') == key and entry.get('status') == 'pending':
+                entry.update(status='unknown', terminal_reason=_UNKNOWN_ON_CLOSE)
+        write_json(path,value)
+    finally:
+        release(handle)
 
 
 def close_budget(path, reason):

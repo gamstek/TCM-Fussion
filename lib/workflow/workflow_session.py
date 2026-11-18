@@ -163,7 +163,7 @@ class WorkflowSession:
         def mutate(doc):
             row,key=self._timeline_row(action,doc)
             if not row:return
-            now=time.time();row['selected_at']=row.get('selected_at') or now
+            now=time.time();row['selected_at']=row.get('selected_at') or action.get('selected_at') or now
             row['started_at']=now;row['status']='running';row['selected_action_id']=action.get('action_id')
         self._timeline_with_lock(mutate)
 
@@ -185,8 +185,19 @@ class WorkflowSession:
         cap = float(self.config.get('tool_timeout_seconds', 600))
         return max(1.0, min(self.remaining_seconds(), cap))
 
+    def prepare_reserved_stage(self,key,epoch):
+        from TCM_Fusion.lib.workflow.physical_schedule import prepare
+        return prepare(self,key,epoch)
+
     def close(self,reason):
-        close_budget(self.budget_path, reason)
+        handle = acquire(self.operations)
+        try:
+            close_budget(self.budget_path, reason)
+            if self.config.get('physical_parallel'):
+                from TCM_Fusion.lib.workflow.physical_schedule import fence_locked
+                fence_locked(self, reason)
+        finally:
+            release(handle)
 
     def diagnostic_quality(self):
         """仅联调允许review工件进入真实测量；不改原始QA/flags或最终规则。"""
@@ -1203,8 +1214,11 @@ class WorkflowSession:
                 raise IntegrationError('EVIDENCE_STALE','阶段父版本失效')
             if action['action_id'] not in {a['action_id'] for a in self.propose()}:
                 raise IntegrationError('ACTION_DENIED','阶段不在当前合法集合')
-            if any(r['status']=='pending' for r in doc['entries'].values()):
-                raise IntegrationError('WORKFLOW_BUSY','已有阶段正在执行')
+            pending_rows = [r for r in doc['entries'].values() if r['status']=='pending']
+            if pending_rows:
+                from TCM_Fusion.lib.workflow.physical_schedule import allows_single
+                if not allows_single(pending_rows,tool,target):
+                    raise IntegrationError('WORKFLOW_BUSY','已有阶段正在执行')
             if tool not in {'measure_instances','detect_region'} and not self.runtime.simulation and not self.allow_network:
                 raise IntegrationError('NETWORK_DISABLED','视觉重算须显式允许网络')
             # 类别复核是一次受控视觉观察：只占观察/网络预算，不挤占测量所需的重算额度；
@@ -1257,7 +1271,7 @@ class WorkflowSession:
         self.record_finished({'tool':tool,'target_id':target['id'],'action_id':action.get('action_id')}, record.get('status','failed'), record.get('error_code'))
         return record
 
-    def accept(self,tool,target,result,parent):
+    def accept(self,tool,target,result,parent,*,receipt=None):
         image=target['image_id'];items=[];rows=[];replace=[]
         if tool=='hybrid_scan':
             detections=result.get('detections') or {}
@@ -1498,7 +1512,12 @@ class WorkflowSession:
                 rows.append({'scope':target['id'],'depends_on':[mid],'data':raw})
             replace=[target['id']]
         else:raise IntegrationError('TOOL_UNKNOWN','未知提交类型')
-        version=self.store.commit(parent,items,rows,replace)['version']
+        if receipt:
+            from TCM_Fusion.lib.workflow.physical_schedule import check_live
+            version=self.store.commit(parent,items,rows,replace,receipt=receipt,
+                                      before_publish=lambda:check_live(self))['version']
+        else:
+            version=self.store.commit(parent,items,rows,replace)['version']
         if (tool=='segment_instance' and (target.get('measure_if') or self.config.get('auto_measure_after_segment', False))
                 and result.get('quality')=='valid'):
             scale=self.store.current()['artifacts'].get('scale:'+image,{})
@@ -1591,8 +1610,9 @@ class WorkflowSession:
                 return True
         return False
 
-    def progress_signature(self):
-        return digest([(k,v['sha256']) for k,v in sorted(self.store.current()['artifacts'].items())
+    def progress_signature(self, snapshot=None):
+        snapshot = self.store.current() if snapshot is None else snapshot
+        return digest([(k,v['sha256']) for k,v in sorted(snapshot['artifacts'].items())
                        if v['valid'] and v['kind'] in {'crop','scale','segmentation','measurement'}
                        and v.get('quality','valid')=='valid'])
 

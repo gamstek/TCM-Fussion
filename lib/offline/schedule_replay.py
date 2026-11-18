@@ -101,6 +101,7 @@ def additions(before, after, case):
 def replay(run, version, scratch_root):
     chain = history(run, version)
     steps = {}
+    receipts = {snap['version']:snap.get('stage_receipt') for snap in chain}
     for before, after in zip(chain, chain[1:]):
         steps[after['version']] = additions(before, after, run.parent.parent)
     order = list(steps)
@@ -121,7 +122,7 @@ def replay(run, version, scratch_root):
             current = store.current()
             for step in sequence:
                 items, records = steps[step]
-                current = store.commit(current['version'], items, records)
+                current = store.commit(current['version'], items, records, receipt=receipts[step])
                 if serial:
                     require(current['version'] == step, '原序重建未复现录制版本')
             store.verified_records()

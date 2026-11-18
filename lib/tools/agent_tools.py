@@ -180,6 +180,9 @@ class LocalToolbox:
             if self.ledger.get("identity") != self.identity:
                 raise IntegrationError("LEDGER_MISMATCH", "工具账本与样品不匹配")
 
+    async def prepare_stage(self, key, epoch):
+        return await asyncio.to_thread(self.runtime.workflow.prepare_reserved_stage, key, epoch)
+
     async def recompute(self, action):
         if getattr(self.runtime, "workflow", None) is None:
             raise IntegrationError("ACTION_DENIED", "没有工作流上下文")

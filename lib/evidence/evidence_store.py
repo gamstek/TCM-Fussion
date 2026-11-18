@@ -27,9 +27,11 @@ class EvidenceStore:
                 raise IntegrationError('EVIDENCE_SCOPE','证据库样品/配置不匹配')
         finally:release(handle)
 
-    def _write(self, value):
+    def _write(self, value, *, before_publish=None):
         version=digest(value);target=self.root/'versions'/(version+'.json')
         if not target.exists():write_json(target,{**value,'version':version})
+        if before_publish:
+            before_publish()
         write_json(self.head,{'version':version})
         return {**value,'version':version}
 
@@ -39,12 +41,29 @@ class EvidenceStore:
             raise IntegrationError('EVIDENCE_CORRUPT','证据快照哈希错误')
         return v
 
-    def commit(self, parent, artifacts, records=(), replace_scopes=()):
+    def published_version(self, receipt, base):
+        """仅沿当前已发布祖先查找操作回执，孤立的版本文件不能证明提交成功。"""
+        snap = self.current()
+        while snap['version'] != base:
+            if snap.get('stage_receipt') == receipt:
+                return snap['version']
+            parent = snap.get('parent')
+            if parent is None:
+                raise IntegrationError('EVIDENCE_STALE', '计划基线不在当前证据历史中')
+            snap = read_json(self.root/'versions'/(parent+'.json'))
+            if digest({k:v for k,v in snap.items() if k != 'version'}) != parent or snap['version'] != parent:
+                raise IntegrationError('EVIDENCE_CORRUPT', '证据祖先摘要错误')
+        return None
+
+    def commit(self, parent, artifacts, records=(), replace_scopes=(), *, receipt=None, before_publish=None):
         handle=acquire(self.head)
         try:
             old=self.current()
             if old['version']!=parent:raise IntegrationError('EVIDENCE_STALE','父版本已改变')
             new=copy.deepcopy(old);new.pop('version');new['parent']=parent
+            new.pop('stage_receipt', None)
+            if receipt is not None:
+                new['stage_receipt'] = receipt
             changed=set()
             if len({a['id'] for a in artifacts})!=len(artifacts):
                 raise IntegrationError('ARTIFACT_COLLISION','同一提交包含重复工件ID')
@@ -87,7 +106,7 @@ class EvidenceStore:
                 new['records'].append(copy.deepcopy(row))
             ids=[(r['data'].get('image_stem'),r['data'].get('instance_id')) for r in new['records']]
             if len(ids)!=len(set(ids)):raise IntegrationError('INSTANCE_COLLISION','物理实例主键冲突')
-            return self._write(new)
+            return self._write(new, before_publish=before_publish) if before_publish else self._write(new)
         finally:release(handle)
 
     def verified_records(self):
