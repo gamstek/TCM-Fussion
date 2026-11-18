@@ -27,7 +27,7 @@ import urllib.request
 
 from TCM_Fusion.lib.tools.agent_tools import FixtureBackend,LocalToolbox
 from TCM_Fusion.lib.runtime.controlled_process import run
-from TCM_Fusion.lib.runtime.resource_budget import install_http_guard,operation_failure
+from TCM_Fusion.lib.runtime.resource_budget import finish_http, install_http_guard, operation_failure, reserve
 from TCM_Fusion.lib.runtime.service_errors import service_error
 from TCM_Fusion.lib.runtime.storage import IntegrationError,read_json,write_json
 from TCM_Fusion.lib.workflow.workflow_runtime import WorkflowRuntime
@@ -173,6 +173,38 @@ class ServiceFailureTests(unittest.TestCase):
         finally:urllib.request.urlopen=original;urllib.request.HTTPRedirectHandler.redirect_request=redirect
         self.assertIsNone(operation_failure(ctx))
         self.assertEqual(next(iter(read_json(budget)['entries'].values()))['http_status'],200)
+
+    def test_workflow_close_settles_worker_requests_without_refund_or_retry(self):
+        runtime, _ = self.runtime()
+        workflow = runtime.workflow
+        budget = workflow.budget_path
+        for key in ('unresolved', 'received', 'failed'):
+            reserve(budget, 'network', key, workflow.limits, metadata={'operation_key': 'op'})
+        reserve(budget, 'planning', 'parent', workflow.limits, extra_pool='network')
+        finish_http(budget, 'received', status='response_received', http_status=200)
+        finish_http(budget, 'failed', status='failed', http_status=429, error_type='HTTPError')
+        before = read_json(budget)
+
+        workflow.close('test_finished')
+        closed = read_json(budget)
+        self.assertTrue(closed['closed'])
+        self.assertEqual(closed['used'], before['used'])
+        self.assertEqual(closed['entries']['unresolved']['status'], 'unknown')
+        self.assertEqual(closed['entries']['unresolved']['terminal_reason'],
+                         'WORKFLOW_CLOSED_WITHOUT_HTTP_RESULT')
+        for key in ('received', 'failed', 'parent', 'api:parent'):
+            self.assertEqual(closed['entries'][key], before['entries'][key])
+        with self.assertRaises(IntegrationError) as caught:
+            reserve(budget, 'network', 'unresolved', workflow.limits)
+        self.assertEqual(caught.exception.code, 'WORKFLOW_CLOSED')
+
+        finish_http(budget, 'unresolved', status='response_received', http_status=200)
+        finish_http(budget, 'unresolved', status='failed', http_status=429)
+        settled = read_json(budget)
+        self.assertTrue(settled['closed'])
+        self.assertEqual(settled['used'], before['used'])
+        self.assertTrue(settled['entries']['unresolved']['result_received_after_close'])
+        self.assertEqual(settled['entries']['unresolved']['http_status'], 200)
 
 
     def test_invalid_worker_context_rejected_before_spawn(self):

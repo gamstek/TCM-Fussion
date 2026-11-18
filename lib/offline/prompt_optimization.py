@@ -7,7 +7,7 @@
 - save。
 - chat_model。
 - optimize。
-- RecordedTools。
+- RecordedTools 由同包 recorded_tools 提供。
 - validate。
 - publish。
 
@@ -27,6 +27,7 @@ import paths
 from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, output_root, read_json, write_json
 from TCM_Fusion.lib.agent.prompt_defaults import DEFAULT_INSTRUCTION, GUARD
 from TCM_Fusion.lib.agent.prompt_release import profile, check_candidate, runtime_context, load_release
+from TCM_Fusion.lib.offline.recorded_tools import RecordedTools
 
 
 def save(kind, value):
@@ -83,26 +84,6 @@ async def optimize(training, *, allow_network=False, model=None):
             "instruction": instruction, "baseline": DEFAULT_INSTRUCTION, "guard_sha256": digest(GUARD),
             "training_sha256": digest(training), "training_groups": sorted(groups),
             "profile": profile(), "simulation": model is not None}
-
-
-class RecordedTools:
-    def __init__(self, rows):
-        self.rows = {}
-        self.misses = []
-        for row in rows:
-            action = row["action"]
-            key = action["action_id"]
-            if key in self.rows and self.rows[key] != row:
-                raise IntegrationError("REPLAY_CONFLICT", "同动作录制了不同响应，拒绝静默覆盖")
-            self.rows[key] = row
-
-    async def observe(self, action):
-        row = self.rows.get(action["action_id"])
-        if row is None or row["action"] != action:
-            self.misses.append(action["action_id"])
-            raise IntegrationError("REPLAY_UNKNOWN", "未录制动作，回放不能验证")
-        return {"action_id": action["action_id"], "accepted": row["accepted"],
-                "result": row["result"], "cache_hit": True, "new_requests": 0}
 
 
 async def validate(candidate, dataset, *, allow_network=False, planner_factory=None):

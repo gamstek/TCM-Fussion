@@ -17,7 +17,7 @@ import paths
 from TCM_Fusion.lib.workflow.adapters import interpreter
 from TCM_Fusion.lib.evidence.evidence_store import EvidenceStore
 from TCM_Fusion.lib.runtime.ledger_lock import acquire, release
-from TCM_Fusion.lib.runtime.resource_budget import reserve
+from TCM_Fusion.lib.runtime.resource_budget import close_budget, reserve
 from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, project_path, read_json, write_json, finite_number
 from TCM_Fusion.lib.workflow.workflow_backend import WorkflowBackend
 from TCM_Fusion.lib.vision.box_quality import assess_meta
@@ -186,10 +186,7 @@ class WorkflowSession:
         return max(1.0, min(self.remaining_seconds(), cap))
 
     def close(self,reason):
-        h=acquire(self.budget_path)
-        try:
-            value=read_json(self.budget_path);value.update(closed=True,stop_reason=reason);write_json(self.budget_path,value)
-        finally:release(h)
+        close_budget(self.budget_path, reason)
 
     def diagnostic_quality(self):
         """仅联调允许review工件进入真实测量；不改原始QA/flags或最终规则。"""

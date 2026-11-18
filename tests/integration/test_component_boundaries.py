@@ -51,3 +51,21 @@ class ComponentBoundaryTests(unittest.TestCase):
                         self.assertNotEqual(dependency, 'offline', f'{file}:{node.lineno}')
                         graph.add(owner, dependency)
         self.assertEqual(set(graph.static_order()), components)
+
+    def test_offline_module_dependencies_have_no_delayed_import_cycle(self):
+        folder = Path(paths.PROJECT_ROOT) / 'TCM_Fusion/lib/offline'
+        prefix = 'TCM_Fusion.lib.offline'
+        modules = {f'{prefix}.{file.stem}': file for file in folder.glob('*.py')}
+        graph = TopologicalSorter()
+        for name, file in modules.items():
+            graph.add(name)
+            tree = ast.parse(file.read_text(encoding='utf-8-sig'))
+            for node in ast.walk(tree):
+                if isinstance(node, ast.ImportFrom):
+                    imports = [node.module, *(f'{node.module}.{item.name}' for item in node.names)]
+                elif isinstance(node, ast.Import):
+                    imports = [item.name for item in node.names]
+                else:
+                    continue
+                graph.add(name, *(target for target in imports if target in modules))
+        self.assertEqual(set(graph.static_order()), modules.keys())

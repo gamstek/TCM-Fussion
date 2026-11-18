@@ -18,21 +18,82 @@ from TCM_Fusion.lib.runtime.storage import IntegrationError, file_hash, read_jso
 
 
 class RecordedStages:
-    def __init__(self,operations):self.operations=list(operations);self.misses=0;self.calls=0
-    def execute(self,session,tool,target,work,context):
-        self.calls+=1
-        fingerprint=session.dependency_fingerprint(tool,target)
-        matches=[r for r in self.operations if r.get('tool')==tool and r.get('target_id')==target['id']
-                 and r.get('dependency_fingerprint')==fingerprint and r.get('status')=='done' and r.get('bundle')]
-        if len(matches)!=1:
-            self.misses+=1;raise IntegrationError('REPLAY_MISS','没有唯一录制动作/依赖结果')
-        record=matches[0]['bundle'];root=Path(record['root']).resolve();copy=Path(work)/'recorded';copy.mkdir()
-        for name,sha in record['files'].items():
-            source=(root/name).resolve();dest=(copy/name).resolve()
-            if not source.is_relative_to(root) or not dest.is_relative_to(copy) or file_hash(source)!=sha:
-                raise IntegrationError('REPLAY_ARTIFACT','录制产物越界、缺失或变更')
-            dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,dest)
-        return {**{k:str(copy/v) for k,v in record['paths'].items()},'quality':record.get('quality')}
+    def __init__(self, operations):
+        self.operations = list(operations)
+        self.misses = 0
+        self.calls = 0
+
+    def execute(self, session, tool, target, work, context):
+        self.calls += 1
+        fingerprint = session.dependency_fingerprint(tool, target)
+        matches = [
+            row for row in self.operations
+            if row.get('tool') == tool and row.get('target_id') == target['id']
+            and row.get('dependency_fingerprint') == fingerprint
+            and row.get('status') == 'done' and row.get('bundle')
+        ]
+        try:
+            if len(matches) != 1:
+                raise IntegrationError('REPLAY_MISS', '没有唯一录制动作/依赖结果')
+            return self._restore(matches[0]['bundle'], tool, work)
+        except IntegrationError:
+            self.misses += 1
+            raise
+        except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+            self.misses += 1
+            raise IntegrationError('REPLAY_ARTIFACT', '录制产物不可读或格式错误') from exc
+
+    @staticmethod
+    def _restore(record, tool, work):
+        root = Path(record['root']).resolve()
+        copy = (Path(work) / 'recorded').resolve()
+        paths = record['paths']
+        files = record['files']
+
+        def within(base, name):
+            rel = Path(name)
+            path = (base / rel).resolve()
+            if rel.is_absolute() or '..' in rel.parts or not path.is_relative_to(base):
+                raise IntegrationError('REPLAY_ARTIFACT', '录制产物越界')
+            return path
+
+        if tool == 'classify_crops_batch' and not {'classifications', 'failures'} <= record.keys():
+            raise IntegrationError('REPLAY_MISS', '旧录制缺少逐裁图分类结果')
+        if tool == 'image_exemplar_audit' and not {'audit', 'contact_sheet'} <= paths.keys():
+            raise IntegrationError('REPLAY_MISS', '旧录制缺少示例审计或拼图')
+
+        restored = {key: str(within(copy, name)) for key, name in paths.items()}
+        restored['quality'] = record.get('quality')
+        for key in ('audit', 'contact_sheet'):
+            if key in paths and Path(paths[key]).as_posix() not in files:
+                raise IntegrationError('REPLAY_ARTIFACT', '示例审计文件缺少录制摘要')
+        if 'classifications' in record:
+            restored['classifications'] = []
+            for row in record['classifications']:
+                directory = within(copy, row['classification'])
+                relative = (Path(row['classification']) / 'classification.json').as_posix()
+                if relative not in files:
+                    raise IntegrationError('REPLAY_ARTIFACT', '分类文件缺少录制摘要')
+                restored['classifications'].append({**row, 'classification': str(directory)})
+            restored['failures'] = [
+                {key: row[key] for key in ('crop_id', 'status', 'error_code')}
+                for row in record['failures']
+            ]
+
+        transfers = []
+        for name, sha in files.items():
+            source = within(root, name)
+            destination = within(copy, name)
+            if file_hash(source) != sha:
+                raise IntegrationError('REPLAY_ARTIFACT', '录制工件内容已改变')
+            transfers.append((source, destination, sha))
+        copy.mkdir()
+        for source, destination, sha in transfers:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+            if file_hash(destination) != sha:
+                raise IntegrationError('REPLAY_ARTIFACT', '复制期间录制工件内容已改变')
+        return restored
 
 
 class RecordedObservations:

@@ -3,6 +3,7 @@
 主要定义：
 - reserve: 在账本锁内校验样品、任务关闭、截止时间与额度后登记 pending 预约，并为收尾研判保留额度。
 - finish_http: 保留第一次 HTTP 结果元数据，不读取或记录响应正文、凭据和 URL 参数。
+- close_budget: 在同一事务内关闭任务，并将无终态的 worker HTTP 预约标为结果未知。
 - operation_failure: 按 operation_key 查出已失败的预算条目。
 - install_http_guard: 仅在专用 worker 内替换 urlopen，拒绝同一请求重放与隐式重定向。
 
@@ -13,6 +14,9 @@
 import time
 from TCM_Fusion.lib.runtime.ledger_lock import acquire, release
 from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json, write_json, digest
+
+
+_UNKNOWN_ON_CLOSE = 'WORKFLOW_CLOSED_WITHOUT_HTTP_RESULT'
 
 
 def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool=None, probe=None):
@@ -56,9 +60,28 @@ def finish_http(path,key,*,status,http_status=None,error_type=None):
     handle=acquire(path)
     try:
         value=read_json(path);entry=value['entries'][key]
+        if entry['status'] == 'unknown' and entry.get('terminal_reason') == _UNKNOWN_ON_CLOSE:
+            # 允许迟到的结果补齐计费审计，任务关闭状态和证据资格由会话控制。
+            entry['result_received_after_close'] = True
+        elif entry['status'] != 'pending':
+            return
         entry.update(status=status,http_status=http_status,error_type=error_type)
         write_json(path,value)
     finally:release(handle)
+
+
+def close_budget(path, reason):
+    """封闭账本并结束悬空 HTTP 预约，保留原扣费、去重键和已知结果。"""
+    handle = acquire(path)
+    try:
+        value = read_json(path)
+        for entry in value['entries'].values():
+            if entry.get('pool') == 'network' and entry.get('operation_key') and entry.get('status') == 'pending':
+                entry.update(status='unknown', terminal_reason=_UNKNOWN_ON_CLOSE)
+        value.update(closed=True, stop_reason=reason)
+        write_json(path, value)
+    finally:
+        release(handle)
 
 
 def operation_failure(context_path):

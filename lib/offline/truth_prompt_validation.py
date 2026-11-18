@@ -8,14 +8,14 @@
 
 关联：
 - 调用方 「lib/offline/prompt_optimization.py」。
-- 直接依赖 「lib/agent/prompt_release.py」、「lib/agent/react_graph.py」、「lib/offline/outcome_evaluation.py」、「lib/offline/prompt_optimization.py」、「lib/runtime/storage.py」、「lib/workflow/evidence_runtime.py」。
+- 直接依赖 「lib/agent/prompt_release.py」、「lib/agent/react_graph.py」、「lib/offline/outcome_evaluation.py」、「lib/offline/recorded_tools.py」、「lib/runtime/storage.py」、「lib/workflow/evidence_runtime.py」。
 """
 from TCM_Fusion.lib.runtime.storage import IntegrationError,digest,read_json
 from TCM_Fusion.lib.offline.outcome_evaluation import evaluate,summarize
+from TCM_Fusion.lib.offline.recorded_tools import RecordedTools
 
 
 async def validate_truth(candidate,dataset,*,allow_network=False,planner_factory=None):
-    from TCM_Fusion.lib.offline.prompt_optimization import RecordedTools
     from TCM_Fusion.lib.agent.prompt_release import runtime_context
     from TCM_Fusion.lib.agent.react_graph import LLMPlanner,run_react
     from TCM_Fusion.lib.workflow.evidence_runtime import EvidenceRuntime
