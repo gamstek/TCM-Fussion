@@ -16,6 +16,11 @@ from TCM_Fusion.lib.runtime.ledger_lock import acquire, release
 from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, read_json, write_json, file_hash
 
 
+def _check_snapshot(value):
+    if value['version'] != digest({k: data for k, data in value.items() if k != 'version'}):
+        raise IntegrationError('EVIDENCE_CORRUPT', '证据快照哈希错误')
+
+
 class EvidenceStore:
     def __init__(self, root, identity):
         self.root=Path(root);self.identity=identity;self.head=self.root/'head.json'
@@ -36,10 +41,8 @@ class EvidenceStore:
         return {**value,'version':version}
 
     def current(self):
-        ref=read_json(self.head)['version'];v=read_json(self.root/'versions'/(ref+'.json'))
-        if v['version']!=digest({k:x for k,x in v.items() if k!='version'}):
-            raise IntegrationError('EVIDENCE_CORRUPT','证据快照哈希错误')
-        return v
+        ref = read_json(self.head)['version']
+        return read_json(self.root / 'versions' / (ref + '.json'), validate=_check_snapshot)
 
     def published_version(self, receipt, base):
         """仅沿当前已发布祖先查找操作回执，孤立的版本文件不能证明提交成功。"""

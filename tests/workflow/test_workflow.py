@@ -27,7 +27,7 @@ from pathlib import Path
 from unittest.mock import patch
 import contracts
 import paths
-from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, read_json, write_json
+from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, read_json, reusable_reads, write_json
 from TCM_Fusion.lib.tools.tool_registry import ToolSpec, validate_arguments
 from TCM_Fusion.lib.evidence.evidence_store import EvidenceStore
 from TCM_Fusion.lib.workflow.workflow_runtime import WorkflowRuntime
@@ -179,6 +179,50 @@ class WorkflowTests(WorkflowFixture, unittest.TestCase):
                           return_value={**interest, 'ids': ['白芍'], 'inactive_ids': ['知母']}):
             self.assertNotIn('needle_crystal',
                              {o['feature_id'] for o in runtime.workflow.recovery_options()})
+
+    def test_round_targets_refresh_on_operations_and_hypothesis_changes(self):
+        runtime = self._generic_recovery_runtime(('白芍', '知母'), agent_policy='adaptive_v2')
+        workflow = runtime.workflow
+        image = next(iter(runtime.images))
+        cluster = 'feature_scan:' + image + ':cluster_crystal'
+        needle = 'feature_scan:' + image + ':needle_crystal'
+        before = runtime.score([])['evidence_digest']
+        with reusable_reads(), patch.object(workflow, '_build_targets', wraps=workflow._build_targets) as build:
+            offered = workflow.targets()
+            self.assertIn(needle, offered)
+            offered.pop(cluster)
+            self.assertIn(cluster, workflow.targets())
+            self.assertEqual(build.call_count, 1)
+
+            write_json(workflow.operations, {'entries': {'reserved': {
+                'tool': 'feature_scan', 'target_id': cluster, 'status': 'pending', 'scan_tiles_reserved': 4}}})
+            self.assertNotIn(cluster, workflow.targets())
+            self.assertIn(needle, workflow.targets())
+            self.assertEqual(build.call_count, 2)
+
+            runtime.update_hypotheses([{'candidate_id': '知母', 'status': 'paused', 'reason': 'test scope'}], before)
+            self.assertNotIn(needle, workflow.targets())
+            self.assertEqual(build.call_count, 3)
+
+    def test_read_reuse_keeps_evidence_version_and_artifact_integrity_checks(self):
+        flow = self.runtime().workflow
+        store = flow.store
+        with reusable_reads():
+            first = store.current()
+            original = first['version']
+            self.assertEqual(store.verified_records(), [])
+            artifact = next(item for item in first['artifacts'].values() if item['kind'] == 'image')
+            extra = self.root / 'metadata.json'
+            write_json(extra, {'count': 1})
+            added = flow._art('sample_note', 'detection', extra, [artifact['id']], image_id=artifact['id'])
+            new = store.commit(original, [added])
+            self.assertNotEqual(original, new['version'])
+            self.assertIn('sample_note', store.current()['artifacts'])
+            self.assertEqual(store.verified_records(), [])
+            write_json(extra, {'count': 2})
+            with self.assertRaises(IntegrationError) as exc:
+                store.verified_records()
+            self.assertEqual(exc.exception.code, 'ARTIFACT_CHANGED')
 
     def test_generic_spend_caps_count_pending_and_failed_attempts(self):
         runtime = self._generic_recovery_runtime()

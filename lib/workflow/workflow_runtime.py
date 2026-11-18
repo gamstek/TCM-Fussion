@@ -16,7 +16,9 @@ import paths
 from TCM_Fusion.lib.workflow.evidence_runtime import EvidenceRuntime
 from TCM_Fusion.lib.workflow.workflow_session import WorkflowSession, TOOLS
 from TCM_Fusion.lib.tools.tool_registry import ToolSpec, object_schema, validate_arguments
-from TCM_Fusion.lib.runtime.storage import IntegrationError, project_path, file_hash, digest, read_json, write_json
+from TCM_Fusion.lib.runtime.storage import (
+    IntegrationError, project_path, file_hash, digest, read_json, reusable_reads, write_json,
+)
 
 
 HYPOTHESIS_UPDATES = {'type':'array','minItems':1,'maxItems':3,'items':{
@@ -409,6 +411,7 @@ class WorkflowRuntime(EvidenceRuntime):
                                      '记录 present/absent 后再结束。'}
         return None
 
+    @reusable_reads()
     def legal_actions(self,state):
         base=super().legal_actions(state)
         if base and base[0]['mandatory'] and self.workflow.config.get('agent_policy') != 'adaptive_v2':return base
@@ -634,10 +637,10 @@ class WorkflowRuntime(EvidenceRuntime):
         self._decision_view_cache = (key, result)
         return result
 
+    @reusable_reads()
     def summary(self,state):
-        result=super().summary(state)
-        from TCM_Fusion.lib.runtime.storage import read_json
         scored=self.score(state.get('observations', []))
+        result=super().summary(state, scored=scored)
         provisional=self.provisional_state(scored['decision'])
         required, gaps=self.required_states(provisional)
         focus=self.p0_focus()

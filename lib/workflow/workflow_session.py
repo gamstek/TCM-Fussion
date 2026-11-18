@@ -19,7 +19,9 @@ from TCM_Fusion.lib.workflow.adapters import interpreter
 from TCM_Fusion.lib.evidence.evidence_store import EvidenceStore
 from TCM_Fusion.lib.runtime.ledger_lock import acquire, release
 from TCM_Fusion.lib.runtime.resource_budget import close_budget, reserve, revoke_operation
-from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, project_path, read_json, write_json, finite_number
+from TCM_Fusion.lib.runtime.storage import (
+    IntegrationError, digest, file_hash, file_revision, project_path, read_json, reuse_read, write_json, finite_number,
+)
 from TCM_Fusion.lib.workflow.workflow_backend import WorkflowBackend
 from TCM_Fusion.lib.vision.box_quality import assess_meta
 from TCM_Fusion.lib.runtime.service_errors import stage_error_kind
@@ -449,6 +451,17 @@ class WorkflowSession:
         return False
 
     def targets(self):
+        """复用当前证据、操作、预算和调查范围下的同一份目标表。"""
+        return reuse_read((self, 'targets'), self._target_revision, self._build_targets, mutable=True)
+
+    def _target_revision(self):
+        version = read_json(self.store.head)['version']
+        paths = (self.store.root / 'versions' / (version + '.json'), self.operations,
+                 self.budget_path, self.root / 'investigation.json')
+        revisions = tuple(file_revision(path) for path in paths)
+        return (version, revisions) if None not in revisions else None
+
+    def _build_targets(self):
         snap=self.store.current();arts=snap['artifacts'];targets={}
         for identifier,v in arts.items():
             if not v['valid']:continue

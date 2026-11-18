@@ -7,7 +7,8 @@
 - IntegrationError: 带机器可读 code 的集成层异常类型。
 - project_path: 把相对路径按项目根解析为绝对路径。
 - output_root: 返回集成输出的根目录。
-- read_json: 以 utf-8-sig 读取 JSON 文件。
+- read_json: 以 utf-8-sig 读取 JSON 文件，可在规划准备期间复用校验过的内容。
+- reusable_reads / reuse_read / file_revision: 同步准备步骤内按当前文件或输入版本复用只读计算。
 - write_json: 临时写后原子替换，含 Windows 占用重试。
 - file_hash: 计算文件的 SHA256。
 - digest: 对对象做稳定排序序列化后取 SHA256 摘要。
@@ -19,12 +20,15 @@
 """
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import math
 import os
 import tempfile
 import time
+from contextlib import contextmanager
+from contextvars import ContextVar
 from pathlib import Path
 
 import paths
@@ -45,7 +49,64 @@ def output_root():
     return Path(paths.UI_OUT_ROOT) / "fusion"
 
 
-def read_json(path):
+# 作用域在同步规划准备返回时退出。所有执行、MCP 调用和预算预约使用原有独立读取。
+_reused_reads = ContextVar('reused_reads', default=None)
+
+
+@contextmanager
+def reusable_reads():
+    """在当前同步调用链复用只读结果，嵌套摘要和菜单共用同一批读取。"""
+    if _reused_reads.get() is not None:
+        yield
+        return
+    token = _reused_reads.set({})
+    try:
+        yield
+    finally:
+        _reused_reads.reset(token)
+
+
+def file_revision(path):
+    """识别原子替换和原地更新。无法读取状态时由原读取函数处理。"""
+    try:
+        stat = Path(path).stat()
+    except FileNotFoundError:
+        return ()
+    except OSError:
+        return None
+    return stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns
+
+
+def reuse_read(key, revision, load, *, mutable=False):
+    """只缓存输入版本稳定的成功读取，保留调用者可独立修改结果的语义。"""
+    cache = _reused_reads.get()
+    if cache is None:
+        return load()
+    before = revision()
+    if before is None:
+        return load()
+    if key in cache:
+        saved_revision, saved = cache[key]
+        if saved_revision == before:
+            return copy.deepcopy(saved) if mutable else saved
+    saved_revision = copy.deepcopy(before)
+    value = load()
+    if saved_revision == revision():
+        cache[key] = (saved_revision, copy.deepcopy(value) if mutable else value)
+    return value
+
+
+def read_json(path, *, validate=None):
+    def load():
+        value = _load_json(path)
+        if validate is not None:
+            validate(value)
+        return value
+
+    return reuse_read(('json', Path(path), validate), lambda: file_revision(path), load, mutable=True)
+
+
+def _load_json(path):
     # Windows原子替换瞬间可能拒绝并行读者；仅重试本地读，不重发任何模型请求。
     for attempt in range(4):
         try:
@@ -82,6 +143,10 @@ def write_json(path, obj):
 
 
 def file_hash(path):
+    return reuse_read(('sha256', Path(path)), lambda: file_revision(path), lambda: _hash_file(path))
+
+
+def _hash_file(path):
     h = hashlib.sha256()
     with Path(path).open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):

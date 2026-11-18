@@ -28,7 +28,7 @@ import paths
 from rule_engine import BAND_PROBABLE, MARGIN_DELTA
 
 from TCM_Fusion.lib.decision.collaboration import fuse
-from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, read_json, write_json
+from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, read_json, reusable_reads, write_json
 from TCM_Fusion.lib.agent.prompt_defaults import DEFAULT_INSTRUCTION, GUARD
 
 
@@ -467,6 +467,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         return [{**row,'stale':row.get('read_revision')!=revision}
                 for row in state.get('read_results',[])]
 
+    @reusable_reads()
     def assess(state):
         # A terminal act result (plan transport/pending failure) must survive the
         # act -> assess edge. Recomputing done here would resume the graph and can
@@ -809,162 +810,162 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 break
             planning += 1
             requests += 1
-            current_budget = remaining_budget()
-            evidence_version = workflow.store.current()['version']
-            # review始终可选；不够确认时不再反复展示/拒绝同一个finish。
-            stop_now = [a for a in stop if a['tool'] == 'request_review' or not state['finish_veto']]
-            choices = [a for a in eligible if affordable(a, current_budget) and controller.guard(a)] + stop_now
-            parallel = []
-            initial_choices = [a for a in choices if a['tool'] == 'detect_fov_initial']
-            independent_observations = [a for a in observation_choices if a['tool'] in {'presence_check', 'scene_check'}]
-            if (initial_choices and workflow.config.get("max_parallel", 2) >= 2 and state["steps"]+2 <= max_steps
-                    and current_budget["total"] >= 4 and current_budget["network"] >= 2):
-                parallel = [a for a in independent_observations if affordable(a, current_budget)
-                            and any(a["args"]["image_id"] == c.get("args", {}).get("target_id") for c in initial_choices)]
-            from TCM_Fusion.lib.agent.action_feedback import objective
-            from TCM_Fusion.lib.decision.comparison_problems import action_question
-            from TCM_Fusion.lib.runtime.probe_budget import split_enabled
-            opportunities_for_menu = []
-            if split_enabled(runtime):
-                from TCM_Fusion.lib.decision.candidate_audit import (
-                    investigation_opportunities, protect_investigation_budget)
-                opportunities_for_menu = investigation_opportunities(runtime,
-                    runtime.decision_view(state)['candidate_audit'], state['investigation_focus'],
-                    choices, current_budget)
-                choices, deferred = protect_investigation_budget(
-                    runtime, choices, opportunities_for_menu, current_budget)
-                if deferred:
-                    events.append({'phase': 'investigation_budget_protected',
-                                   'deferred': deferred, 'evidence_effect': 'none'})
-                allowed = {a['action_id'] for a in choices}
-                parallel = [a for a in parallel if a['action_id'] in allowed]
-            model_actions, menu_meta = model_action_menu(
-                runtime, choices, int(workflow.config.get('context_max_actions', 20)),
-                priority_ids=[row['action_id'] for row in opportunities_for_menu])
-            context = {
-                "actions": model_actions, "evidence": compact_evidence(runtime.summary(state)),
-                "parallel_observations": parallel,
-                "planning_instruction": planning_instruction,
-                "previous_observations": state["observations"], "read_results": read_context(state)[-4:],
-                "action_objectives": {a["action_id"]: objective(a) for a in model_actions if "args" in a},
-                "stop_advisory": state["stop_advisory"], "finish_veto": state["finish_veto"],
-                "stop_decision": state.get("stop_decision") or {},
-                "remaining_budget": current_budget, "rejected_proposals": rejected,
-                "rejection_details": rejection_details,
-                "task_reflection": controller.compact(),
-                "recent_action_feedback": compact_feedback(events),
-                "skills": compact_skills(runtime),
-                "action_menu_meta": menu_meta,
-            }
-            if opportunities_for_menu:
-                shown = {a['action_id'] for a in model_actions}
-                context['investigation_opportunities'] = [
-                    row for row in opportunities_for_menu if row['action_id'] in shown]
-            if format_feedback is not None:
-                context['format_feedback'] = format_feedback
-            choice_feedback=[e for e in events if e['phase']=='choice_partially_preserved']
-            if choice_feedback:
-                context['selection_feedback']=choice_feedback[-2:]
-            history = [e['feedback'] for e in events if isinstance(e.get('feedback'), dict)]
-            targets = workflow.targets()
-            for action in model_actions:
-                if action['action_id'] not in context['action_objectives']:
-                    continue
-                question = action_question(runtime, action, targets=targets)
-                row = context['action_objectives'][action['action_id']]
-                row['question_id'] = question['question_id']
-                times = [f['latency_ms']/1000 for f in history
-                         if f.get('latency_ms') and f.get('objective') == row['objective']][-6:]
-                if times:
-                    row['recent_latency_seconds'] = {'min':min(times), 'max':max(times), 'n':len(times)}
-            parallel_questions = {}
-            if workflow.config.get('max_parallel', 2) >= 2 and state['steps']+2 <= max_steps:
-                for a in choices:
-                    if a['tool'] in {'presence_check','scene_check'}:
-                        q = action_question(runtime, a, targets=targets)
-                        parallel_questions[q['question_id']] = a
-                context['parallel_questions'] = [action_question(runtime, a, targets=targets) for a in parallel_questions.values()
-                                                 if a['tool']=='presence_check']
-            try:
-                from TCM_Fusion.lib.evidence.search_ledger import render_shared
-                context['shared_observations'] = render_shared(runtime, state)
-            except Exception:
-                context['shared_observations'] = []
-            focus = getattr(runtime, "p0_focus", lambda: None)()
-            if focus:
-                context["p0_focus"] = focus
-                if not focus.get("attempted") and not focus.get('advisory_only') and not agent_driven:
+            with reusable_reads():
+                current_budget = remaining_budget()
+                # review始终可选；不够确认时不再反复展示/拒绝同一个finish。
+                stop_now = [a for a in stop if a['tool'] == 'request_review' or not state['finish_veto']]
+                choices = [a for a in eligible if affordable(a, current_budget) and controller.guard(a)] + stop_now
+                parallel = []
+                initial_choices = [a for a in choices if a['tool'] == 'detect_fov_initial']
+                independent_observations = [a for a in observation_choices if a['tool'] in {'presence_check', 'scene_check'}]
+                if (initial_choices and workflow.config.get("max_parallel", 2) >= 2 and state["steps"]+2 <= max_steps
+                        and current_budget["total"] >= 4 and current_budget["network"] >= 2):
+                    parallel = [a for a in independent_observations if affordable(a, current_budget)
+                                and any(a["args"]["image_id"] == c.get("args", {}).get("target_id") for c in initial_choices)]
+                from TCM_Fusion.lib.agent.action_feedback import objective
+                from TCM_Fusion.lib.decision.comparison_problems import action_question
+                from TCM_Fusion.lib.runtime.probe_budget import split_enabled
+                opportunities_for_menu = []
+                if split_enabled(runtime):
+                    from TCM_Fusion.lib.decision.candidate_audit import (
+                        investigation_opportunities, protect_investigation_budget)
+                    opportunities_for_menu = investigation_opportunities(runtime,
+                        runtime.decision_view(state)['candidate_audit'], state['investigation_focus'],
+                        choices, current_budget)
+                    choices, deferred = protect_investigation_budget(
+                        runtime, choices, opportunities_for_menu, current_budget)
+                    if deferred:
+                        events.append({'phase': 'investigation_budget_protected',
+                                       'deferred': deferred, 'evidence_effect': 'none'})
+                    allowed = {a['action_id'] for a in choices}
+                    parallel = [a for a in parallel if a['action_id'] in allowed]
+                model_actions, menu_meta = model_action_menu(
+                    runtime, choices, int(workflow.config.get('context_max_actions', 20)),
+                    priority_ids=[row['action_id'] for row in opportunities_for_menu])
+                context = {
+                    "actions": model_actions, "evidence": compact_evidence(runtime.summary(state)),
+                    "parallel_observations": parallel,
+                    "planning_instruction": planning_instruction,
+                    "previous_observations": state["observations"], "read_results": read_context(state)[-4:],
+                    "action_objectives": {a["action_id"]: objective(a) for a in model_actions if "args" in a},
+                    "stop_advisory": state["stop_advisory"], "finish_veto": state["finish_veto"],
+                    "stop_decision": state.get("stop_decision") or {},
+                    "remaining_budget": current_budget, "rejected_proposals": rejected,
+                    "rejection_details": rejection_details,
+                    "task_reflection": controller.compact(),
+                    "recent_action_feedback": compact_feedback(events),
+                    "skills": compact_skills(runtime),
+                    "action_menu_meta": menu_meta,
+                }
+                if opportunities_for_menu:
+                    shown = {a['action_id'] for a in model_actions}
+                    context['investigation_opportunities'] = [
+                        row for row in opportunities_for_menu if row['action_id'] in shown]
+                if format_feedback is not None:
+                    context['format_feedback'] = format_feedback
+                choice_feedback=[e for e in events if e['phase']=='choice_partially_preserved']
+                if choice_feedback:
+                    context['selection_feedback']=choice_feedback[-2:]
+                history = [e['feedback'] for e in events if isinstance(e.get('feedback'), dict)]
+                targets = workflow.targets()
+                for action in model_actions:
+                    if action['action_id'] not in context['action_objectives']:
+                        continue
+                    question = action_question(runtime, action, targets=targets)
+                    row = context['action_objectives'][action['action_id']]
+                    row['question_id'] = question['question_id']
+                    times = [f['latency_ms']/1000 for f in history
+                             if f.get('latency_ms') and f.get('objective') == row['objective']][-6:]
+                    if times:
+                        row['recent_latency_seconds'] = {'min':min(times), 'max':max(times), 'n':len(times)}
+                parallel_questions = {}
+                if workflow.config.get('max_parallel', 2) >= 2 and state['steps']+2 <= max_steps:
+                    for a in choices:
+                        if a['tool'] in {'presence_check','scene_check'}:
+                            q = action_question(runtime, a, targets=targets)
+                            parallel_questions[q['question_id']] = a
+                    context['parallel_questions'] = [action_question(runtime, a, targets=targets) for a in parallel_questions.values()
+                                                     if a['tool']=='presence_check']
+                try:
+                    from TCM_Fusion.lib.evidence.search_ledger import render_shared
+                    context['shared_observations'] = render_shared(runtime, state)
+                except Exception:
+                    context['shared_observations'] = []
+                focus = getattr(runtime, "p0_focus", lambda: None)()
+                if focus:
+                    context["p0_focus"] = focus
+                    if not focus.get("attempted") and not focus.get('advisory_only') and not agent_driven:
+                        context["planning_instruction"] = planning_instruction + (
+                            " 当前 p0_focus 存在且尚未尝试：必须先选择其指向的 locate_feature"
+                            "（或分块检测），在其完成或失败前不得查 P1/C 存在性。")
+                context["coverage"] = (context.get("evidence") or {}).get("workflow", {}).get("coverage")
+                context["identity_pending"] = (context.get("evidence") or {}).get("workflow", {}).get("identity_pending")
+                context["agent_driven_coverage"] = agent_driven
+                context["remaining_seconds"] = (round(workflow.remaining_seconds(), 1)
+                                                 if workflow is not None else None)
+                if early_verification:
+                    opportunities = runtime.verification_opportunities(
+                        choices, current_budget, decision=state['decision'])
+                    context['verification_opportunities'] = opportunities
+                    shown={a['action_id'] for a in context['actions']}
+                    for row in opportunities:
+                        if row.get('action_id') not in shown:
+                            context['actions'].append(row);shown.add(row.get('action_id'))
+                    context['action_menu_meta']['shown']=len(context['actions'])
+                    context['supporting_gaps'] = (context.get('evidence') or {}).get('workflow', {}).get('supporting_gaps') or []
+                    context['planning_instruction'] = planning_instruction + (
+                        ' 初检后保留全部合法动作；不要等待全部crop分类或补扫完成才核验已有实例。'
+                        'verification_opportunities仅列出与活动候选定量判据相关、前置条件已满足且预算可完成的动作。'
+                        '优先评估合格mask的测量，以及身份可信实例的分割→测量；'
+                        '在decision_summary说明本轮能解决哪个候选分歧。'
+                        '若仍选择分类或补扫，说明其为何比现有核验更有价值。'
+                        '这些是建议，不是强制顺序；可查竞争候选，不因未检出排除药材。'
+                        '不要为刷新首次测量时间而处理无关实例，也不要为覆盖每张图而重复同一判据。')
+                    if context['supporting_gaps']:
+                        context['planning_instruction'] += (
+                            ' 当前仍有未完成的 supporting 判据；required 完成不等于 supporting 已查完。'
+                            '若这些 supporting 有合法实例或适合视野，优先评估一次小范围核验；'
+                            '再次测量同一 required 特征必须说明它还能解决什么新问题，不能只因数值已有就重复测量。'
+                            'supporting_gaps 只是调查建议，不授予证据资格，也不要求全部查完。'
+                            'check_state=checked_negative 表示当前视野已查未见，不等于全样本不存在；'
+                            'unreadable_or_failed 不是阴性；优先补 unchecked 或可修复的合法机会，'
+                            '不要反复重试同一失败依赖。')
+                    events.append({'phase': 'planning_menu', 'policy': 'early_verification_v1',
+                                   'evidence_version': context['evidence']['workflow']['evidence_version'],
+                                   'action_keys': [a['tool'] + '|' + str(a.get('args', {}).get('target_id') or
+                                                  a.get('args', {}).get('feature_id') or '') for a in context['actions']],
+                                   'verification_action_ids': [row['action_id'] for row in opportunities],
+                                   'verification_keys': [row['tool'] + '|' + row['target_id'] for row in opportunities]})
+                elif agent_driven:
                     context["planning_instruction"] = planning_instruction + (
-                        " 当前 p0_focus 存在且尚未尝试：必须先选择其指向的 locate_feature"
-                        "（或分块检测），在其完成或失败前不得查 P1/C 存在性。")
-            context["coverage"] = (context.get("evidence") or {}).get("workflow", {}).get("coverage")
-            context["identity_pending"] = (context.get("evidence") or {}).get("workflow", {}).get("identity_pending")
-            context["agent_driven_coverage"] = agent_driven
-            context["remaining_seconds"] = (round(workflow.remaining_seconds(), 1)
-                                             if workflow is not None else None)
-            if early_verification:
-                opportunities = runtime.verification_opportunities(
-                    choices, current_budget, decision=state['decision'])
-                context['verification_opportunities'] = opportunities
-                shown={a['action_id'] for a in context['actions']}
-                for row in opportunities:
-                    if row.get('action_id') not in shown:
-                        context['actions'].append(row);shown.add(row.get('action_id'))
-                context['action_menu_meta']['shown']=len(context['actions'])
-                context['supporting_gaps'] = (context.get('evidence') or {}).get('workflow', {}).get('supporting_gaps') or []
-                context['planning_instruction'] = planning_instruction + (
-                    ' 初检后保留全部合法动作；不要等待全部crop分类或补扫完成才核验已有实例。'
-                    'verification_opportunities仅列出与活动候选定量判据相关、前置条件已满足且预算可完成的动作。'
-                    '优先评估合格mask的测量，以及身份可信实例的分割→测量；'
-                    '在decision_summary说明本轮能解决哪个候选分歧。'
-                    '若仍选择分类或补扫，说明其为何比现有核验更有价值。'
-                    '这些是建议，不是强制顺序；可查竞争候选，不因未检出排除药材。'
-                    '不要为刷新首次测量时间而处理无关实例，也不要为覆盖每张图而重复同一判据。')
-                if context['supporting_gaps']:
+                        " coverage/missing_useful 只是观察，不是强制路线：自行选择当前最值得的工具，"
+                        "优先让每个视野至少有一个非空 feature 的 classification；"
+                        "不得因单一 identity_pending 或单一视野的低分 crop 反复分类；"
+                        "只要 missing_useful 非空且预算/时间仍允许，先补其他缺失视野；"
+                        "stage2/CNN 很快，空白框也应先识别而不是先丢弃；"
+                        "同时参考 remaining_budget/remaining_seconds，避免耗尽时间。")
+                if context.get('investigation_opportunities'):
                     context['planning_instruction'] += (
-                        ' 当前仍有未完成的 supporting 判据；required 完成不等于 supporting 已查完。'
-                        '若这些 supporting 有合法实例或适合视野，优先评估一次小范围核验；'
-                        '再次测量同一 required 特征必须说明它还能解决什么新问题，不能只因数值已有就重复测量。'
-                        'supporting_gaps 只是调查建议，不授予证据资格，也不要求全部查完。'
-                        'check_state=checked_negative 表示当前视野已查未见，不等于全样本不存在；'
-                        'unreadable_or_failed 不是阴性；优先补 unchecked 或可修复的合法机会，'
-                        '不要反复重试同一失败依赖。')
-                events.append({'phase': 'planning_menu', 'policy': 'early_verification_v1',
-                               'evidence_version': context['evidence']['workflow']['evidence_version'],
-                               'action_keys': [a['tool'] + '|' + str(a.get('args', {}).get('target_id') or
-                                              a.get('args', {}).get('feature_id') or '') for a in context['actions']],
-                               'verification_action_ids': [row['action_id'] for row in opportunities],
-                               'verification_keys': [row['tool'] + '|' + row['target_id'] for row in opportunities]})
-            elif agent_driven:
-                context["planning_instruction"] = planning_instruction + (
-                    " coverage/missing_useful 只是观察，不是强制路线：自行选择当前最值得的工具，"
-                    "优先让每个视野至少有一个非空 feature 的 classification；"
-                    "不得因单一 identity_pending 或单一视野的低分 crop 反复分类；"
-                    "只要 missing_useful 非空且预算/时间仍允许，先补其他缺失视野；"
-                    "stage2/CNN 很快，空白框也应先识别而不是先丢弃；"
-                    "同时参考 remaining_budget/remaining_seconds，避免耗尽时间。")
-            if context.get('investigation_opportunities'):
-                context['planning_instruction'] += (
-                    ' investigation_opportunities是关键判据的可选入口，cost为计划预算估计，'
-                    '不是已核验或保证成功；若申请复核，说明这些机会为何不足或不值得继续。')
-            context = compact_round_context(context, workflow)
-            if workflow.config.get('semantic_execution', False):
-                from TCM_Fusion.lib.agent.semantic_execution import options, GOAL_CONTRACT
-                context['semantic_options'] = options(runtime, choices)
-                context['semantic_goal_contract'] = GOAL_CONTRACT
-            from TCM_Fusion.lib.agent.planning_choices import attach
-            context = attach(runtime, context, targets=targets, can_pair=bool(
-                workflow.config.get('max_parallel',2)>=2 and state['steps']+2<=max_steps
-                and current_budget['observation']>=2 and current_budget['network']>=2
-                and current_budget['total']>=4))
-            if physical_runner and not physical_runner.tasks and state['steps']+2 <= max_steps:
-                context['execution_options'].update(physical_runner.options(
-                    context['actions'],targets,current_budget,max_steps-state['steps']))
-            if workflow.config.get('context_compact', False):
-                from TCM_Fusion.lib.agent.planning_context import compact as compact_d3
-                context, cursor, audit = compact_d3(context, state.get('context_cursor'))
-                state['context_cursor'] = cursor
-                events.append({'phase': 'context_profile', **audit})
+                        ' investigation_opportunities是关键判据的可选入口，cost为计划预算估计，'
+                        '不是已核验或保证成功；若申请复核，说明这些机会为何不足或不值得继续。')
+                context = compact_round_context(context, workflow)
+                if workflow.config.get('semantic_execution', False):
+                    from TCM_Fusion.lib.agent.semantic_execution import options, GOAL_CONTRACT
+                    context['semantic_options'] = options(runtime, choices)
+                    context['semantic_goal_contract'] = GOAL_CONTRACT
+                from TCM_Fusion.lib.agent.planning_choices import attach
+                context = attach(runtime, context, targets=targets, can_pair=bool(
+                    workflow.config.get('max_parallel',2)>=2 and state['steps']+2<=max_steps
+                    and current_budget['observation']>=2 and current_budget['network']>=2
+                    and current_budget['total']>=4))
+                if physical_runner and not physical_runner.tasks and state['steps']+2 <= max_steps:
+                    context['execution_options'].update(physical_runner.options(
+                        context['actions'],targets,current_budget,max_steps-state['steps']))
+                if workflow.config.get('context_compact', False):
+                    from TCM_Fusion.lib.agent.planning_context import compact as compact_d3
+                    context, cursor, audit = compact_d3(context, state.get('context_cursor'))
+                    state['context_cursor'] = cursor
+                    events.append({'phase': 'context_profile', **audit})
             planning_started = time.monotonic()
             started_at = time.time()
             events.append({'phase':'planning_started','request_number':planning,'started_at':started_at})
@@ -1248,13 +1249,15 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     if offset < page.get("total",0):queries.append((read["tool"],{"offset":offset,"limit":50}))
             queries += [("read_evidence", {"offset": offset, "limit": 20})
                         for offset in range(20, len(runtime.records), 20)]
-            interest = runtime.summary(state)["candidate_interest"]
-            queries += [("query_criteria", {"candidate_id": cid}) for cid in interest["ids"]]
-            for name, args in queries:
-                action = runtime.action(name, args, "evidence_inspection")
-                action["action_id"] = digest({"query": action["action_id"], "evidence": runtime.read_revision(state)})
-                if action["action_id"] not in state.get("attempted", []):
-                    eligible.append(action)
+            with reusable_reads():
+                interest = runtime.candidate_interest()
+                queries += [("query_criteria", {"candidate_id": cid}) for cid in interest["ids"]]
+                revision = runtime.read_revision(state)
+                for name, args in queries:
+                    action = runtime.action(name, args, "evidence_inspection")
+                    action["action_id"] = digest({"query": action["action_id"], "evidence": revision})
+                    if action["action_id"] not in state.get("attempted", []):
+                        eligible.append(action)
         stop = [{"action_id": "finish", "tool": "finish"},
                 {"action_id": "review", "tool": "request_review"}]
         if autonomous:

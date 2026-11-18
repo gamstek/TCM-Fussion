@@ -22,7 +22,9 @@ from rule_engine import EvidenceCard, KnowledgeBase, decide, pool_evidence
 
 from TCM_Fusion.lib.tools.tool_registry import ToolRegistry
 from TCM_Fusion.lib.decision.candidate_policy import candidates as a_candidates, criteria_diff, validate_candidates
-from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, file_hash, finite_number, project_path, read_json
+from TCM_Fusion.lib.runtime.storage import (
+    IntegrationError, digest, file_hash, finite_number, project_path, read_json, reuse_read,
+)
 
 
 class Skills:
@@ -77,6 +79,16 @@ class EvidenceRuntime:
     def score(self, observations):
         if file_hash(self.kb_path) != self.kb_sha256:
             raise IntegrationError("KB_CHANGED", "运行期间知识库改变")
+        workflow = getattr(self, 'workflow', None)
+        threshold = workflow.config.get('min_support_features') if workflow is not None else None
+        return reuse_read(
+            (self, 'rules'),
+            lambda: (self.records, observations, threshold),
+            lambda: self._score_rules(observations, threshold),
+            mutable=True,
+        )
+
+    def _score_rules(self, observations, threshold):
         cards = pool_evidence(self.records)
         scene = scene_attributes.build_scene(self.records)
         answers = []
@@ -100,8 +112,6 @@ class EvidenceRuntime:
                 card.conf_assumed = True  # 不创建dims/px_per_um/尺寸
         if answers:
             scene = scene_attributes.merge_vlm_scene(scene, answers)
-        workflow = getattr(self, 'workflow', None)
-        threshold = workflow.config.get('min_support_features') if workflow is not None else None
         decision = decide(self.kb, cards, scene=scene, min_support_features=threshold)
         observation_states=[]
         from TCM_Fusion.lib.evidence.evidence_projection import presence_state
@@ -278,8 +288,9 @@ class EvidenceRuntime:
                 and result.get("arrangement") in {"rows", "scattered", "unknown"}
                 and result.get("abundance") in {"few", "many", "very_many", "unknown"})
 
-    def summary(self, state):
-        scored = self.score(state.get("observations", []))
+    def summary(self, state, *, scored=None):
+        if scored is None:
+            scored = self.score(state.get("observations", []))
         interest = self.candidate_interest()
         d = scored["decision"]
         compact = {"verdict": d["verdict"], "conclusion": d.get("conclusion"),
