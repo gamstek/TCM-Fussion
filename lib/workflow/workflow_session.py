@@ -35,6 +35,9 @@ class WorkflowSession:
         import threading
         self.cancel_event=threading.Event()
         self.config=copy.deepcopy(config);self.sample_id=runtime.sample_id
+        if self.config.get('agent_policy') == 'adaptive_v2':
+            self.config.setdefault('physical_parallel',True)
+            self.config.setdefault('max_parallel',4)
         self.python=interpreter(config.get('python'));self.allow_network=allow_network
         self.yolo_signature = {}
         self.cnn_signature = None
@@ -1217,7 +1220,7 @@ class WorkflowSession:
             pending_rows = [r for r in doc['entries'].values() if r['status']=='pending']
             if pending_rows:
                 from TCM_Fusion.lib.workflow.physical_schedule import allows_single
-                if not allows_single(pending_rows,tool,target):
+                if not allows_single(pending_rows,tool,target) or len(pending_rows)>=self.config['max_parallel']:
                     raise IntegrationError('WORKFLOW_BUSY','已有阶段正在执行')
             if tool not in {'measure_instances','detect_region'} and not self.runtime.simulation and not self.allow_network:
                 raise IntegrationError('NETWORK_DISABLED','视觉重算须显式允许网络')

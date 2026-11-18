@@ -62,7 +62,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'box_association':{'enum':['center_point','region_component']},
     'agent_policy':{'enum':['legacy','adaptive_v1','adaptive_v2']},
     'quality_evaluation':{'enum':['legacy','purpose_v1']},
-    'max_parallel':{'type':'integer','minimum':1,'maximum':2},
+    'max_parallel':{'type':'integer','minimum':1,'maximum':4},
     'fast_yolo_stage2':{'const':True},  # fast 为标准路径；仅兼容历史配置，不再允许 false
     'early_verification':{'type':'boolean'},
     'fast_recovery_selection':{'enum':['legacy_bundle','per_feature']},

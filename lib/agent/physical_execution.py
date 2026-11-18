@@ -1,4 +1,4 @@
-"""把 ReAct 明确选中的两个动作交给工作流预约，经 toolbox 并发准备，按回执顺序提交。
+"""把 ReAct 明确选中的跨视野动作组交给工作流预约，经 toolbox 并发准备并逐支提交。
 普通回执一轮汇总；快支解锁实例操作时允许提前规划。会话退出时先隔离未提交分支。
 
 主要定义：
@@ -26,21 +26,31 @@ class PhysicalRunner:
             release(self.lease)
             raise
 
-    def options(self, actions, targets, budget):
-        pairs = []
-        for a,b in combinations((a for a in actions if a['tool'] in schedule.POOLS),2):
-            tool = a['tool']
-            if tool != b['tool'] or budget[schedule.POOLS[tool]] < 2:
-                continue
+    def options(self, actions, targets, budget, steps_left):
+        groups = []
+        for tool,pool in schedule.POOLS.items():
+            views = {}
+            for a in actions:
+                if a['tool'] == tool:
+                    image = targets[a['args']['target_id']]['image_id']
+                    views.setdefault(image,[]).append(a['action_id'])
             network = tool == 'classify_target' or not self.session.runtime.simulation
-            if budget['total'] < 2 + 2*network or (network and budget['network'] < 2):
-                continue
-            if targets[a['args']['target_id']]['image_id'] != targets[b['args']['target_id']]['image_id']:
-                pairs.append([a['action_id'],b['action_id']])
-        return pairs
+            limit = min(self.session.config['max_parallel'],len(views),steps_left,
+                        budget[pool],budget['total']//(1+int(network)))
+            if network:
+                limit = min(limit,budget['network'])
+            if limit >= 2:
+                groups.append({'tool':tool,'limit':limit,'views':list(views.values())})
+        if not groups:
+            return {}
+        offers = {'physical_groups':groups}
+        if all(group['limit']==2 for group in groups):
+            offers['physical_pairs'] = [[a,b] for group in groups for x,y in combinations(group['views'],2)
+                                        for a in x for b in y]
+        return offers
 
     def start(self, actions):
-        tickets = schedule.reserve_pair(self.session, actions)
+        tickets = schedule.reserve_group(self.session, actions)
         for a,ticket in zip(actions,tickets):
             task = asyncio.create_task(self.toolbox.prepare_stage(*ticket))
             self.tasks[task] = (a,ticket)

@@ -14,7 +14,7 @@
 | [reflection_controller.py](reflection_controller.py) | D3任务内反思控制器：实际反馈→补丁建议→校验应用→下一动作后验。 |
 | [reflection_memory.py](reflection_memory.py) | 加载通过回放验证的经验工件。 |
 | [semantic_execution.py](semantic_execution.py) | D3实验串行语义图：模型选实例目标，程序逐节点晚绑定当前合法工具。 |
-| [physical_execution.py](physical_execution.py) | D4 实验调度。模型可在本轮可见菜单中选一对跨视野初检或分类。协调者接收私有工件回执，在快支解锁实例操作时提前交回 ReAct。 |
+| [physical_execution.py](physical_execution.py) | D4 跨视野调度。模型可单选，也可在同一工具组的不同视野中各选一个初检或分类。可选数量受并发上限、剩余步数和资源约束。协调者逐支提交，快支解锁实例操作时可提前交回 ReAct。 |
 
 直接依赖 decision、evidence、runtime、tools。
 

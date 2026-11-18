@@ -150,6 +150,8 @@ def model_view(context):
     offers = out.get('execution_options') or {}
     if 'physical_pairs' in offers:
         offers['physical_pairs'] = [[aliases[a],aliases[b]] for a,b in offers['physical_pairs']]
+    for group in offers.get('physical_groups',[]):
+        group['views'] = [[aliases[a] for a in view] for view in group['views']]
     offers['goals'] = [{**g, 'goal_id':f'G{i}', 'entry_action_id':aliases[g['entry_action_id']]}
         for i,g in enumerate(offers.get('goals',[]),1) if g['entry_action_id'] in aliases]
     offers['questions'] = [{**q, 'question_id':f'Q{i}', 'canonical_question_id':q['question_id'],
@@ -173,6 +175,16 @@ def model_view(context):
             for p in problem.get('entry_paths', []) if p['action_id'] in aliases]
         problem['entry_visibility'] = 'current_menu' if problem['entry_paths'] else 'detail_or_unavailable'
     return out, ids
+
+
+def physical_allowed(ids, offers):
+    if not isinstance(ids,list) or not all(isinstance(a,str) for a in ids) or len(set(ids))!=len(ids):
+        return False
+    if 'physical_groups' not in offers:
+        return len(ids)==2 and (ids in offers.get('physical_pairs',[]) or ids[::-1] in offers.get('physical_pairs',[]))
+    return any(2 <= len(ids) <= group['limit'] and
+               sum(bool(set(view).intersection(ids)) for view in group['views']) == len(ids)
+               for group in offers.get('physical_groups',[]))
 
 
 def decode(reply, context):
@@ -204,13 +216,12 @@ def decode(reply, context):
     offers = context.get('execution_options') or {}
     if kind == 'action' and set(decision) == {'kind','action_id'}:
         value['action_id'] = decision['action_id']
-    elif kind == 'physical_pair' and set(decision) == {'kind','action_ids'}:
+    elif kind in {'physical_group','physical_pair'} and set(decision) == {'kind','action_ids'}:
         pair = decision['action_ids']
-        if (not isinstance(pair,list) or len(pair)!=2 or
-                pair not in offers.get('physical_pairs',[]) and pair[::-1] not in offers.get('physical_pairs',[]) or
-                any(k in value for k in ('semantic_goal','parallel_question_id','parallel_observation_id','physical_partner_id'))):
-            raise IntegrationError('PLANNER_CHOICE_INVALID','须选择本轮列出的独立物理动作对')
-        value['action_id'], value['physical_partner_id'] = pair
+        if (not physical_allowed(pair,offers) or kind=='physical_pair' and len(pair)!=2 or
+                any(k in value for k in ('semantic_goal','parallel_question_id','parallel_observation_id','physical_partner_id','physical_partner_ids'))):
+            raise IntegrationError('PLANNER_CHOICE_INVALID','须从同一工具组的不同视野中选取动作')
+        value['action_id'], value['physical_partner_ids'] = pair[0],pair[1:]
     elif kind == 'instance_goal' and set(decision) == {'kind','goal_id'}:
         goal = next((g for g in offers.get('goals',[]) if g['goal_id']==decision['goal_id']),None)
         if not goal:

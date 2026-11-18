@@ -39,7 +39,7 @@ class AgentState(TypedDict, total=False):
     actions: list
     selected: dict
     parallel_observation: dict | None
-    physical_partner: dict | None
+    physical_partners: list
     events: list
     requests: int
     planning_requests: int
@@ -92,9 +92,9 @@ class LLMPlanner:
             self.last_request_menu = audit(context)
         reflection = (context.get('task_reflection') or {}).get('pending') if adaptive else None
         reflection_instruction = ''
-        physical_instruction = ('可选decision.kind=physical_pair及action_ids，取本轮physical_pairs的一对。'
-                                '每项均值得立即执行时才选；已可单独核验的关键实例可直接选action。'
-                                if (context.get('execution_options') or {}).get('physical_pairs') else '')
+        physical_instruction = ('可选decision.kind=physical_group及action_ids。在本轮physical_groups同一工具组中，'
+                                '从不同views各取一个动作，共2至limit项。每项均值得立即执行时才选；关键实例可直接单选action。'
+                                if (context.get('execution_options') or {}).get('physical_groups') else '')
         if reflection:
             reflection_instruction = (
                 '若收到反思，请在正常主选择旁填顶层reflection_response，值为apply、maintain、defer或reject。'
@@ -187,9 +187,12 @@ class LLMPlanner:
                 exc.choice_diagnostic = diagnose(reply, context)
                 raise
             option = reply.get("action_id")
-            partner = reply.get("physical_partner_id")
-            if isinstance(partner,str) and partner in option_ids:
-                reply["physical_partner_id"] = option_ids[partner]
+            if isinstance(reply.get('physical_partner_ids'),list):
+                reply['physical_partner_ids'] = [option_ids.get(p,p) if isinstance(p,str) else p
+                                                 for p in reply['physical_partner_ids']]
+            if isinstance(reply.get('physical_partner_id'),str):
+                old = reply['physical_partner_id']
+                reply['physical_partner_id'] = option_ids.get(old,old)
             if isinstance(option, str) and option in option_ids:
                 reply["action_id"] = option_ids[option]
             companion = reply.get("parallel_observation_id")
@@ -804,7 +807,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             parallel = []
             initial_choices = [a for a in choices if a['tool'] == 'detect_fov_initial']
             independent_observations = [a for a in observation_choices if a['tool'] in {'presence_check', 'scene_check'}]
-            if (initial_choices and workflow.config.get("max_parallel", 2) == 2 and state["steps"]+2 <= max_steps
+            if (initial_choices and workflow.config.get("max_parallel", 2) >= 2 and state["steps"]+2 <= max_steps
                     and current_budget["total"] >= 4 and current_budget["network"] >= 2):
                 parallel = [a for a in independent_observations if affordable(a, current_budget)
                             and any(a["args"]["image_id"] == c.get("args", {}).get("target_id") for c in initial_choices)]
@@ -865,7 +868,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 if times:
                     row['recent_latency_seconds'] = {'min':min(times), 'max':max(times), 'n':len(times)}
             parallel_questions = {}
-            if workflow.config.get('max_parallel', 2) == 2 and state['steps']+2 <= max_steps:
+            if workflow.config.get('max_parallel', 2) >= 2 and state['steps']+2 <= max_steps:
                 for a in choices:
                     if a['tool'] in {'presence_check','scene_check'}:
                         q = action_question(runtime, a, targets=targets)
@@ -941,13 +944,12 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 context['semantic_goal_contract'] = GOAL_CONTRACT
             from TCM_Fusion.lib.agent.planning_choices import attach
             context = attach(runtime, context, targets=targets, can_pair=bool(
-                workflow.config.get('max_parallel',2)==2 and state['steps']+2<=max_steps
+                workflow.config.get('max_parallel',2)>=2 and state['steps']+2<=max_steps
                 and current_budget['observation']>=2 and current_budget['network']>=2
                 and current_budget['total']>=4))
             if physical_runner and not physical_runner.tasks and state['steps']+2 <= max_steps:
-                pairs = physical_runner.options(context['actions'], targets, current_budget)
-                if pairs:
-                    context['execution_options']['physical_pairs'] = pairs
+                context['execution_options'].update(physical_runner.options(
+                    context['actions'],targets,current_budget,max_steps-state['steps']))
             if workflow.config.get('context_compact', False):
                 from TCM_Fusion.lib.agent.planning_context import compact as compact_d3
                 context, cursor, audit = compact_d3(context, state.get('context_cursor'))
@@ -1030,16 +1032,20 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     'requested':'finish', 'actual':'request_review',
                     'qualification_blockers':state['finish_veto'], 'new_planning_requests':0})
             error = None
-            partner = None
-            if isinstance(reply,dict) and 'physical_partner_id' in reply:
-                pair = [reply.get('action_id'),reply['physical_partner_id']]
-                offered = (context.get('execution_options') or {}).get('physical_pairs',[])
-                if ((reply.get('execution_choice') or {}).get('kind') != 'physical_pair'
-                        or (pair not in offered and pair[::-1] not in offered)
+            partners = []
+            if isinstance(reply,dict) and ('physical_partner_ids' in reply or 'physical_partner_id' in reply):
+                from TCM_Fusion.lib.agent.planning_choices import physical_allowed
+                rest = reply.get('physical_partner_ids',[reply.get('physical_partner_id')])
+                ids = [reply.get('action_id'),*rest] if isinstance(rest,list) else []
+                kind = (reply.get('execution_choice') or {}).get('kind')
+                if (kind not in {'physical_pair','physical_group'} or (kind=='physical_pair' and len(ids)!=2)
+                        or ('physical_partner_ids' in reply and 'physical_partner_id' in reply)
+                        or not physical_allowed(ids,context.get('execution_options') or {})
                         or any(k in reply for k in ('parallel_question_id','parallel_observation_id','semantic_goal'))):
                     error = 'physical_pair_unavailable'
                 else:
-                    partner = next(a for a in context['actions'] if a['action_id']==pair[1])
+                    by_id = {a['action_id']:a for a in context['actions']}
+                    partners = [by_id[p] for p in rest]
             if chosen is None:
                 error = "action_unavailable"
             is_stop = chosen is not None and chosen["tool"] in {"finish", "request_review"}
@@ -1159,7 +1165,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 events.append({'phase':'hypothesis_update_requested','decision_source':planner_source,
                                'updates':updates,'is_evidence':False,'applies':'after_current_action'})
             update = {"selected": chosen, "events": events, "requests": requests, "planning_requests": planning,
-                      "physical_partner": partner,
+                      "physical_partners": partners,
                       "semantic_plan": semantic_plan,
                       "parallel_observation": companion,
                       "pending_hypothesis_updates": updates or [],
@@ -1328,7 +1334,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         companion = None
         if autonomous and not state.get('_parallel_child'):
             companion = state.get('parallel_observation')
-        if adaptive and runtime.workflow.config.get('max_parallel',1)==2 and not state.get('_parallel_child') and state['steps']+2<=max_steps and state['requests']<max_requests:
+        if adaptive and runtime.workflow.config.get('max_parallel',1)>=2 and not state.get('_parallel_child') and state['steps']+2<=max_steps and state['requests']<max_requests:
             layer=runtime.tools.get(action['tool']).budget_class
             other_layer='observation' if layer=='recompute' else 'recompute' if layer=='observation' else None
             companion=next((a for a in state['actions'] if not a.get('mandatory') and
@@ -1591,10 +1597,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         return state
 
     async def act(state):
-        partner = state.get('physical_partner')
-        if physical_runner and partner:
-            actions = [state['selected'],partner]
-            state = {**state,'physical_partner':None,'events':list(state['events'])}
+        partners = state.get('physical_partners')
+        if physical_runner and partners:
+            actions = [state['selected'],*partners]
+            state = {**state,'physical_partners':[],'events':list(state['events'])}
             try:
                 physical_bindings.update({a['action_id']:(controller.key(a),controller.binding(a)) for a in actions})
                 physical_runner.start(actions)
@@ -1604,7 +1610,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 state['needs_review'] = True
                 state['stop_reason'] = 'physical_pair_rejected'
                 return state
-            state['steps'] += 2
+            state['steps'] += len(actions)
             state['attempted'] = state['attempted']+[a['action_id'] for a in actions]
             return await collect_physical(state,allow_wakeup=state['steps']<max_steps)
         if physical_runner and physical_runner.tasks:

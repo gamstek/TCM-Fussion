@@ -20,7 +20,7 @@ _UNKNOWN_ON_CLOSE = 'WORKFLOW_CLOSED_WITHOUT_HTTP_RESULT'
 
 
 def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool=None, probe=None,
-            partner_key=None):
+            partner_key=None, additional_keys=()):
     handle=acquire(path)
     try:
         value=read_json(path)
@@ -32,10 +32,11 @@ def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool
             raise IntegrationError('BRANCH_REVOKED','已撤销分支禁止新请求')
         if time.time()>value['deadline']:raise IntegrationError('WORKFLOW_TIMEOUT','任务时间预算耗尽')
         reservations = [(pool, key)]
-        if partner_key is not None:
-            if partner_key == key or extra_pool or probe:
-                raise IntegrationError('BUDGET_SCOPE','双阶段须为不同键、同一物理阶段池')
-            reservations.append((pool, partner_key))
+        partners = [*additional_keys] if partner_key is None else [partner_key,*additional_keys]
+        if partners:
+            if len(set([key,*partners])) != 1+len(partners) or extra_pool or probe:
+                raise IntegrationError('BUDGET_SCOPE','并行阶段须为不同键、同一物理阶段池')
+            reservations.extend((pool,k) for k in partners)
         if extra_pool:
             reservations.append((extra_pool, 'api:' + key))
         if any(k in value['entries'] for _, k in reservations):return False

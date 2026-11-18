@@ -1,8 +1,8 @@
-"""为同一样品的两个跨视野物理动作冻结输入、预算和写入范围。worker 只准备私有工件。
+"""为同一样品的跨视野物理动作组冻结输入、预算和写入范围。worker 只准备私有工件。
 协调者逐支校验并发布；关闭、重复回执和发布进程中断均以磁盘账本与证据祖先为准。
 
 主要定义：
-- reserve_pair 绑定本轮合法动作，prepare 按票据执行一次，publish 处理单支回执。
+- reserve_group 绑定本轮合法动作，prepare 按票据执行一次，publish 处理单支回执。
 - fence_locked 在关闭或接管运行时对账已发布版本，隔离其余未提交结果。
 
 关联：
@@ -32,16 +32,16 @@ def locked(session):
 
 
 def enabled(session):
-    return (session.config.get('physical_parallel') is True
-            and session.config.get('agent_policy') == 'adaptive_v2'
-            and session.config.get('max_parallel', 2) == 2)
+    return (session.config.get('agent_policy') == 'adaptive_v2'
+            and session.config['physical_parallel'] is True
+            and 2 <= session.config['max_parallel'] <= 4)
 
 
 def allows_single(pending, tool, target):
     """慢支只写私有目录时，允许另一视野已选中的单实例工作立即启动。"""
-    return (len(pending)==1 and bool(pending[0].get('epoch'))
+    return (bool(pending) and all(r.get('epoch') for r in pending)
             and tool == 'classify_target'
-            and pending[0]['image_id'] != target.get('image_id'))
+            and all(r['image_id'] != target.get('image_id') for r in pending))
 
 
 def _scope(snapshot, image):
@@ -57,8 +57,16 @@ def check_live(session):
 
 
 def reserve_pair(session, actions):
-    if not enabled(session) or len(actions) != 2 or actions[0]['tool'] not in POOLS or actions[0]['tool'] != actions[1]['tool']:
-        raise IntegrationError('PAIR_DENIED', '实验开关及同类双阶段约束未满足')
+    if len(actions) != 2:
+        raise IntegrationError('PAIR_DENIED','双动作接口需要两个动作')
+    return reserve_group(session,actions)
+
+
+def reserve_group(session, actions):
+    tools = {a['tool'] for a in actions}
+    if (not enabled(session) or not 2 <= len(actions) <= session.config['max_parallel']
+            or len(tools)!=1 or not tools <= POOLS.keys()):
+        raise IntegrationError('PAIR_DENIED', '物理并发宽度或同类阶段约束未满足')
     with locked(session) as book:
         check_live(session)
         session.store.verified_records()
@@ -82,10 +90,9 @@ def reserve_pair(session, actions):
                 'dependency_fingerprint':session.dependency_fingerprint(tool,target),
                 'status':'pending', 'phase':'reserved', 'accepted':False, 'repair_completed':False,
                 'selected_at':time.time(), 'target':target})
-        first, second = rows
-        if first['image_id'] == second['image_id'] or (
-                first.get('semantic_key') and first['semantic_key'] == second.get('semantic_key')):
-            raise IntegrationError('PAIR_OVERLAP', '两项触及同一视野或同一实例')
+        instances = [row['semantic_key'] for row in rows if row.get('semantic_key')]
+        if len({r['image_id'] for r in rows}) != len(rows) or len(set(instances)) != len(instances):
+            raise IntegrationError('PAIR_OVERLAP', '组内动作触及同一视野或同一实例')
         if any(r['status']=='pending' for r in book['entries'].values()):
             raise IntegrationError('WORKFLOW_BUSY','已有预约')
         keys = [r['operation_key'] for r in rows]
@@ -96,8 +103,8 @@ def reserve_pair(session, actions):
         # 在允许 worker 看见预约前，先持锁持久化意图。中断后只对账，不自动重发。
         write_json(session.operations,book)
         try:
-            if not reserve(session.budget_path, POOLS[first['tool']], keys[0], session.limits,
-                           identity=session.identity, partner_key=keys[1]):
+            if not reserve(session.budget_path, POOLS[rows[0]['tool']], keys[0], session.limits,
+                           identity=session.identity, additional_keys=keys[1:]):
                 raise IntegrationError('RESOURCE_REPLAY','该阶段已预约')
         except Exception:
             for key in keys:
