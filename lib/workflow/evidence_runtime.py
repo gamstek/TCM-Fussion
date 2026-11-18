@@ -104,12 +104,12 @@ class EvidenceRuntime:
         threshold = workflow.config.get('min_support_features') if workflow is not None else None
         decision = decide(self.kb, cards, scene=scene, min_support_features=threshold)
         observation_states=[]
+        from TCM_Fusion.lib.evidence.evidence_projection import presence_state
         for observation in observations:
-            action=observation['action'];result=observation.get('result',{})
+            action=observation['action']
             if action['tool']=='presence_check':
-                valid=observation.get('accepted') and result.get('ok') is True and result.get('conf',0)>=0.5
                 observation_states.append({'image_id':action['args']['image_id'],'feature_id':action['args']['feature_id'],
-                    'state':('present' if result.get('present') else 'absent') if valid else 'unknown',
+                    'state':presence_state(observation, self.kb),
                     'scope':'observed_fov_only'})
         return {"cards": cards, "scene": scene, "decision": decision,
                 'observation_states':observation_states,

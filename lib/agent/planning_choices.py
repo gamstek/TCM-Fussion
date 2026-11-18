@@ -18,14 +18,73 @@ react_graph最终仍逐项校验并晚绑定。model_view仅作短编号映射�
 import copy
 import re
 
-from TCM_Fusion.lib.decision.comparison_problems import action_question
+from TCM_Fusion.lib.decision.comparison_problems import _action_feature, action_question
 from TCM_Fusion.lib.runtime.storage import IntegrationError, digest
 
 
-def attach(runtime, context, *, can_pair):
+def action_state(runtime, actions, evidence, targets):
+    """投影实际菜单里可直接执行的步骤和同视野记录；不从观察文本推断状态。"""
+    presence = {}
+    for row in evidence.get('observation_states', []):
+        key = (row['image_id'], row['feature_id'])
+        presence.setdefault(key, set()).add(row['state'])
+    rows = {}
+    for action in actions:
+        tool = action['tool']
+        args = action.get('args') or {}
+        target = targets.get(args.get('target_id'), {})
+        image = args.get('image_id') or target.get('image_id')
+        if image not in runtime.images or runtime.tools.get(tool).layer == 'read':
+            continue
+        fid = _action_feature(action, targets)
+        row = {'image_id': image, 'entry_kind': 'discovery' if tool == 'detect_fov_initial'
+               else 'current_step'}
+        if fid:
+            row.update(feature_id=fid, presence_states=sorted(presence.get((image, fid), ())))
+        rows[action['action_id']] = row
+    return rows
+
+
+def add_crop_reuse_hints(rows, actions, targets):
+    """给同视野同特征的补扫关联已有裁图入口；不重排、过滤或自动执行工具。"""
+    reuse = {}
+    for action in actions:
+        tool = action['tool']
+        row = rows.get(action['action_id'])
+        if row is None or tool not in {'classify_target', 'classify_crops_batch',
+                                       'segment_instance', 'measure_instances'}:
+            continue
+        target = targets.get(action['args'].get('target_id'), {})
+        crops = (target.get('crops', []) if tool == 'classify_crops_batch' else
+                 [targets.get(target.get('crop_id'), target)])
+        for crop in crops:
+            if (crop.get('kind') != 'crop' or crop.get('box_source') != 'yolo'
+                    or crop.get('box_quality') not in {'usable', 'low_detail', 'tiny'}
+                    or not crop.get('valid')):
+                continue
+            fid = _action_feature({'args': {'target_id': crop['id']}}, targets)
+            if fid:
+                entries = reuse.setdefault((crop['image_id'], fid), {})
+                entries[action['action_id']] = None
+    for action in actions:
+        row = rows.get(action['action_id'])
+        if row is None or action['tool'] != 'feature_scan':
+            continue
+        entries = reuse.get((row['image_id'], row.get('feature_id')))
+        if entries:
+            row['existing_crop_actions'] = list(entries)[:3]
+            scan = targets.get(action['args']['target_id'], {})
+            row['max_scan_tiles'] = scan.get('max_tiles')
+
+
+def attach(runtime, context, *, can_pair, targets=None):
     """给当前实际可见动作建立目标/问题入口；不把菜单外动作偷偷加进来。"""
     out = dict(context)
     actions = context['actions']
+    targets = runtime.workflow.targets() if targets is None else targets
+    out['action_state'] = action_state(runtime, actions + context.get('parallel_observations', []),
+                                       context.get('evidence') or {}, targets)
+    add_crop_reuse_hints(out['action_state'], actions, targets)
     active = set(runtime.candidate_interest()['ids'])
     criteria = [dict(c, candidate_id=r['id']) for r in runtime.kb.candidates()
                 if r['id'] in active for c in r['criteria']]
@@ -34,7 +93,7 @@ def attach(runtime, context, *, can_pair):
         for a in actions:
             if a['tool'] not in {'presence_check', 'scene_check'}:
                 continue
-            q = action_question(runtime, a)
+            q = action_question(runtime, a, targets=targets)
             consumers = sorted({c['candidate_id'] for c in criteria if c['feature'] == q['feature_id']})
             questions.append({**q, 'action_id':a['action_id'], 'tool':a['tool'],
                 'shared_consumers':consumers,
@@ -79,6 +138,11 @@ def model_view(context):
     for field in ('actions','parallel_observations'):
         out[field] = [{**a,'action_id':aliases[a['action_id']]} for a in out.get(field,[])]
     out['action_objectives'] = {aliases[k]:v for k,v in out.get('action_objectives',{}).items() if k in aliases}
+    if 'action_state' in out:
+        out['action_state'] = {aliases[k]: v for k,v in out['action_state'].items() if k in aliases}
+        for row in out['action_state'].values():
+            if 'existing_crop_actions' in row:
+                row['existing_crop_actions'] = [aliases[a] for a in row['existing_crop_actions'] if a in aliases]
     for field in ('verification_opportunities', 'investigation_opportunities'):
         if field in out:
             out[field] = [{**r,'action_id':aliases[r['action_id']]}
@@ -99,6 +163,8 @@ def model_view(context):
     if 'entry_path_details' in comparison:
         comparison['entry_path_details'] = [{**p, 'action_id':aliases[p['action_id']]}
             for p in comparison['entry_path_details'] if p['action_id'] in aliases]
+    for query in comparison.get('shared_queries', []):
+        query['legal_action_ids'] = [aliases[a] for a in query.get('legal_action_ids', []) if a in aliases]
     for problem in comparison.get('questions', []):
         problem['legal_action_ids'] = [aliases[a] for a in problem.get('legal_action_ids', []) if a in aliases]
         problem['entry_paths'] = [{**p, 'action_id': aliases[p['action_id']]}
@@ -196,10 +262,11 @@ def audit(context):
     return {'schema':'planner-offer/v1','actions':context['actions'],
         'execution_options':context.get('execution_options',{}),
         'parallel_observations':context.get('parallel_observations',[]),
+        'action_state':context.get('action_state', {}),
         'remaining_budget':context.get('remaining_budget'),
         'investigation_opportunities':context.get('investigation_opportunities', []),
         'investigation': {k:((context.get('evidence')or{}).get('workflow')or{}).get(k)
-                          for k in ('comparison_problems','investigation_focus')},
+                          for k in ('comparison_problems','investigation_focus','candidate_audit')},
         'reflection_offer': {k:v for k,v in ((context.get('task_reflection')or{}).get('pending')or{}).items()
             if k in {'issue_id','revision','reflection_id','evidence_refs'}},
         'context_sha256':digest(context)}

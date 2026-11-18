@@ -35,8 +35,8 @@ class PlanningChoicesTests(unittest.TestCase):
         r.investigate(['G3'],'explicit test scope',r.score([])['evidence_digest'])
         return r
 
-    def context(self,r,**kw):
-        c={'actions':r.legal_actions({'observations':[],'attempted':[]}),
+    def context(self,r,*,observations=None,**kw):
+        c={'actions':r.legal_actions({'observations':observations or [],'attempted':[]}),
            'stop_advisory':{},'parallel_observations':[],**kw}
         return attach(r,c,can_pair=True)
 
@@ -66,6 +66,70 @@ class PlanningChoicesTests(unittest.TestCase):
         self.assertIn(reply['action_id'],[a['action_id'] for a in c['actions']])
         self.assertEqual(p.last_request_menu['execution_options'],captured['execution_options'])
         self.assertNotIn('semantic_options',captured);self.assertNotIn('parallel_questions',captured)
+
+    def test_actual_llm_payload_keeps_legal_yolo_distinct_from_unchecked_evidence(self):
+        r=self.runtime(agent_policy='adaptive_v2')
+        image=next(iter(r.images))
+        observation={'accepted':True,'action':{'tool':'presence_check',
+            'args':{'image_id':image,'feature_id':'sand_crystal'}},
+            'result':{'ok':True,'present':True,'conf':.8}}
+        audit={'candidates':[{'candidate_id':'test','required':{'vessel':'unchecked'}}]}
+        c=self.context(r,observations=[observation],evidence={'workflow':{'candidate_audit':audit},
+            'observation_states':r.score([observation])['observation_states']})
+        p=LLMPlanner.__new__(LLMPlanner)
+        p.client=SimpleNamespace(model='fixture',timeout_s=2)
+        p.config={}
+
+        def post(payload,timeout):
+            ctx=json.loads(payload['messages'][1]['content'])
+            yolo=next(a for a in ctx['actions'] if a['tool']=='detect_fov_initial')
+            self.assertIn('scene_check',{a['tool'] for a in ctx['actions']})
+            self.assertEqual(ctx['action_state'][yolo['action_id']],
+                             {'image_id':image,'entry_kind':'discovery'})
+            self.assertEqual(ctx['evidence']['workflow']['candidate_audit'],audit)
+            return {'choices':[{'message':{'content':json.dumps({
+                'decision':{'kind':'action','action_id':yolo['action_id']}})}}]}
+
+        with patch('TCM_Fusion.lib.runtime.hard_calls.post',side_effect=post) as mock_post:
+            reply,_=p.choose(c)
+        mock_post.assert_called_once()
+        self.assertEqual(p.last_request_menu['investigation']['candidate_audit'],audit)
+        self.assertEqual(reply['action_id'],
+                         next(a['action_id'] for a in c['actions'] if a['tool']=='detect_fov_initial'))
+
+    def test_same_view_existing_yolo_crop_and_scan_are_both_available(self):
+        class ReadableCrop(fixtures.StageFixture):
+            def execute(self,session,tool,target,work,context):
+                result=super().execute(session,tool,target,work,context)
+                if tool=='detect_fov_initial':
+                    from PIL import Image
+                    pixels=Image.new('L',(8,8))
+                    pixels.putdata([255 if (i + i//8)%2 else 0 for i in range(64)])
+                    pixels.save(Path(result['crops_dir'])/'crop.png')
+                return result
+
+        r=self.runtime(backend=ReadableCrop(),agent_policy='adaptive_v2',
+                       fast_recovery_selection='per_feature',fast_fallback_max_features=10)
+        r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        r.investigate(['G3'],'explicit test scope',r.score([])['evidence_digest'])
+        c=self.context(r)
+        scan=next(a for a in c['actions'] if a['tool']=='feature_scan'
+                  and c['action_state'][a['action_id']]['feature_id']=='single_crystal')
+        crop=next(a for a in c['actions'] if a['tool']=='classify_target')
+        hint=c['action_state'][scan['action_id']]
+        self.assertIn(crop['action_id'],hint['existing_crop_actions'])
+        self.assertGreater(hint['max_scan_tiles'],0)
+        self.assertEqual(hint['presence_states'],[])
+        view,ids=model_view(c)
+        short=lambda action: next(k for k,v in ids.items() if v==action['action_id'])
+        self.assertIn(short(crop),view['action_state'][short(scan)]['existing_crop_actions'])
+        # A legal entry hidden by menu compaction must not show up as an offered choice.
+        actions=[a for a in c['actions'] if a['action_id']!=crop['action_id']]
+        shortened=attach(r,{**c,'actions':actions},can_pair=True)
+        self.assertNotIn(crop['action_id'],
+                         shortened['action_state'][scan['action_id']].get('existing_crop_actions',[]))
+        explicit=decode({'decision':{'kind':'action','action_id':short(scan)}},view)
+        self.assertEqual(ids[explicit['action_id']],scan['action_id'])
 
     def test_explicit_goal_runs_dependencies_and_returns_without_replanning_each_tool(self):
         r=self.detected(auto_measure_after_segment=False);seen=[]

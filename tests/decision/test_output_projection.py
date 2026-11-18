@@ -32,6 +32,9 @@ class OutputProjectionTest(unittest.TestCase):
         self.assertEqual(len(out["strong_observations"]), 2)
         self.assertEqual(out["strong_observations"][0]["view"], "view_01")
         self.assertIn("菟丝子", out["strong_observations"][0]["supporting_candidates"])
+        self.assertEqual(out["strong_observations"][1]["scope"], "observed_fov_only")
+        self.assertEqual(out["strong_observations"][1]["qualification"], "presence_only")
+        self.assertEqual(out["strong_observations"][1]["supporting_candidates"], [])
 
     def test_confirmed_maps_to_confirmed(self):
         verdict = _verdict()

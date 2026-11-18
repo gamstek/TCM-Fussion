@@ -126,6 +126,11 @@ class LLMPlanner:
                         "竞争候选一次阳性不自动成为其他药材的反证，也不使主解释未查项消失。"
                         "comparison_problems的问题卡同时列出直接入口和discovery_prerequisite；"
                         "无实例时YOLO初检仍可推进定量特征，尚不能选分割不等于无路可查。"
+                        "以actions和action_state为准：编号已经出现即本轮可选，scene_check不会解锁已列出的动作。"
+                        "菜单是可执行入口，不是执行回执。candidate_audit的unchecked保持未查；"
+                        "presence_states只说明该视野该类已有的存在性观察，空数组表示无此类记录。"
+                        "补扫若带existing_crop_actions，先比较复用同视野同类已有裁图的价值与max_scan_tiles成本；"
+                        "需要新位置或已有裁图不足时仍可选补扫。现有裁图本身不证明身份或合格量纲。"
                         "你比较各取证路线的价值与成本，自主选择顺序；不要求每个supporting逐项付费打卡。"
                          "可选investigate_candidates（hypothesis_catalog或hypothesis_catalog_index中最多3个ID）和investigation_reason，"
                         "用于下一轮扩展调查，不等于证据或确认。扩展时本轮宜选择只读动作核查判据。"
@@ -841,17 +846,13 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             if choice_feedback:
                 context['selection_feedback']=choice_feedback[-2:]
             history = [e['feedback'] for e in events if isinstance(e.get('feedback'), dict)]
-            present = {fid for fid, card in context['evidence'].get('cards', {}).items()
-                       if card.get('present')}
+            targets = workflow.targets()
             for action in model_actions:
                 if action['action_id'] not in context['action_objectives']:
                     continue
-                question = action_question(runtime, action)
+                question = action_question(runtime, action, targets=targets)
                 row = context['action_objectives'][action['action_id']]
                 row['question_id'] = question['question_id']
-                fid = question['feature_id']
-                row['incremental_value'] = ('该类已有观察；可核验实例/形态，但同类实例不会增加独立特征类别数'
-                    if fid in present else '可能补充尚未采信的特征；实际资格由工具和规则判定')
                 times = [f['latency_ms']/1000 for f in history
                          if f.get('latency_ms') and f.get('objective') == row['objective']][-6:]
                 if times:
@@ -860,9 +861,9 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             if workflow.config.get('max_parallel', 2) == 2 and state['steps']+2 <= max_steps:
                 for a in choices:
                     if a['tool'] in {'presence_check','scene_check'}:
-                        q = action_question(runtime, a)
+                        q = action_question(runtime, a, targets=targets)
                         parallel_questions[q['question_id']] = a
-                context['parallel_questions'] = [action_question(runtime, a) for a in parallel_questions.values()
+                context['parallel_questions'] = [action_question(runtime, a, targets=targets) for a in parallel_questions.values()
                                                  if a['tool']=='presence_check']
             try:
                 from TCM_Fusion.lib.evidence.search_ledger import render_shared
@@ -932,7 +933,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 context['semantic_options'] = options(runtime, choices)
                 context['semantic_goal_contract'] = GOAL_CONTRACT
             from TCM_Fusion.lib.agent.planning_choices import attach
-            context = attach(runtime, context, can_pair=bool(
+            context = attach(runtime, context, targets=targets, can_pair=bool(
                 workflow.config.get('max_parallel',2)==2 and state['steps']+2<=max_steps
                 and current_budget['observation']>=2 and current_budget['network']>=2
                 and current_budget['total']>=4))

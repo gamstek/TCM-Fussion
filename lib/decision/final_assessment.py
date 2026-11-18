@@ -196,6 +196,7 @@ def _compact_fact(fact):
     elif kind=='observation':
         action=data.get('action') or {};result=data.get('result') or {}
         data={'accepted':data.get('accepted'),'scope':data.get('scope'),
+              'observation_state':data.get('observation_state'),
               'action':{'tool':action.get('tool'),'args':{k:action.get('args',{}).get(k)
                         for k in ('image_id','feature_id')}},
               'result':{k:result.get(k) for k in ('ok','present','conf','reason')
@@ -233,7 +234,7 @@ def compact_packet(packet, limit=120000):
                               if k in {'artifact_id','feature_id','label','identity_verified',
                                        'image_stem','instance_id','calibration_px_per_um',
                                        'calibration_status','use_qualification','state',
-                                       'present','reliability','accepted','scope','status'}}
+                                       'present','reliability','accepted','scope','status','observation_state'}}
         text=json.dumps(model,ensure_ascii=False)
         if len(text)<=limit:return model
     model['facts']=[{'id':f['id'],'kind':f['kind'],
@@ -268,7 +269,9 @@ def request_model(runtime, packet):
          '不得绕过正式规则确认、编造尺寸或把不可判当成不存在。仅返回JSON：'
          '{"candidate_id":"已有候选ID或null","support_refs":["事实ID"],'
          '"counter_refs":[],"unresolved_refs":[],"explanation":"结合事实的简短分析"}。'
-         'support_refs只能选supports_candidate_ids含该候选的事实；counter_refs同理。'
+         'support_refs可引用合格判据或该候选相关的局部存在性线索，解释里要区分两者。'
+         'counter_refs仅引用该候选的量纲判据反证；同一视野未见只描述观察范围。'
+         '未知包括不可判、失败和未查；不能用它们否定特征或药材。'
          '优先从candidate索引的eligible_support_refs/eligible_counter_refs选择已有ID。'
          '解释中引用事实ID。A仅是先验，不得将融合分数写成已校准正确率。'
          'explanation只分析证据、冲突和缺口，不复述任何分数、概率或数值；数值由程序按候选ID输出。'
@@ -372,14 +375,20 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
                         + ' 待核验，正式证据不足。')
     compared=list(dict.fromkeys([r['id'] for r in formal.get('ranking',[])]+([cid] if cid else [])))
     comparison=[]
+    checks_by_candidate={}
+    for f in packet['facts']:
+        if f['kind']=='criterion':
+            checks_by_candidate.setdefault(f['data']['candidate_id'], []).append(f)
     for identifier in compared:
         candidate=next((c for c in packet['candidates'] if c['id']==identifier),{})
         fused=next((r.get('fused_score') for r in formal.get('ranking',[]) if r['id']==identifier),None)
-        checks=[f for f in packet['facts'] if f['kind']=='criterion' and f['data']['candidate_id']==identifier]
+        checks=checks_by_candidate.get(identifier, [])
+        supported=[f for f in checks if reference_allowed(f, identifier)]
         comparison.append({'candidate_id':identifier,'display':candidate.get('display',identifier),
             'rule_confidence':candidate.get('rule_confidence'),'fused_score':fused,
             'support_count':candidate.get('support_count'),
-            'supported_criteria':[f['id'] for f in checks if identifier in f['supports_candidate_ids']],
+            'verified_feature_count':len({f['data']['feature_id'] for f in supported}),
+            'supported_criteria':[f['id'] for f in supported],
             'required_gaps':[f['id'] for f in checks if f['data'].get('role')=='required' and
                              f['data'].get('state') not in {'IN_RANGE','EXTREME','NO_REF'}]})
     selected=next((c for c in comparison if c['candidate_id']==cid),{})
@@ -407,9 +416,17 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
         narrative_warnings.append('MODEL_NUMERIC_CLAIM_UNVERIFIED')
     score_summary=(f"{selected.get('display',cid)}：B规则排序分={selected.get('rule_confidence')}；"
                    f"融合排序分={selected.get('fused_score')}；已验证独立特征类数="
-                   f"{selected.get('support_count')}；最低类数={threshold}。"
+                   f"{selected.get('verified_feature_count')}；B规则计分特征类数="
+                   f"{selected.get('support_count')}；B规则最低计分类数={threshold}。"
                    '上述分数不是校准正确率；交付复核要求见 review_reasons。' if cid else
                    '未选择药材候选，无法给出候选分数。')
+    scoped_observations={'present':[], 'absent':[]}
+    for f in packet['facts']:
+        data=f['data']
+        if f['kind']=='observation' and cid in data.get('related_candidate_ids', []):
+            state=data['observation_state']
+            if state in scoped_observations:
+                scoped_observations[state].append(f)
     value={'schema':'final-assessment/v1','method':method,'simulation':runtime.simulation,
         'stop_reason':result.get('stop_reason'),'candidate_id':cid,'candidate_display':row.get('display'),
         'termination':packet['termination'],
@@ -417,7 +434,9 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
         'status':level,'judgement':judgement,'explanation':explanation,
         'explanation_source':explanation_source,'narrative_warnings':narrative_warnings,
         'score_summary':score_summary,
-        'supporting_evidence':[facts[x] for x in reply['support_refs']],
+        'supporting_evidence':[facts[x] for x in reply['support_refs'] if facts[x]['kind']=='criterion'],
+        'presence_observations':scoped_observations['present'],
+        'local_absence_observations':scoped_observations['absent'],
         'counterevidence':[facts[x] for x in reply['counter_refs']],
         'unresolved':[facts[x] for x in reply['unresolved_refs']],
         'unresolved_scope':'selected candidate and execution facts; full cohort gaps in candidate_audit',
@@ -429,6 +448,7 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
         'review_required':not authorized,'review_reasons':review_reasons,'confidence_basis':{
             'rule_confidence':row.get('rule_confidence'),'calibrated_probability':None,
             'fused_score':selected.get('fused_score'),'support_count':selected.get('support_count'),
+            'verified_feature_count':selected.get('verified_feature_count'),
             'min_support_features':threshold,'level_meaning':'delivery_authorization_not_probability',
             'level':'high' if level=='confirmed' else 'medium' if authorized else 'low',
             'has_admitted_b_support':positive},

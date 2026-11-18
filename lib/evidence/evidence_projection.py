@@ -6,7 +6,7 @@ WorkflowRuntime 给规划器紧凑视图，final_assessment 复用同一事实�
 
 主要定义：
 - fact。内容及实际来源变动才改变 ID，无关操作不会使既有引用改号。
-- reference_allowed。共享授权：先验/失败/工件存在本身不能作药材支持；反证只表达其局部范围。
+- reference_allowed。共享引用资格；局部未见只进入观察，反证必须来自正式判据。
 - considered_candidates。
 - build。返回事实、候选资格和缺口；只读取当前证据，不新增模型调用。
 - compact。有界默认视图；完整候选/事实由既有只读工具按需取回。
@@ -29,11 +29,34 @@ def fact(kind, data, supports=(), counters=(), *, binding=None):
 
 
 def reference_allowed(row, candidate_id, relation='support'):
-    """共享授权：先验/失败/工件存在本身不能作药材支持；反证只表达其局部范围。"""
-    if candidate_id is None or row.get('kind') not in {'criterion', 'observation'}:
+    """存在性阳性可以引用为线索；只有正式判据可引用为反证。"""
+    if candidate_id is None:
         return False
-    field = 'supports_candidate_ids' if relation == 'support' else 'counters_candidate_ids'
-    return candidate_id in row.get(field, [])
+    if relation == 'support' and row.get('kind') in {'criterion', 'observation'}:
+        return candidate_id in row.get('supports_candidate_ids', [])
+    return (relation == 'counter' and row.get('kind') == 'criterion'
+            and candidate_id in row.get('counters_candidate_ids', []))
+
+
+def presence_state(observation, kb):
+    """分类局部观察，缺结果、失败和低置信均为未知。"""
+    action = observation.get('action') or {}
+    result = observation.get('result') or {}
+    fid = (action.get('args') or {}).get('feature_id')
+    if (observation.get('accepted') and action.get('tool') == 'presence_check'
+            and result.get('ok') is True and type(result.get('present')) is bool
+            and kb.tier(fid) in {'P1', 'C'}
+            and finite_number(result.get('conf'), minimum=.5, maximum=1)):
+        return 'present' if result['present'] else 'absent'
+    return 'unknown'
+
+
+def supports_criterion(check):
+    """判据级支持，兼容原 B 对无量纲要求的定性判据。"""
+    state = check.get('state')
+    return bool(check.get('present') and (check.get('score_contribution') or 0) > 0
+                and (state in {'IN_RANGE', 'EXTREME'} or
+                     state == 'NO_REF' and not check.get('quant_bounds')))
 
 
 def considered_candidates(runtime, decision, verdict=None):
@@ -98,18 +121,17 @@ def build(runtime, scored, observations, *, verdict=None):
         support = []; counter = []; diagnostic = []; invalid = []; gaps = []
         for check in row.get('checks', []):
             state = check.get('state'); quantitative = bool(check.get('quant_bounds'))
-            positive = bool(check.get('present') and (check.get('score_contribution') or 0) > 0
-                            and (state in {'IN_RANGE', 'EXTREME'} or
-                                 state == 'NO_REF' and not quantitative))
+            countered = bool(check.get('present') and quantitative and state == 'OUT_OF_RANGE')
+            positive = supports_criterion(check)
             data = {'candidate_id': cid, **copy.deepcopy(check),
                     'claim_scope': 'quantitative_criterion' if quantitative else 'presence_or_morphology',
                     'dimension_eligible': bool(quantitative and state in {'IN_RANGE', 'EXTREME', 'OUT_OF_RANGE'})}
             entry = fact('criterion', data, [cid] if positive else [],
-                         [cid] if state == 'OUT_OF_RANGE' else [],
+                         [cid] if countered else [],
                          binding=bindings.get(check.get('feature_id'), []))
             facts.append(entry); catalog[-1]['check_refs'].append(entry['id'])
             if positive: support.append(entry['id'])
-            elif state == 'OUT_OF_RANGE': counter.append(entry['id'])
+            elif countered: counter.append(entry['id'])
             else: diagnostic.append(entry['id'])
             if quantitative and state not in {'IN_RANGE', 'EXTREME', 'OUT_OF_RANGE'}:
                 invalid.append({'feature_id': check['feature_id'], 'dimension': check['quant_bounds'].get('dim'),
@@ -129,24 +151,19 @@ def build(runtime, scored, observations, *, verdict=None):
         args = action.get('args') or {}; fid = args.get('feature_id')
         related = [cid for cid, checks in checks_by_candidate.items()
                    if any(c.get('feature_id') == fid for c in checks)]
-        valid = bool(obs.get('accepted') and result.get('ok') is True and
-                     action.get('tool') == 'presence_check' and runtime.kb.tier(fid) in {'P1', 'C'} and
-                     type(result.get('present')) is bool and
-                     finite_number(result.get('conf'), minimum=.5, maximum=1))
-        observed_state = ('present' if result.get('present') else 'absent') if valid else 'unknown'
+        observed_state = presence_state(obs, runtime.kb)
         entry = fact('observation', {'accepted': bool(obs.get('accepted')),
             'action': {k: action.get(k) for k in ('tool', 'args', 'action_id')}, 'result': result,
             'observation_state': observed_state, 'dimension_eligible': False,
+            'related_candidate_ids': sorted(related),
             'scope': 'bound field of view only; failure is unknown, absence does not exclude a sample'},
-            related if valid and result['present'] else [], related if valid and not result['present'] else [],
+            related if observed_state == 'present' else [],
             binding=runtime.images.get(args.get('image_id'), {}).get('sha256'))
         facts.append(entry)
         for row in projections:
             if row['candidate_id'] in related:
                 # 观察可支持局部存在性解释，不替代定量 required；其缺口保留。
-                field = ('formal_counter' if observed_state == 'absent' else
-                         'diagnostic_only')
-                row[field].append(entry['id'])
+                row['diagnostic_only'].append(entry['id'])
                 for gap in row['gaps']:
                     if gap['feature_id'] == fid:
                         prior = gap.get('observation_state', 'unknown')

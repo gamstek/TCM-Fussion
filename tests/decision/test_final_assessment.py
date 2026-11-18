@@ -208,14 +208,59 @@ class FinalAssessmentTests(unittest.TestCase):
         with self.assertRaises(IntegrationError):
             validate_reply(packet,{**good,'support_refs':[failed['id']]})
 
-    def test_true_negative_is_scoped_counterevidence_not_global_absence(self):
+    def test_local_absence_in_another_view_is_not_candidate_counterevidence(self):
+        second=self.root/'second.png'
+        second.write_bytes(b'second-fixture')
+        runtime=WorkflowRuntime([self.image,second],root=self.root/'two-views',sample_id='s',
+            a=self.runtime.a,simulation=True,backend=StageFixture(),
+            workflow_config={'agent_policy':'adaptive_v2'})
         negative=copy.deepcopy(self.observation)
-        negative['action']['args']['feature_id']='secretory_tissue'
+        image=next(img for img in runtime.images if img!=negative['action']['args']['image_id'])
+        negative['action']['args']['image_id']=image
         negative['result']['present']=False
-        packet=build_packet(self.runtime,self.verdict,{**self.result,'observations':[negative]})
-        obs=next(f for f in packet['facts'] if f['kind']=='observation')
-        self.assertIn('桔梗',obs['counters_candidate_ids'])
+        result={**self.result,'observations':[self.observation,negative]}
+        packet=build_packet(runtime,self.verdict,result)
+        obs=next(f for f in packet['facts'] if f['kind']=='observation'
+                 and f['data']['observation_state']=='absent')
+        self.assertIn('秦皮',obs['data']['related_candidate_ids'])
+        self.assertEqual(obs['counters_candidate_ids'],[])
         self.assertIn('bound field of view',obs['data']['scope'])
+        good,_=self.reply(packet)
+        with self.assertRaises(IntegrationError):
+            validate_reply(packet,{**good,'counter_refs':[obs['id']]})
+        value=finalize(runtime,self.verdict,result,self.root/'same-feature')
+        self.assertEqual(value['local_absence_observations'],[obs])
+        self.assertTrue(value['presence_observations'])
+        self.assertEqual(value['counterevidence'],[])
+        self.assertTrue(all(f['kind']=='criterion' for f in value['supporting_evidence']))
+
+    def test_uncalibrated_score_contribution_does_not_count_as_a_verified_feature(self):
+        verdict,scored=self.single_feature_verdict()
+        top=next(r for r in scored['decision']['ranking'] if r['id']=='秦皮')
+        top['support_count']=2
+        top['checks'].append({'feature_id':'fiber','present':True,'role':'supporting',
+                              'state':'UNCAL','quant_bounds':{'dim':'width','min':1,'max':2},
+                              'score_contribution':.5})
+        with patch.object(self.runtime,'score',return_value=scored):
+            value=finalize(self.runtime,verdict,self.result,self.root/'two-counts',responder=self.reply)
+        self.assertEqual(value['confidence_basis']['support_count'],2)
+        self.assertEqual(value['confidence_basis']['verified_feature_count'],1)
+        self.assertIn('已验证独立特征类数=1',value['score_summary'])
+        self.assertIn('B规则计分特征类数=2',value['score_summary'])
+
+    def test_only_quantitative_criterion_can_be_referenced_as_counterevidence(self):
+        scored=self.runtime.score(self.result['observations'])
+        top=next(r for r in scored['decision']['ranking'] if r['id']=='秦皮')
+        top['checks'].append({'feature_id':'fiber','present':True,'role':'supporting',
+                              'state':'OUT_OF_RANGE','quant_bounds':{'dim':'width','min':1,'max':2},
+                              'score_contribution':0.0})
+        with patch.object(self.runtime,'score',return_value=scored):
+            packet=build_packet(self.runtime,self.verdict,self.result)
+        counter=next(f for f in packet['facts'] if f['kind']=='criterion'
+                     and '秦皮' in f['counters_candidate_ids'])
+        good,_=self.reply(packet)
+        reply={**good,'counter_refs':[counter['id']]}
+        self.assertEqual(validate_reply(packet,reply),reply)
 
     def test_invalid_model_answer_falls_back_without_new_tools(self):
         def bad(packet):

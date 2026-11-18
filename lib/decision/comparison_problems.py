@@ -57,15 +57,16 @@ def presence_key(runtime, action):
                    'model': runtime.config_identity, 'kb': runtime.kb_sha256})
 
 
-def action_question(runtime, action):
+def action_question(runtime, action, *, targets=None):
     """跨工具的物理调查身份；候选是消费者，扫描→crop身份核验不是换问题。
 
     同源同类身份问题共用ID；实例/方法/输入仍由原执行键区分，不改变权限或去重键。
     专门形态提示单列语义范围，不能把不同观察问题合并为一次证据。
     """
     args = action.get('args') or {}
-    workflow = getattr(runtime, 'workflow', None)
-    targets = workflow.targets() if workflow is not None else {}
+    if targets is None:
+        workflow = getattr(runtime, 'workflow', None)
+        targets = workflow.targets() if workflow is not None else {}
     target = targets.get(args.get('target_id'), {})
     image = args.get('image_id') or target.get('image_id')
     if not image and args.get('target_id') in runtime.images:

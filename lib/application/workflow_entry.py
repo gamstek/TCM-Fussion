@@ -37,7 +37,6 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'min_support_features':{'type':'integer','enum':[1,2]},
     'final_assessment_llm':{'type':'boolean'},
     'final_assessment_seconds':{'type':'number','exclusiveMinimum':0,'maximum':120},
-    'needle_audit':{'type':'boolean'},  # deprecated: 主链只写 feature_audit
     'feature_audit':{'type':'boolean'},
     'feature_audit_features':{'type':'array','items':{'type':'string'}},
     'image_exemplar_audit':{'type':'boolean'},
@@ -263,6 +262,15 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
            'b_executed':bool(result['operations']),'elapsed_seconds':time.perf_counter()-start,
            'limitations':['真实API及风险阈值需独立数据验收；资源计量为调用/任务次数，不等于费用']}
     write_json(directory/'fusion.json',value)
+    def observation_labels(rows):
+        labels=[]
+        for row in rows:
+            args=row['data']['action']['args']
+            image=runtime.images.get(args['image_id'], {})
+            view=' / '.join(image.get('stems', [])) or args['image_id']
+            labels.append(f"{args['feature_id']} @ {view} ({row['id']})")
+        return labels
+
     comparison='\n'.join(
         f"| {row['display']} | {row['rule_confidence']} | {row['fused_score']} | "
         f"{len(row['supported_criteria'])} | {len(row['required_gaps'])} |"
@@ -281,8 +289,10 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
         f"{assessment['score_summary']}\n\n"
         f"- 解释来源：{assessment['explanation_source']}；文本警告：{assessment['narrative_warnings']}\n"
         f"- 研判来源：{assessment['method']}；模型失败原因：{assessment['model_failure']}\n"
-        f"- 支持证据：{[f['id'] for f in assessment['supporting_evidence']]}\n"
-        f"- 反证：{[f['id'] for f in assessment['counterevidence']]}\n"
+        f"- 研判引用的合格判据：{[f['id'] for f in assessment['supporting_evidence']]}\n"
+        f"- 局部存在性观察（仅说明该视野）：{observation_labels(assessment['presence_observations'])}\n"
+        f"- 局部未见（仅说明该视野）：{observation_labels(assessment['local_absence_observations'])}\n"
+        f"- 判据反证：{[f['id'] for f in assessment['counterevidence']]}\n"
         f"- 未解决：{[f['id'] for f in assessment['unresolved']]}\n"
         f"- 候选组审查完成：{assessment['candidate_review_complete']}；未完成候选："
         f"{assessment['candidate_audit']['incomplete_candidate_ids']}；未映射："

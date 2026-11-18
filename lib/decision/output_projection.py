@@ -19,7 +19,8 @@ from __future__ import annotations
 from collections import Counter
 from pathlib import Path
 
-from TCM_Fusion.lib.runtime.storage import read_json
+from TCM_Fusion.lib.evidence.evidence_projection import supports_criterion
+from TCM_Fusion.lib.runtime.storage import finite_number, read_json
 from TCM_Fusion.lib.evidence.provisional_evidence import build as build_provisional
 
 STRONG_CONF = 0.6
@@ -157,15 +158,21 @@ def _observations(result, views):
         action = obs.get("action") or {}
         payload = obs.get("result") or {}
         conf = payload.get("conf")
-        if not isinstance(conf, (int, float)) or conf < STRONG_CONF:
+        if payload.get('ok') is False or not finite_number(conf, minimum=STRONG_CONF, maximum=1):
             continue
         args = action.get("args") or {}
         image_id = args.get("image_id", "")
+        is_presence = action.get('tool') == 'presence_check'
+        present = payload.get('present')
+        if is_presence and type(present) is not bool:
+            continue
         rows.append({
             "view": views.get(image_id, Path(image_id).stem or None),
             "tool": action.get("tool"),
             "feature_id": args.get("feature_id") or ("scene_check" if action.get("tool") == "scene_check" else None),
-            "present": payload.get("present"),
+            "present": present,
+            "scope": "observed_fov_only",
+            "qualification": "presence_only" if is_presence else "scene_context",
             "confidence": conf,
             "source": "glm_presence" if action.get("tool") == "presence_check" else "glm_scene",
         })
@@ -176,8 +183,7 @@ def _supporting_candidates(ranking, feature_id):
     names = []
     for row in ranking:
         for check in row.get("checks") or []:
-            if (check.get("feature_id") == feature_id and check.get("present")
-                    and (check.get("score_contribution") or 0) > 0):
+            if check.get("feature_id") == feature_id and supports_criterion(check):
                 names.append(row.get("id"))
                 break
     return names[:5]
@@ -257,7 +263,8 @@ def project_output(sample_id, verdict, result, a):
     views = _view_map(a)
     observations = _observations(result, views)
     for row in observations:
-        row["supporting_candidates"] = _supporting_candidates(ranking, row.get("feature_id"))
+        row["supporting_candidates"] = (_supporting_candidates(ranking, row.get("feature_id"))
+                                        if row["present"] is True else [])
     detections = _detections(result.get("operations"))
     classifications = _classifications(result.get("operations"))
     missing = []
@@ -285,6 +292,7 @@ def project_output(sample_id, verdict, result, a):
             "id": top.get("id"), "display": top.get("display"), "kind": top.get("kind"),
             "score": top.get("score"), "confidence": top.get("confidence"),
             "support_count": top.get("support_count"),
+            "verified_feature_count": (assessment.get('confidence_basis') or {}).get('verified_feature_count'),
             "a_probability": top.get("a_probability"),
             "b_confidence": top.get("b_confidence"),
             "fused_score": top.get("fused_score"),
