@@ -2,5 +2,6 @@ config/*.local.json
 __pycache__/
 *.pyc
 
-yolo-results/
+yolo-results/*
+!yolo-results/README.md
 

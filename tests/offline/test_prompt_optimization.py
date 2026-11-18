@@ -1,4 +1,5 @@
 """真实 LangMem 优化、提示消费、封闭回放/发布隔离与共享账本回归。
+该组用例由项目根 selftest 发现。涉及模型回复的用例使用可控输入，涉及进程的用例以各断言规定的执行边界为准。
 
 主要定义：
 - PromptTests 优化与真值校验: `P.optimize` 生成新 instruction；truth 模式接受已验证纠正而非要求答案一致。
@@ -9,11 +10,8 @@
 - 共享账本与跨进程锁: 同账本两实例去重计费，`ledger_lock` 在另一进程持锁时返回 `LEDGER_BUSY`。
 
 关联：
-- TCM_Fusion.lib.prompt_optimization: `optimize`/`validate`/`publish`/`load_release`/`RecordedTools`。
-- TCM_Fusion.lib.react_graph: `run_react` 与 `LLMPlanner`。
-- TCM_Fusion.lib.agent_tools: `LocalToolbox`/`FixtureBackend`。
-- TCM_Fusion.tests.prompt_support: 提供离线模型与规划替身。
-- TCM_Fusion.lib.ledger_lock、adjudicator.AdjudicatorClient: 跨进程锁与模型客户端。
+- 直接依赖 「lib/agent/react_graph.py」、「lib/offline/prompt_optimization.py」、「lib/runtime/ledger_lock.py」、「lib/runtime/storage.py」、「lib/tools/agent_tools.py」、「lib/workflow/evidence_runtime.py」、「tests/support/prompt_support.py」。
+- 统一执行见 tests/README.md。
 """
 import asyncio
 import copy
@@ -25,12 +23,12 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from TCM_Fusion.lib import prompt_optimization as P
-from TCM_Fusion.lib.evidence_runtime import EvidenceRuntime
-from TCM_Fusion.lib.agent_tools import LocalToolbox, FixtureBackend
-from TCM_Fusion.lib.react_graph import run_react, LLMPlanner
-from TCM_Fusion.lib.storage import IntegrationError, digest, read_json, write_json
-from TCM_Fusion.tests.prompt_support import OfflineOptimizerModel, OfflinePlanner, IMPROVED
+from TCM_Fusion.lib.offline import prompt_optimization as P
+from TCM_Fusion.lib.workflow.evidence_runtime import EvidenceRuntime
+from TCM_Fusion.lib.tools.agent_tools import LocalToolbox, FixtureBackend
+from TCM_Fusion.lib.agent.react_graph import run_react, LLMPlanner
+from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, read_json, write_json
+from TCM_Fusion.tests.support.prompt_support import OfflineOptimizerModel, OfflinePlanner, IMPROVED
 
 
 class PromptTests(unittest.IsolatedAsyncioTestCase):
@@ -64,7 +62,7 @@ class PromptTests(unittest.IsolatedAsyncioTestCase):
         data['cases'][0]['reference']={'label':'target','label_source':'expert','label_scope':'sample_identity'}
         traces=[{'decision':{'verdict':'confirmed','conclusion':{'id':label}},'needs_review':False,
                  'requests':2,'events':[],'planner_degraded':False,'mandatory_complete':True} for label in ('wrong','target')]
-        with patch('TCM_Fusion.lib.react_graph.run_react',new=AsyncMock(side_effect=traces)):
+        with patch('TCM_Fusion.lib.agent.react_graph.run_react',new=AsyncMock(side_effect=traces)):
             report=await P.validate(self.candidate,data,planner_factory=OfflinePlanner)
         self.assertTrue(report['passed']);self.assertFalse(report['real_accuracy_validated'])
         self.assertEqual(report['candidate_summary']['correct_determinate'],1)
@@ -150,7 +148,7 @@ class PromptTests(unittest.IsolatedAsyncioTestCase):
         client = object.__new__(LLMPlanner)
         client.client = AdjudicatorClient.__new__(AdjudicatorClient)
         client.client.model = "test";client.client.timeout_s=1; client.config = {}
-        with patch('TCM_Fusion.lib.hard_calls.post', return_value={"choices": [{"message": {"content": '{"action_id":"review"}'}}]}) as post:
+        with patch('TCM_Fusion.lib.runtime.hard_calls.post', return_value={"choices": [{"message": {"content": '{"action_id":"review"}'}}]}) as post:
             client.choose({"planning_instruction": IMPROVED})
         system = post.call_args.args[0]["messages"][0]["content"]
         self.assertIn(IMPROVED, system); self.assertIn(P.GUARD, system)
@@ -166,7 +164,7 @@ class PromptTests(unittest.IsolatedAsyncioTestCase):
                    "actions": [{"action_id": "registered-hash", "tool": "presence_check"},
                                {"action_id": "review", "tool": "request_review"}],
                    "action_objectives": {"registered-hash": "verify"}}
-        with patch("TCM_Fusion.lib.hard_calls.post",
+        with patch("TCM_Fusion.lib.runtime.hard_calls.post",
                    return_value={"choices": [{"message": {"content": '{"action_id":"A2"}'}}]}) as post:
             reply, _ = client.choose(context)
         self.assertEqual(reply["action_id"], "review")
@@ -178,11 +176,11 @@ class PromptTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(context["actions"][0]["action_id"], "registered-hash")
 
     async def test_os_lock_excludes_another_process(self):
-        from TCM_Fusion.lib.ledger_lock import acquire, release
+        from TCM_Fusion.lib.runtime.ledger_lock import acquire, release
         ledger = self.root/"cross_process.json"
         handle = acquire(ledger)
-        code = ("import sys\nfrom TCM_Fusion.lib.ledger_lock import acquire,release\n"
-                "from TCM_Fusion.lib.storage import IntegrationError\n"
+        code = ("import sys\nfrom TCM_Fusion.lib.runtime.ledger_lock import acquire,release\n"
+                "from TCM_Fusion.lib.runtime.storage import IntegrationError\n"
                 "try:\n h=acquire(sys.argv[1],timeout=.1)\n release(h)\n print('UNEXPECTED')\n"
                 "except IntegrationError as e:\n print(e.code)\n")
         try:

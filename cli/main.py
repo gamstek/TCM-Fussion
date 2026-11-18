@@ -1,4 +1,4 @@
-"""项目主 CLI 入口：`python -m TCM_Fusion.cli.main run|doctor|selftest|multi-view|five-view`。
+"""提供真实任务、就绪检查、多图准备和统一回归命令。解析用户参数后分发给应用层。selftest 从项目根递归发现融合用例，并执行原 B 三套断言。
 
 主要定义：
 - main: 构建 argparse 子命令并按 `args.command` 分发。
@@ -10,10 +10,8 @@
 - 错误处理: 捕获 `IntegrationError/OSError/ValueError/KeyError`，按 `[CODE] message` 写 stderr 并返回 2。
 
 关联：
-- TCM_Fusion.lib.pipeline: 提供 doctor 与 run_pipeline。
-- TCM_Fusion.lib.multi_view: 任意数量原图的建任务、配置准备与工作流启动。
-- TCM_Fusion.lib.storage: 配置读取、路径解析与 IntegrationError。
-- TCM_Fusion.cli.offline: 离线回放/评估/优化/发布统一入口，不在本文件。
+- 直接依赖 「lib/application/multi_view.py」、「lib/application/pipeline.py」、「lib/runtime/storage.py」。
+- 从项目根通过 python -m 启动。
 """
 from __future__ import annotations
 import argparse
@@ -23,8 +21,8 @@ import sys
 import unittest
 from pathlib import Path
 import paths
-from TCM_Fusion.lib.pipeline import doctor, run_pipeline
-from TCM_Fusion.lib.storage import IntegrationError, project_path, read_json
+from TCM_Fusion.lib.application.pipeline import doctor, run_pipeline
+from TCM_Fusion.lib.runtime.storage import IntegrationError, project_path, read_json
 
 
 def main(argv=None):
@@ -63,7 +61,7 @@ def main(argv=None):
         return 0 if passed else 1
     try:
         if args.command in {"multi-view", "five-view"}:
-            from TCM_Fusion.lib.multi_view import run_multi_view
+            from TCM_Fusion.lib.application.multi_view import run_multi_view
             directory = run_multi_view(args.source_dir, manifest=args.manifest,
                 output_root=args.output_root, config_template=args.config_template,
                 a_python=args.a_python, dry_run=args.dry_run, case_name=args.name)

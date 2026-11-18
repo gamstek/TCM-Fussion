@@ -1,4 +1,5 @@
 """路由真实编排分支、候选权限与零 API 只读验证；不把替身当识别效果。
+该组用例由项目根 selftest 发现。涉及模型回复的用例使用可控输入，涉及进程的用例以各断言规定的执行边界为准。
 
 主要定义：
 - RoutingTests shadow/trial 路由: shadow 只建议、trial 真正跳过 B；边界分数、非法概率分布与不支持的结构标签都不释放。
@@ -8,11 +9,8 @@
 - stdio MCP: 工具注册表条目、只读读取不含真实标签、预算耗尽返回 `RESOURCE_BUDGET` 且不落账。
 
 关联：
-- TCM_Fusion.lib.routing_policy: `route` 与 `validate_policy`。
-- TCM_Fusion.lib.pipeline: `run_pipeline` 与 `validate_config`。
-- TCM_Fusion.lib.candidate_policy: `candidates` 候选重组。
-- TCM_Fusion.lib.evidence_runtime/agent_tools/react_graph/mcp_bridge: 运行时、工具、ReAct 与 MCP 边界。
-- tests/fixtures/recorded_pipeline.json、react_case.json: 配置与记录夹具。
+- 直接依赖 「lib/agent/react_graph.py」、「lib/application/pipeline.py」、「lib/decision/candidate_policy.py」、「lib/decision/collaboration.py」、「lib/decision/routing_policy.py」、「lib/mcp/mcp_bridge.py」、「lib/runtime/storage.py」、「lib/tools/agent_tools.py」。
+- 统一执行见 tests/README.md。
 """
 import asyncio
 import copy
@@ -21,15 +19,15 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 import paths
-from TCM_Fusion.lib.storage import IntegrationError, read_json, digest
-from TCM_Fusion.lib.collaboration import knowledge_base
-from TCM_Fusion.lib.pipeline import run_pipeline, validate_config
-from TCM_Fusion.lib.routing_policy import route, validate_policy
-from TCM_Fusion.lib.candidate_policy import candidates
-from TCM_Fusion.lib.evidence_runtime import EvidenceRuntime
-from TCM_Fusion.lib.agent_tools import LocalToolbox, FixtureBackend
-from TCM_Fusion.lib.react_graph import run_react, ScriptedPlanner
-from TCM_Fusion.lib.mcp_bridge import connect_stdio
+from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json, digest
+from TCM_Fusion.lib.decision.collaboration import knowledge_base
+from TCM_Fusion.lib.application.pipeline import run_pipeline, validate_config
+from TCM_Fusion.lib.decision.routing_policy import route, validate_policy
+from TCM_Fusion.lib.decision.candidate_policy import candidates
+from TCM_Fusion.lib.workflow.evidence_runtime import EvidenceRuntime
+from TCM_Fusion.lib.tools.agent_tools import LocalToolbox, FixtureBackend
+from TCM_Fusion.lib.agent.react_graph import run_react, ScriptedPlanner
+from TCM_Fusion.lib.mcp.mcp_bridge import connect_stdio
 
 BASE = Path(paths.PROJECT_ROOT)/'TCM_Fusion'
 
@@ -76,16 +74,16 @@ class RoutingTests(unittest.TestCase):
 
     def test_trial_really_skips_b(self):
         self.config['routing']={**self.policy,'mode':'trial'}
-        with patch('TCM_Fusion.lib.pipeline.predict_a',return_value=self.a), patch('TCM_Fusion.lib.pipeline.execute_b') as b:
+        with patch('TCM_Fusion.lib.application.pipeline.predict_a',return_value=self.a), patch('TCM_Fusion.lib.application.pipeline.execute_b') as b:
             directory=run_pipeline(self.config,base=self.root)
         b.assert_not_called();value=read_json(directory/'fusion.json')
         self.assertIsNone(value['b']);self.assertFalse(value['agent']['executed']);self.assertTrue(value['needs_review'])
         self.assertNotIn('confirmed',(directory/'report.md').read_text('utf-8').split('不代表')[0])
 
     def test_shadow_does_not_skip_b(self):
-        from TCM_Fusion.lib import pipeline
+        from TCM_Fusion.lib.application import pipeline
         original=pipeline.execute_b
-        with patch('TCM_Fusion.lib.pipeline.predict_a',return_value=self.a),patch('TCM_Fusion.lib.pipeline.execute_b',wraps=original) as b:
+        with patch('TCM_Fusion.lib.application.pipeline.predict_a',return_value=self.a),patch('TCM_Fusion.lib.application.pipeline.execute_b',wraps=original) as b:
             directory=run_pipeline(self.config,base=self.root)
         b.assert_called_once();self.assertTrue(read_json(directory/'fusion.json')['b_executed'])
 
@@ -143,7 +141,7 @@ class RoutingTests(unittest.TestCase):
 
     def test_mcp_registry_and_read_transport(self):
         image=self.root/'fov.png';image.write_bytes(b'simulated')
-        from TCM_Fusion.lib.storage import write_json
+        from TCM_Fusion.lib.runtime.storage import write_json
         f=read_json(BASE/'tests/fixtures/react_case.json');f['images']=[str(image)]
         path=self.root/'context.json';write_json(path,{'simulation':True,'sample_id':'test','fixture':f})
         async def check():
@@ -159,8 +157,8 @@ class RoutingTests(unittest.TestCase):
         asyncio.run(check())
 
     def test_mcp_recompute_returns_structured_budget_error_without_api(self):
-        from TCM_Fusion.lib.storage import write_json
-        from TCM_Fusion.lib.workflow_runtime import from_task
+        from TCM_Fusion.lib.runtime.storage import write_json
+        from TCM_Fusion.lib.workflow.workflow_runtime import from_task
         image=self.root/'fov.png';image.write_bytes(b'explicit-test-no-api')
         directory=self.root/'task';directory.mkdir()
         cfg={'sample_id':'budget_test','allow_network':True,'a':{'mode':'unavailable'},

@@ -1,4 +1,5 @@
 """反思发布的有效性、数据隔离与回放反例回归；不调用真实模型。
+该组用例由项目根 selftest 发现。涉及模型回复的用例使用可控输入，涉及进程的用例以各断言规定的执行边界为准。
 
 主要定义：
 - ReflectionTests.test_publish_load_and_no_network: `propose`→`validate`→`publish`→`load_memory` 全链路且不联网。
@@ -9,10 +10,8 @@
 - test_llm_reflection_requires_opt_in、test_llm_path_uses_text_feedback_only: LLM 反思需显式 opt-in，且载荷不含图像。
 
 关联：
-- TCM_Fusion.lib.reflection: `propose`/`validate`/`publish`/`load_memory`。
-- TCM_Fusion.lib.storage: `digest`/`read_json`/`write_json`/`IntegrationError`。
-- TCM_Fusion.lib.agent_tools: `FixtureBackend` 的回放对照。
-- adjudicator.AdjudicatorClient: LLM 反思客户端替身。
+- 直接依赖 「lib/offline/reflection.py」、「lib/runtime/storage.py」、「lib/tools/agent_tools.py」。
+- 统一执行见 tests/README.md。
 """
 import copy
 import tempfile
@@ -20,8 +19,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from TCM_Fusion.lib.reflection import propose, validate, publish, load_memory
-from TCM_Fusion.lib.storage import digest, IntegrationError, read_json, write_json
+from TCM_Fusion.lib.offline.reflection import propose, validate, publish, load_memory
+from TCM_Fusion.lib.runtime.storage import digest, IntegrationError, read_json, write_json
 
 
 class ReflectionTests(unittest.IsolatedAsyncioTestCase):
@@ -48,18 +47,18 @@ class ReflectionTests(unittest.IsolatedAsyncioTestCase):
             self.assertTrue(report["passed"])
             self.assertEqual(report["rows"][0]["baseline"]["requests"], 2)
             self.assertEqual(report["rows"][0]["candidate"]["requests"], 1)
-            with patch("TCM_Fusion.lib.reflection.output_root", return_value=self.root):
+            with patch("TCM_Fusion.lib.offline.reflection.output_root", return_value=self.root):
                 path = await publish(self.candidate, report)
             self.assertEqual(load_memory(path, simulation=True)["policy"], {"no_gain_limit": 1})
         network.assert_not_called()
 
     async def test_second_view_evidence_rejects_early_stop(self):
-        from TCM_Fusion.lib.agent_tools import FixtureBackend
+        from TCM_Fusion.lib.tools.agent_tools import FixtureBackend
         class LaterPositive(FixtureBackend):
             def call(self, runtime, action, path):
                 self.calls.append(1)
                 return {"ok": True, "present": len(self.calls) == 2, "conf": .9}, None
-        with patch("TCM_Fusion.lib.agent_tools.FixtureBackend", LaterPositive):
+        with patch("TCM_Fusion.lib.tools.agent_tools.FixtureBackend", LaterPositive):
             report = await validate(self.candidate, self.cases)
         self.assertFalse(report["passed"])
 
@@ -93,7 +92,7 @@ class ReflectionTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_simulation_memory_not_used_in_production(self):
         report = await validate(self.candidate, self.cases)
-        with patch("TCM_Fusion.lib.reflection.output_root", return_value=self.root):
+        with patch("TCM_Fusion.lib.offline.reflection.output_root", return_value=self.root):
             path = await publish(self.candidate, report)
         with self.assertRaises(IntegrationError):
             load_memory(path, simulation=False)

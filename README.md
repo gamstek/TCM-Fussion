@@ -1,5 +1,7 @@
 # TCM_Fusion｜真实五折CNN＋VLM Agent融合链路
 
+开发者从[源码导航](lib/README.md)、[回归导航](tests/README.md)和[组件重组方案](融合链路文档/21_TCM_Fusion组件重组方案.md)进入。
+
 FAIR-INVESTIGATION-001（2026-11-18）：540项（539通过/1历史参考缺失跳过）、B59/21/125通过；新单图425.578秒，主/竞争均调查并产出17.274558μm，交付一致暂定白芍仍复核。统一鉴别问题卡，主解释与竞争支持分列；无crop时簇晶可关联真实YOLO入口。受限说明字段本地归一、结构错误至多纠正一次，交付跟随唯一研判候选。充分性策略仅shadow，原保守确认不放松；不强制调查顺序。见[18](融合链路文档/18_主解释与竞争解释公平取证.md)。
 
 CANDIDATE-AUDIT-001（2026-11-17）：最终回归521项（520通过、1历史case缺失跳过）及原B59/21/125通过；候选审查优先于时延/token。五折并集及未映射、暂停候选的required/supporting逐项保留；独立补查不再被别的crop未分类阻塞。审查不完整时可review，交付不得升级为完整鉴别。旧245.828秒只属历史运行，不能证明同覆盖提效。见[17 候选审查完整性与效率边界](融合链路文档/17_候选审查完整性与效率边界.md)。
@@ -130,8 +132,6 @@ context_recent_observations = 6
 context_recent_operations = 8
 context_max_actions = 20
 auto_measure_after_segment = true
-auto_prepare_stage = false
-auto_required_measurement = false
 suppress_repeated_measurement = true
 supporting_probe_total = 6
 supporting_probe_per_candidate = 2
@@ -148,13 +148,9 @@ box_quality_enabled = true
 box_quality_retry = true
 agent_driven_coverage = true
 identity_min_confidence = medium
-feature_scan_enabled = false
 feature_scan_features = []
-feature_scan_tile_size = 1024
-feature_scan_overlap = 0.15
 feature_scan_max_tiles = 4
 feature_scan_concurrency = 2
-hybrid_scan_enabled = true
 feature_audit = true
 feature_audit_features = 14 类 taxonomy（默认全部）
 image_exemplar_audit = true
@@ -170,7 +166,6 @@ cnn_meta = "分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01
 cnn_threshold = 0.75
 cnn_entropy_threshold = 0.8
 cnn_batch_size = 16
-cnn_other_fallback = true
 candidate_scope = open_strict
 a_weight / b_weight = 0.6 / 0.4
 min_support_features = 2
@@ -201,13 +196,13 @@ max_locate_attempts = max(4, locate_attempts_per_view * N + locate_attempt_reser
 | 位置 | 职责 |
 |---|---|
 | `cli/main.py` | run、doctor、selftest、multi-view；five-view 为兼容别名 |
-| `lib/multi_view.py`、`config/multi_view.json` | 任意数量原图接口及规范模板 |
-| `lib/workflow_*`、`react_graph`、`tool_*`、`agent_tools`、`mcp_bridge` | 主动流程、真实 MCP、前置条件、模型规划与反馈 |
-| `cli/*_worker`、`lib/worker_bootstrap` | 隔离解释器、API、YOLO、分类和 B 阶段执行 |
-| `lib/final_assessment`、`output_projection` | 调查停止后综合判断；证据不足不强制确认 |
+| `lib/application/multi_view.py`、`config/multi_view.json` | 任意数量原图接口及规范模板 |
+| [代码组件](lib/README.md) | 应用编排、ReAct、MCP、视觉、证据、工作流及离线接口 |
+| `cli/*_worker`、[预算启动钩子](lib/runtime/worker_bootstrap/README.md) | 隔离解释器、API、YOLO、分类和 B 阶段执行 |
+| `lib/decision/final_assessment.py`、`output_projection` | 调查停止后综合判断；证据不足不强制确认 |
 | `skills`、`requirements-agent*.txt` | 注册技能与锁定依赖 |
 | `yolo-results` | 当前 best.pt、class_map 及训练/评测来源指标 |
-| `tests`、`tests/offline` | 主链契约与离线功能测试，统一由 selftest 递归发现 |
+| [回归目录](tests/README.md) | 主链契约与离线功能测试，统一由 selftest 递归发现 |
 
 ## 在线与离线分开
 

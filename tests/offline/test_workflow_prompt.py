@@ -1,4 +1,5 @@
 """离线 LangMem/prompt 发布工作流回归，被 selftest 递归发现但不属于主链测试。
+该组用例由项目根 selftest 发现。涉及模型回复的用例使用可控输入，涉及进程的用例以各断言规定的执行边界为准。
 
 主要定义：
 - WorkflowPromptTests.setUp/runtime: 构造临时图像与 `WorkflowRuntime`（`StageFixture` 后端、模拟模式）。
@@ -7,11 +8,8 @@
 - `Planner`（测试内类）: 基线提示下额外读一次证据，用于比较候选提示是否减少请求。
 
 关联：
-- TCM_Fusion.lib.prompt_optimization: `validate`/`publish`/`load_release`/`DEFAULT_INSTRUCTION`/`GUARD`/`profile`。
-- TCM_Fusion.lib.workflow_runtime: `WorkflowRuntime` 提供 workflow 配置与操作账本。
-- TCM_Fusion.lib.react_graph: `run_react` 产出可回放轨迹。
-- TCM_Fusion.tests.test_workflow.StageFixture: 测试替身后端。
-- TCM_Fusion.lib.storage: `digest`/`read_json` 绑定报告与数据集。
+- 直接依赖 「lib/agent/react_graph.py」、「lib/offline/prompt_optimization.py」、「lib/runtime/storage.py」、「lib/tools/agent_tools.py」、「lib/workflow/workflow_runtime.py」、「tests/support/workflow_fixtures.py」。
+- 统一执行见 tests/README.md。
 """
 import asyncio
 import copy
@@ -20,11 +18,11 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from TCM_Fusion.lib.agent_tools import LocalToolbox, FixtureBackend
-from TCM_Fusion.lib.react_graph import run_react
-from TCM_Fusion.lib.storage import digest, read_json
-from TCM_Fusion.lib.workflow_runtime import WorkflowRuntime
-from TCM_Fusion.tests.test_workflow import StageFixture
+from TCM_Fusion.lib.tools.agent_tools import LocalToolbox, FixtureBackend
+from TCM_Fusion.lib.agent.react_graph import run_react
+from TCM_Fusion.lib.runtime.storage import digest, read_json
+from TCM_Fusion.lib.workflow.workflow_runtime import WorkflowRuntime
+from TCM_Fusion.tests.support.workflow_fixtures import StageFixture
 
 
 class WorkflowPromptTests(unittest.TestCase):
@@ -42,7 +40,7 @@ class WorkflowPromptTests(unittest.TestCase):
             backend=backend or StageFixture())
 
     def test_workflow_prompt_dual_replay_and_release(self):
-        from TCM_Fusion.lib import prompt_optimization as P
+        from TCM_Fusion.lib.offline import prompt_optimization as P
         r = self.runtime(max_planning=30, max_resource_units=200)
         tools = LocalToolbox(r, ledger_path=self.root / 'recorded_obs.json',
                              backend=FixtureBackend(), max_requests=100)
@@ -75,8 +73,8 @@ class WorkflowPromptTests(unittest.TestCase):
                     self.extra = False
                 return {'action_id': selected['action_id']}, None
 
-        with patch('TCM_Fusion.lib.workflow_prompt_validation.output_root', return_value=self.root), \
-             patch('TCM_Fusion.lib.prompt_optimization.output_root', return_value=self.root):
+        with patch('TCM_Fusion.lib.offline.workflow_prompt_validation.output_root', return_value=self.root), \
+             patch('TCM_Fusion.lib.offline.prompt_optimization.output_root', return_value=self.root):
             validation = asyncio.run(P.validate(candidate, dataset, planner_factory=Planner))
             self.assertTrue(validation['passed'])
             self.assertEqual(validation['new_image_api_calls'], 0)

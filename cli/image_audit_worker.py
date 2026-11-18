@@ -6,10 +6,8 @@
 - main: 读取 `--context`，校验目标 crop 与正负例是否齐全，构建对照图后请求 VLM 并写规范化审计结果。
 
 关联：
-- TCM_Fusion.lib.image_exemplar_audit: 提供 `build_contact_sheet` 与 `normalize_audit`。
-- TCM_Fusion.lib.workflow_backend: 以 `-m TCM_Fusion.cli.image_audit_worker` 子进程调用，对应 `image_exemplar_audit` 工具。
-- TCM_Fusion.lib.storage: 读取 context、写结果 JSON 与 IntegrationError。
-- 检测侧库（ls_common、vlm_api）: 提供配置、API key 与 VLM 调用/JSON 解析。
+- 直接依赖 「lib/runtime/storage.py」、「lib/vision/image_exemplar_audit.py」。
+- 从项目根通过 python -m 启动。
 """
 import argparse
 from pathlib import Path
@@ -17,8 +15,8 @@ from pathlib import Path
 from PIL import Image
 import numpy as np
 
-from TCM_Fusion.lib.image_exemplar_audit import build_contact_sheet, normalize_audit
-from TCM_Fusion.lib.storage import IntegrationError, read_json, write_json
+from TCM_Fusion.lib.vision.image_exemplar_audit import build_contact_sheet, normalize_audit
+from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json, write_json
 
 
 def main(argv=None):

@@ -13,11 +13,8 @@
 - reflect / reflection-validate / reflection-publish: 从轨迹与程序反馈生成候选经验，再验证与发布。
 
 关联：
-- TCM_Fusion.lib.outcome_evaluation、TCM_Fusion.lib.ablation_evaluation: 评估与报告实现。
-- TCM_Fusion.lib.confidence_gate: 置信门 fit/validate/publish。
-- TCM_Fusion.lib.dataset_split、TCM_Fusion.lib.prompt_optimization、TCM_Fusion.lib.reflection: 划分、优化与经验沉淀。
-- TCM_Fusion.lib.workflow_replay: 无新请求的工作流回放。
-- TCM_Fusion.cli.main: 在线真实入口；本文件只承担离线职责。
+- 直接依赖 「lib/offline/ablation_evaluation.py」、「lib/offline/confidence_gate.py」、「lib/offline/dataset_split.py」、「lib/offline/outcome_evaluation.py」、「lib/offline/prompt_optimization.py」、「lib/offline/reflection.py」、「lib/offline/workflow_replay.py」、「lib/runtime/storage.py」。
+- 从项目根通过 python -m 启动。
 """
 from __future__ import annotations
 import argparse
@@ -26,7 +23,7 @@ import json
 import sys
 from pathlib import Path
 import paths
-from TCM_Fusion.lib.storage import IntegrationError, project_path, read_json
+from TCM_Fusion.lib.runtime.storage import IntegrationError, project_path, read_json
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description='A/B融合与LangGraph主动ReAct证据闭环')
@@ -84,21 +81,21 @@ def main(argv=None):
             print(json.dumps(value, ensure_ascii=False, indent=2))
             return 0
         if args.command in {'outcome-evaluate', 'ablation-report', 'quality-report'}:
-            from TCM_Fusion.lib.storage import write_json
+            from TCM_Fusion.lib.runtime.storage import write_json
             if args.command == 'outcome-evaluate':
-                from TCM_Fusion.lib.outcome_evaluation import evaluate
+                from TCM_Fusion.lib.offline.outcome_evaluation import evaluate
                 value = evaluate(read_json(project_path(args.trace)), read_json(project_path(args.reference)), a_label=args.a_label)
             elif args.command == 'ablation-report':
-                from TCM_Fusion.lib.ablation_evaluation import compare
+                from TCM_Fusion.lib.offline.ablation_evaluation import compare
                 value = compare(read_json(project_path(args.dataset)))
             else:
-                from TCM_Fusion.lib.ablation_evaluation import quality_compare
+                from TCM_Fusion.lib.offline.ablation_evaluation import quality_compare
                 value = quality_compare(read_json(project_path(args.dataset)))
             write_json(project_path(args.out), value)
             print(args.out)
             return 0
         if args.command in {'gate-fit', 'gate-validate', 'gate-publish'}:
-            from TCM_Fusion.lib import confidence_gate as G
+            from TCM_Fusion.lib.offline import confidence_gate as G
             if args.command == 'gate-fit':
                 value = G.fit(read_json(project_path(args.dataset)))
                 kind = 'calibrations'
@@ -111,21 +108,21 @@ def main(argv=None):
             print(G.save(kind, value))
             return 2 if value.get('passed') is False else 0
         if args.command == 'workflow-replay':
-            from TCM_Fusion.lib.workflow_replay import replay_report
-            from TCM_Fusion.lib.storage import output_root
+            from TCM_Fusion.lib.offline.workflow_replay import replay_report
+            from TCM_Fusion.lib.runtime.storage import output_root
             import uuid
             directory = output_root() / 'workflow_replay' / uuid.uuid4().hex
             value = asyncio.run(replay_report(read_json(project_path(args.report)), directory))
             print(directory / 'report.json')
             return 0 if value['covered'] else 2
         if args.command == 'dataset-split':
-            from TCM_Fusion.lib import dataset_split as S
+            from TCM_Fusion.lib.offline import dataset_split as S
             explicit = read_json(project_path(args.explicit)) if args.explicit else None
             value = S.build(args.attributes, seed=args.seed, ratios=args.ratios, explicit=explicit)
             print(S.write(value, args.out))
             return 0
         if args.command in {'prompt-optimize', 'prompt-validate', 'prompt-publish'}:
-            from TCM_Fusion.lib import prompt_optimization as P
+            from TCM_Fusion.lib.offline import prompt_optimization as P
             if args.command == 'prompt-optimize':
                 value = asyncio.run(P.optimize(read_json(project_path(args.training)), allow_network=args.allow_network))
                 print(P.save('candidates', value))
@@ -137,7 +134,7 @@ def main(argv=None):
                 print(asyncio.run(P.publish(read_json(project_path(args.candidate)), read_json(project_path(args.report)), allow_network=args.allow_network)))
             return 0
         if args.command in {'reflect', 'reflection-validate', 'reflection-publish'}:
-            from TCM_Fusion.lib.reflection import propose, validate, publish, save_artifact
+            from TCM_Fusion.lib.offline.reflection import propose, validate, publish, save_artifact
             if args.command == 'reflect':
                 value = propose(read_json(project_path(args.trace)), read_json(project_path(args.feedback)), llm=args.llm, allow_network=args.allow_network)
                 print(save_artifact('candidates', value))

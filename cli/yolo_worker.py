@@ -1,20 +1,19 @@
 """受控 YOLO 检测 worker：只输出原图坐标与模型溯源，从项目根以 `-m` 启动。
+读取 `--context`，校验权重/类别表/检测配置的哈希签名，在可选 ROI 上检测并把框平移回原图坐标，最后复查资产与原图未变。从项目根以模块方式启动。读取命令参数或任务上下文，并通过约定的结果文件或退出码交付。
 
 主要定义：
 - main: 读取 `--context`，校验权重/类别表/检测配置的哈希签名，在可选 ROI 上检测并把框平移回原图坐标，最后复查资产与原图未变。
 - 模块级约束: 强制 `YOLO_AUTOINSTALL=false`；类别表必须与项目类别顺序一致，否则 `YOLO_CLASS_MAP` 失败；资产或原图在推理期间变化即 `YOLO_ASSET_CHANGED`。
 
 关联：
-- TCM_Fusion.lib.workflow_backend: 以 `-m TCM_Fusion.cli.yolo_worker` 子进程调用，服务于 `detect_fov_initial` 与 `detect_region`。
-- TCM_Fusion.lib.detector_yolo: 提供 `load_settings` 与 `detect`。
-- TCM_Fusion.cli.workflow_worker: 消费本 worker 写出的 boxes 继续裁 crop。
-- TCM_Fusion.lib.storage: 读取 context、文件哈希与写结果 JSON。
+- 直接依赖 「lib/runtime/storage.py」、「lib/vision/detector_yolo.py」。
+- 从项目根通过 python -m 启动。
 """
 import argparse
 import os
 from pathlib import Path
 
-from TCM_Fusion.lib.storage import IntegrationError, file_hash, read_json, write_json
+from TCM_Fusion.lib.runtime.storage import IntegrationError, file_hash, read_json, write_json
 
 
 def main(argv=None):
@@ -25,7 +24,7 @@ def main(argv=None):
     import yaml
     import paths
     from ls_common import imread_cn, load_config
-    from TCM_Fusion.lib.detector_yolo import detect, load_settings
+    from TCM_Fusion.lib.vision.detector_yolo import detect, load_settings
 
     assets = {key: ctx[key] for key in ('weights', 'class_map', 'detector_config')}
     assets['taxonomy_config'] = Path(paths.DETECTION_CONFIG_DIR) / 'vlm_config.json'

@@ -1,4 +1,5 @@
 """固定检测侧库包装 worker：全图/局部检测、重新标定与 GLM 定向定位，从项目根以 `-m` 启动，绝不 import CLI。
+读取 `--context` 绑定上下文，按 `ctx['tool']` 分发 `calibrate_fov`、`detect_fov_initial`、`detect_region`、`locate_feature`，写回标定、裁图与框清单。从项目根以模块方式启动。读取命令参数或任务上下文，并通过约定的结果文件或退出码交付。
 
 主要定义：
 - main: 读取 `--context` 绑定上下文，按 `ctx['tool']` 分发 `calibrate_fov`、`detect_fov_initial`、`detect_region`、`locate_feature`，写回标定、裁图与框清单。
@@ -8,14 +9,12 @@
 - 模块级约束: `locate_min_roi_side` 用于扩窗，`locate_min_box_side` 约束框边长，`feature_hint` 只作提示词补充。
 
 关联：
-- TCM_Fusion.lib.workflow_backend: 以 `-m TCM_Fusion.cli.workflow_worker` 子进程调用，承载检测、标定与定向定位工具。
-- TCM_Fusion.cli.yolo_worker: 本 worker 检测分支的上游框来源。
-- TCM_Fusion.lib.storage: 读取 context、写结果 JSON 与分析文件哈希。
-- 检测侧库（ls_common、detect_core、geom、contracts、prompts）: 提供读图、检测、IOU 去重与受信类别提示。
+- 直接依赖 「lib/runtime/storage.py」。
+- 从项目根通过 python -m 启动。
 """
 import argparse
 from pathlib import Path
-from TCM_Fusion.lib.storage import read_json, write_json, IntegrationError
+from TCM_Fusion.lib.runtime.storage import read_json, write_json, IntegrationError
 
 
 def main(argv=None):
@@ -40,7 +39,7 @@ def main(argv=None):
     import cv2
     import contracts
     h,w=img.shape[:2]
-    from TCM_Fusion.lib.storage import file_hash
+    from TCM_Fusion.lib.runtime.storage import file_hash
     if targeted:
         from detect_core import detect_once
         from prompts import CLASSIFY_HINTS
@@ -115,7 +114,7 @@ def main(argv=None):
             raise IntegrationError('SAMPLE_MISMATCH', 'YOLO 框与绑定原图或局部范围不一致')
     detections = result['dets']
     if not targeted:
-        from TCM_Fusion.lib.det_dataset import split_delivery
+        from 目标检测.lib.det_dataset import split_delivery
         detections, other = split_delivery(detections)
         write_json(out/'other_detections.json', {'dets':other})
     if initial:
@@ -126,7 +125,7 @@ def main(argv=None):
             ctx['px_per_um'] = None
             print(f'[warn] 自动标定失败，保留检测框并置 px_per_um=None: {type(exc).__name__}: {exc}', flush=True)
     crops=out/'crops';crops.mkdir()
-    from TCM_Fusion.lib.storage import digest
+    from TCM_Fusion.lib.runtime.storage import digest
     count=0;replacements={};used_replacements=set();seen=list(ctx.get('existing_boxes',[]))
     for d in detections:
         # 已有同类区域不重复注入；复用框IoU原语，不把重复实例当新证据。

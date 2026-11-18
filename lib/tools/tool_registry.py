@@ -1,0 +1,151 @@
+"""将技能、权限、输入输出 schema 与受信 handler 和前置条件绑定为工具规格。运行时通过注册表生成可执行动作，执行前后分别检查输入和输出。注册信息同样用于 MCP 工具目录和工件签名。
+
+主要定义：
+- ToolSpec。
+- ToolRegistry。
+
+关联：
+- 调用方 「lib/agent/react_graph.py」、「lib/agent/reflection_controller.py」、「lib/agent/semantic_execution.py」、「lib/application/pipeline.py」、「lib/application/workflow_entry.py」、「lib/decision/final_assessment.py」。
+- 直接依赖 「lib/runtime/schema.py」、「lib/runtime/storage.py」、「lib/tools/tool_builtins.py」。
+"""
+from dataclasses import dataclass, asdict
+import json
+from jsonschema import Draft202012Validator
+from TCM_Fusion.lib.runtime.storage import IntegrationError, digest
+from TCM_Fusion.lib.runtime.schema import object_schema, local_refs, validate_arguments
+from TCM_Fusion.lib.runtime.schema import PRESENCE_BOX_SCHEMA
+
+@dataclass(frozen=True)
+class ToolSpec:
+    name: str
+    layer: str
+    version: str
+    input_schema: dict
+    output_schema: dict
+    skill_ids: tuple
+    budget_class: str
+    produces_evidence_version: bool
+    handler_id: str = ''
+    precondition_id: str = 'bound_sample_read'
+    result_guard_id: str = 'none'
+    default_allow: bool = True
+    requires_human: bool = False
+    proposal_id: str = ""
+
+class ToolRegistry:
+    def __init__(self):
+        self.specs,self.handlers,self.preconditions,self.guards,self.proposers={},{},{},{},{}
+        self.register_proposer("legacy_observations",lambda r,s:r._legacy_proposals(s))
+        self.register_precondition('bound_sample_read',lambda r,a,s:bool(r.sample_id))
+        self.register_precondition('legacy_observation',lambda r,a,s:r._validate_action_semantics(s['action']))
+        self.register_guard('none',lambda r,a,v:True)
+        self.register_guard('legacy_observation_v1',lambda r,a,v:r._validate_observation_v1(a,v))
+        self.register_handler('scene_check',lambda r,a,s:s['backend'].client.scene_check(s['path']))
+        def presence(r,a,s):
+            fid=a['feature_id'];zh=r.kb.raw['feature_vocab'][r.kb.tier(fid)][fid]
+            return s['backend'].client.presence_check(zh,a['morph_hint'],s['path'])
+        self.register_handler('presence_check',presence)
+        for name,fields,skill in [('scene_check',{'image_id':'string'},'scene_context'),
+            ('presence_check',{'image_id':'string','feature_id':'string','morph_hint':'string'},'differential_presence')]:
+            self.register(ToolSpec(name,'recompute','1',object_schema(fields),{'type':'object'},
+                (skill,),'observation',True,name,'legacy_observation','legacy_observation_v1',proposal_id='legacy_observations'))
+        from TCM_Fusion.lib.tools.tool_builtins import read_builtin
+        for name,fields in [('read_evidence',{'offset':'integer','limit':'integer'}),('list_features',{}),
+            ('query_criteria',{'candidate_id':'string'}),('read_scale',{}),('list_fovs',{}),('criteria_diff',{}),
+            ('list_artifacts',{}),('read_artifact_status',{}),('read_quality',{}),('read_action_catalog',{'offset':'integer','limit':'integer'}),('read_evidence_detail',{'kind':'string','offset':'integer','limit':'integer'})]:
+            self.register_handler(name,lambda r,a,s,n=name:read_builtin(r,n,a,s))
+            schema=object_schema(fields)
+            if name=='read_action_catalog':
+                schema={'type':'object','properties':{'offset':{'type':'integer','minimum':0},
+                    'limit':{'type':'integer','minimum':1,'maximum':200}},'additionalProperties':False}
+            if name=='read_evidence_detail':
+                schema={'type':'object','properties':{
+                    'kind':{'enum':['classifications','operations','quality','measurements',
+                                    'eligibility','eligibility_facts','comparison','instances',
+                                    'candidate_catalog','provisional','observations']},
+                    'offset':{'type':'integer','minimum':0},
+                    'limit':{'type':'integer','minimum':1,'maximum':50}},
+                    'required':['kind'],'additionalProperties':False}
+            if name=='read_evidence':
+                schema['properties']={'offset':{'type':'integer','minimum':0},
+                                      'limit':{'type':'integer','minimum':1,'maximum':50}}
+            if name in {'list_artifacts','read_artifact_status'}:
+                schema={'type':'object','properties':{'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':200}},'additionalProperties':False}
+            self.register(ToolSpec(name,'read','3' if name=='read_evidence_detail' else '1',schema,{'type':'object'},
+                ('evidence_inspection',),'read',False,name))
+    def _bind(self,table,name,fn):
+        if name in table or not callable(fn):raise IntegrationError('TOOL_BINDING','重复/非法绑定')
+        table[name]=fn
+    def register_handler(self,n,f):self._bind(self.handlers,n,f)
+    def register_precondition(self,n,f):self._bind(self.preconditions,n,f)
+    def register_guard(self,n,f):self._bind(self.guards,n,f)
+    def register_proposer(self,n,f):self._bind(self.proposers,n,f)
+    def register(self,spec):
+        if spec.name in self.specs:raise IntegrationError('TOOL_DUPLICATE','工具已注册')
+        if (spec.handler_id not in self.handlers or spec.precondition_id not in self.preconditions
+            or spec.result_guard_id not in self.guards or (spec.proposal_id and spec.proposal_id not in self.proposers) or spec.layer not in {'read','recompute','upstream'}):
+            raise IntegrationError('TOOL_BINDING','缺少受信handler/precondition')
+        for schema in (spec.input_schema,spec.output_schema):
+            local_refs(schema);Draft202012Validator.check_schema(schema)
+        self.specs[spec.name]=spec
+    def get(self,name):
+        if name not in self.specs:raise IntegrationError('ACTION_DENIED','未注册工具')
+        return self.specs[name]
+    def describe(self):return [asdict(s) for s in self.specs.values()]
+    def signature(self):return digest(self.describe())
+    def propose(self,runtime,state):
+        result=[];seen=set()
+        for proposal_id in dict.fromkeys(s.proposal_id for s in self.specs.values() if s.proposal_id):
+            for action in self.proposers[proposal_id](runtime,state):
+                spec=self.get(action.get('tool'))
+                if spec.proposal_id!=proposal_id:raise IntegrationError('TOOL_BINDING','提案器越过注册归属')
+                if action['action_id'] in seen or action['action_id'] in state.get('attempted',[]):continue
+                try:self.validate(action,runtime,state)
+                except IntegrationError as exc:
+                    if exc.code in {'ACTION_DENIED','PRECONDITION_FAILED'}:continue
+                    raise
+                seen.add(action['action_id']);result.append(action)
+        mandatory=[a for a in result if a.get('mandatory')]
+        workflow = getattr(runtime, 'workflow', None)
+        if workflow and workflow.config.get('agent_policy') == 'adaptive_v2':
+            return result
+        return mandatory or result
+
+    def validate(self,action,runtime,state=None):
+        spec=self.get(action.get('tool'));validate_arguments(spec.input_schema,action.get('args'))
+        skills={s['id'] for s in runtime.skills.registry if spec.name in s['tools']}
+        if action.get('skill') not in skills or action['skill'] not in spec.skill_ids:
+            raise IntegrationError('ACTION_DENIED','技能不能扩权')
+        if (not spec.default_allow or spec.requires_human) and spec.name not in getattr(runtime,'authorized_tools',set()):
+            raise IntegrationError('ACTION_DENIED','工具未授权')
+        if not self.preconditions[spec.precondition_id](runtime,action['args'],{**(state or {}),'action':action}):
+            raise IntegrationError('PRECONDITION_FAILED','前置条件失败')
+        return spec
+    def validate_result(self,runtime,action,value):
+        spec=self.get(action['tool'])
+        try:validate_arguments(spec.output_schema,value)
+        except IntegrationError:return False
+        return bool(self.guards[spec.result_guard_id](runtime,action,value))
+    def invoke(self,runtime,action,state=None):
+        spec=self.validate(action,runtime,state)
+        result=self.handlers[spec.handler_id](runtime,action['args'],{**(state or {}),'action':action})
+        import inspect
+        if inspect.isawaitable(result):
+            if inspect.iscoroutine(result):result.close()
+            raise IntegrationError('ASYNC_TOOL_REQUIRED', '该工具必须走异步执行入口')
+        if not self.validate_result(runtime,action,result):raise IntegrationError('TOOL_OUTPUT_INVALID','输出校验失败')
+        return result
+    async def invoke_async(self, runtime, action, state=None):
+        import inspect
+        spec = self.validate(action, runtime, state)
+        result = self.handlers[spec.handler_id](runtime, action['args'], {**(state or {}), 'action': action})
+        if inspect.isawaitable(result):result = await result
+        if not self.validate_result(runtime, action, result):
+            raise IntegrationError('TOOL_OUTPUT_INVALID', '异步工具输出校验失败')
+        return result
+    def read(self,runtime,name,args,state):
+        spec=self.get(name)
+        if spec.layer!='read':raise IntegrationError('ACTION_DENIED','只读入口禁止观察')
+        skills=[s['id'] for s in runtime.skills.registry if name in s['tools'] and s['id'] in spec.skill_ids]
+        if not skills:raise IntegrationError('ACTION_DENIED','没有受信技能可用此工具')
+        return self.invoke(runtime,{'tool':name,'args':args,'skill':skills[0]},state)

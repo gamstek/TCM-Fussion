@@ -1,16 +1,16 @@
 """项目根启动绑定样品的 MCP stdio 服务 worker；协议 stdout 仅由官方 SDK 写入。
+解析 `--context`，先 import cv2 完成原生库冷加载，再用 `lib.mcp_bridge.make_server(context).run(transport="stdio")` 提供显微证据工具。从项目根以模块方式启动。读取命令参数或任务上下文，并通过约定的结果文件或退出码交付。
 
 主要定义：
 - main: 解析 `--context`，先 import cv2 完成原生库冷加载，再用 `lib.mcp_bridge.make_server(context).run(transport="stdio")` 提供显微证据工具。
 
 关联：
-- TCM_Fusion.lib.mcp_bridge: 提供 `make_server`，并以 `-m TCM_Fusion.cli.mcp_server --context ...` 子进程拉起本入口。
-- TCM_Fusion.cli.workflow_worker、TCM_Fusion.cli.yolo_worker 等: 被 MCP 工具间接调用的检测/分类 worker 兄弟入口。
-- 检测侧库（cv2 等）: 主线程预加载，避免 Windows asyncio worker 中的 DLL 冷启动阻塞。
+- 直接依赖 「lib/mcp/mcp_bridge.py」。
+- 从项目根通过 python -m 启动。
 """
 import argparse
 
-from TCM_Fusion.lib.mcp_bridge import make_server
+from TCM_Fusion.lib.mcp.mcp_bridge import make_server
 
 
 def main(argv=None):

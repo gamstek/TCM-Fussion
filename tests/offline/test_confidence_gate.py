@@ -1,4 +1,5 @@
 """统计门控离线单测；临时构造数据不证明真实分类效果或样品独立性。
+该组用例由项目根 selftest 发现。涉及模型回复的用例使用可控输入，涉及进程的用例以各断言规定的执行边界为准。
 
 主要定义：
 - ConfidenceTests 温度拟合与模型身份: `G.fit` 的 NLL 不升、权重签名不一致时报错。
@@ -9,19 +10,17 @@
 - validated 正路径: 冻结规则下 `route` 可 skip 且标记 calibrated，权重变更后不再 skip。
 
 关联：
-- TCM_Fusion.lib.confidence_gate: `fit`/`validate`/`publish`/`upper_error`/`model_identity`。
-- TCM_Fusion.lib.routing_policy: `route` 与 `validate_policy`。
-- TCM_Fusion.lib.storage: `file_hash`/`write_json`/`IntegrationError` 绑定工件与错误。
-- TCM_Fusion.lib.collaboration: `knowledge_base` 提供判据。
+- 直接依赖 「lib/decision/collaboration.py」、「lib/decision/routing_policy.py」、「lib/offline/confidence_gate.py」、「lib/runtime/storage.py」。
+- 统一执行见 tests/README.md。
 """
 import copy
 import tempfile
 import unittest
 from pathlib import Path
-from TCM_Fusion.lib import confidence_gate as G
-from TCM_Fusion.lib.storage import IntegrationError, file_hash, write_json
-from TCM_Fusion.lib.routing_policy import route,validate_policy
-from TCM_Fusion.lib.collaboration import knowledge_base
+from TCM_Fusion.lib.offline import confidence_gate as G
+from TCM_Fusion.lib.runtime.storage import IntegrationError, file_hash, write_json
+from TCM_Fusion.lib.decision.routing_policy import route,validate_policy
+from TCM_Fusion.lib.decision.collaboration import knowledge_base
 
 
 class ConfidenceTests(unittest.TestCase):

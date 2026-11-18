@@ -10,15 +10,13 @@
 - 模块级约束: 文字型 confidence 按 glm high=0.90 / medium=0.65 / low=0.30 折算为 `confidence_score`。
 
 关联：
-- TCM_Fusion.lib.workflow_backend: 以 `-m TCM_Fusion.cli.classify_worker` 子进程调用，对应 `classify_target` 单 crop 动作。
-- 检测侧库（classify_crop、ls_common）: 提供分类实现与配置/API key。
-- TCM_Fusion.lib.storage: 读取 context、写结果 JSON 与 IntegrationError。
-- TCM_Fusion.lib.worker_bootstrap: 子进程启动钩子，把 HTTP 请求纳入同一资源账本。
+- 直接依赖 「lib/runtime/storage.py」。
+- 从项目根通过 python -m 启动。
 """
 import argparse
 from pathlib import Path
 
-from TCM_Fusion.lib.storage import IntegrationError, read_json, write_json
+from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json, write_json
 
 
 def geometry_context(tight_box, width, height):

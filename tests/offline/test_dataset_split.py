@@ -1,4 +1,5 @@
 """数据集划分回归：group 隔离、确定性、显式覆盖与泄漏检查。
+该组用例由项目根 selftest 发现。涉及模型回复的用例使用可控输入，涉及进程的用例以各断言规定的执行边界为准。
 
 主要定义：
 - `_write_attributes`: 写出含 image/herb/feature_id/group_key 的 `attributes.csv` 测试夹具。
@@ -7,9 +8,8 @@
 - test_same_image_in_two_groups_is_rejected、test_empty_split_is_rejected: 跨组泄漏与空划分（无 test 等）被拒。
 
 关联：
-- TCM_Fusion.lib.dataset_split: `build`/`assign`/`read_groups`/`split_of`。
-- TCM_Fusion.lib.storage: `IntegrationError` 表达划分约束失败。
-- paths: 在 `results/ui_out/.../verification` 下建临时目录并在 tearDown 清理。
+- 直接依赖 「lib/offline/dataset_split.py」、「lib/runtime/storage.py」。
+- 统一执行见 tests/README.md。
 """
 import csv
 import shutil
@@ -18,8 +18,8 @@ import uuid
 from pathlib import Path
 
 import paths
-from TCM_Fusion.lib import dataset_split as S
-from TCM_Fusion.lib.storage import IntegrationError
+from TCM_Fusion.lib.offline import dataset_split as S
+from TCM_Fusion.lib.runtime.storage import IntegrationError
 
 
 def _write_attributes(directory, rows):

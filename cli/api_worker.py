@@ -1,14 +1,14 @@
-"""固定 HTTP worker：由 hard_calls 以子进程启动，隔离网络阻塞并支撑整次硬截止。
+"""读取调用方写入的请求 JSON，运行图像编码或模型请求，并将结果写入指定路径。负责命令行参数与进程退出码，实际处理由 runtime.hard_calls 提供。
 
 主要定义：
 - main: 解析 `--input` / `--output` 两个路径参数，转交 `lib.hard_calls.worker`。
 
 关联：
-- TCM_Fusion.lib.hard_calls: 提供 `worker` 实现，并以 `-m TCM_Fusion.cli.api_worker` 拉起本入口。
-- TCM_Fusion.lib.worker_bootstrap: 子进程启动钩子，把 HTTP 请求纳入统一资源账本。
+- 直接依赖 「lib/runtime/hard_calls.py」。
+- 从项目根通过 python -m 启动。
 """
 import argparse
-from TCM_Fusion.lib.hard_calls import worker
+from TCM_Fusion.lib.runtime.hard_calls import worker
 
 
 def main(argv=None):

@@ -1,4 +1,5 @@
 """离线评估与报告回归，不属于线上五视图链路。
+该组用例由项目根 selftest 发现。涉及模型回复的用例使用可控输入，涉及进程的用例以各断言规定的执行边界为准。
 
 主要定义：
 - EvaluationTests.test_true_reference_is_not_exposed_by_task_feedback: 真实参考标签不进入任务反馈，`reflection_card` 不标注使用参考标签，review 视为弃答。
@@ -6,17 +7,15 @@
 - test_zero_errors_does_not_imply_zero_risk: Wilson 上界在零错误时仍大于 0；空用例 `compare` 直接报错。
 
 关联：
-- TCM_Fusion.lib.outcome_evaluation: 被测的 `evaluate`。
-- TCM_Fusion.lib.action_feedback: `reflection_card` 的参考标签隔离。
-- TCM_Fusion.lib.ablation_evaluation: `compare`/`wilson` 统计。
-- TCM_Fusion.lib.storage: `IntegrationError`。
+- 直接依赖 「lib/agent/action_feedback.py」、「lib/offline/ablation_evaluation.py」、「lib/offline/outcome_evaluation.py」、「lib/runtime/storage.py」。
+- 统一执行见 tests/README.md。
 """
 import unittest
 
-from TCM_Fusion.lib.action_feedback import reflection_card
-from TCM_Fusion.lib.ablation_evaluation import compare, wilson
-from TCM_Fusion.lib.outcome_evaluation import evaluate as outcome
-from TCM_Fusion.lib.storage import IntegrationError
+from TCM_Fusion.lib.agent.action_feedback import reflection_card
+from TCM_Fusion.lib.offline.ablation_evaluation import compare, wilson
+from TCM_Fusion.lib.offline.outcome_evaluation import evaluate as outcome
+from TCM_Fusion.lib.runtime.storage import IntegrationError
 
 
 class EvaluationTests(unittest.TestCase):
