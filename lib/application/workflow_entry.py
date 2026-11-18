@@ -6,12 +6,10 @@
 
 关联：
 - 调用方 「lib/application/pipeline.py」、「tests/application/test_lifecycle.py」、「tests/runtime/test_readiness.py」、「tests/runtime/test_time_budget.py」、「tests/vision/test_box_quality.py」。
-- 直接依赖 「lib/agent/react_graph.py」、「lib/decision/ab_fusion.py」、「lib/decision/candidate_scope.py」、「lib/decision/collaboration.py」、「lib/decision/final_assessment.py」、「lib/decision/output_projection.py」、「lib/evidence/purpose_evidence.py」、「lib/mcp/mcp_bridge.py」。
+- 直接依赖 「lib/agent/react_graph.py」、「lib/decision/ab_fusion.py」、「lib/decision/candidate_scope.py」、「lib/decision/collaboration.py」、「lib/decision/final_assessment.py」、「lib/decision/output_projection.py」、「lib/evidence/purpose_evidence.py」、「lib/mcp/mcp_bridge.py」、「lib/vision/feature_audit.py」。
 """
 import time
 import copy
-from pathlib import Path
-import paths
 from TCM_Fusion.lib.runtime.code_guard import CodeSignatureGuard
 from TCM_Fusion.lib.decision.output_projection import project_output
 from TCM_Fusion.lib.runtime.storage import write_json, IntegrationError
@@ -190,16 +188,13 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
     runtime.score(result['observations'])
     if workflow.get('feature_audit', False):
         try:
-            from TCM_Fusion.lib.vision.needle_observation import build_feature_audit
-            feature_ids = workflow.get('feature_audit_features') or [
-                row.get('feature_id') for row in
-                (read_json(Path(paths.PROJECT_ROOT) / 'feature_taxonomy.json').get('features') or [])
-                if row.get('feature_id')]
-            feature_ids = [str(x) for x in feature_ids if str(x)]
-            result['feature_audit']=build_feature_audit(directory, feature_ids=feature_ids)
+            from TCM_Fusion.lib.vision.feature_audit import build_feature_audit
+            result['feature_audit'] = build_feature_audit(
+                runtime.workflow.store.current(), out_dir=directory / 'feature_audit',
+                feature_ids=workflow.get('feature_audit_features'))
         except Exception as exc:
             # 旁路审计失败不得改变原裁决或关闭任务。
-            result['feature_audit']={'schema':'feature-audit/v1','non_blocking':True,
+            result['feature_audit']={'schema':'feature-audit/v2','non_blocking':True,
                                      'error':f'{type(exc).__name__}: {exc}'}
     guard.check('before_fusion')
     if runtime.workflow.purpose_quality():

@@ -68,6 +68,20 @@ class LifecycleTests(WorkflowFixture, unittest.TestCase):
         self.assertEqual(ctx.exception.code, 'SIMULATION_SCOPE')
         self.assertFalse((self.root/'ledger.json').exists())
 
+    def test_workflow_exports_audit_for_the_finished_evidence_version(self):
+        config = self.config()
+        config['agent']['workflow']['feature_audit'] = True
+        runtime = self.runtime()
+        with patch('TCM_Fusion.lib.application.workflow_entry.from_task', return_value=runtime):
+            asyncio.run(execute_workflow(
+                config, {}, self.root, routing={}, start=time.perf_counter(),
+                job={}, status_path=self.root/'job.json',
+            ))
+        audit = read_json(self.root/'feature_audit/feature_audit.json')
+        output = read_json(self.root/'output.json')
+        self.assertEqual(audit, output['feature_audit'])
+        self.assertEqual(audit['evidence_version'], runtime.workflow.store.current()['version'])
+
     def test_mcp_workflow_context_uses_task_ledger(self):
         runtime = self.runtime()
         context_path = self.root/'context.json'

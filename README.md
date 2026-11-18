@@ -104,7 +104,7 @@ detect_fov_initial（YOLO）
 - `feature_scan` / `hybrid_scan` 是兜底扫描工具；标准路径只在 missing required feature 时按 `fast_recovery_selection` 创建，`hybrid_scan` 仅旧配置 `legacy_bundle` 使用。
 - **feature_profiles**：以 `feature_taxonomy.json` 为全集生成默认 profile；针晶的负例只属于针晶 profile，不会污染其他特征。
 - **negative_feature_bank.json**：按 P0 test 错误归因构建的 target-conditioned 负例特征库；淀粉粒因漏检高且类别混淆为 0，不作为针晶硬负例。
-- **feature_audit**：workflow 结束后离线读取已有 crop/classification/mask，生成通用 `feature_audit/feature_audit.json`。
+- **feature_audit**：调查结束后按当前有效证据快照汇总 YOLO、通用补扫及已提交的单体和批量分类，生成 `feature_audit/feature_audit.json` 和 mask 目检图。报告记录证据版本和读取异常。
 - **image_exemplar_audit**：读取 `feature_exemplar_bank.json`（14 类 target profile，每类正/负示例），把目标 crop 与正/负示例拼成 contact sheet，由 VLM 输出 `target_score`（针晶兼容 `needle_score`）/ `negative_margin`；当前只审计 `det_score>=0.8` 且未分类的 crop，最多 6 个；只写 `image_audit` 工件，不阻断高分 mask/measure；worker 的 PIL/numpy 输入 bug 已修复，修复后未在线复验。
 - **classify_crops_batch / classify_target**：批量动作逐实例提交；底层仍用 14 类 ResNet18 对全部待分类 crop 做一次 batch 推理；`top1_prob>=cnn_threshold` 且熵低且不是 `other` 时直接写 `source=cnn`，否则进入 pending_review；单实例 classify_target 路径可回退 GLM；required crop 的 GLM 结果仍会做 YOLO crop 复核。
 - **CNN 特征分类器**：权重与 meta 在 `分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/`，使用 `.venv/yolo`（有 torch/torchvision）；只做 14 类特征归类，不判药材、不替代 locate、不生成 mask。分类器没有 `unreadable` 类；批量低置信/`other` 保留 `pending_review`，由 Agent 决定后续 GLM 复核。
@@ -152,7 +152,7 @@ feature_scan_features = []
 feature_scan_max_tiles = 4
 feature_scan_concurrency = 2
 feature_audit = true
-feature_audit_features = 14 类 taxonomy（默认全部）
+feature_audit_features = 模板显式列 14 类；空列表或省略时按快照中的有效裁图审计
 image_exemplar_audit = true
 image_exemplar_audit_min_det_score = 0.8
 image_exemplar_audit_max_crops = 6
