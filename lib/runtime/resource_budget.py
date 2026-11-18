@@ -115,6 +115,37 @@ def operation_failure(context_path):
                  if r.get('operation_key')==ctx['operation_key'] and r.get('status')=='failed'),None)
 
 
+def _record_response_usage(response, path, key):
+    """抓取 worker 已读取的完整 JSON 的 token 计数，保持原始读取及返回值。"""
+    from http.client import HTTPResponse
+    import json
+    if not isinstance(response, HTTPResponse) or response.headers.get_content_type() != 'application/json':
+        return
+    read = response.read
+
+    def read_with_usage(amt=None):
+        data = read(amt)
+        if amt is None and len(data) <= 1024 * 1024 and b'"usage"' in data:
+            try:
+                payload = json.loads(data)
+                usage = payload.get('usage') if isinstance(payload, dict) else None
+                counts = {name: usage[name] for name in ('prompt_tokens', 'completion_tokens', 'total_tokens')
+                          if isinstance(usage, dict) and type(usage.get(name)) is int and usage[name] >= 0}
+                if counts:
+                    handle = acquire(path)
+                    try:
+                        book = read_json(path)
+                        book['entries'][key]['usage'] = counts
+                        write_json(path, book)
+                    finally:
+                        release(handle)
+            except (ValueError, OSError, IntegrationError):
+                pass  # 诊断数据缺失时由评估报告为未知，业务层仍收到原响应。
+        return data
+
+    response.read = read_with_usage
+
+
 def install_http_guard(context_path):
     """仅在专用worker及其子进程安装，不改变原B或全局用户环境。"""
     import urllib.request
@@ -136,6 +167,7 @@ def install_http_guard(context_path):
         status=getattr(response,'status',None)
         finish_http(ctx['budget_path'],key,status='response_received',
                     http_status=status if isinstance(status,int) else None)
+        _record_response_usage(response,ctx['budget_path'],key)
         return response
     urllib.request.urlopen=guarded
     def no_redirect(*args,**kwargs):

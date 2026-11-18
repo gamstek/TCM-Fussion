@@ -44,6 +44,21 @@ def baseline(run):
     http = Counter(row['status'] for row in resources['entries'].values()
                    if row['pool'] == 'network' and row.get('operation_key'))
     audit = final['candidate_audit']
+    require(output.get('final_assessment') == final == trace.get('final_assessment') and
+            audit == packet.get('candidate_audit'), '交付、证据包或候选审查副本不一致')
+    require(trace.get('resources') == resources, '最终轨迹所附账本与持久账本不一致')
+    facts = {f['id']: f for f in packet['facts']}
+    for role in ('supporting_evidence', 'counterevidence'):
+        refs = [f['id'] for f in final[role]]
+        require(len(refs) == len(set(refs)) and all(facts.get(f['id']) == f for f in final[role]),
+                '交付存在重复或未绑定事实引用')
+    for row in audit['candidates']:
+        for item in row['required'] + row['supporting']:
+            if item['state'] in {'supported','quantitative_counter'}:
+                fact = facts.get(item['fact_ref'], {})
+                relation = 'supports_candidate_ids' if item['state']=='supported' else 'counters_candidate_ids'
+                require(fact.get('kind')=='criterion' and row['candidate_id'] in fact[relation],
+                        '候选合格判据与证据资格不一致')
     states = {role: dict(Counter(item['state'] for row in audit['candidates']
                                  for item in row[role])) for role in ('required', 'supporting')}
     views = read_json(run.parent.parent / 'input_proof.json')['views']
@@ -65,6 +80,9 @@ def baseline(run):
         'candidate': (output['top_candidate'] or {}).get('id'), 'status': output['status'],
         'review_required': output['review_required'], 'review_reasons': final['review_reasons'],
         'criterion_states': states, 'unmapped': len(audit['unmapped']),
+        'frozen_contract_sha256': {key: digest(value) for key, value in (
+            ('eligibility',packet['eligibility_projection']),('audit',audit),
+            ('delivery',final),('ledger',resources))},
     }
 
 

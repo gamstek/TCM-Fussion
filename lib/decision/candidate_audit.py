@@ -99,6 +99,28 @@ def build(runtime, scored, observations, *, eligibility=None, actions=None):
         'policy':'review is always allowed; incomplete audit cannot authorize a complete differential conclusion'}
 
 
+def first_contrast(audit):
+    """返回当前映射候选间首个合格判据差异及可复核的事实 ID。局部未见不作反证。"""
+    candidates = audit['candidates']
+    if len(candidates) < 2:
+        return None
+    by_feature = {}
+    for row in candidates:
+        for item in row['required'] + row['supporting']:
+            by_feature.setdefault(item['feature_id'], {})[row['candidate_id']] = item
+    for feature, items in sorted(by_feature.items()):
+        supports = {cid: item['fact_ref'] for cid, item in items.items()
+                    if item['state'] == 'supported' and item['fact_ref']}
+        counters = {cid: item['fact_ref'] for cid, item in items.items()
+                    if item['state'] == 'quantitative_counter' and item['fact_ref']}
+        outside = sorted(row['candidate_id'] for row in candidates if row['candidate_id'] not in items)
+        if supports and (counters or outside):
+            return {'feature_id': feature, 'support_refs': supports, 'counter_refs': counters,
+                    'other_candidates_without_criterion': outside,
+                    'basis': 'opposing_criteria' if counters else 'candidate_specific_criterion'}
+    return None
+
+
 def compact(value):
     """每候选仅发状态与缺口，不重复判据全文；完整账本落盘/收尾可查。"""
     return {k:value[k] for k in ('schema','complete','candidate_ids','unmapped',

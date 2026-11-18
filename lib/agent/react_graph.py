@@ -453,6 +453,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                       and planner_mode != "heuristic")
     from TCM_Fusion.lib.agent.reflection_controller import ReflectionController
     controller = ReflectionController(runtime) if autonomous else None
+    react_started = time.monotonic()
     planner_source = "model" if planner_mode == "llm" and planner is None else "injected_planner"
     if type(no_gain_limit) is not int or no_gain_limit not in (1, 2):
         raise IntegrationError("CONFIG_INVALID", "无增益阈值只允许1或2")
@@ -617,6 +618,15 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         if autonomous:
             from TCM_Fusion.lib.decision.candidate_audit import build as audit_candidates, compact as compact_audit
             audit=audit_candidates(runtime,scored,state.get('observations',[]),actions=actions)
+            if not any(e['phase'] == 'first_qualified_contrast' for e in state['events']):
+                from TCM_Fusion.lib.decision.candidate_audit import first_contrast
+                contrast = first_contrast(audit)
+                if contrast:
+                    state = {**state, 'events': [*state['events'], {
+                        'phase': 'first_qualified_contrast', **contrast, 'assessed_at': time.time(),
+                        'elapsed_from_react_start': round(time.monotonic() - react_started, 6),
+                        'evidence_version': workflow.store.current()['version'],
+                        'evidence_digest': scored['evidence_digest']}]}
             state={**state,'candidate_audit':compact_audit(audit)}
             from TCM_Fusion.lib.decision.comparison_problems import investigation_focus
             state={**state,'investigation_focus':investigation_focus(runtime,scored,audit)}
@@ -1044,7 +1054,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                         or any(k in reply for k in ('parallel_question_id','parallel_observation_id','semantic_goal'))):
                     error = 'physical_pair_unavailable'
                 else:
-                    by_id = {a['action_id']:a for a in context['actions']}
+                    # 送模菜单省略 skill 等受信绑定，所有伙伴与首项一样从当前合法原动作派发。
+                    by_id = {a['action_id']:a for a in choices}
                     partners = [by_id[p] for p in rest]
             if chosen is None:
                 error = "action_unavailable"
@@ -1151,7 +1162,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     diagnosis = controller.reject(reply['reflection_patch'], exc)
                     events.append({'phase': 'reflection_patch_rejected', **diagnosis})
             events.append({"phase": "thought", "decision_source": planner_source,
-                           "action_id": chosen["action_id"], "usage": usage,
+                           "action_id": chosen["action_id"], "tool": chosen["tool"], "usage": usage,
+                           "physical_partner_ids": [p['action_id'] for p in partners],
                            "execution_choice": reply.get('execution_choice',{'kind':'action','format':'legacy'}),
                            "choice_normalization": reply.get('choice_normalization'),
                            "stop_advisory": state["stop_advisory"],

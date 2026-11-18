@@ -164,7 +164,7 @@ class PhysicalScheduleTests(WorkflowFixture,unittest.TestCase):
         self.assertEqual(read_json(self.s.budget_path)['used'],{'initialization':2})
 
     def test_graph_authorizes_pair_and_coalesces(self):
-        self.setup_pair()
+        self.setup_pair(context_compact=True)
         class Planner:
             def choose(self,ctx):
                 ids = ctx['execution_options']['physical_pairs'][0]

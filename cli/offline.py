@@ -53,6 +53,13 @@ def main(argv=None):
     schedule = sub.add_parser('schedule-replay', help='冻结实跑基线并在独立证据库回放初检乱序')
     schedule.add_argument('--run', required=True, action='append', help='case/runs/fusion_<id>，可重复')
     schedule.add_argument('--out-dir', required=True, help='原 case 之外的新目录')
+    paired = sub.add_parser('schedule-compare', help='同图冷启动单路/并发及可选历史实跑对照')
+    paired.add_argument('--serial', required=True)
+    paired.add_argument('--parallel', required=True)
+    paired.add_argument('--historical')
+    paired.add_argument('--semantic-serial', help='开启串行语义目标的 C 组')
+    paired.add_argument('--semantic-parallel', help='同时开启语义目标与 D4 的组合组')
+    paired.add_argument('--out', required=True)
     split = sub.add_parser('dataset-split', help='按group_key确定性划分训练/开发/测试，防止调参泄漏')
     split.add_argument('--attributes', nargs='+', required=True, help='一个或多个attributes.csv')
     split.add_argument('--out', required=True, help='输出dataset-split/v1 JSON')
@@ -78,6 +85,18 @@ def main(argv=None):
     args = parser.parse_args(argv)
     package = Path(paths.PROJECT_ROOT) / 'TCM_Fusion'
     try:
+        if args.command == 'schedule-compare':
+            from TCM_Fusion.lib.offline.paired_schedule import compare
+            runs = {k:project_path(p) for k,p in vars(args).items() if p and k in
+                    {'serial','parallel','historical','semantic_serial','semantic_parallel'}}
+            out = project_path(args.out)
+            if out.exists() or any(out.is_relative_to(p.parent.parent) for p in runs.values()):
+                raise IntegrationError('SCHEDULE_COMPARISON', '请指定原 case 之外的新结果文件')
+            report = compare(**runs)
+            with out.open('x', encoding='utf-8') as stream:
+                json.dump(report, stream, ensure_ascii=False, indent=2)
+            print(out)
+            return 0
         if args.command == 'schedule-replay':
             from TCM_Fusion.lib.offline.schedule_replay import run
             out = project_path(args.out_dir)

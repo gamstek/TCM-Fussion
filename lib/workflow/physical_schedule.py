@@ -76,7 +76,7 @@ def reserve_group(session, actions):
         rows = []
         for a in actions:
             canonical = legal.get(a['action_id'])
-            if not canonical or any(a[k] != canonical[k] for k in ('tool','skill','args')):
+            if not canonical or any(a.get(k) != canonical[k] for k in ('tool','skill','args')):
                 raise IntegrationError('PAIR_STALE', '动作已失效或参数不匹配')
             session.runtime.tools.validate(a, session.runtime)
             tool = a['tool']
