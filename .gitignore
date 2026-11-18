@@ -5,3 +5,29 @@ __pycache__/
 yolo-results/*
 !yolo-results/README.md
 
+# 本机历史路径联接。实际存档位于运行结果索引列出的标准名称下。
+/运行结果/龙胆_agentdrive_20261109_1645_screen4/
+/运行结果/case_ev1_20261111_125716/
+/运行结果/白芍四图_20261112_1832/
+/运行结果/白芍_单视野16_20261116_0910/
+/运行结果/白芍_单视野21_20261116_1122/
+/运行结果/白芍_四图8_20261116_1146/
+/运行结果/陈皮_四图2_20261116_1448/
+/运行结果/甘草_三图1_20261116_1644/
+/运行结果/case_advisory_single_20261117_165118/
+/运行结果/case_d3_single_20261117_191050/
+/运行结果/case_d3_fixed_single_20261117_192513/
+/运行结果/case_eff_single_20261117_214135/
+/运行结果/case_choices_single_20261117_222246/
+/运行结果/case_choices_fixed_single_20261117_223156/
+/运行结果/case_candidate_audit_single_20261118_090132/
+/运行结果/case_fair_investigation_single_20261118_093651/
+/运行结果/case_context_reflection_single_20261118_113050/
+/运行结果/case_context_reflection_single_20261118_114242/
+/运行结果/case_context_reflection_single_20261118_115328/
+/运行结果/case_context_reflection_newimage_20261118_115744/
+/运行结果/case_identity_reflection_sameimage_20261118_134704/
+/运行结果/case_identity_reflection_B20241228_20261118_140422/
+/运行结果/yolo_annotation_audit_20261109_v2/
+/运行结果/白芍_support_presence4_20261112_1832/
+

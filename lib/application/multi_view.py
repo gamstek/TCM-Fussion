@@ -20,6 +20,7 @@ import os
 import re
 import shutil
 import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import paths
@@ -30,6 +31,8 @@ _INVALID_NAME_CHARS = frozenset('<>:"/\\|?*') | frozenset(chr(i) for i in range(
 _RESERVED_NAMES = frozenset({'CON', 'PRN', 'AUX', 'NUL'}) | frozenset(
     f'{prefix}{i}' for prefix in ('COM', 'LPT') for i in range(1, 10))
 _MAX_CASE_NAME = 100
+_CASE_TAG = re.compile(r'[A-Za-z0-9\u3400-\u9fff]+(?:-[A-Za-z0-9\u3400-\u9fff]+)*')
+_RUN_TIMEZONE = timezone(timedelta(hours=8))
 
 
 def _validate_case_name(case_name):
@@ -47,6 +50,16 @@ def _validate_case_name(case_name):
     if case_name.split('.', 1)[0].upper() in _RESERVED_NAMES:
         raise IntegrationError('MULTI_VIEW_NAME', f'case_name不能使用系统保留名: {case_name}')
     return case_name
+
+
+def _format_case_name(subject, purpose, view_count, dry_run, token):
+    for label, tag in (('测试对象', subject), ('测试目的', purpose)):
+        if not isinstance(tag, str) or len(tag) > 16 or not _CASE_TAG.fullmatch(tag):
+            raise IntegrationError(
+                'MULTI_VIEW_NAME', f'{label}须为1至16个中文、字母、数字或单个连字符组成的短标签')
+    mode = '预检' if dry_run else '实跑'
+    stamp = datetime.now(_RUN_TIMEZONE).strftime('%Y%m%d-%H%M%S')
+    return f'{mode}__{subject}__{view_count:02d}图__{stamp}__{purpose}-{token}'
 
 
 def inspect_sources(source_dir, manifest=None):
@@ -110,11 +123,12 @@ def bind_config(template, images, *, sample_id, a_python=None):
 
 
 def run_multi_view(source_dir, *, output_root=None, manifest=None,
-                  config_template=None, a_python=None, dry_run=False, case_name=None):
+                   config_template=None, a_python=None, dry_run=False, case_name=None,
+                   subject=None, purpose=None):
     """Return fresh case on dry-run, completed run directory on live execution.
 
-    case_name optionally names the case directory; the config sample_id is
-    sanitized separately so Chinese/display names remain usable on disk.
+    subject and purpose label the case directory; automatic names use a neutral
+    config sample_id. case_name is the legacy exact directory override.
     All failures after case creation write interface_status.json. Retrying means
     another case; no recorded observations, old A cache or hidden fallback.
     """
@@ -132,14 +146,18 @@ def run_multi_view(source_dir, *, output_root=None, manifest=None,
     source = project_path(source_dir)
     if root == source or root.is_relative_to(source):
         raise IntegrationError('MULTI_VIEW_SCOPE', '输出根不能位于输入图像目录内')
-    if case_name is not None:
-        _validate_case_name(case_name)
-        base = root / case_name
+    if case_name is not None and (subject is not None or purpose is not None):
+        raise IntegrationError('MULTI_VIEW_NAME', '旧参数 --name 不能与 --subject 或 --purpose 同用')
+    if case_name is None:
+        token = uuid.uuid4().hex[:8]
+        sample_id = 'case_' + token
+        base = root / _format_case_name(
+            '未标注' if subject is None else subject,
+            '链路测试' if purpose is None else purpose, len(bindings), dry_run, token)
     else:
-        base = root / ('case_' + uuid.uuid4().hex[:8])
+        base = root / _validate_case_name(case_name)
+        sample_id = re.sub(r'[^0-9A-Za-z_-]+', '_', case_name)[:64].strip('_') or base.name
     base.mkdir(parents=True, exist_ok=False)
-    sample_id = re.sub(r'[^0-9A-Za-z_-]+','_', case_name)[:64].strip('_') if case_name else base.name
-    sample_id = sample_id or base.name
     status = {'schema': 'multi-view-interface/v1', 'dry_run': bool(dry_run),
               'base': str(base), 'stage': 'copying', 'status': 'running'}
     write_json(base / 'interface_status.json', status)

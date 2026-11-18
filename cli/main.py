@@ -2,10 +2,10 @@
 
 主要定义：
 - main: 构建 argparse 子命令并按 `args.command` 分发。
-- run: 要求 `agent.mode=active` 且含 `agent.workflow`，转交 `lib.pipeline.run_pipeline`。
-- doctor: 转交 `lib.pipeline.doctor` 输出就绪报告，未就绪返回码 2。
+- run: 要求 `agent.mode=active` 且含 `agent.workflow`，转交 `lib.application.pipeline.run_pipeline`。
+- doctor: 转交 `lib.application.pipeline.doctor` 输出就绪报告，未就绪返回码 2。
 - selftest: 用 `unittest` 递归发现 `TCM_Fusion/tests`，并额外执行原 B 的 rule_engine/adjudicator/scene 三组测试。
-- multi-view: 转交 `lib.multi_view.run_multi_view`；图片数量由 manifest 决定，`--dry-run` 只准备与本地 doctor。
+- multi-view: 转交 `lib.application.multi_view.run_multi_view`；图片数量由 manifest 决定，`--dry-run` 只准备与本地 doctor。
 - five-view: 兼容旧名的等价别名，不带独立逻辑。
 - 错误处理: 捕获 `IntegrationError/OSError/ValueError/KeyError`，按 `[CODE] message` 写 stderr 并返回 2。
 
@@ -39,7 +39,9 @@ def main(argv=None):
         item.add_argument("--manifest")
         item.add_argument("--output-root")
         item.add_argument("--config-template")
-        item.add_argument("--name", help="case目录名；sample_id会另做ASCII清洗")
+        item.add_argument("--subject", help="目录中的测试对象；盲测使用中性样本代号，默认未标注")
+        item.add_argument("--purpose", help="目录中的测试目的，默认链路测试")
+        item.add_argument("--name", help="兼容旧脚本的完整目录名；与 --subject/--purpose 互斥")
         item.add_argument("--a-python", help="A模型解释器，或设TCM_A_PYTHON；不自动切环境")
         item.add_argument("--dry-run", action="store_true", help="只准备和本地doctor，不调用模型")
         item.add_argument("--json", action="store_true")
@@ -64,7 +66,8 @@ def main(argv=None):
             from TCM_Fusion.lib.application.multi_view import run_multi_view
             directory = run_multi_view(args.source_dir, manifest=args.manifest,
                 output_root=args.output_root, config_template=args.config_template,
-                a_python=args.a_python, dry_run=args.dry_run, case_name=args.name)
+                a_python=args.a_python, dry_run=args.dry_run, case_name=args.name,
+                subject=args.subject, purpose=args.purpose)
             value = {"directory": str(directory), "dry_run": args.dry_run,
                      "status": "prepared" if args.dry_run else "completed"}
             print(json.dumps(value, ensure_ascii=False) if args.json else str(directory))
