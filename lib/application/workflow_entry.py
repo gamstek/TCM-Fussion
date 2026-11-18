@@ -83,6 +83,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'supporting_probe_per_candidate':{'type':'integer','minimum':1,'maximum':5},
     'supporting_probe_scan_total':{'type':'integer','minimum':0,'maximum':20},
     'supporting_probe_scan_per_candidate':{'type':'integer','minimum':1,'maximum':5},
+    'protect_investigation_budget':{'type':'boolean'},
     'context_recent_observations':{'type':'integer','minimum':1,'maximum':32},
     'context_recent_operations':{'type':'integer','minimum':1,'maximum':64},
     'tool_timeout_seconds':{'type':'integer','minimum':30,'maximum':3600},

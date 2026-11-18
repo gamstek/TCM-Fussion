@@ -185,10 +185,12 @@ def investigation_opportunities(runtime, audit, focus, actions, remaining):
 
 def protect_investigation_budget(runtime, actions, opportunities, remaining):
     """Do not sell the last feasible path to an unrelated supporting probe."""
+    if not runtime.workflow.config.get('protect_investigation_budget', True):
+        return actions, []
     protected = [r for r in opportunities if r['role'] == 'required'] or opportunities
     if not protected:
         return actions, []
-    from TCM_Fusion.lib.runtime.probe_budget import check_reservation, describe, sponsor
+    from TCM_Fusion.lib.runtime.probe_budget import check_reservation, describe, with_sponsor
     targets = runtime.workflow.targets()
     book = read_json(runtime.workflow.budget_path)
     selected = {a['action_id']: a for a in actions}
@@ -210,7 +212,7 @@ def protect_investigation_budget(runtime, actions, opportunities, remaining):
             tiles = target['max_tiles']
             spend = {'recompute': 1, 'network': tiles + 1, 'planning': 1, 'total': tiles + 3}
         preview = {'supporting_probes': {**book.get('supporting_probes', {}),
-            probe['key']: {**probe, 'charged_candidate_ids': [sponsor(book, probe)]}}}
+                                        probe['key']: with_sponsor(book, probe)}}
         can_keep_path = False
         for row in protected:
             next_action = selected[row['action_id']]

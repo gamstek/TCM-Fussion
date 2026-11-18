@@ -198,6 +198,47 @@ class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn(required['action_id'], {a['action_id'] for a in kept})
         self.assertTrue(any(r['tool'] == 'presence_check' and r['feature_id'] == 'cork_cell'
                             for r in deferred))
+        runtime.workflow.config['protect_investigation_budget'] = False
+        self.assertEqual(protect_investigation_budget(runtime, actions, opportunities, remaining),
+                         (actions, []))
+
+    async def test_parallel_supporting_observations_share_remaining_slots(self):
+        for slots in (1, 2):
+            with self.subTest(slots=slots):
+                name = f'paired-probes-{slots}'
+                runtime = self.scan_runtime(name, supporting_probe_total=2 + slots,
+                                            supporting_probe_scan_total=2,
+                                            protect_investigation_budget=False)
+                backend = FixtureBackend()
+                tools = LocalToolbox(runtime, ledger_path=self.root / (name + '.json'), backend=backend)
+                calls = []
+
+                class Planner:
+                    def choose(self, context):
+                        calls.append(context)
+                        if len(calls) > 1:
+                            return {'action_id': 'review'}, None
+                        questions = {r['feature_id']: r['question_id']
+                                     for r in context['execution_options']['questions']}
+                        return {'decision': {'kind': 'observe_questions',
+                            'question_ids': [questions['fiber'], questions['cork_cell']]}}, None
+
+                trace = await run_react(runtime, tools, planner=Planner(), planner_mode='scripted',
+                                        max_steps=8)
+                self.assertEqual(trace['planning_requests'], 2)
+                self.assertEqual(len(backend.calls), slots)
+                self.assertEqual(len(trace['observations']), slots)
+                self.assertTrue(all(o['accepted'] for o in trace['observations']))
+                probes = read_json(runtime.workflow.budget_path)['supporting_probes'].values()
+                self.assertEqual({p['feature_id'] for p in probes},
+                                 {'fiber'} if slots == 1 else {'fiber', 'cork_cell'})
+                rejected = [e for e in trace['events'] if e['phase'] == 'parallel_question_rejected']
+                if slots == 1:
+                    self.assertEqual(len(rejected), 1)
+                    self.assertEqual(rejected[0]['reason'], 'SUPPORTING_POOL_BUDGET')
+                    self.assertEqual(rejected[0]['new_planning_requests'], 0)
+                else:
+                    self.assertFalse(rejected)
 
     async def test_split_preserves_both_p0_supporting_actions_in_serialized_model_menu(self):
         comparison = {}

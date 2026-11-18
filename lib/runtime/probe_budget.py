@@ -7,6 +7,8 @@
 - describe: 绑定可信知识库与物理查询身份，不信任调用方自报角色。
 - check_reservation: 校验探测预留是否与已记账资源一致。
 - sponsor: 为分池方案选择有该类余额的一个发起候选。
+- with_sponsor: 为已获准的预留记录写入同池发起者信息。
+- parallel_probe_blocker: 在同一账本快照中预检两项观察。
 - available: 判断动作/目标是否仍有可用预留额度。
 
 关联：
@@ -91,6 +93,12 @@ def sponsor(book, probe):
                key=lambda cid: (used[cid], cid), default=None)
 
 
+def with_sponsor(book, probe):
+    if 'pool_limit' not in probe:
+        return probe
+    return {**probe, 'charged_candidate_ids': [sponsor(book, probe)]}
+
+
 def check_reservation(book, probe):
     """Return an error code; called again under the resource reservation lock."""
     entries = book.get('supporting_probes', {})
@@ -114,3 +122,17 @@ def check_reservation(book, probe):
 def available(runtime, action, target=None):
     probe = describe(runtime, action, target)
     return probe is None or check_reservation(read_json(runtime.workflow.budget_path), probe) is None
+
+
+def parallel_probe_blocker(runtime, primary, companion):
+    """Preview both probe charges in selection order without changing the ledger."""
+    first, second = describe(runtime, primary), describe(runtime, companion)
+    if first is None or second is None:
+        return None
+    book = read_json(runtime.workflow.budget_path)
+    reason = check_reservation(book, first)
+    if reason:
+        return reason
+    preview = {'supporting_probes': {**book.get('supporting_probes', {}),
+                                    first['key']: with_sponsor(book, first)}}
+    return check_reservation(preview, second)

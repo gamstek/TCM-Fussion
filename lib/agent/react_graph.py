@@ -1066,15 +1066,20 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             if question_id is not None:
                 additional = parallel_questions.get(question_id) if isinstance(question_id, str) else None
                 primary_q = action_question(runtime, chosen)['question_id']
+                pair_blocker = 'not_independent_or_affordable'
                 if (not companion and not is_stop and chosen['tool'] in {'presence_check','scene_check'} and additional
                         and primary_q != question_id and current_budget['observation'] >= 2
                         and current_budget['network'] >= 2 and current_budget['total'] >= 4
                         and state['steps']+2 <= max_steps):
-                    companion = additional
+                    from TCM_Fusion.lib.runtime.probe_budget import parallel_probe_blocker
+                    pair_blocker = parallel_probe_blocker(runtime, chosen, additional)
+                    if pair_blocker is None:
+                        companion = additional
+                if pair_blocker is None:
                     events.append({'phase':'parallel_question_authorized','question_ids':[primary_q,question_id],
                                    'decision_source':planner_source,'max_parallel':2})
                 else:
-                    events.append({'phase':'parallel_question_rejected','reason':'not_independent_or_affordable',
+                    events.append({'phase':'parallel_question_rejected','reason':pair_blocker,
                                    'selected_action_preserved':True,'new_planning_requests':0})
             semantic_plan = None
             if reply.get('semantic_goal') is not None and not is_stop:

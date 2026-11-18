@@ -170,10 +170,11 @@
       "context_max_actions": 20,
       "auto_measure_after_segment": true,
       "candidate_group_verification": true,
-      "supporting_probe_total": 6,
+      "supporting_probe_total": 8,
       "supporting_probe_per_candidate": 2,
-      "supporting_probe_scan_total": 2,
+      "supporting_probe_scan_total": 3,
       "supporting_probe_scan_per_candidate": 1,
+      "protect_investigation_budget": false,
       "suppress_repeated_measurement": true
     }
   },
