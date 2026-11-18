@@ -118,6 +118,10 @@ def validate_config(config):
         if not project_path(a["image"]).is_relative_to(project_path(b["input"])):
             raise IntegrationError("SAMPLE_MISMATCH", "A图像须位于本次B原图目录，不能融合不同样品")
     validated = copy.deepcopy(config)
+    if ("workflow" in agent and agent.get("planner", "llm") == "llm"
+            and agent["workflow"].get("agent_policy", "adaptive_v2") == "adaptive_v2"):
+        # 在新任务装配时确定策略，使主机与 MCP 读取同一份配置。历史回放使用原任务配置。
+        validated["agent"]["workflow"].setdefault("semantic_execution", True)
     if validated.get("routing") and "candidate_policy" not in validated.get("agent", {}):
         validated.setdefault("agent", {})["candidate_policy"] = {"top_k": validated["routing"].get("top_k", 3)}
     return validated

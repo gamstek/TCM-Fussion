@@ -22,7 +22,7 @@
     "workflow": {
       "execution": "active",
       "agent_policy": "adaptive_v2",
-      "semantic_execution": false,
+      "semantic_execution": true,
       "physical_parallel": true,
       "python": ".venv/vision/Scripts/python.exe",
       "detector": "yolo",

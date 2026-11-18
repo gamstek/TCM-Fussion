@@ -140,11 +140,18 @@ class MultiViewTests(unittest.TestCase):
         self.assertEqual(len(cfg['a']['images']), len(self.proof['views']))
         self.assertEqual(cfg['a']['images'], cfg['agent']['image_roots'])
         self.assertEqual(cfg['agent']['transport'], 'mcp')
+        workflow = cfg['agent']['workflow']
+        self.assertIs(workflow['semantic_execution'], True)
+        self.assertIs(workflow['physical_parallel'], True)
+        self.assertEqual(workflow['max_parallel'], 4)
         self.assertNotIn('routing', cfg)
         self.assertEqual(read_json(base / 'interface_status.json')['status'], 'prepared')
 
     def test_live_calls_existing_pipeline_with_fresh_case_and_writes_pointer(self):
         def run(cfg, *, base):
+            self.assertEqual(cfg, read_json(base / 'config.json'))
+            self.assertIs(cfg['agent']['workflow']['semantic_execution'], True)
+            self.assertIs(cfg['agent']['workflow']['physical_parallel'], True)
             self.assertFalse((base / 'a_cache').exists())
             self.assertFalse((base / 'runs').exists())
             result = base / 'runs/fake-run'
@@ -185,6 +192,23 @@ class MultiViewTests(unittest.TestCase):
             with self.assertRaises(IntegrationError):
                 F.bind_config(cfg, images, sample_id='test', a_python=paths.VENV_PY)
 
+    def test_new_task_semantic_default_and_independent_overrides(self):
+        images = [str(self.source / row['view']) for row in self.proof['views']]
+        for semantic, physical in ((None, True), (False, True), (True, False), (False, False)):
+            with self.subTest(semantic=semantic, physical=physical):
+                template = copy.deepcopy(self.template)
+                workflow = template['agent']['workflow']
+                workflow['physical_parallel'] = physical
+                if semantic is None:
+                    del workflow['semantic_execution']
+                else:
+                    workflow['semantic_execution'] = semantic
+                bound = F.bind_config(template, images, sample_id='test', a_python=paths.VENV_PY)
+                effective = bound['agent']['workflow']
+                self.assertIs(effective['semantic_execution'], True if semantic is None else semantic)
+                self.assertIs(effective['physical_parallel'], physical)
+                self.assertEqual('semantic_execution' in workflow, semantic is not None)
+
     def test_reference_policy_field_parity_and_explicit_defaults(self):
         ref_path = Path(paths.PROJECT_ROOT) / 'TCM_Fusion/运行结果/case_9cc59640/config.json'
         if not ref_path.is_file():
@@ -193,7 +217,7 @@ class MultiViewTests(unittest.TestCase):
         old = ref['agent']['workflow']
         new = self.template['agent']['workflow']
         for field, value in old.items():
-            if field not in {'p0_priority', 'max_initializations', 'max_locate_attempts',
+            if field not in {'p0_priority', 'max_initializations', 'max_locate_attempts', 'semantic_execution',
                              'max_planning', 'max_observations', 'max_api_calls',
                              'max_resource_units'}:
                 self.assertEqual(new[field], value, field)
