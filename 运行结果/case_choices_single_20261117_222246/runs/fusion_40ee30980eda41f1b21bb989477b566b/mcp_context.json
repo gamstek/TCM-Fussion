@@ -1,0 +1,204 @@
+{
+  "workflow_config": {
+    "allow_network": true,
+    "a": {
+      "mode": "cli",
+      "required": true,
+      "checkpoint_dir": "MICROSCOPE-main/v3_resnet50_full",
+      "timeout_seconds": 180,
+      "images": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_choices_single_20261117_222246\\view_01.jpg"
+      ],
+      "python": "D:\\Anaconda\\python.exe"
+    },
+    "b": {
+      "mode": "run",
+      "input_mode": "images",
+      "enable_vlm": false,
+      "input": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_choices_single_20261117_222246\\view_01.jpg"
+    },
+    "agent": {
+      "mode": "active",
+      "planner": "llm",
+      "transport": "mcp",
+      "max_steps": 60,
+      "candidate_policy": {
+        "top_k": 3
+      },
+      "workflow": {
+        "execution": "active",
+        "agent_policy": "adaptive_v2",
+        "semantic_execution": true,
+        "python": ".venv/vision/Scripts/python.exe",
+        "detector": "yolo",
+        "targeted_recovery": true,
+        "max_parallel": 2,
+        "locate_attempts_per_view": 2,
+        "locate_attempt_reserve": 2,
+        "max_tool_failures": 2,
+        "identity_min_confidence": "medium",
+        "max_seconds": 2400,
+        "max_observation_seconds": 150,
+        "max_call_seconds": 180,
+        "initialization_reserve": 1,
+        "max_planning": 60,
+        "agent_driven_coverage": true,
+        "max_observations": 40,
+        "max_recompute": 30,
+        "max_api_calls": 200,
+        "max_resource_units": 400,
+        "quality_policy": "strict",
+        "quality_evaluation": "legacy",
+        "box_association": "region_component",
+        "igm_size": "2048x2048",
+        "candidate_scope": "open_strict",
+        "a_weight": 0.6,
+        "b_weight": 0.4,
+        "min_support_features": 2,
+        "final_assessment_llm": true,
+        "final_assessment_seconds": 45,
+        "feature_audit": true,
+        "feature_audit_features": [
+          "cluster_crystal",
+          "single_crystal",
+          "needle_crystal",
+          "vessel",
+          "stone_cell",
+          "starch_grain",
+          "non_glandular_hair",
+          "secretory_tissue",
+          "stoma",
+          "epidermis_cell",
+          "hypha",
+          "fiber",
+          "pollen_grain",
+          "other"
+        ],
+        "image_exemplar_audit": true,
+        "image_exemplar_audit_min_det_score": 0.8,
+        "image_exemplar_audit_max_crops": 6,
+        "image_exemplar_audit_skip_classified": true,
+        "image_exemplar_bank": "TCM_Fusion/config/feature_exemplar_bank.json",
+        "image_exemplar_positive": 4,
+        "image_exemplar_negative": 4,
+        "image_exemplar_seconds": 60,
+        "cnn_weights": "分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/best.pt",
+        "cnn_meta": "分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/model_meta.json",
+        "cnn_threshold": 0.75,
+        "cnn_entropy_threshold": 0.8,
+        "cnn_batch_size": 16,
+        "cnn_other_fallback": true,
+        "fast_fallback_max_features": 2,
+        "fast_fallback_max_locate_calls": 6,
+        "fast_classify_max_per_view": 3,
+        "classify_batch_enabled": true,
+        "context_compact": true,
+        "context_recent_observations": 6,
+        "context_recent_operations": 8,
+        "tool_timeout_seconds": 180,
+        "feature_scan_tile_policy": "full",
+        "feature_scan_enabled": false,
+        "feature_scan_features": [],
+        "feature_scan_tile_size": 1024,
+        "feature_scan_overlap": 0.15,
+        "feature_scan_max_tiles": 4,
+        "feature_scan_concurrency": 2,
+        "hybrid_scan_enabled": true,
+        "feature_profiles": {
+          "needle_crystal": {
+            "positive": "针晶可散在，也常多根成束、密集、相邻或连续分布；优先框可分辨的针状结晶及其集合，不因成簇、堆叠或相邻出现而排除。",
+            "negative": [
+              "纤维：连续细胞壁/胞腔",
+              "表皮细胞：片状/多边形边界",
+              "导管：管腔/环纹/网纹",
+              "石细胞：厚壁/胞腔",
+              "分泌组织：油室/油管/腔隙内容物",
+              "簇晶/方晶/花粉粒仅作软负例"
+            ]
+          },
+          "fiber": {
+            "negative": [
+              "表皮细胞：片状/多边形边界",
+              "导管：管腔/环纹/网纹",
+              "石细胞：厚壁/胞腔",
+              "分泌组织：油室/油管/腔隙"
+            ]
+          },
+          "epidermis_cell": {
+            "negative": [
+              "纤维：连续细胞壁/胞腔",
+              "导管：管腔/环纹/网纹",
+              "石细胞：厚壁/胞腔"
+            ]
+          },
+          "vessel": {
+            "negative": [
+              "纤维：连续细胞壁/胞腔",
+              "表皮细胞：片状/多边形边界",
+              "石细胞：厚壁/胞腔"
+            ]
+          },
+          "stone_cell": {
+            "negative": [
+              "纤维：连续细胞壁/胞腔",
+              "表皮细胞：片状/多边形边界",
+              "分泌组织：油室/油管/腔隙"
+            ]
+          },
+          "secretory_tissue": {
+            "negative": [
+              "纤维：连续细胞壁/胞腔",
+              "石细胞：厚壁/胞腔",
+              "未分类组织/背景"
+            ]
+          }
+        },
+        "glm_identity_threshold": 0.8,
+        "locate_expand": 1.5,
+        "locate_min_box_side": 90,
+        "locate_min_roi_side": 256,
+        "box_quality_enabled": true,
+        "box_quality_retry": true,
+        "enabled_tools": [
+          "detect_fov_initial",
+          "calibrate_fov",
+          "segment_instance",
+          "classify_target",
+          "classify_crops_batch",
+          "measure_instances",
+          "detect_region",
+          "locate_feature",
+          "feature_scan",
+          "hybrid_scan",
+          "image_exemplar_audit"
+        ],
+        "fast_recovery_selection": "per_feature",
+        "fast_recovery_roles": [
+          "required",
+          "supporting"
+        ],
+        "early_verification": true,
+        "context_max_actions": 20,
+        "auto_measure_after_segment": true,
+        "auto_prepare_stage": false,
+        "auto_required_measurement": false,
+        "candidate_group_verification": true,
+        "supporting_probe_total": 6,
+        "supporting_probe_per_candidate": 2,
+        "suppress_repeated_measurement": true,
+        "fast_yolo_stage2": true
+      },
+      "image_roots": [
+        "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_choices_single_20261117_222246\\view_01.jpg"
+      ]
+    },
+    "aliases": {},
+    "allow_recorded": false,
+    "sample_id": "case_choices_single_20261117_222246"
+  },
+  "a_prediction": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_choices_single_20261117_222246\\runs\\fusion_40ee30980eda41f1b21bb989477b566b\\a_prediction.json",
+  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_choices_single_20261117_222246\\runs\\fusion_40ee30980eda41f1b21bb989477b566b",
+  "allow_network": true,
+  "max_requests": 40,
+  "simulation": false
+}

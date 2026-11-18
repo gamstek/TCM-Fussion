@@ -1,0 +1,30 @@
+{
+  "schema": "serial-semantic-plan/d3",
+  "plan_id": "plan:9e5ccbe7ed0e42ac1f1496d7",
+  "goal": {
+    "semantic_task": "verify_identity",
+    "instance_ref": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+    "problem_id": "question:64ddacdd80a5a471e4f5ec80"
+  },
+  "dimension": null,
+  "bound_input": "1c6383a7daa777da1696d011220ef3de4e1461eb8999dab36f8558d0e14fcc48",
+  "nodes": [
+    {
+      "node_id": "verify_identity",
+      "semantic_task": "verify_identity",
+      "instance_ref": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "depends_on": [],
+      "status": "succeeded",
+      "required_facts": [
+        "instance_exists"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    }
+  ],
+  "status": "completed",
+  "return_reason": "local_goal_satisfied"
+}

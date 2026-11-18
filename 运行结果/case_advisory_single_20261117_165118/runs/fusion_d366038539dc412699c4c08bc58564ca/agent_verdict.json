@@ -1,0 +1,1255 @@
+{
+  "sample_id": "case_advisory_single_20261117_165118",
+  "verdict": "insufficient_evidence",
+  "conclusion": null,
+  "alternatives": [
+    {
+      "id": "郁金",
+      "kind": "herb",
+      "display": "郁金",
+      "score": 0.172063,
+      "score_max": 0.3,
+      "confidence": 0.4131,
+      "checks": [
+        {
+          "feature_id": "gelatinized_starch",
+          "role": "required",
+          "tier": "C",
+          "present": true,
+          "state": "NO_REF",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.3,
+          "q_state": 0.6,
+          "abundance": "可见",
+          "m_abundance": 0.9,
+          "counts_toward_conf": true,
+          "score_contribution": 0.1239,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "薄壁细胞中可见糊化淀粉粒",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 1,
+      "conf_required_num": 0.1239,
+      "conf_denom": 0.3,
+      "sup_net": 0.0,
+      "conf_raw": 0.4131,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.011371,
+      "b_confidence": 0.4131,
+      "fused_score": 0.172063,
+      "b_score": 0.1239
+    },
+    {
+      "id": "茯苓",
+      "kind": "herb",
+      "display": "茯苓",
+      "score": 0.001309,
+      "score_max": 0.8,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "hypha",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "菌丝无色或淡棕色，细长有分枝（单味正文直径3～8μm，少数至16μm；成方显微口径为4～6μm）",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 3,
+            "max": 8,
+            "extreme": 16
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "fungal_mass",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "不规则分枝状团块无色，遇水合氯醛液溶化",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "hypha",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        },
+        {
+          "feature_id": "fungal_mass",
+          "penalty": 0.009,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.069,
+      "conf_denom": 0.8,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.002181,
+      "b_confidence": 0.0,
+      "fused_score": 0.001309,
+      "b_score": -0.069
+    },
+    {
+      "id": "G3",
+      "kind": "group",
+      "display": "枳壳 / 陈皮",
+      "score": 7e-05,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "single_crystal",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "方晶成片存在于薄壁组织中，多面体形、菱形或双锥形",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 3,
+            "max": 53,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "stoma",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "果皮表皮细胞气孔环式（枳壳补充）",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 16,
+            "max": 34,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "single_crystal",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.000116,
+      "b_confidence": 0.0,
+      "fused_score": 7e-05,
+      "b_score": -0.24
+    },
+    {
+      "id": "G1",
+      "kind": "group",
+      "display": "赤芍 / 牡丹皮",
+      "score": 5.7e-05,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "cluster_crystal",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": "众多",
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "草酸钙簇晶存在于薄壁细胞中，有时数个排列成行",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "starch_grain",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": "较多",
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "淀粉粒多，单粒类圆形、椭圆形（赤芍2～13μm；牡丹皮3～16μm，取并集）",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 2,
+            "max": 16,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "vessel",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "具缘纹孔导管（赤芍条目，直径25～78μm）",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 25,
+            "max": 78,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "cork_cell",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "木栓细胞淡红色（赤芍条目）",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "fiber",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "木纤维成束（赤芍条目，药典未给μm数值）",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "cluster_crystal",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 9.6e-05,
+      "b_confidence": 0.0,
+      "fused_score": 5.7e-05,
+      "b_score": -0.24
+    }
+  ],
+  "ranking": [
+    {
+      "id": "白芍",
+      "kind": "herb",
+      "display": "白芍",
+      "score": 0.472168,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "cluster_crystal",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "簇晶存在于薄壁细胞中，常排列成行，或一个细胞含数个簇晶",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 11,
+            "max": 35,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "starch_grain",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": "甚多",
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "含淀粉粒；药典原文为'糊化淀粉粒团块甚多'，糊化形态需灰度/偏振信息确认",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "vessel",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "具缘纹孔及网纹导管",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 20,
+            "max": 65,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "fiber",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "纤维长梭形，壁厚微木化，具大圆形纹孔",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 15,
+            "max": 40,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "cluster_crystal",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.786946,
+      "b_confidence": 0.0,
+      "fused_score": 0.472168,
+      "b_score": -0.24
+    },
+    {
+      "id": "郁金",
+      "kind": "herb",
+      "display": "郁金",
+      "score": 0.172063,
+      "score_max": 0.3,
+      "confidence": 0.4131,
+      "checks": [
+        {
+          "feature_id": "gelatinized_starch",
+          "role": "required",
+          "tier": "C",
+          "present": true,
+          "state": "NO_REF",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.3,
+          "q_state": 0.6,
+          "abundance": "可见",
+          "m_abundance": 0.9,
+          "counts_toward_conf": true,
+          "score_contribution": 0.1239,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "薄壁细胞中可见糊化淀粉粒",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 1,
+      "conf_required_num": 0.1239,
+      "conf_denom": 0.3,
+      "sup_net": 0.0,
+      "conf_raw": 0.4131,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.011371,
+      "b_confidence": 0.4131,
+      "fused_score": 0.172063,
+      "b_score": 0.1239
+    },
+    {
+      "id": "茯苓",
+      "kind": "herb",
+      "display": "茯苓",
+      "score": 0.001309,
+      "score_max": 0.8,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "hypha",
+          "role": "required",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "菌丝无色或淡棕色，细长有分枝（单味正文直径3～8μm，少数至16μm；成方显微口径为4～6μm）",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 3,
+            "max": 8,
+            "extreme": 16
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "fungal_mass",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "不规则分枝状团块无色，遇水合氯醛液溶化",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "hypha",
+          "penalty": 0.06,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        },
+        {
+          "feature_id": "fungal_mass",
+          "penalty": 0.009,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.069,
+      "conf_denom": 0.8,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.002181,
+      "b_confidence": 0.0,
+      "fused_score": 0.001309,
+      "b_score": -0.069
+    },
+    {
+      "id": "G3",
+      "kind": "group",
+      "display": "枳壳 / 陈皮",
+      "score": 7e-05,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "single_crystal",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "方晶成片存在于薄壁组织中，多面体形、菱形或双锥形",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 3,
+            "max": 53,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "stoma",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "果皮表皮细胞气孔环式（枳壳补充）",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 16,
+            "max": 34,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "single_crystal",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.000116,
+      "b_confidence": 0.0,
+      "fused_score": 7e-05,
+      "b_score": -0.24
+    },
+    {
+      "id": "G1",
+      "kind": "group",
+      "display": "赤芍 / 牡丹皮",
+      "score": 5.7e-05,
+      "score_max": 1.0,
+      "confidence": 0.0,
+      "checks": [
+        {
+          "feature_id": "cluster_crystal",
+          "role": "required",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": "众多",
+          "m_abundance": 1.0,
+          "counts_toward_conf": true,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "草酸钙簇晶存在于薄壁细胞中，有时数个排列成行",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "starch_grain",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": "较多",
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "淀粉粒多，单粒类圆形、椭圆形（赤芍2～13μm；牡丹皮3～16μm，取并集）",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": 2,
+            "max": 16,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "vessel",
+          "role": "supporting",
+          "tier": "P0",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 1.0,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "具缘纹孔导管（赤芍条目，直径25～78μm）",
+          "quant_bounds": {
+            "dim": "mean_width",
+            "min": 25,
+            "max": 78,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "cork_cell",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "木栓细胞淡红色（赤芍条目）",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "fiber",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "counts_toward_conf": false,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "木纤维成束（赤芍条目，药典未给μm数值）",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "cluster_crystal",
+          "penalty": 0.24,
+          "note": "主判特征未检出（按通道灵敏度打折）"
+        }
+      ],
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "support_count": 0,
+      "conf_required_num": -0.24,
+      "conf_denom": 1.0,
+      "sup_net": 0.0,
+      "conf_raw": 0.0,
+      "scene_factor_eff": 1.0,
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 9.6e-05,
+      "b_confidence": 0.0,
+      "fused_score": 5.7e-05,
+      "b_score": -0.24
+    }
+  ],
+  "notes": [
+    "候选池为空或最高分候选无有效支持分（<0.50）"
+  ],
+  "support_feature_count": 1,
+  "needs_review": true,
+  "source_images": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\view_01.jpg"
+  ],
+  "agent": {
+    "mode": "workflow_react",
+    "vlm_calls": 6,
+    "planning_calls": 11,
+    "identity_review": false
+  },
+  "candidate_scope": {
+    "scope": "open_strict",
+    "a_topk_ids": [
+      "白芍",
+      "G1",
+      "郁金",
+      "G3",
+      "茯苓"
+    ],
+    "kept_ids": [
+      "郁金",
+      "茯苓",
+      "G1",
+      "G3",
+      "白芍"
+    ],
+    "dropped": [
+      {
+        "id": "辣蓼",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "青黛",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "槟榔",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "蝉蜕",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "穿心莲",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大青叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "地黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "滑石",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "牡蛎",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "秦皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "石膏",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "水牛角",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "雄黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "泽泻",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "当归",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "艾叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "板蓝根",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "薄荷",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "荜茇",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "柴胡",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "川楝子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "防风",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "甘草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "广藿香",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "诃子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "红花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄柏",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄连",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄芩",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "金银花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "荆芥",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桔梗",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "菊花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "苦参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "莱菔子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "连翘",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麻黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麦芽",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "牵牛子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桑白皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "使君子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "葶苈子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "菟丝子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "王不留行",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "乌梅",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "香附",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "益母草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "茵陈",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "白头翁",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "鱼腥草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄芪",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大腹皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "淡竹叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "木香",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G2",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G4",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桂枝",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "厚朴",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "虎杖",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "苦杏仁",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "龙胆",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "马齿苋",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "肉桂",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "山楂",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "射干",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "五味子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "玄参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "淫羊藿",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "知母",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "栀子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "党参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "猪苓",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麦冬",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大黄",
+        "reason": "not_in_a_topk"
+      }
+    ],
+    "policy": "A Top-K 为 Plan B 重点；非 A 仅在 open_strict 且 required+supporting 全部符合时保留"
+  },
+  "fusion_weights": {
+    "a": 0.6,
+    "b": 0.4,
+    "a_folds": 5
+  },
+  "fusion_policy": "A 先验 + B 证据加权；B verdict/证据状态不由 A 改写",
+  "candidate_admission": {
+    "available": false,
+    "decision": "verify",
+    "fallback": true,
+    "reason": "rule evidence requires review; no model admission requested",
+    "decision_source": "runtime_precondition"
+  }
+}

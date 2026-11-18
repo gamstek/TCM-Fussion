@@ -1,9 +1,22 @@
-"""Presence observation -> diagnostic localization, consumed by the ledger/planner.
+"""把 presence 观察的可选 box 投影为影子定位线索，供账本与规划器参考，不产生正式工件。
 
-Source images are read-only. This module never creates formal CropMeta, identity
-approval, calibration or measurements. Geometry/quality hints do not change the
-legacy P1/C observation. Box schema belongs to ToolRegistry; shared IoU/context
-expansion and image-quality primitives remain in geom/box_quality.
+源图只读；本模块不生成正式 CropMeta、身份批准、标定或测量，几何/质量提示也不改变
+旧的 P1/C 观察。模型自报的 transform 一律不采信；box schema 归 ToolRegistry，
+IoU/上下文扩展与图像质量原语仍留在 geom/box_quality。
+
+主要定义：
+- POLICY_VERSION: 定位策略版本 `presence_localization_shadow_v1`。
+- sanitize_proposal: 丢弃畸形可选 box，不使合法观察失效。
+- observation_context: 绑定实际下发栅格并记录来源哈希、尺寸与逆变换。
+- assess_presence: 把观察结果拆分为定位、质量、身份与用途资格。
+- `_mapped_box` / `_spatial_hints`：坐标逆映射与重叠诊断的内部工具。
+
+关联：
+- TCM_Fusion.lib.tool_registry: PRESENCE_BOX_SCHEMA 与 validate_arguments 校验 box。
+- TCM_Fusion.lib.box_quality: assess 提供质量提示。
+- geom: iou_box/loose_box 提供共享几何原语。
+- TCM_Fusion.lib.agent_tools: 调用 sanitize_proposal/observation_context/assess_presence。
+- TCM_Fusion.lib.storage: 哈希、数值校验与 JSON 写出。
 """
 from __future__ import annotations
 
@@ -110,7 +123,7 @@ def assess_presence(result, *, path, expected_sha256, feature_id, context=None,
 
 output_dir is a fresh host-owned action directory under the current ledger.
 Diagnostic PNGs deliberately have no formal CropMeta sidecars and cannot enter
-locate_override, segmentation or measurement through the artifact store.
+classification or measurement through the artifact store.
 """
     row = {'policy_version': POLICY_VERSION, 'mode': 'shadow',
            'source_image_sha256': expected_sha256, 'feature_id': feature_id,

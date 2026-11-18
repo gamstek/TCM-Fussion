@@ -1,0 +1,83 @@
+{
+  "source_sha256": "2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305",
+  "image_size": [
+    3840,
+    2160
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "549fcbeb0eead19e808c1e1f1c064f70ce499921d473bc372a3e1fe97ff975c6"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "其他",
+      "tight_bbox": [
+        1326.8,
+        1574.6,
+        2658.5,
+        2159.5
+      ],
+      "confidence": "low",
+      "score": 0.2703,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "纤维",
+      "tight_bbox": [
+        321.7,
+        24.9,
+        3800.7,
+        1989.8
+      ],
+      "confidence": "medium",
+      "score": 0.627,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        1328.1,
+        1578.6,
+        2615.6,
+        2158.6
+      ],
+      "confidence": "low",
+      "score": 0.3455,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        2126.8,
+        1788.2,
+        2661.8,
+        2158.0
+      ],
+      "confidence": "medium",
+      "score": 0.6049,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        3.2,
+        1898.3,
+        552.8,
+        2160.0
+      ],
+      "confidence": "medium",
+      "score": 0.5353,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ]
+}

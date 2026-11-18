@@ -1,25 +1,24 @@
 # -*- coding: utf-8 -*-
-"""det_dataset.py — P0 数据工程：把 14 个单类 YOLO 导出集合并成一个可信的多类训练集
+"""P0 数据工程：把逐类导出的单类 YOLO 数据集按内容 md5 合并为可信多类训练集，并完成组感知划分、稀有类重采样与可复跑审计。
 
-**为什么存在**：`cli/export_det_dataset.py` 是按类逐目录导出的，每个目录只有本类标签，
-且 753 个文件名跨目录重复（同名不同图）。直接拼目录会把不同图的标签混到一张图上
-（见 docs/目标检测_文献调研与实现方案_20261030.md §4.2 / §7）。本模块做四件事：
+主要定义：
+- DatasetError: 数据工程断言失败（消息带可回查路径/键）。
+- class_table / split_delivery: 由 `vlm_config.json` 生成连续 0..N-1 类别表；把「其他」类检测框分流成交付与非交付两列。
+- scan_source / resolve_negative_meta: 扫描单类导出目录并校验计数；解析负样本/背景元数据。
+- merge_by_md5: 以内容 md5 为键合并重复图，标签取并集。
+- select_holdout_herbs / plan_split: 选留整味药材做跨药材 test；按 group_key 整组划分 train/val/test。
+- oversample_train: 仅对 train 稀有类写重复行，不在磁盘复制图片。
+- audit_records: 按类统计框面积/长宽比/贴边/巨型与小框比例。
+- write_dataset: 写 images/labels、train_list.txt、data yaml 与数据集指纹。
+- validate_plan / validate_output: 对划分与落盘结果做断言。
+- build: 串起扫描→负样本→md5 合并→hold-out→划分→重采样→写盘→校验的编排入口。
 
-1. **以内容 md5 为键合并**（不是文件名），重复内容标签取并集；
-2. **按 group_key 组感知划分** train/val/test，留整味药材做跨药材 test；
-3. **train-only 稀有类重采样**（写进 train_list.txt 的重复行，不在磁盘复制图片）；
-4. 出可复跑的审计/断言/指纹（`split_report.json` + `dataset_fingerprint.json`）。
-
-**分层**：本文件是具名库（无 `__main__`、不 import 入口脚本）；入口在
-`目标检测/cli/build_det_dataset.py`，离线断言在 `目标检测/tests/test_det_dataset.py`。
-
-**不变量**（与方案文档 §6.2 对齐）：
-- 输出 `images/<split>/` 里同一内容只出现一次（重复靠 train_list.txt 表达）；
-- 同一 `group_key` 只落一个 split；hold-out 药材不进 train/val；
-- `其他` 是第 14 个**正类**，正常参与 train/val/test；但它没有 IGM 特征描述，
-  所以 `delivery=False`，不进入交付类集合；
-- 类别 id 在输出里**连续重编**（`vlm_config.json` 的全局 id 有 pending 空洞，
-  YOLO 要求 0..N-1）。
+关联：
+- 独立数据工程模块：仅依赖标准库，不 import 入口脚本。
+- 目标检测/cli/build_det_dataset.py: 构建入口调用 `build`。
+- cli/workflow_worker.py: 调用 `split_delivery` 把「其他」类分流。
+- lib/detector_yolo.py: 复用 `class_table` 作为唯一类别表事实源。
+- 目标检测/tests/test_det_dataset.py: 离线断言。
 """
 import csv
 import hashlib

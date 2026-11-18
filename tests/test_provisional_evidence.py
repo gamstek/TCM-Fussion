@@ -1,3 +1,17 @@
+"""暂定证据排序回归：分类只更新 provisional 视图，不改变正式判决与支持计数。
+
+主要定义：
+- ProvisionalEvidenceTests（pending 分类）: 分类命中只标 DETECTED_PENDING，正式分数与支持计数保持不变。
+- ProvisionalEvidenceTests（状态边界）: UNCAL/NO_REF 不算已核验；低置信且无部分线索记为 UNKNOWN。
+- ProvisionalEvidenceTests（冲突判定）: 同一 crop 被分成互斥特征时标记 CONFLICT，越界结论同样是冲突。
+- ProvisionalEvidenceTests（快照优先级）: 当前有效证据快照优先于历史操作记录。
+
+关联：
+- TCM_Fusion.lib.provisional_evidence: 被测的 build 以及内部 _best_classes/_tier_for 状态推导。
+- TCM_Fusion.lib.storage: 通过临时 bundle 中的 classification.json 构造输入。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
+
 import json
 import tempfile
 import unittest

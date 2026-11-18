@@ -1,0 +1,258 @@
+{
+  "entries": {
+    "bcd966408ef0a0134713c21df935eccc1b2f60b4bcdae12e377a98d4e625bfcf": {
+      "action_id": "f05b2c5ca44690b6467ed507682481325d2f2e8824f5feb0c0a9a323709dc882",
+      "tool": "detect_fov_initial",
+      "target_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "bcd966408ef0a0134713c21df935eccc1b2f60b4bcdae12e377a98d4e625bfcf",
+      "evidence_version": "05bd1052b0bd7f11730646baf355ed8c5a6b9cba0118f730d8e684794f23762e",
+      "dependency_fingerprint": "0e61f0520cb65d84868209d8431d6352864d664e33bd1f762f8abce8c6ff11a7",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\bcd966408ef0a013",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops/cluster_crystal_view_01_01.json": "00938c568d9ccb5ed802a8ecaacb8c77792d3bd3734333a32a7bde1b70a67d1d",
+          "detection/crops/cluster_crystal_view_01_01.png": "ec4d401d26534fd293500333de9f01b359d21726bfaf7150a08a96341707739f",
+          "detection/crops/cluster_crystal_view_01_02.json": "37cc419df8fde190a406985f2f7f769cdf65120095e691f660d1cd44f5d6b016",
+          "detection/crops/cluster_crystal_view_01_02.png": "94d46c4ab26436bfc2b3b5361d5252bbd2f6951033cad22ff5f657bfeac4c0ba",
+          "detection/crops.json": "8e654c0bbdf498ee02b75eaeeb5c498d2107fe1ac071dc46b57118d298db6302"
+        },
+        "quality": null
+      }
+    },
+    "4cf80a8aa71b9ec96a811774a44aea74c736ebbe2782a000765a208206f6becc": {
+      "action_id": "8327ded64d0714d1316ea8c24ca99254b024781aaf229048f8afd538966851fc",
+      "tool": "classify_target",
+      "target_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "4cf80a8aa71b9ec96a811774a44aea74c736ebbe2782a000765a208206f6becc",
+      "instance_id": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "semantic_key": "d8caed6747dcb872437748af0fde99c2489f062a7397c293e2733aaf54197b94",
+      "evidence_version": "d00637ef70a73273aebe5f2adeb2da56c638721d173e782d9c39397dd8660344",
+      "dependency_fingerprint": "d254f8e02214d9cd44678c0fb6569f2f36033b9854cb50045cc91ef67757a4b9",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\4cf80a8aa71b9ec9",
+        "paths": {
+          "classification": "classification"
+        },
+        "files": {
+          "classification/classification.json": "4024b6a77f7bef26ef23bba7482036597e0ee88fa7ec547840e2941a49a4b65d"
+        },
+        "quality": null
+      }
+    },
+    "6d1ca20f3a58a6109ba79be34079579e2d4d035b043267766349a462fc16d9bc": {
+      "action_id": "c37ca68a1d2aadd1e506f268594533f64af82403454b7b8be163350953ecf875",
+      "tool": "segment_instance",
+      "target_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "6d1ca20f3a58a6109ba79be34079579e2d4d035b043267766349a462fc16d9bc",
+      "instance_id": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "semantic_key": "c147da3871120ff0653bb679b2394287c6940d10c66133b527b2a3ac5acd7cae",
+      "evidence_version": "c295a040cc5a9287881d100a3df0c830dbce0d0c9f91ca2568fe7f922971821f",
+      "dependency_fingerprint": "5415bfb90f5569e9352d3cf1be96cc6117e15ba4ad64d0cfb3427973ae6e8d62",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\6d1ca20f3a58a610",
+        "paths": {
+          "segmentation": "segmentation"
+        },
+        "files": {
+          "segmentation/instances.json": "b359c4f8ad63e9a0220f1b4a44d86b7de81bf983c18444aa7490ac6a070b5fe4",
+          "segmentation/masks/view_01__cluster_crystal__inst01.png": "6c3e55c25037b13cfb21633caa748e67059b2f90cab0faeca0ace7ffe798f866",
+          "segmentation/masks/view_01__measure_manifest.csv": "5c2fab8f2527d945cac7f36cbae563237daa46c8f8325bcfd22371385f5f9f73",
+          "segmentation/igm/cluster_crystal_view_01_01/gen_raw.png": "e56bbe067b8c9bbccd3fa6c0939ca6dc2e4f90d53261aad32bca460f4d44dfd5",
+          "segmentation/igm/cluster_crystal_view_01_01/input_sent.jpg": "70bf354ba319adae4f961320ab56e7e98916ac474afd68293d1e7f706c05b77d",
+          "segmentation/igm/cluster_crystal_view_01_01/mask.png": "6c3e55c25037b13cfb21633caa748e67059b2f90cab0faeca0ace7ffe798f866",
+          "segmentation/igm/cluster_crystal_view_01_01/meta.json": "f419d7a5d57eaeed474831e157ff49e43a01b47655a765788451aa0ce6a1c953",
+          "segmentation/igm/cluster_crystal_view_01_01/overlay.jpg": "1dd897b776dd047501dd1f813ef8bb977d9cdd91408250bf9e99008ff1d4328e",
+          "segmentation/masks/crops/cluster_crystal_view_01_01.json": "00938c568d9ccb5ed802a8ecaacb8c77792d3bd3734333a32a7bde1b70a67d1d",
+          "segmentation/masks/crops/cluster_crystal_view_01_01.png": "ec4d401d26534fd293500333de9f01b359d21726bfaf7150a08a96341707739f"
+        },
+        "quality": "review"
+      }
+    },
+    "dafc8bf379ccc5ccbbd6ecaf29492ffdba597924db40104a8ece9a5921664764": {
+      "action_id": "b2cf1c5f4ab4fafb94c525b05f6b7c900533ec07de48a9e38e3adfdb4a2692d8",
+      "tool": "classify_target",
+      "target_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "dafc8bf379ccc5ccbbd6ecaf29492ffdba597924db40104a8ece9a5921664764",
+      "instance_id": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "semantic_key": "7618c569a83d4057a18ce41650e51f0669496f168662d5b0100dca1d3def26d9",
+      "evidence_version": "c68e06dcb6610ee4a6bfe72c61a3a3eb4c1d112b7bc89380732441943c6c62a2",
+      "dependency_fingerprint": "befaa48a1dbb849b9957d6744a2ed7d3716f1d279388a83aa6360054e6040147",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\dafc8bf379ccc5cc",
+        "paths": {
+          "classification": "classification"
+        },
+        "files": {
+          "classification/classification.json": "7d8fd989c49c14079de5378393c04f3bae920878904172cb70ff26110159282f"
+        },
+        "quality": null
+      }
+    },
+    "eb81417881ee579a3cf5a97530c1ff4a4cefea897acdeb976649d0b493bbb443": {
+      "action_id": "fc1c16b84c06645ef5d706b3fc7697c5267044d27034f8b5d9f10fff8f270752",
+      "tool": "segment_instance",
+      "target_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "eb81417881ee579a3cf5a97530c1ff4a4cefea897acdeb976649d0b493bbb443",
+      "instance_id": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "semantic_key": "cfc1776e310e76c08d84eea8e874c9370f77ff15fd73794f7ac217a036b6c0b3",
+      "evidence_version": "11b7f8eac5984150b8f4923c44d21af0e4b0e5a402ce9cc0d17256df3c801a46",
+      "dependency_fingerprint": "a26e4e840cb1e6ae8a99255041e2cddc37e5bcfc8a2b40359eb9efc433b57900",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\eb81417881ee579a",
+        "paths": {
+          "segmentation": "segmentation"
+        },
+        "files": {
+          "segmentation/instances.json": "aa93ff197350644e77357421e573762b82629e901dcc4ce7039600d24096d459",
+          "segmentation/masks/view_01__cluster_crystal__inst01.png": "cca7b108dfd5b9c504131587487b2eb590e3dd69d657c6fcc80f76903c413eb5",
+          "segmentation/masks/view_01__measure_manifest.csv": "373d6086817c9d9770d539dbae07e951548e8d5c46d29db48013fb5423a9231a",
+          "segmentation/igm/cluster_crystal_view_01_02/gen_raw.png": "a14281ecf06adf00ae8e1d85d997524b485084d95f5ff1c49fb89a7066d44ac2",
+          "segmentation/igm/cluster_crystal_view_01_02/input_sent.jpg": "bb995484fce740acdc7730d71f0e6691c61023667c3f621479ac11767196e132",
+          "segmentation/igm/cluster_crystal_view_01_02/mask.png": "cca7b108dfd5b9c504131587487b2eb590e3dd69d657c6fcc80f76903c413eb5",
+          "segmentation/igm/cluster_crystal_view_01_02/meta.json": "68ae431cf217202f07842328ccd57d6c96bd11d217bbdd88237ad9535bba1e17",
+          "segmentation/igm/cluster_crystal_view_01_02/overlay.jpg": "43084d8240a0a5744c60a291259f808d9760c517c668fb998b98d73010c1aac2",
+          "segmentation/masks/crops/cluster_crystal_view_01_02.json": "37cc419df8fde190a406985f2f7f769cdf65120095e691f660d1cd44f5d6b016",
+          "segmentation/masks/crops/cluster_crystal_view_01_02.png": "94d46c4ab26436bfc2b3b5361d5252bbd2f6951033cad22ff5f657bfeac4c0ba"
+        },
+        "quality": "valid"
+      }
+    },
+    "auto:d3d6c36d7bf21dd8ef8793a05ad9afd9a371fd548b6b7e12d450b81202b7c88b": {
+      "instance_id": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "semantic_key": "d3d6c36d7bf21dd8ef8793a05ad9afd9a371fd548b6b7e12d450b81202b7c88b",
+      "operation_key": "auto:d3d6c36d7bf21dd8ef8793a05ad9afd9a371fd548b6b7e12d450b81202b7c88b",
+      "tool": "measure_instances",
+      "target_id": "seg:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+      "status": "done",
+      "accepted": true,
+      "automatic": true,
+      "evidence_version": "11b7f8eac5984150b8f4923c44d21af0e4b0e5a402ce9cc0d17256df3c801a46",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\eb81417881ee579a\\auto_measure",
+        "paths": {
+          "measurements": "measurement/result_measurements.jsonl",
+          "delivery": "delivery"
+        },
+        "files": {
+          "measurement/result_measurements.jsonl": "c5ccfeaedd88ac7135ecf4ff8d4167fee1ad2dc0a2ce6e987325a2663bfbd125",
+          "delivery/view_01__cluster_crystal__inst26302019650001.png": "cca7b108dfd5b9c504131587487b2eb590e3dd69d657c6fcc80f76903c413eb5",
+          "delivery/view_01__measure_manifest.csv": "60680fcf4bab672eb19b5e3861d20527491f8fd35d164cc4916c65ab50d151be",
+          "delivery/crops/cluster_crystal_view_01_02.json": "37cc419df8fde190a406985f2f7f769cdf65120095e691f660d1cd44f5d6b016",
+          "delivery/crops/cluster_crystal_view_01_02.png": "94d46c4ab26436bfc2b3b5361d5252bbd2f6951033cad22ff5f657bfeac4c0ba"
+        },
+        "quality": null
+      },
+      "latency_ms": 578.0
+    },
+    "c550bd8f495920a4f0c8ce5e13c79c04351fe9d70e46fb60b7499c8b6c81bc52": {
+      "action_id": "fb39a05cdc8fb6dabc9a9e83f9349b199cefce849e77d0e028ff8dd42f61dc5b",
+      "tool": "feature_scan",
+      "target_id": "feature_scan:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:single_crystal",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "c550bd8f495920a4f0c8ce5e13c79c04351fe9d70e46fb60b7499c8b6c81bc52",
+      "feature_id": "single_crystal",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "scan_tiles_reserved": 4,
+      "criteria": [
+        {
+          "candidate_id": "G3",
+          "role": "required"
+        }
+      ],
+      "evidence_version": "91daa9762f0f8058a7123075ee6152af5d7098031a9071f6da9dcebaf6132797",
+      "dependency_fingerprint": "7612eb8393f0a29eb499b80c840ad146f83edb1cf8238eb16d83ec11e0b6eeca",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\c550bd8f495920a4",
+        "paths": {
+          "crops_dir": "scan/crops",
+          "completion": "scan/scan_result.json"
+        },
+        "files": {
+          "scan/crops/single_crystal_view_01_glm0abfd40672a2_01.json": "2e7ee143b248c5ddbb32e18abcad2122d55892a7dadee9c9b39c211afb2f3898",
+          "scan/crops/single_crystal_view_01_glm0abfd40672a2_01.png": "5fa5a6cd5296bd59b3f0c9aa6a1f56131e422e2f51ec17507014ea5dab4a3305",
+          "scan/scan_result.json": "aca7ba613fd9cd338db9fdabac7a13b9147b2c165d9e59f24d3e50fe14b06c60"
+        },
+        "quality": null
+      }
+    },
+    "640e359087f5631a38731b2a73e72e29cd595925cab1f879e4ef610af14138b3": {
+      "action_id": "6c4c538c9158c994558974a1a3c515a71600be583814589febe26598a391984c",
+      "tool": "classify_target",
+      "target_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:single_crystal_view_01_glm0abfd40672a2_01",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "640e359087f5631a38731b2a73e72e29cd595925cab1f879e4ef610af14138b3",
+      "instance_id": "inst:28f0ba06b3ae28a22703b74f1c998b5d2b59775d117d9b0d5bc45aa0182c0173",
+      "semantic_key": "6d6b4a172f9a58e9a42854d1a04611ab44aad514506b10e02c1b09746dcadc2a",
+      "evidence_version": "80ec1b341d1209103b23f59f5f521629bc1c972949785c52f1cca851dc7f41d8",
+      "dependency_fingerprint": "13a3429c5830e956b2710c9e86566c0ef613eb2b592b4c3ee73795913d43a0f5",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\640e359087f5631a",
+        "paths": {
+          "classification": "classification"
+        },
+        "files": {
+          "classification/classification.json": "98b014f9e149bdfddc702de9aeb17106af6ddabf0dd8fdc3de1f6ba4b7f18e86"
+        },
+        "quality": null
+      }
+    },
+    "01d5546f5148a5c1175898ae9830976cc7b58c801c3045fc333fc0111b46ab29": {
+      "action_id": "ffd39ccb5e81b907ac301a51cb45c5e258a408d0103d4080add1a520088d32d1",
+      "tool": "feature_scan",
+      "target_id": "feature_scan:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:starch_grain",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "01d5546f5148a5c1175898ae9830976cc7b58c801c3045fc333fc0111b46ab29",
+      "feature_id": "starch_grain",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "scan_tiles_reserved": 2,
+      "criteria": [
+        {
+          "candidate_id": "白芍",
+          "role": "supporting"
+        },
+        {
+          "candidate_id": "G1",
+          "role": "supporting"
+        }
+      ],
+      "evidence_version": "05881a3cd3b3d5e897f380ea3627ae0177d9f6deb608c78813c46e4e918e75e3",
+      "dependency_fingerprint": "960d52b9824f6f79901dde4f8392007a7c38b93c412c8c5b9db4727c6ce404a6",
+      "bundle": {
+        "root": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\workflow\\ops\\01d5546f5148a5c1",
+        "paths": {
+          "crops_dir": "scan/crops",
+          "completion": "scan/scan_result.json"
+        },
+        "files": {
+          "scan/scan_result.json": "37ee01fb6ce71ce53376e3da54590a4d1f671b197a4fe309d161b0a29b1446ac"
+        },
+        "quality": null
+      }
+    }
+  }
+}

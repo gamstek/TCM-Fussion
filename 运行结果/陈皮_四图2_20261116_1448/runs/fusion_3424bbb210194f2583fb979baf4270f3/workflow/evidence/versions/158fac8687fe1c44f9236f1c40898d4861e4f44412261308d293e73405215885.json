@@ -1,0 +1,44 @@
+{
+  "identity": "19e4fae1c9b3fc380441ea1bb0486693fa93af4d002f907642292dc0e7f67f2b",
+  "parent": "9d0b9398a3ebda0869f32b2043b2ffa2401ae52c5dc9b704d68d5f5c63600fca",
+  "artifacts": {
+    "img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858": {
+      "id": "img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\view_01.jpg",
+      "sha256": "db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858",
+      "parents": [],
+      "image_id": "img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858",
+      "valid": true
+    },
+    "img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056": {
+      "id": "img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\view_02.jpg",
+      "sha256": "d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056",
+      "parents": [],
+      "image_id": "img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056",
+      "valid": true
+    },
+    "img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03": {
+      "id": "img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\view_03.jpg",
+      "sha256": "fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03",
+      "parents": [],
+      "image_id": "img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03",
+      "valid": true
+    },
+    "img_2e4fe138752048a8a5ffc8b2479935b143efdca0b3ebbe412f92676b06a633c1": {
+      "id": "img_2e4fe138752048a8a5ffc8b2479935b143efdca0b3ebbe412f92676b06a633c1",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\view_04.jpg",
+      "sha256": "2e4fe138752048a8a5ffc8b2479935b143efdca0b3ebbe412f92676b06a633c1",
+      "parents": [],
+      "image_id": "img_2e4fe138752048a8a5ffc8b2479935b143efdca0b3ebbe412f92676b06a633c1",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "158fac8687fe1c44f9236f1c40898d4861e4f44412261308d293e73405215885"
+}

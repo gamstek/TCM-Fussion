@@ -1,0 +1,8 @@
+{
+  "schema": "multi-view-interface/v1",
+  "dry_run": false,
+  "base": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_single_20261117_191050",
+  "stage": "done",
+  "status": "completed",
+  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_single_20261117_191050\\runs\\fusion_cec0ffc6280c49ac80f04d5061bcf2fe"
+}

@@ -1,4 +1,16 @@
-"""负例特征库：按 P0 test 错误归因构建；只作为提示/审计，不替代召回。"""
+"""负例特征库结构回归：按 P0 测试错误归因构建，只作提示与审计，不替代召回。
+
+主要定义：
+- NegativeFeatureBankTests（schema）: 校验 schema 版本与目标集合覆盖针晶及主要组织特征。
+- NegativeFeatureBankTests（针晶硬负例）: 针晶硬负例限定为组织类特征，淀粉粒排除、簇晶记为软负例。
+- NegativeFeatureBankTests（特征条目）: 每个特征都具备 morphology、evidence 与 priority，且 gt 大于零。
+- NegativeFeatureBankTests（P0 混淆）: 记录 fiber 的 gt、stone_cell 的 fp 与 secretory_tissue 的 miss，并保持淀粉粒无 negative_for。
+
+关联：
+- TCM_Fusion/config/negative_feature_bank.json: 被检查的负例库数据文件。
+- paths.PROJECT_ROOT: 定位配置文件的根路径。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import json
 import unittest
 from pathlib import Path

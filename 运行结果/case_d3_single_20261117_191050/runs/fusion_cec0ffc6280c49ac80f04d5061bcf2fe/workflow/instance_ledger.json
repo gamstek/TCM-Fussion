@@ -1,0 +1,115 @@
+{
+  "schema": "instance-ledger/d2",
+  "evidence_version": "7f20b5f3d39c28a5d26ca8654ae92865f7b8ddd8f44d50d78905249d66bd4fba",
+  "instances": {
+    "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2": {
+      "instance_id": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "source_image_sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "source_bbox": [
+        858.8,
+        506.1,
+        1116.5,
+        779.9
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+          "sha256": "8a9a4d67d75ce9ca9d8f9fb7bff20de4bb381e9a61e4a3d108452db1b501694b",
+          "pixels_sha256": "ec4d401d26534fd293500333de9f01b359d21726bfaf7150a08a96341707739f"
+        }
+      ],
+      "classifications": [
+        {
+          "artifact_id": "classification:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+          "sha256": "359ddb0a5ad12e551e730217110f9d99074c98a94b10b467c64bd17eb9642b06"
+        }
+      ],
+      "mask_versions": [
+        {
+          "artifact_id": "seg:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+          "sha256": "f820904c08e8722f8c340cc382c6bdcafa402a074068841e9e3b9ad68ea2287a"
+        }
+      ],
+      "measurements": [],
+      "attempts": [
+        {
+          "operation_key": "b987ab143ba011bdda5f939cd4fee35a5627a3cc7e129eb43a2fd601ec5014e8",
+          "semantic_key": "4fbf72cf35e79affea2f91406d04e08aebf67e6e4c9c3347a3daa4180a071a0f",
+          "tool": "classify_target",
+          "status": "done",
+          "error_code": null
+        },
+        {
+          "operation_key": "0dad82c3b72d692622fa24d3ceb7d41595fafae3c94776331c2c95d25374bf47",
+          "semantic_key": "18da6b282b9448a74aafa973b08fbef1ba1a9133b994ae8c7c7a9dd16d54ee7b",
+          "tool": "segment_instance",
+          "status": "done",
+          "error_code": null
+        },
+        {
+          "operation_key": "auto:8e73748c1a779b352e5890a9cd060832889215dddd504228caab534078af0423",
+          "semantic_key": "8e73748c1a779b352e5890a9cd060832889215dddd504228caab534078af0423",
+          "tool": "measure_instances",
+          "status": "failed",
+          "error_code": "WORKFLOW_TIMEOUT"
+        }
+      ]
+    },
+    "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318": {
+      "instance_id": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "source_image_sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "source_bbox": [
+        1649.1,
+        526.3,
+        1885.9,
+        756.4
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+          "sha256": "6215661a85e5643e9a68e47dc0f663214e4043e376090898a8316779c632572e",
+          "pixels_sha256": "94d46c4ab26436bfc2b3b5361d5252bbd2f6951033cad22ff5f657bfeac4c0ba"
+        }
+      ],
+      "classifications": [
+        {
+          "artifact_id": "classification:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+          "sha256": "1034f09dfd7c7cbf6587c091d3a84f0ce7426b80f188f5719b51c9f5a0e828a7"
+        }
+      ],
+      "mask_versions": [
+        {
+          "artifact_id": "seg:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+          "sha256": "a89c380eae4a5f7d72e82aeca2ceb1c1bdc58bcedf1aaf028d4586141e3c4cb6"
+        }
+      ],
+      "measurements": [],
+      "attempts": [
+        {
+          "operation_key": "590d5799289d3f43ae3fd9eb8b73337e25384fcabecbc971b1101701026615a4",
+          "semantic_key": "c70446a42817af64795a82c4b31d4d9649931e174a74de4f848da4ed5e84498b",
+          "tool": "classify_target",
+          "status": "done",
+          "error_code": null
+        },
+        {
+          "operation_key": "99b2ddf9c5e1f964d2903d628806b401902419c55b0e392f723ab3aed06a0a12",
+          "semantic_key": "783f7199db4e2e894fc1d7393269bae6d9f33b2bfccbae764b267b79fcde3148",
+          "tool": "segment_instance",
+          "status": "done",
+          "error_code": null
+        },
+        {
+          "operation_key": "auto:a236e2c64201f16b00dab1182338d7058a6c75de27cba9a63071251dfedf71b9",
+          "semantic_key": "a236e2c64201f16b00dab1182338d7058a6c75de27cba9a63071251dfedf71b9",
+          "tool": "measure_instances",
+          "status": "failed",
+          "error_code": "WORKFLOW_TIMEOUT"
+        }
+      ]
+    }
+  },
+  "associations": []
+}

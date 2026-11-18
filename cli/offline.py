@@ -1,6 +1,23 @@
-"""离线验证/发布入口：项目根 python -m TCM_Fusion.cli.offline <command>。
+"""离线验证/发布入口：项目根 `python -m TCM_Fusion.cli.offline <command>`。
 
-与真实识别入口分离；优化/发布可能显式使用文本API，回放不是在线识别。
+与真实识别入口分离；优化/发布可能显式使用文本 API，回放不是在线识别，默认不联网。
+
+主要定义：
+- main: 构建全部离线子命令并分发，异常按 `[CODE] message` 写 stderr 返回 2。
+- quality-replay: 零 API 重放已有生成图，写新 QA 与用途资格。
+- outcome-evaluate / ablation-report / quality-report: 运行后独立真值反馈、B0—B3 配对评估、人工用途参考的误拦/误放统计。
+- gate-fit / gate-validate / gate-publish: 置信门离线校准、独立风险验证与复验发布。
+- workflow-replay: 封闭物理工件与观察回放，不新发看图请求。
+- dataset-split: 按 group_key 确定性划分训练/开发/测试，防止调参泄漏。
+- prompt-optimize / prompt-validate / prompt-publish: LangMem 离线文本优化、封闭工具回放与版本发布。
+- reflect / reflection-validate / reflection-publish: 从轨迹与程序反馈生成候选经验，再验证与发布。
+
+关联：
+- TCM_Fusion.lib.outcome_evaluation、TCM_Fusion.lib.ablation_evaluation: 评估与报告实现。
+- TCM_Fusion.lib.confidence_gate: 置信门 fit/validate/publish。
+- TCM_Fusion.lib.dataset_split、TCM_Fusion.lib.prompt_optimization、TCM_Fusion.lib.reflection: 划分、优化与经验沉淀。
+- TCM_Fusion.lib.workflow_replay: 无新请求的工作流回放。
+- TCM_Fusion.cli.main: 在线真实入口；本文件只承担离线职责。
 """
 from __future__ import annotations
 import argparse

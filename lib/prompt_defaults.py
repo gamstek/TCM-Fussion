@@ -1,7 +1,13 @@
-"""Planning prompt defaults shared by the online ReAct loop.
+"""在线 ReAct 循环共享的规划提示默认值，保持不依赖 LangMem/离线模块。
 
-Kept free of LangMem/offline dependencies so the main workflow does not import
-prompt-optimization code at module load time.
+主要定义：
+- DEFAULT_INSTRUCTION: 默认调度指令，要求优先选择最有区分性的合法观察。
+- GUARD: 固定守卫文本，限定只能选合法 action_id、不得编造观察/标定/尺寸/结论。
+
+关联：
+- .react_graph: 在线规划直接导入并拼接这两段提示。
+- .prompt_optimization: 以它们作为优化基线并校验候选守卫哈希。
+- 本模块不导入项目内其他模块，避免主链加载离线依赖。
 """
 
 DEFAULT_INSTRUCTION = (

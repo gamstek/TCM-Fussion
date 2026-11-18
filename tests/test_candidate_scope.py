@@ -1,5 +1,18 @@
 # -*- coding: utf-8 -*-
-"""候选范围门：B 只能从 A Top-K 取候选，非 A 必须严格证明。"""
+"""候选范围门回归：B 只能从 A Top-K 取候选，非 A 必须严格证明。
+
+主要定义：
+- `_a_dragon`/`_verdict`: 构造五视图 A 预测与含荜茇、龙胆的 B 排名夹具。
+- CandidateScopeTest.test_a_topk_drops_non_a_candidate: `a_topk` 模式丢弃非 A Top-K 候选并记录到 `candidate_scope.dropped`。
+- test_open_strict_drops_generic_only_non_a、test_out_of_range_non_a_is_not_strict_evidence: 开放严格模式下泛化或超范围证据不足以保留非 A 候选。
+- test_preserves_confirmed_candidate_when_scope_does_not_change_top: 范围过滤未改变排名首位时保留 confirmed 结论。
+
+关联：
+- TCM_Fusion.lib.candidate_scope: 被测的 `apply_candidate_scope`。
+- rule_engine.KnowledgeBase: 加载 `herb_criteria.json` 提供判据。
+- paths: 提供 `JUDGE_DIR` 路径常量。
+- tests/test_ab_fusion.py: 共享同一多视图 A 夹具风格。
+"""
 import unittest
 from pathlib import Path
 

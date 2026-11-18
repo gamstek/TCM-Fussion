@@ -1,7 +1,22 @@
-"""离线反思→候选→开发集工具回放→版本化经验；不更新权重，不在识别时调用模型。
+"""离线闭环反思：从程序可复核的轨迹反馈提出候选经验，经开发集回放后版本化发布。
 
-首版只允许把连续无增益停止阈值2收紧到1；不改判据、证据类型、图像工具权限。
-回放采用显式模拟观察，发布版本仅允许simulation运行使用，不冒充真实识别增益。
+不更新模型权重，识别时不再调用模型。首版只允许把连续无增益停止阈值由 2 收紧到 1，
+不改判据、证据类型或图像工具权限；回放采用显式模拟观察，发布版本仅允许 simulation
+运行使用，不冒充真实识别增益。
+
+主要定义：
+- save_artifact: 把反思工件写入输出目录并返回路径。
+- propose: 依据绑定轨迹的程序反馈（可选 LLM 反思）生成候选经验。
+- check_candidate: 校验候选只包含受支持的策略与 simulation 作用域。
+- validate: 在开发集上按阈值 2/1 双回放，要求结论与证据不变且请求数不增加。
+- publish: 重新回放通过后写入带版本与摘要的经验记忆。
+- load_memory: 校验并加载经验版本，仅允许 simulation 场景使用。
+
+关联：
+- .storage: 使用 IntegrationError、digest、output_root、read_json、write_json 做校验与归档。
+- .agent_tools / .evidence_runtime: 分别提供录制后端与回放所用运行时。
+- .react_graph: 驱动 heuristic 回放，并在真实识别链路中调用 load_memory 读取经验版本。
+- adjudicator / paths: 启用 LLM 反思时提供文本传输与配置路径。
 """
 from __future__ import annotations
 

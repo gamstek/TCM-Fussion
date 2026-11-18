@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
 """融合层的有界决策 LLM：只做 review 修复策略与候选准入，不产生测量或最终分数。
 
-设计边界：
-- 输入只给结构化证据（review 字段、候选 checks、A 候选 id），不传原图/真值；
-- 输出必须是有限枚举 JSON；非法输出由调用方回退到确定性策略；
-- 这里不写证据、不写 verdict、不改 rule_engine 的 score。
+输入只给结构化证据，不传原图/真值；输出必须是有限枚举 JSON，非法输出由调用方回退确定性策略；本模块不写证据、不写 verdict、不改 rule_engine 分数。
+
+主要定义：
+- DecisionLLM: 复用 adjudicator 文本传输的决策审查器，带进程内缓存，只接受有限枚举结果。
+- REVIEW_ACTIONS: review 修复策略枚举（relocate / split_component / diagnostic_measure / abandon）。
+- ADMISSION_ACTIONS: 非 A 候选准入枚举（admit / verify / suppress）。
+
+关联：
+- adjudicator.AdjudicatorClient: 文本传输客户端（惰性导入）。
+- .storage: IntegrationError、digest 与配置读取。
+- paths: 定位 DETECTION_CONFIG_DIR/vlm_config.json。
+- .workflow_runtime: 惰性创建并注入 DecisionLLM。
 """
 from __future__ import annotations
 

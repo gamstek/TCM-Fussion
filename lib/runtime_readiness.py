@@ -1,4 +1,15 @@
-"""真实Agent的本地启动检查：沿用原B配置，仅诊断，不联网、不替换模型或证据。"""
+"""真实 Agent 的本地启动检查：只读模型配置做静态诊断，不联网、不替换模型或证据。
+
+主要定义：
+- profile_checks: 对指定配置段返回固定文字检查清单（配置存在性/编码/地址/模型名/凭据一致性），不返回密钥、原始 JSON 或服务响应。
+- planner_preflight: 在 planner=llm 时汇总启动前检查；CPU/heuristic 路径不受模型凭据约束。
+
+关联：
+- paths: 定位 DETECTION_CONFIG_DIR 下的 vlm_config.json。
+- .storage.read_json: 读取本地模型配置。
+- lib/pipeline.py、lib/workflow_entry.py: 调用 profile_checks / planner_preflight 做启动前检查。
+- tests/test_readiness.py: 直接回归这两个函数。
+"""
 import os
 from pathlib import Path
 from urllib.parse import urlsplit

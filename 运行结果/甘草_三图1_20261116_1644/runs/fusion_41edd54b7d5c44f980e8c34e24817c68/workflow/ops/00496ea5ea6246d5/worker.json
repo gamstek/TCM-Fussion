@@ -1,0 +1,15 @@
+{
+  "tool": "classify_target",
+  "crop_id": "fiber_view_03_roi3acc217301de_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\307feaa793af7dfc\\detection\\crops\\fiber_view_03_roi3acc217301de_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\307feaa793af7dfc\\detection\\crops\\fiber_view_03_roi3acc217301de_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\view_03.tif",
+  "tight_box": [
+    413.8,
+    839.0,
+    2048.0,
+    1179.2
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\00496ea5ea6246d5\\classification",
+  "feature_hint": "目标正例：纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离 易混负例（不要当目标）：表皮细胞：片状/多边形边界；导管：管腔/环纹/网纹；石细胞：厚壁/胞腔；分泌组织：油室/油管/腔隙"
+}

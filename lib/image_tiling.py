@@ -1,7 +1,12 @@
-"""全视野扫描的 tile 采样。
+"""全视野扫描的 tile 采样：在完整网格上均匀取点，避免只覆盖左上角。
 
-当 max_tiles 小于完整网格时，不再直接截断前 N 个，而是在完整网格上
-按索引均匀取点，避免只覆盖左上角。
+主要定义：
+- uniform_tiles: 按图像长宽比选择网格，返回不超过 max_tiles 个覆盖整图的区块；4 个 tile 时即 2×2 分区。
+
+关联：
+- 独立几何工具模块：不依赖项目内其他模块。
+- .workflow_backend: 在 YOLO/VLM 全视野扫描前生成 tile 列表。
+- tests/test_image_tiling.py: 回归 tile 覆盖与数量。
 """
 from __future__ import annotations
 

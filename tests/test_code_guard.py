@@ -1,5 +1,17 @@
 # -*- coding: utf-8 -*-
-"""代码签名冻结检查的离线回归；不联网、不执行真实阶段。"""
+"""代码签名冻结检查的离线回归：签名漂移即中止，不联网、不执行真实阶段。
+
+主要定义：
+- CodeSignatureGuardTest: 覆盖未变化时记录检查次数、变化时报 CODE_CHANGED、watchdog 置取消事件与显式基线拒绝漂移。
+- CodeSignatureGuardTest.test_pipeline_aborts_before_agent_on_signature_change: 流水线在启动 Agent 前中止并写失败 job 与起止签名。
+- _FakeSignature: 可切换返回值的签名替身，模拟代码被修改。
+
+关联：
+- TCM_Fusion.lib.code_guard.CodeSignatureGuard: 被测试的签名守卫与周期检查。
+- TCM_Fusion.lib.pipeline.run_pipeline / workflow_backend.WorkflowBackend: 流水线级联中止路径。
+- TCM_Fusion.lib.storage: read_json/IntegrationError 支撑结果断言。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import tempfile
 import threading
 import unittest

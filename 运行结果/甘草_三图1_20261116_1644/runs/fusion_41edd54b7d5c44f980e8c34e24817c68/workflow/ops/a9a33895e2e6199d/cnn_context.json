@@ -1,0 +1,217 @@
+{
+  "crops": [
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:cluster_crystal_view_03_glm3667244f60f3_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\44ef62075c683fcf\\scan\\crops\\cluster_crystal_view_03_glm3667244f60f3_01.png"
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:cluster_crystal_view_03_glm8a09306abb41_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\44ef62075c683fcf\\scan\\crops\\cluster_crystal_view_03_glm8a09306abb41_01.png"
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\9715e1b8fcbd75be\\detection\\crops\\fiber_view_03_roicbdd6cfd1ef3_01.png"
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\469df326b2245e3e\\detection\\crops\\fiber_view_03_roi9f04af062971_01.png"
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_roic19725a4d127_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\b841c24432da27c0\\detection\\crops\\fiber_view_03_roic19725a4d127_02.png"
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_roic19725a4d127_03",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\b841c24432da27c0\\detection\\crops\\fiber_view_03_roic19725a4d127_03.png"
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:starch_grain_view_03_glm492a993e9139_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\e3cffee802cc041a\\scan\\crops\\starch_grain_view_03_glm492a993e9139_01.png"
+    },
+    {
+      "id": "crop:img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305:fiber_view_01_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\fiber_view_01_01.png"
+    },
+    {
+      "id": "crop:img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305:needle_crystal_view_01_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\needle_crystal_view_01_02.png"
+    },
+    {
+      "id": "crop:img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305:needle_crystal_view_01_03",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\needle_crystal_view_01_03.png"
+    },
+    {
+      "id": "crop:img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305:needle_crystal_view_01_04",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\needle_crystal_view_01_04.png"
+    },
+    {
+      "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:fiber_view_02_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\292697fe8c097f04\\detection\\crops\\fiber_view_02_01.png"
+    },
+    {
+      "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:starch_grain_view_02_glm7a6b535b6f6f_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\a1a0f118b3308dc6\\scan\\crops\\starch_grain_view_02_glm7a6b535b6f6f_01.png"
+    },
+    {
+      "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:starch_grain_view_02_glm7a6b535b6f6f_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\a1a0f118b3308dc6\\scan\\crops\\starch_grain_view_02_glm7a6b535b6f6f_02.png"
+    },
+    {
+      "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:stone_cell_view_02_glm0abfd40672a2_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\crops\\stone_cell_view_02_glm0abfd40672a2_01.png"
+    },
+    {
+      "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:stone_cell_view_02_glm809388596c20_01",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\crops\\stone_cell_view_02_glm809388596c20_01.png"
+    },
+    {
+      "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:stone_cell_view_02_glm809388596c20_02",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\crops\\stone_cell_view_02_glm809388596c20_02.png"
+    },
+    {
+      "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:stone_cell_view_02_glm809388596c20_03",
+      "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\crops\\stone_cell_view_02_glm809388596c20_03.png"
+    }
+  ],
+  "weights": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+  "meta": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+  "signature": {
+    "schema": "stage2-request/v2",
+    "profile": {
+      "weights": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+      "meta": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+      "metadata": {
+        "arch": "resnet18",
+        "imgsz": 320,
+        "input_mode": "letterbox",
+        "classes": [
+          "00_cluster_crystal",
+          "01_single_crystal",
+          "02_needle_crystal",
+          "03_vessel",
+          "04_stone_cell",
+          "05_starch_grain",
+          "06_non_glandular_hair",
+          "07_secretory_tissue",
+          "08_stoma",
+          "09_epidermis_cell",
+          "10_hypha",
+          "11_fiber",
+          "12_pollen_grain",
+          "13_other"
+        ],
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ],
+        "checkpoint": "best.pt"
+      },
+      "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+      "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+      "preprocessor_sha256": "bd6f8a77fd9218704715c357ddc4999023370101c9e82bf372c5c0a148c1ed66",
+      "adapter_sha256": "287c33cc90d809274c029d417c4e1136e61b97c8ed85ba833d921b8c30695636"
+    },
+    "crops": [
+      {
+        "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:cluster_crystal_view_03_glm3667244f60f3_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\44ef62075c683fcf\\scan\\crops\\cluster_crystal_view_03_glm3667244f60f3_01.png",
+        "sha256": "7f8c36bd499ce3de417b11c0420cbb755c04e04d0be8d74c0fd7724133ff4ebf"
+      },
+      {
+        "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:cluster_crystal_view_03_glm8a09306abb41_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\44ef62075c683fcf\\scan\\crops\\cluster_crystal_view_03_glm8a09306abb41_01.png",
+        "sha256": "4c483038f6005c2b52b1693fa9ea7d435a6659b446b10b618ecd483eaa2d0f09"
+      },
+      {
+        "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\9715e1b8fcbd75be\\detection\\crops\\fiber_view_03_roicbdd6cfd1ef3_01.png",
+        "sha256": "c0942edbef8a06708cb10696b6973b24b5b5206c81453e16efa83a88a36763b8"
+      },
+      {
+        "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_02",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\469df326b2245e3e\\detection\\crops\\fiber_view_03_roi9f04af062971_01.png",
+        "sha256": "01a5bbb8fe58f257c2c9a584b56c4689d3dcb677caee16321e9e09318d5da91b"
+      },
+      {
+        "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_roic19725a4d127_02",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\b841c24432da27c0\\detection\\crops\\fiber_view_03_roic19725a4d127_02.png",
+        "sha256": "44451cd778cd8285045fe9ed6785c9d558761e6bad0f9c021f857b08a0f7cc0e"
+      },
+      {
+        "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_roic19725a4d127_03",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\b841c24432da27c0\\detection\\crops\\fiber_view_03_roic19725a4d127_03.png",
+        "sha256": "54c4c48277e577307d2ec62495f2f9733b7145be140c3fab41aff4e2ccfe45fe"
+      },
+      {
+        "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:starch_grain_view_03_glm492a993e9139_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\e3cffee802cc041a\\scan\\crops\\starch_grain_view_03_glm492a993e9139_01.png",
+        "sha256": "d4289c9cd6544f32fca50fff28e9f0588224597ccdcd16899297b2ad8fb5752f"
+      },
+      {
+        "id": "crop:img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305:fiber_view_01_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\fiber_view_01_01.png",
+        "sha256": "dc8f31048fe8b41908f3dc47129085dee57512724c35aeb53cca71310c326269"
+      },
+      {
+        "id": "crop:img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305:needle_crystal_view_01_02",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\needle_crystal_view_01_02.png",
+        "sha256": "bbf83e4865f13e1a8f47b0681158dd493fe901e801317177d0d499c790bacd92"
+      },
+      {
+        "id": "crop:img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305:needle_crystal_view_01_03",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\needle_crystal_view_01_03.png",
+        "sha256": "8e472d98b52845659514f3e0988f8404537647633d553585a8ca9b310118f2cb"
+      },
+      {
+        "id": "crop:img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305:needle_crystal_view_01_04",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\needle_crystal_view_01_04.png",
+        "sha256": "da00880d5589d0ec19b8886a0e3561ae765f7f0e55083b123ef564b59a89b679"
+      },
+      {
+        "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:fiber_view_02_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\292697fe8c097f04\\detection\\crops\\fiber_view_02_01.png",
+        "sha256": "28363f005eacc9176a8906a0f859ca21d22a1659434f7dd5b902e058f092d9a8"
+      },
+      {
+        "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:starch_grain_view_02_glm7a6b535b6f6f_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\a1a0f118b3308dc6\\scan\\crops\\starch_grain_view_02_glm7a6b535b6f6f_01.png",
+        "sha256": "e32114b387f21a67eb9bc43ac850265ed88f98ea7c9b9b57cba00bbab02cfcfa"
+      },
+      {
+        "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:starch_grain_view_02_glm7a6b535b6f6f_02",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\a1a0f118b3308dc6\\scan\\crops\\starch_grain_view_02_glm7a6b535b6f6f_02.png",
+        "sha256": "24680d373d740a3146b78ad7b4b644466afe1a7d7f79f20a598b1ac809627536"
+      },
+      {
+        "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:stone_cell_view_02_glm0abfd40672a2_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\crops\\stone_cell_view_02_glm0abfd40672a2_01.png",
+        "sha256": "9631622b439baa8c04d17234eed4b1165991951a2cc9d6d518718a18372e353e"
+      },
+      {
+        "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:stone_cell_view_02_glm809388596c20_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\crops\\stone_cell_view_02_glm809388596c20_01.png",
+        "sha256": "2de61457e6f9c3e5df0521b9df2b6f2027730bb5427abdccd751f774c2d29ac9"
+      },
+      {
+        "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:stone_cell_view_02_glm809388596c20_02",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\crops\\stone_cell_view_02_glm809388596c20_02.png",
+        "sha256": "4af2968b17340570b8b54351b1cbd1f38a1d495a7c688aca4e44b2da019708be"
+      },
+      {
+        "id": "crop:img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1:stone_cell_view_02_glm809388596c20_03",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\crops\\stone_cell_view_02_glm809388596c20_03.png",
+        "sha256": "28b6b3b0b16610b42d71fc944bbff9ea69bd65ef0b6d2372e0f4cc06397b918d"
+      }
+    ],
+    "python": "D:\\TCM-Microscopic-Image-Recognition-main\\.venv\\yolo\\Scripts\\python.exe",
+    "python_sha256": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702"
+  },
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\cnn\\predictions.json",
+  "batch_size": 16
+}

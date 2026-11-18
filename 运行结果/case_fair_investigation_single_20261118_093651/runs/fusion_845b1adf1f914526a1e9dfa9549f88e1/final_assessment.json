@@ -1,0 +1,978 @@
+{
+  "schema": "final-assessment/v1",
+  "method": "model",
+  "simulation": false,
+  "stop_reason": "planner_request_review",
+  "candidate_id": "白芍",
+  "candidate_display": "白芍",
+  "termination": {
+    "reason": "planner_request_review",
+    "route": "planner_request_review",
+    "category": "model",
+    "decision_source": null,
+    "planner_degraded": false
+  },
+  "selection": "formal",
+  "status": "tentative",
+  "judgement": "现有证据暂倾向：白芍；尚不能确认，需要复核。",
+  "explanation": "依据已采信判据分析当前候选，未通过的身份、质量及尺寸仍保留不确定性。判据状态：cluster_crystal=IN_RANGE；starch_grain=NOT_DETECTED；vessel=NOT_DETECTED；fiber=NOT_DETECTED。",
+  "explanation_source": "deterministic_numeric_guard",
+  "narrative_warnings": [
+    "MODEL_NUMERIC_CLAIM_UNVERIFIED"
+  ],
+  "score_summary": "白芍：B规则排序分=1.0；融合排序分=0.872168；已验证独立特征类数=1；最低类数=2。上述分数不是校准正确率；交付复核要求见 review_reasons。",
+  "supporting_evidence": [
+    {
+      "id": "criterion:359f38026291c8524d8ca276",
+      "kind": "criterion",
+      "data": {
+        "candidate_id": "白芍",
+        "feature_id": "cluster_crystal",
+        "role": "required",
+        "tier": "P0",
+        "present": true,
+        "state": "IN_RANGE",
+        "quant_note": "median 17.3μm ∈ [11, 35]μm",
+        "morph_plausibility": 1.0,
+        "reliability": 1.0,
+        "weight": 1.0,
+        "q_state": 1.0,
+        "abundance": null,
+        "m_abundance": 1.0,
+        "counts_toward_conf": true,
+        "score_contribution": 1.0,
+        "penalty": 0.0,
+        "n_instances": 1,
+        "stats": {
+          "median": 17.274558152757056,
+          "p25": 17.274558152757056,
+          "p75": 17.274558152757056,
+          "min": 17.274558152757056,
+          "max": 17.274558152757056,
+          "n_measured": 1,
+          "n_uncal": 0
+        },
+        "morph_text": "簇晶存在于薄壁细胞中，常排列成行，或一个细胞含数个簇晶",
+        "quant_bounds": {
+          "dim": "feret_max",
+          "min": 11,
+          "max": 35,
+          "extreme": null
+        },
+        "scene_factor": 1.0,
+        "instance_refs": [
+          "view_01#26302019650001"
+        ],
+        "claim_scope": "quantitative_criterion",
+        "dimension_eligible": true
+      },
+      "supports_candidate_ids": [
+        "白芍"
+      ],
+      "counters_candidate_ids": []
+    }
+  ],
+  "counterevidence": [
+    {
+      "id": "observation:c6a8e652a9318a088fee79b2",
+      "kind": "observation",
+      "data": {
+        "accepted": true,
+        "action": {
+          "tool": "presence_check",
+          "args": {
+            "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+            "feature_id": "fiber",
+            "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离"
+          },
+          "action_id": "6746e5d950b50e31102370a3f15b0e39c312553d6d5f4eb213c0574d20fa3302"
+        },
+        "result": {
+          "present": false,
+          "conf": 0.92,
+          "reason": "视野中仅见一个宽大的卵圆形半透明细胞状团块（内含颗粒状/螺纹状内容物），不呈细长梭形、无两端渐尖及厚壁纤维的形态特征，故未见纤维。",
+          "ok": true
+        },
+        "observation_state": "absent",
+        "dimension_eligible": false,
+        "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+      },
+      "supports_candidate_ids": [],
+      "counters_candidate_ids": [
+        "G1",
+        "G4",
+        "使君子",
+        "厚朴",
+        "大腹皮",
+        "木香",
+        "板蓝根",
+        "栀子",
+        "桑白皮",
+        "白芍",
+        "诃子",
+        "连翘",
+        "防风",
+        "黄芩",
+        "黄芪",
+        "黄连"
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "id": "criterion:2de3260b61c2458d804fa831",
+      "kind": "criterion",
+      "data": {
+        "candidate_id": "白芍",
+        "feature_id": "starch_grain",
+        "role": "supporting",
+        "tier": "P0",
+        "present": false,
+        "state": "NOT_DETECTED",
+        "quant_note": null,
+        "morph_plausibility": null,
+        "reliability": 0.0,
+        "weight": 1.0,
+        "q_state": 0.0,
+        "abundance": "甚多",
+        "m_abundance": 1.0,
+        "counts_toward_conf": false,
+        "score_contribution": 0.0,
+        "penalty": 0.0,
+        "n_instances": 0,
+        "stats": null,
+        "morph_text": "含淀粉粒；药典原文为'糊化淀粉粒团块甚多'，糊化形态需灰度/偏振信息确认",
+        "quant_bounds": null,
+        "scene_factor": null,
+        "instance_refs": [],
+        "claim_scope": "presence_or_morphology",
+        "dimension_eligible": false
+      },
+      "supports_candidate_ids": [],
+      "counters_candidate_ids": []
+    },
+    {
+      "id": "criterion:ccfbeb0b2f8187a370e3a24d",
+      "kind": "criterion",
+      "data": {
+        "candidate_id": "白芍",
+        "feature_id": "vessel",
+        "role": "supporting",
+        "tier": "P0",
+        "present": false,
+        "state": "NOT_DETECTED",
+        "quant_note": null,
+        "morph_plausibility": null,
+        "reliability": 0.0,
+        "weight": 1.0,
+        "q_state": 0.0,
+        "abundance": null,
+        "m_abundance": 1.0,
+        "counts_toward_conf": false,
+        "score_contribution": 0.0,
+        "penalty": 0.0,
+        "n_instances": 0,
+        "stats": null,
+        "morph_text": "具缘纹孔及网纹导管",
+        "quant_bounds": {
+          "dim": "mean_width",
+          "min": 20,
+          "max": 65,
+          "extreme": null
+        },
+        "scene_factor": null,
+        "instance_refs": [],
+        "claim_scope": "quantitative_criterion",
+        "dimension_eligible": false
+      },
+      "supports_candidate_ids": [],
+      "counters_candidate_ids": []
+    },
+    {
+      "id": "observation:2bd4f4534d074dfeb572dbe3",
+      "kind": "observation",
+      "data": {
+        "accepted": true,
+        "action": {
+          "tool": "presence_check",
+          "args": {
+            "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+            "feature_id": "gelatinized_starch",
+            "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。糊化淀粉粒：糊化粘连成团的淀粉粒，多已失去单粒形态与脐点，边界模糊、呈半透明胶质状"
+          },
+          "action_id": "2b8fb74ff677be32d9b3232f7111ac124cd887161a20fec90a5175fcf12ba6e3"
+        },
+        "result": {
+          "present": true,
+          "conf": 0.72,
+          "reason": "图像右侧可见大块半透明胶质状团块，边界模糊、内部无单粒淀粉形态与脐点，符合糊化淀粉粘连成团的特征。",
+          "ok": true,
+          "localization_proposal": {
+            "bbox": [
+              505,
+              20,
+              1536,
+              1152
+            ],
+            "coordinate_space": "model_input_pixels"
+          }
+        },
+        "observation_state": "present",
+        "dimension_eligible": false,
+        "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+      },
+      "supports_candidate_ids": [
+        "郁金"
+      ],
+      "counters_candidate_ids": []
+    },
+    {
+      "id": "criterion:336ad51efb41e3c8509c2370",
+      "kind": "criterion",
+      "data": {
+        "candidate_id": "郁金",
+        "feature_id": "gelatinized_starch",
+        "role": "required",
+        "tier": "C",
+        "present": true,
+        "state": "NO_REF",
+        "quant_note": null,
+        "morph_plausibility": 0.85,
+        "reliability": 0.9,
+        "weight": 0.3,
+        "q_state": 0.6,
+        "abundance": "可见",
+        "m_abundance": 0.9,
+        "counts_toward_conf": true,
+        "score_contribution": 0.1239,
+        "penalty": 0.0,
+        "n_instances": 0,
+        "stats": null,
+        "morph_text": "薄壁细胞中可见糊化淀粉粒",
+        "quant_bounds": null,
+        "scene_factor": 1.0,
+        "instance_refs": [],
+        "claim_scope": "presence_or_morphology",
+        "dimension_eligible": false
+      },
+      "supports_candidate_ids": [
+        "郁金"
+      ],
+      "counters_candidate_ids": []
+    }
+  ],
+  "unresolved_scope": "selected candidate and execution facts; full cohort gaps in candidate_audit",
+  "candidate_audit": {
+    "schema": "candidate-audit/v1",
+    "candidates": [
+      {
+        "candidate_id": "白芍",
+        "display": "白芍",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "cluster_crystal",
+            "state": "supported",
+            "rule_state": "IN_RANGE",
+            "assessed": true,
+            "satisfies_criterion": true,
+            "observed_fov_count": 0,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:359f38026291c8524d8ca276"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "starch_grain",
+            "state": "investigated_unresolved",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:2de3260b61c2458d804fa831"
+          },
+          {
+            "feature_id": "vessel",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:ccfbeb0b2f8187a370e3a24d"
+          },
+          {
+            "feature_id": "fiber",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:9e81128ee3fe39f5179d15b8"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "starch_grain",
+          "vessel"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "G1",
+        "display": "赤芍 / 牡丹皮",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "cluster_crystal",
+            "state": "supported",
+            "rule_state": "NO_REF",
+            "assessed": true,
+            "satisfies_criterion": true,
+            "observed_fov_count": 0,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:919e6a099baf26dba4910407"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "starch_grain",
+            "state": "investigated_unresolved",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:d36954771a6908b7d0fc6e17"
+          },
+          {
+            "feature_id": "vessel",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:f37cbdb7a3031ed42f10bb86"
+          },
+          {
+            "feature_id": "cork_cell",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:e405ec0dbba6b188a32ee1bb"
+          },
+          {
+            "feature_id": "fiber",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:7f091204f256f9eea0bcf00a"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "starch_grain",
+          "vessel",
+          "cork_cell"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "郁金",
+        "display": "郁金",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "gelatinized_starch",
+            "state": "supported",
+            "rule_state": "NO_REF",
+            "assessed": true,
+            "satisfies_criterion": true,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:336ad51efb41e3c8509c2370"
+          }
+        ],
+        "supporting": [],
+        "review_complete": true,
+        "unassessed_features": [],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "G3",
+        "display": "枳壳 / 陈皮",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "single_crystal",
+            "state": "investigated_unresolved",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:97d810a496c02bf6afc1e99e"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "stoma",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:8b656e944edea478dbe698de"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "single_crystal"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "茯苓",
+        "display": "茯苓",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "hypha",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:9be96dface1af74ec5c15656"
+          },
+          {
+            "feature_id": "fungal_mass",
+            "state": "failed_or_unknown",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:a84aa4c774214d184243e989"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "fungal_mass"
+        ],
+        "paused_is_excluded": false
+      }
+    ],
+    "unmapped": [
+      {
+        "label": "玄明粉",
+        "state": "kb_unmapped",
+        "review_complete": false,
+        "reason": "没有可用候选映射，未审查，不是阴性或已排除"
+      }
+    ],
+    "candidate_ids": [
+      "白芍",
+      "G1",
+      "郁金",
+      "G3",
+      "茯苓"
+    ],
+    "complete": false,
+    "incomplete_candidate_ids": [
+      "白芍",
+      "G1",
+      "G3",
+      "茯苓"
+    ],
+    "actionable_gaps": false,
+    "comparison_required": true,
+    "scope": "current provided fields of view; local absence never excludes a specimen",
+    "policy": "review is always allowed; incomplete audit cannot authorize a complete differential conclusion"
+  },
+  "candidate_review_complete": false,
+  "decision_readiness_shadow": {
+    "schema": "decision-readiness/shadow-v1",
+    "mode": "shadow",
+    "selected_candidate_id": "白芍",
+    "audit_complete": false,
+    "formal_authorized": false,
+    "selected_required_gaps": [],
+    "competing_required_gaps": {
+      "G3": [
+        "single_crystal"
+      ],
+      "茯苓": [
+        "fungal_mass"
+      ]
+    },
+    "supporting_gaps": {
+      "白芍": [
+        "starch_grain",
+        "vessel"
+      ],
+      "G1": [
+        "starch_grain",
+        "vessel",
+        "cork_cell"
+      ]
+    },
+    "unmapped": [
+      "玄明粉"
+    ],
+    "would_be_ready": false,
+    "production_authorization_changed": false,
+    "limit": "未查supporting不单独判否；required观察完成不等于排除竞争候选，仍需独立风险验证"
+  },
+  "formal_verdict": "confirmed",
+  "formal_conclusion_id": "白芍",
+  "candidate_comparison": [
+    {
+      "candidate_id": "白芍",
+      "display": "白芍",
+      "rule_confidence": 1.0,
+      "fused_score": 0.872168,
+      "support_count": 1,
+      "supported_criteria": [
+        "criterion:359f38026291c8524d8ca276"
+      ],
+      "required_gaps": []
+    },
+    {
+      "candidate_id": "G1",
+      "display": "赤芍 / 牡丹皮",
+      "rule_confidence": 0.6,
+      "fused_score": 0.240057,
+      "support_count": 1,
+      "supported_criteria": [
+        "criterion:919e6a099baf26dba4910407"
+      ],
+      "required_gaps": []
+    },
+    {
+      "candidate_id": "郁金",
+      "display": "郁金",
+      "rule_confidence": 0.4131,
+      "fused_score": 0.172063,
+      "support_count": 1,
+      "supported_criteria": [
+        "criterion:336ad51efb41e3c8509c2370"
+      ],
+      "required_gaps": []
+    },
+    {
+      "candidate_id": "茯苓",
+      "display": "茯苓",
+      "rule_confidence": 0.0,
+      "fused_score": 0.001309,
+      "support_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:9be96dface1af74ec5c15656",
+        "criterion:a84aa4c774214d184243e989"
+      ]
+    },
+    {
+      "candidate_id": "G3",
+      "display": "枳壳 / 陈皮",
+      "rule_confidence": 0.0,
+      "fused_score": 7e-05,
+      "support_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:97d810a496c02bf6afc1e99e"
+      ]
+    }
+  ],
+  "rule_notes": [
+    "D8b 单类证据条件放行：独立证据仅 1 类（cluster_crystal），但 top1 白芍 conf 1.00 ≥ 0.75 且与 top2 已区分（分差 0.40）；按 v1.6 出结论，证据类数单薄故仍标人工复核"
+  ],
+  "provisional": {
+    "schema": "provisional-ranking/v1",
+    "policy": "temporary only; formal verdict and formal support count unchanged",
+    "source": "classification artifacts, one best class per crop",
+    "ranking": [
+      {
+        "candidate_id": "白芍",
+        "display": "白芍",
+        "provisional_score": 0.586453,
+        "provisional_delta": -0.285715,
+        "formal_score": 0.872168,
+        "formal_support_count": 1,
+        "criterion_states": [
+          {
+            "feature_id": "cluster_crystal",
+            "role": "required",
+            "tier": "P0",
+            "state": "VERIFIED_MATCH",
+            "weight": 1.0,
+            "provisional_contribution": 1.0,
+            "formal_contribution": 1.0,
+            "instance_ids": [],
+            "formal_state": "IN_RANGE",
+            "quant_note": "median 17.3μm ∈ [11, 35]μm",
+            "pending": false
+          },
+          {
+            "feature_id": "starch_grain",
+            "role": "supporting",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          },
+          {
+            "feature_id": "vessel",
+            "role": "supporting",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          },
+          {
+            "feature_id": "fiber",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "郁金",
+        "display": "郁金",
+        "provisional_score": 0.206823,
+        "provisional_delta": 0.03476,
+        "formal_score": 0.172063,
+        "formal_support_count": 1,
+        "criterion_states": [
+          {
+            "feature_id": "gelatinized_starch",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0.1239,
+            "instance_ids": [],
+            "formal_state": "NO_REF",
+            "quant_note": null,
+            "pending": true
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "gelatinized_starch",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0.1239,
+            "instance_ids": [],
+            "formal_state": "NO_REF",
+            "quant_note": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "G1",
+        "display": "赤芍 / 牡丹皮",
+        "provisional_score": 0.050058,
+        "provisional_delta": -0.189999,
+        "formal_score": 0.240057,
+        "formal_support_count": 1,
+        "criterion_states": [
+          {
+            "feature_id": "cluster_crystal",
+            "role": "required",
+            "tier": "P0",
+            "state": "DETECTED_PENDING",
+            "weight": 1.0,
+            "provisional_contribution": 0.5,
+            "formal_contribution": 0.6,
+            "instance_ids": [],
+            "formal_state": "NO_REF",
+            "quant_note": null,
+            "pending": true
+          },
+          {
+            "feature_id": "starch_grain",
+            "role": "supporting",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          },
+          {
+            "feature_id": "vessel",
+            "role": "supporting",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          },
+          {
+            "feature_id": "cork_cell",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          },
+          {
+            "feature_id": "fiber",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "cluster_crystal",
+            "role": "required",
+            "tier": "P0",
+            "state": "DETECTED_PENDING",
+            "weight": 1.0,
+            "provisional_contribution": 0.5,
+            "formal_contribution": 0.6,
+            "instance_ids": [],
+            "formal_state": "NO_REF",
+            "quant_note": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "茯苓",
+        "display": "茯苓",
+        "provisional_score": 0.001309,
+        "provisional_delta": 0.0,
+        "formal_score": 0.001309,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "hypha",
+            "role": "required",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          },
+          {
+            "feature_id": "fungal_mass",
+            "role": "required",
+            "tier": "C",
+            "state": "NOT_DETECTED",
+            "weight": 0.3,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "G3",
+        "display": "枳壳 / 陈皮",
+        "provisional_score": 7e-05,
+        "provisional_delta": 0.0,
+        "formal_score": 7e-05,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "single_crystal",
+            "role": "required",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          },
+          {
+            "feature_id": "stoma",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      }
+    ],
+    "top_candidate": "白芍",
+    "formal_top_candidate": "白芍"
+  },
+  "review_required": true,
+  "review_reasons": [
+    "FORMAL_REQUIRES_REVIEW",
+    "CANDIDATE_AUDIT_INCOMPLETE",
+    "UNMAPPED_A_CANDIDATES",
+    "INSUFFICIENT_FEATURE_TYPES"
+  ],
+  "confidence_basis": {
+    "rule_confidence": 1.0,
+    "calibrated_probability": null,
+    "fused_score": 0.872168,
+    "support_count": 1,
+    "min_support_features": 2,
+    "level_meaning": "delivery_authorization_not_probability",
+    "level": "low",
+    "has_admitted_b_support": true
+  },
+  "evidence_packet": {
+    "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_fair_investigation_single_20261118_093651\\runs\\fusion_845b1adf1f914526a1e9dfa9549f88e1\\final_evidence.json",
+    "sha256": "ab775c10f8601913aacee52f2593a5c46787c6fb0281171393d112287f1449b9",
+    "fact_count": 49,
+    "hash_method": "canonical_json_sha256",
+    "evidence_version": "05881a3cd3b3d5e897f380ea3627ae0177d9f6deb608c78813c46e4e918e75e3"
+  },
+  "model_failure": null,
+  "model_validation_error": null,
+  "model_proposal": {
+    "candidate_id": "白芍",
+    "explanation": "倾向白芍：唯一量化判据criterion:359f38026291c8524d8ca276显示簇晶feret_max约17.3μm落入[11,35]μm且状态IN_RANGE，校正calibration:f90b40e27b5b66ab771c5148有效，且多数A折（a_prior:6a627c…、06f185…、fefdd…、5163…）以白芍居首，与G1的criterion:919e6a099baf26dba4910407仅形态无量化参照（NO_REF）相比证据更硬。冲突方面：observation:c6a8e652a9318a088fee79b2在视野内未检出纤维，同时反白芍与G1，但纤维为supporting特征，视野局限（仅限当前视野，未见不等于排除），不构成判否。缺口：support_feature_count仅1类（D8b单类证据条件放行），白芍的淀粉粒criterion:2de3260b61c2458d804fa831（需灰度/偏振确认糊化）与导管criterion:ccfbeb0b2f8187a370e3a24d未核查，G1的starch_grain/vessel/cork_cell未评，G3的single_crystal处于investigated_unresolved（分类c77068bfe1e999547650942d为虚焦不可判，不能当阴性）；郁金依赖observation:2bd4f4534d074dfeb572dbe3与criterion:336ad51efb41e3c8509c2370的糊化淀粉但缺乏量化，茯苓被observation:847b6b4e08501968e6c4830e反证菌丝未见。termination为planner_request_review（模型请求复核），与needs_review=true（证据类数单薄）一致，非正式规则否定；融合分数基于A先验，不视为已校准正确率。",
+    "support_refs": [
+      "criterion:359f38026291c8524d8ca276"
+    ],
+    "counter_refs": [
+      "observation:c6a8e652a9318a088fee79b2"
+    ],
+    "unresolved_refs": [
+      "criterion:2de3260b61c2458d804fa831",
+      "criterion:ccfbeb0b2f8187a370e3a24d",
+      "observation:2bd4f4534d074dfeb572dbe3",
+      "criterion:336ad51efb41e3c8509c2370"
+    ]
+  },
+  "usage": {
+    "completion_tokens": 688,
+    "completion_tokens_details": {
+      "reasoning_tokens": 85
+    },
+    "prompt_tokens": 25552,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "total_tokens": 26240
+  },
+  "new_image_calls": 0,
+  "new_tool_calls": 0,
+  "timing": {
+    "elapsed_seconds": 18.125,
+    "model_call_seconds": 17.953,
+    "scope": "read-only evidence packet, optional model call/validation and local assessment"
+  }
+}

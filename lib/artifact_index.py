@@ -1,4 +1,16 @@
-"""绑定样品下的只读B工件索引；契约检查与像素质量检查分开标记。"""
+"""绑定样品下的只读 B 工件索引：契约检查与像素质量检查分开标记。
+
+扫描只收集 crop/mask/measurement/measure_manifest 与已知状态文件，跳过符号链接与
+越界路径；仅输出已知状态字段，不把日志、模型返回或目录药材名送入规划器。
+
+主要定义：
+- ArtifactIndex: 持有待扫描根目录，提供 scan 生成工件清单、计数、缺失阶段与索引摘要。
+
+关联：
+- contracts: 使用 CropMeta、iter_measurement_records、MeasureManifestRow 做契约解析。
+- .storage: 使用 file_hash、read_json、digest 生成身份与索引摘要。
+- .tool_builtins: 在只读目录/工件查询工具中实例化 ArtifactIndex。
+"""
 from pathlib import Path
 import contracts
 from .storage import file_hash, read_json, digest

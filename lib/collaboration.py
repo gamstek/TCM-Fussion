@@ -1,7 +1,20 @@
-"""A/B只读协作与有界影子Agent；不修改EvidenceCard、measurements或原Verdict。
+"""A/B 只读协作与有界影子 Agent：融合两路结果并给出可选补查建议，不改写原工件。
 
-合法补查仅取原B明确NOT_DETECTED的P1/C required判据，A不扩张补查权限。
-本版不执行新增图像观察；LLM只选合法动作，失败退回确定性建议。
+不修改 EvidenceCard、measurements 或原 Verdict；合法补查仅取原 B 明确 NOT_DETECTED
+的 P1/C required 判据，A 不扩张补查权限。本版不执行新增图像观察，LLM 只选合法动作，
+失败保留确定性建议；规划预算只覆盖已记录判药请求与本次规划。
+
+主要定义：
+- knowledge_base: 读取药材判据知识库 JSON。
+- fuse: 比较 A 首选与 B 结论的关系，给出是否需复核，不修改 B 裁决。
+- propose_actions: 由 B 判据生成候选补查动作及 finish/review 选项。
+- select_shadow: 在预算内输出确定性或 LLM 影子选择，最多一次规划请求。
+
+关联：
+- paths: 提供判据库目录、检测配置目录定位。
+- .storage: 使用 IntegrationError、digest、file_hash、read_json 做校验与证据版本绑定。
+- adjudicator: llm_shadow 模式复用 AdjudicatorClient 的文本传输。
+- .react_graph / .pipeline / .workflow_entry: 调用 fuse 与 select_shadow 参与融合与分流。
 """
 from __future__ import annotations
 

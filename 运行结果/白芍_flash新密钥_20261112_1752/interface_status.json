@@ -1,8 +1,0 @@
-{
-  "schema": "multi-view-interface/v1",
-  "dry_run": false,
-  "base": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_flash新密钥_20261112_1752",
-  "stage": "done",
-  "status": "completed",
-  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_flash新密钥_20261112_1752\\runs\\fusion_e71268f68b5941a2a3b99b62684c49f7"
-}

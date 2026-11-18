@@ -1,4 +1,20 @@
-"""可控输入/假子进程验证适配边界，绝不把模拟结果当真实模型效果。"""
+"""可控输入与假子进程下的适配边界回归，绝不把模拟结果当真实模型效果。
+
+主要定义：
+- IntegrationTests A 输出解析: `parse_a_stdout` 的精度与顺序，Top-K 不完整、类别重复、概率和异常均被拒。
+- A 预测缓存: `predict_a` 缓存命中、权重变更失效、损坏缓存 `CACHE_INVALID`、输入变更 `INPUT_CHANGED`、缺图与缺折检查点的错误码。
+- 原子写入: `write_json` 在 Windows 共享冲突下重试、永久拒绝次数有界且保留旧内容、非 Windows 拒绝不重试。
+- 融合与影子选择: `fuse` 冲突不改写 B、`select_shadow` 仅影子不注入卡片、非法 LLM 动作降级、调用失败不重试。
+- 配置与流水线: `validate_config` 拒绝跨样本、未知字段与未声明的 recorded 数据；`run_pipeline` 失败任务落盘。
+- B 适配: `read_b_verdict` 样本契约、`execute_b` 只读回放不改动工件、网络未 opt-in 先失败、子进程退出码映射。
+
+关联：
+- TCM_Fusion.lib.adapters: 被测的 `parse_a_stdout`/`predict_a`/`execute_b`/`run_process`。
+- TCM_Fusion.lib.collaboration: `fuse`/`propose_actions`/`select_shadow`。
+- TCM_Fusion.lib.pipeline: `run_pipeline` 与 `validate_config`。
+- TCM_Fusion.lib.storage: `write_json` 原子写入与 `IntegrationError`。
+- tests/fixtures: a_prediction.json、b_verdict.json、recorded_pipeline.json。
+"""
 from __future__ import annotations
 
 import copy

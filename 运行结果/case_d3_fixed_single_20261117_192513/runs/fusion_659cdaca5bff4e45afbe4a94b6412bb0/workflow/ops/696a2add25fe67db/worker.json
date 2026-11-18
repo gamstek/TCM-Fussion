@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "single_crystal_view_01_glm0abfd40672a2_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_fixed_single_20261117_192513\\runs\\fusion_659cdaca5bff4e45afbe4a94b6412bb0\\workflow\\ops\\a10223d02f00184a\\scan\\crops\\single_crystal_view_01_glm0abfd40672a2_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_fixed_single_20261117_192513\\runs\\fusion_659cdaca5bff4e45afbe4a94b6412bb0\\workflow\\ops\\a10223d02f00184a\\scan\\crops\\single_crystal_view_01_glm0abfd40672a2_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_fixed_single_20261117_192513\\view_01.jpg",
+  "tight_box": [
+    853.0,
+    383.25,
+    979.0,
+    477.75
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_fixed_single_20261117_192513\\runs\\fusion_659cdaca5bff4e45afbe4a94b6412bb0\\workflow\\ops\\696a2add25fe67db\\classification",
+  "feature_hint": "目标正例：草酸钙方晶：可成群或分散的多面体结晶，外形为斜方形、菱形、长方形或双锥形，棱边平直清晰，半透明",
+  "tight_box_local": [
+    24.0,
+    24.25,
+    150.0,
+    118.75
+  ]
+}

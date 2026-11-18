@@ -1,14 +1,21 @@
-"""ReAct可核验反馈：目标→实际证据/能力变化；不将哈希或规则分数当准确率。"""
+"""ReAct 可核验反馈：把动作目标对齐到实际证据或能力变化，不把哈希或规则分数当准确率。
+
+主要定义：
+- objective: 按工具名给出问题的目标、预期解除的阻塞与停止条件。
+- snapshot: 从评分结果提取特征、缺席观察、判据状态与候选排序，作为前后对比基线。
+- evaluate: 对比前后快照并判定动作是否带来有效证据、反证或能力进展。
+- reflection_card: 把失败反馈汇总成只读反思卡片，只影响任务策略，不改变证据。
+
+关联：
+- TCM_Fusion.lib.react_graph: 调用 objective/snapshot/evaluate/reflection_card 生成观测反馈。
+- 独立工具模块：不读写证据，也不调用模型。
+"""
 def objective(action):
     tool=action.get('tool','');args=action.get('args',{})
     return {'problem_id':args.get('feature_id') or args.get('target_id') or tool,
             'objective':{'presence_check':'核验合法候选差异特征','scene_check':'完成强制场景上下文',
                 'measure_instances':'获取具有用途资格的真实量化证据','segment_instance':'恢复可用目标掩码',
                 'detect_region':'局部 YOLO 重检',
-                'propose_regions':'从原图纹理提议局部核验区域',
-                'roi_screen':'用 GLM 多图筛选 ROI，决定哪些局部值得继续框选',
-                'roi_screen_batch':'并发执行多个视野的 ROI 筛选',
-                'needle_scan':'全视野分块、目标条件的针晶候选扫描；输出 crop 供后续身份/测量',
                 'feature_scan':'按 feature_id 做全视野分块的目标条件候选扫描',
                 'hybrid_scan':'并发执行 YOLO 初检与多特征 GLM 全视野扫描，并一次提交汇合结果',
                 'image_exemplar_audit':'用正负示例 contact sheet 对 crop 做非阻断图片示例审计',
@@ -17,7 +24,7 @@ def objective(action):
             'stop_condition':'同依赖重复动作、服务失败、预算或截止，不以生成过门为成功'}
 
 
-def snapshot(scored):
+def snapshot(scored, *, primary_ids=()):
     d=scored['decision'];checks={}
     for r in d.get('ranking',[]):
         for c in r.get('checks',[]):
@@ -25,7 +32,12 @@ def snapshot(scored):
     return {'features':{k:{'present':v.present,'n':v.n_instances} for k,v in scored['cards'].items()},
             'observed_absence':[(r['image_id'],r['feature_id']) for r in scored.get('observation_states',[]) if r['state']=='absent'],
             'checks':checks,'ranking':[r.get('id') for r in d.get('ranking',[])],
-            'verdict':d.get('verdict')}
+            'verdict':d.get('verdict'), 'primary_ids':list(primary_ids),
+            'criterion_support':{r['id']:[c['feature_id'] for c in r.get('checks',[]) if
+                c.get('present') and (c.get('score_contribution')or 0)>0 and
+                c.get('state') in {'IN_RANGE','EXTREME','NO_REF'}] for r in d.get('ranking',[])},
+            'required':{r['id']:[c['feature_id'] for c in r.get('checks',[]) if c.get('role')=='required']
+                        for r in d.get('ranking',[])}}
 
 
 def evaluate(before,after,action,*,accepted,capability_changed=False,result=None,elapsed_ms=0):
@@ -34,12 +46,26 @@ def evaluate(before,after,action,*,accepted,capability_changed=False,result=None
     resolved=[k for k,v in after['checks'].items() if before['checks'].get(k) in {'NOT_DETECTED','UNCAL'} and v not in {'NOT_DETECTED','UNCAL'}]
     negative=bool(accepted and action.get('tool')=='presence_check' and result.get('present') is False and result.get('conf',0)>=0.5)
     if (action.get('args',{}).get('image_id'),action.get('args',{}).get('feature_id')) in before.get('observed_absence',[]):negative=False
-    # 有效负观察是Observation进展，不伪装为规则已支持的阳性证据。
+    # 有效负观察是Observation进展。
     useful=bool(accepted and (new or resolved or negative or capability_changed))
+    support_changes={cid:sorted(set(fids)-set(before.get('criterion_support',{}).get(cid,[])))
+                     for cid,fids in after.get('criterion_support',{}).items()}
+    support_changes={cid:fids for cid,fids in support_changes.items() if fids}
+    counters=[k for k,v in after['checks'].items() if v=='OUT_OF_RANGE' and before['checks'].get(k)!=v]
+    if not accepted:
+        support_changes={};counters=[]
+    primary_progress=any(cid in before.get('primary_ids',[]) and
+        bool(set(fids)&set(before.get('required',{}).get(cid,[]))) for cid,fids in support_changes.items())
+    primary_progress=primary_progress or any(cid+':'+fid in counters for cid in before.get('primary_ids',[])
+                                           for fid in before.get('required',{}).get(cid,[]))
     return {**objective(action),'accepted':bool(accepted),'new_features':new,
             'new_counterevidence':[action.get('args',{}).get('feature_id')] if negative else [],
             'resolved_criteria':resolved,'candidate_order_changed':before['ranking']!=after['ranking'],
             'capability_progress':bool(capability_changed),'useful':useful,
+            'candidate_support_changes':support_changes,'qualified_counter_changes':counters,
+            'primary_required_progress':primary_progress,
+            'discrimination_progress':'qualified_counter_added' if accepted and counters else 'not_established',
+            'interpretation':'支持增加/顺序变化不自动代表候选已区分；局部阴性不是标本排除',
             'latency_ms':round(elapsed_ms,2),'failure_code':result.get('error_code'),
             'continue_reason':'有效证据或能力进展' if useful else '无已验证进展；换路线或停止'}
 

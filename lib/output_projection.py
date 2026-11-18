@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
-"""把规则裁决投影成“永远有输出”的交付视图（方案 A）。
+"""把规则裁决投影成“永远有输出”的交付视图，不修改 decide/阈值/证据卡，并保留真实复核状态。
 
-**为什么存在**：规则引擎在证据不足时会返回 `insufficient_evidence` + `needs_review`，
-但交付层仍需要给出 top 候选、备选、强观察和缺口。本模块只做投影，不修改
-`decide`/阈值/证据卡；交付结果同时保留真实复核状态。
+规则引擎在证据不足时会返回 `insufficient_evidence` + `needs_review`，交付层仍须给出
+top 候选、备选、强观察与缺口；本模块只做投影，不联网、不写证据、不读取原图。
 
-设计边界：
-  * `status` 只取 confirmed/probable/group_level/tentative，不把 tentative 写成 confirmed；
-  * 强观察（GLM 存在性/场景，conf≥0.6）全部保留，并标注它支持了哪些候选；
-  * 分数完全并列时，用 A 的逐折 Top-1 多数做 tie-break（只影响排序，不改变证据）；
-  * 不联网、不写证据、不读取原图。
+主要定义：
+- STRONG_CONF: 强观察置信度阈值（0.6）。
+- TIE_EPS: 判定分数并列的容差。
+- project_output: 生成交付视图；status 只取 confirmed/probable/group_level/tentative，不把 tentative 写成 confirmed。
+- `_a_majority` / `_view_map` / `_detections` 等系列：A 多数票、视野与操作摘要的内部辅助。
+
+关联：
+- TCM_Fusion.lib.storage: read_json 读取已有工件。
+- TCM_Fusion.lib.provisional_evidence: build 提供暂定排序，失败时只降级为旁路信息。
+- TCM_Fusion.lib.workflow_entry: 调用 project_output 写 output.json。
 """
 from __future__ import annotations
 
@@ -214,12 +218,31 @@ def project_output(sample_id, verdict, result, a):
             if candidate:
                 top = candidate
                 selection = 'provisional'
-    ambiguous = [r for r in ranking[1:5] if top and abs((r.get("score") or 0) - (top.get("score") or 0)) <= TIE_EPS]
+    assessment = result.get('final_assessment') or {}
+    assessment_bound = assessment.get('schema') == 'final-assessment/v1'
+    projection_error = None
+    if assessment_bound:
+        # finalize已完成来源/引用校验；交付不再独立重选另一个药材。
+        cid = assessment.get('candidate_id')
+        top = next((r for r in ranking if r.get('id') == cid), None) if cid else None
+        selection = 'final_assessment'
+        if cid and top is None:
+            projection_error = 'ASSESSMENT_CANDIDATE_NOT_IN_RANKING'
+    ambiguous = [r for r in ranking if r is not top and top and
+                 abs((r.get("score") or 0) - (top.get("score") or 0)) <= TIE_EPS][:4]
     status = {"confirmed": "confirmed", "probable": "probable",
               "group_level": "group_level"}.get(verdict.get("verdict"), "tentative")
     status_note = None
     needs_review = bool(verdict.get('needs_review') or result.get('needs_review')
+                        or (result.get('final_assessment')or{}).get('review_required')
                         or status == 'tentative' or selection == 'provisional')
+    if assessment_bound and assessment.get('status') not in {'confirmed','probable','group_level'}:
+        status = 'tentative' if top else 'undetermined'
+        needs_review = True
+    if projection_error:
+        status = 'undetermined'
+        needs_review = True
+        status_note = projection_error
     conclusion = verdict.get('conclusion')
     conclusion_id = conclusion.get('id') if isinstance(conclusion, dict) else conclusion
     if conclusion_id and top and conclusion_id != top.get('id'):
@@ -285,7 +308,9 @@ def project_output(sample_id, verdict, result, a):
         "missing_required": missing,
         "review_required": needs_review,
         "final_assessment": result.get('final_assessment'),
-        "judgement": (result.get('final_assessment') or {}).get('judgement'),
+        "candidate_audit": (result.get('final_assessment')or{}).get('candidate_audit'),
+        "judgement": None if projection_error else assessment.get('judgement'),
+        "fusion_ranking": [{"id":r.get('id'), "score":r.get('score')} for r in verdict.get('ranking',[])],
         "feature_audit": result.get('feature_audit'),
         "image_exemplar_audits": _image_audits(result.get('operations')),
         "audit": {
@@ -296,6 +321,7 @@ def project_output(sample_id, verdict, result, a):
             "fusion_weights": verdict.get("fusion_weights"),
             "fusion_policy": verdict.get("fusion_policy"),
             "policy": "always_output_tentative",
+            "assessment_projection_error": projection_error,
         },
         "note": "tentative 是未确认候选；review_required 如实表示复核需要，不阻止报告交付。",
     }

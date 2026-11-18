@@ -1,4 +1,21 @@
-"""Presence hints: deterministic boundary/compatibility tests; no real API or truth claims."""
+"""presence 可选定位与影子线索的边界回归：确定性与兼容性验证，不宣称真实 API 或真值。
+
+主要定义：
+- PresenceLocalizationTests（映射与用途）: 校验模型框逆变换到源图 tight bbox，且身份保持 pending、不授予尺寸资格。
+- PresenceLocalizationTests（旧观察区分）: 无框阳性、阴性、服务失败与低置信分别落到 present_unlocalized/not_observed_local/unknown。
+- PresenceLocalizationTests（非法坐标）: 坏数值、歧义空间、越界/反向/零面积、未知变换与源图不符都不静默夹取或擦除观察。
+- PresenceLocalizationTests（诊断项）: 小目标、细长、贴边、整图、空间重叠与 EXIF 旋转只作诊断，不用于去重或身份验证。
+- PresenceLocalizationTests（硬阻断）: 空白裁图与不可读质量即使旧 block_segment 为假也阻断新工件。
+- PresenceLocalizationTests（发布与取消）: 任务取消、关闭、源图删除或替换时不发布诊断，并落失败/取消终态、不自动重放。
+- PresenceLocalizationTests（主链与传输）: 图执行只让原始观察改变规则，local/MCP 传输均保留诊断与旧正式结果。
+- PresenceLocalizationTests（进程清理）: taskkill 失败时立即回退并回收真实子进程。
+
+关联：
+- TCM_Fusion.lib.presence_localization: 被测的 assess_presence / observation_context / sanitize_proposal。
+- TCM_Fusion.lib.agent_tools / controlled_process: 观察请求侧车与整树终止。
+- TCM_Fusion.lib.evidence_runtime: 诊断工件发布与终态记录。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import asyncio
 import base64
 import copy

@@ -1,0 +1,17 @@
+{
+  "identity": "75a196e3aabc17ce7e0985ab364ae0098f390c8d634889fcc733e85ff8359997",
+  "parent": "3ecd37fefccdfdd48fa7f83f7187e9e37263942363d238989c8e60bb01973dd9",
+  "artifacts": {
+    "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13": {
+      "id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\view_01.jpg",
+      "sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "parents": [],
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "b57695d544b497801fcac54205fbc83bf951e8387540a9988c5df456b5ee819b"
+}

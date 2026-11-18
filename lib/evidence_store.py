@@ -1,4 +1,16 @@
-"""独立不可变证据快照：CAS提交、依赖失效传播；原B工件永不覆写。"""
+"""独立不可变证据快照库：内容寻址提交、依赖失效传播，原 B 工件永不覆写。
+
+每次提交生成以内容摘要命名的新版本，旧版本只读保留；提交前校验工件哈希、
+依赖环路与实例主键冲突，任何失效依赖都会使下游工件标记 invalid。
+
+主要定义：
+- EvidenceStore: 管理单个样品/配置身份的证据库，负责初始化、提交与读取校验。
+
+关联：
+- .ledger_lock: 通过 acquire/release 串行化同一证据库的跨进程提交。
+- .storage: 使用 IntegrationError、digest、read_json、write_json、file_hash 做校验与落盘。
+- .workflow_session: 创建并持有 EvidenceStore 作为会话证据权威。
+"""
 import copy
 from pathlib import Path
 from .ledger_lock import acquire, release

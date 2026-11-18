@@ -1,9 +1,33 @@
-"""规划服务错误的最小诊断；不记录响应正文或密钥，不替换真实模型。"""
+"""规划/服务错误的最小诊断分类；不记录响应正文或密钥，也不替换真实模型。
+
+主要定义：
+- EVIDENCE_REPAIR_ERRORS: 可视为证据修复类错误的代码集合。
+- planner_retryable: 只允许只读规划请求在断连时重试一次，不扩展为工具重试。
+- stage_error_kind: 把错误码归类为服务/配置/其他阶段类型。
+- service_error: 从异常中提取最小错误码与类别，不泄露原始响应。
+
+关联：
+- TCM_Fusion.lib.react_graph: 用 planner_retryable/service_error/stage_error_kind 处理规划与工具失败。
+- TCM_Fusion.lib.workflow_session: stage_error_kind 标记阶段失败类型。
+- TCM_Fusion.lib.final_assessment: 归类终止原因。
+- TCM_Fusion.lib.hard_calls: 文本调用失败时复用 service_error。
+"""
 import json
+from http.client import RemoteDisconnected
 from urllib.error import HTTPError
 
 
 EVIDENCE_REPAIR_ERRORS=frozenset({'EMPTY_MASK','MASK_INVALID','MASK_QUALITY_FAILED','MASK_OUT_OF_BOUNDS'})
+
+
+def planner_retryable(exc):
+    """Only a disconnected read-only planner request may be retried once.
+
+    This is not a tool retry policy: an image-service failure stays a service
+    error, and auth/credit/configuration failures must not issue another call.
+    """
+    return (getattr(exc, 'code', None) == 'UPSTREAM_REMOTE_DISCONNECTED'
+            or isinstance(exc, RemoteDisconnected))
 
 
 def stage_error_kind(code):

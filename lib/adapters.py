@@ -1,7 +1,22 @@
-"""通过子进程执行原A/原B入口，绝不import入口或复制预处理算法。
+"""通过子进程调用原 A/原 B 入口，绝不 import 入口模块或复制其预处理算法。
 
-A平均榜沿用四位小数输出，Agent候选使用机器可读的逐折原始概率排名。
-B始终走原run_pipeline，或只读已完成run；其交付校验复用contracts。
+A 平均榜沿用四位小数输出，Agent 候选使用机器可读的逐折原始概率排名；
+B 始终走原 run_pipeline 或只读已完成 run，交付校验复用 contracts。
+失败不自动重试，A 结果按图像/权重/脚本/解释器指纹缓存。
+
+主要定义：
+- interpreter: 解析并校验 A/B 使用的解释器路径，缺失即报错。
+- run_process: 以 UTF-8 环境运行子进程入口，超时或退出码非零时抛结构化错误。
+- parse_a_stdout: 严格解析原 A 完整 Top-N 文本，缺行、重名或概率非法即失败。
+- predict_a: 按 cli/recorded/unavailable 三种模式产出 A 排序与逐折排名，并写缓存。
+- read_b_verdict: 读取并校验 B 裁决，检查裁决带与 sample_id。
+- execute_b: 按 run/existing/recorded 模式执行或读取 B run，并校验完成度与样品唯一性。
+
+关联：
+- contracts: 读取 B verdict 与测量记录，做交付级校验。
+- paths: 提供项目根、run 目录、解释器与配置路径。
+- .storage: 使用 IntegrationError、digest、file_hash、fingerprint 等做校验与缓存键。
+- .pipeline / .workflow_session: 分别调用 predict_a、execute_b 与 interpreter。
 """
 from __future__ import annotations
 

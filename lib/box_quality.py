@@ -1,6 +1,14 @@
 """框内容质量评估：只做保守的可用性判断，不替代 locate/classify。
 
-目标是先挡住“空白/几乎无结构”的框；不因目标成簇、连续、相邻而拒绝。
+主要定义：
+- assess: 返回 usable / low_detail / blank / tiny / invalid 状态及分数、flags、指标；blank 才阻断后续分割。
+- assess_meta: 读取 CropMeta 的源图尺寸与 tight_box，再调用 assess。
+
+关联：
+- PIL、numpy: 灰度缩略图与纹理/边缘统计。
+- .presence_localization: 对定位裁图调用 assess 生成质量诊断。
+- .workflow_session: 保留low_detail提示，身份确认后可尝试分割；blank阻断，mask/量纲另行检查。
+- tests/test_box_quality.py: 直接回归 assess。
 """
 from __future__ import annotations
 
@@ -20,7 +28,7 @@ def assess(path, *, box=None, source_size=None, touches_border=None):
     """返回 dict；status 只有 usable / low_detail / blank / tiny / invalid。
 
     - blank：几乎无纹理，阻止继续分割；
-    - low_detail：细节弱，保留但标记 review；
+    - low_detail：灰度/相邻像素变化偏低的提示，不证明目标不可分割或尺寸可信；
     - tiny：尺寸过小，保留但标记；
     - invalid：像素不可读（旧工件/测试替身），不据此阻断；
     - 其余为 usable。

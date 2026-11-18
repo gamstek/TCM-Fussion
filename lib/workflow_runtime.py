@@ -1,4 +1,19 @@
-"""可从原图/部分B启动的领域运行时；物理证据仅由可信阶段提交，仍交原decide。"""
+"""可从原图或部分 B 工件启动的工作流领域运行时，物理证据只由可信阶段提交，裁决仍交原 decide。
+
+主要定义：
+- HYPOTHESIS_UPDATES: 候选假设状态（proposed/investigating/paused/withdrawn）的 JSON Schema。
+- WorkflowRuntime: 继承EvidenceRuntime，绑定 WorkflowSession 与工具注册，维护候选兴趣和假设文档。
+- from_task: 由任务配置和原图构造运行时，并校验 A 预测与图像绑定一致。
+- `_hypothesis_document` 系列：读写 investigation.json、合并假设状态的内部工具。
+
+关联：
+- TCM_Fusion.lib.evidence_runtime: 基类，提供评分、候选兴趣与工具读写。
+- TCM_Fusion.lib.workflow_session: 提供工具候选、局部执行与不可变证据快照。
+- TCM_Fusion.lib.tool_registry: 注册 ToolSpec 并校验动作参数。
+- TCM_Fusion.lib.workflow_entry: 通过 from_task 构造本运行时。
+- TCM_Fusion.lib.mcp_bridge: 通过 from_task 绑定工作流上下文。
+- TCM_Fusion.lib.storage: 路径解析、哈希与 JSON 读写。
+"""
 from pathlib import Path
 import contracts
 import paths
@@ -264,27 +279,10 @@ class WorkflowRuntime(EvidenceRuntime):
             crops.append((art_id, meta, art))
         path = Path(workflow.operations)
         entries = read_json(path).get('entries', {}) if path.is_file() else {}
-        propose_done = [v for v in entries.values()
-                        if v.get('tool') == 'propose_regions' and v.get('status') == 'done']
-        propose_failed = any(v.get('tool') == 'propose_regions'
-                             and v.get('status') == 'failed' for v in entries.values())
         locate_count = sum(1 for v in entries.values()
                            if v.get('tool') == 'locate_feature'
                            and v.get('status') in {'done', 'failed'})
-        region_count = 0
-        for entry in propose_done:
-            bundle = entry.get('bundle') or {}
-            for name in (bundle.get('files') or {}):
-                if name.endswith('regions.json'):
-                    try:
-                        region_count = len(read_json(Path(bundle['root']) / name).get('regions') or [])
-                    except (OSError, ValueError, KeyError):
-                        region_count = 0
-                    break
-        max_locate = int(workflow.config.get('max_locate_attempts', 4))
-        required_locate = min(region_count, max_locate) if region_count else 1
-        attempted = bool(propose_failed or (propose_done and locate_count >= required_locate)
-                         or (propose_done and region_count == 0))
+        attempted = locate_count >= 1
         present = getattr(self, 'present_features', set()) or set()
         for cid in interest.get('ids') or []:
             row = rows.get(cid)
@@ -390,7 +388,7 @@ class WorkflowRuntime(EvidenceRuntime):
                         'quant': crit.get('quant'), 'morph': crit.get('morph'),
                         'status': 'no_crop' if fid not in crop_features else 'no_measurement',
                         'attempted': attempted,
-                        'directive': '先执行 propose_regions/locate_feature（或分块检测）；完成或失败前不得查 P1/C。'}
+                        'directive': '先执行 locate_feature（或分块检测）；完成或失败前不得查 P1/C。'}
         # P0 物理证据完成后，按判据库的 supporting 列表补一轮 GLM 存在性审查。
         # 不把 supporting 写死为 epidermis_cell：哪个候选/哪条判据需要，就查哪条。
         for cid in interest.get('ids') or []:
@@ -427,20 +425,20 @@ class WorkflowRuntime(EvidenceRuntime):
         if focus and focus.get('status')=='crop_pending_classification' and not focus['attempted']:
             target=focus.get('crop_artifact_id')
             filtered=[a for a in actions
-                      if a['tool'] not in {'presence_check','locate_feature','propose_regions'}
+                      if a['tool'] not in {'presence_check','locate_feature'}
                       and (a['tool']!='classify_target'
                            or (a.get('args') or {}).get('target_id')==target)]
             if filtered:return filtered
         if (focus and focus.get('status') in {'crop_found_unsegmented','crop_segmented_unmeasured'}
                 and not focus['attempted']):
             filtered=[a for a in actions
-                      if a['tool'] not in {'presence_check','locate_feature','propose_regions'}]
+                      if a['tool'] not in {'presence_check','locate_feature'}]
             if filtered:return filtered
         if focus and focus.get('status')=='crop_segmentation_review' and not focus['attempted']:
             allowed={'read_quality','read_artifact_status','list_artifacts','query_criteria','list_features'}
             repair=(focus.get('review_decision') or {}).get('repair')
             if repair=='relocate':
-                allowed.update({'locate_feature','propose_regions'})
+                allowed.update({'locate_feature'})
             if repair in {'split_component','diagnostic_measure'}:
                 allowed.add('measure_instances')
             filtered=[a for a in actions if a['tool'] in allowed]
@@ -603,6 +601,36 @@ class WorkflowRuntime(EvidenceRuntime):
                             'present': state.get('state') == 'VERIFIED_MATCH'})
         return out
 
+    def decision_view(self, state, *, scored=None):
+        """D2 只读视图：按当前头、观察、候选及规则状态失效，不另请模型审查。"""
+        from .evidence_projection import build as eligibility
+        from .comparison_problems import build as comparison
+        from .instance_ledger import project as instances
+        snapshot = self.workflow.store.current()
+        observations = state.get('observations', [])
+        scored = scored or self.score(observations)
+        actions = state.get('actions')
+        if actions is None:
+            # 自主路径的合法集合是本地检查；MCP只读请求也需得到真实的动作可达性。
+            actions = self.legal_actions(state) if self.workflow.config.get('agent_policy') == 'adaptive_v2' else []
+        operations = read_json(self.workflow.operations)
+        key = digest({'head': snapshot['version'], 'observations': observations,
+                      'interest': self.candidate_interest(), 'decision': scored['decision'],
+                      'operations': operations, 'actions': actions})
+        cached = getattr(self, '_decision_view_cache', None)
+        if cached and cached[0] == key:
+            return cached[1]
+        view = eligibility(self, scored, observations)
+        result = {'eligibility': view, 'comparison': comparison(self, scored, view, actions),
+                  'instances': instances(snapshot, operations)}
+        from .candidate_audit import build as audit_candidates
+        result['candidate_audit']=audit_candidates(self,scored,observations,
+                                                  eligibility=view,actions=actions)
+        from .comparison_problems import investigation_focus
+        result['investigation_focus']=investigation_focus(self,scored,result['candidate_audit'])
+        self._decision_view_cache = (key, result)
+        return result
+
     def summary(self,state):
         result=super().summary(state)
         from .storage import read_json
@@ -642,23 +670,36 @@ class WorkflowRuntime(EvidenceRuntime):
                                                  'identity_verified':v.get('identity_verified')}
             for v in self.workflow.store.current()['artifacts'].values()
             if v['valid'] and v['kind']=='classification']
+        # 复用既有分类摘要传递质量建议，避免另加付费审查或整份质量历史。
+        artifacts = self.workflow.store.current()['artifacts']
+        for row in result['workflow']['classifications']:
+            crop = artifacts.get(row['crop_id'], {})
+            if crop.get('box_quality') in {'blank', 'low_detail'}:
+                row['segmentation_admission'] = self.workflow.crop_segmentation_admission(crop)
         result['workflow']['provisional']=provisional
         result['workflow']['required_states']=required
         result['workflow']['supporting_states']=self.supporting_states(provisional, result.get('observation_states'))
         result['workflow']['supporting_gaps']=[row for row in result['workflow']['supporting_states']
                                                if not row['present']]
         result['workflow']['discriminating_gaps']=gaps
+        from .evidence_projection import compact as compact_eligibility
+        from .comparison_problems import compact as compact_comparison
+        view = self.decision_view(state, scored=scored)
+        from .candidate_audit import compact as compact_audit
+        result['workflow']['candidate_audit']=compact_audit(view['candidate_audit'])
+        result['workflow']['investigation_focus']=view['investigation_focus']
+        result['workflow']['eligibility_projection'] = compact_eligibility(view['eligibility'])
+        result['workflow']['comparison_problems'] = compact_comparison(view['comparison'])
+        associations = view['instances']['associations']
+        result['workflow']['instance_associations'] = {'total': len(associations),
+            'rows': associations[:8], 'detail_access': 'read_evidence_detail(kind=instances)',
+            'qualification_effect': 'none'}
         if self.workflow.config.get('fast_recovery_selection') == 'per_feature':
             result['workflow']['recovery_options']=self.workflow.recovery_options()
             result['workflow']['recovery_policy']=(
                 '每个 feature_scan 动作只查 target_id 中显式指定的一类微粒；'
                 'required/supporting 共用定位方法，criteria 给出关联候选。'
                 '选项不是强制任务；未检出不是阴性，supporting 不替代 required。')
-        if self.workflow.config.get('targeted_recovery', False):
-            result['workflow']['recovery_regions'] = [
-                {'target_id': t['id'], 'image_stem': Path(t['source']).stem,
-                 'box': t['roi'], 'line_score': t['line_score'], 'feature_id': t.get('feature_id')}
-                for t in self.workflow.targets().values() if 'line_score' in t]
         return result
 
 

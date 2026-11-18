@@ -1,0 +1,40 @@
+{
+  "crop_id": "hypha_view_01_glm8a09306abb41_01",
+  "png": "hypha_view_01_glm8a09306abb41_01.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\view_01.jpg",
+  "stem": "view_01",
+  "feature_id": "hypha",
+  "object_label": "菌丝",
+  "herb": "",
+  "px_per_um": 11.65,
+  "tight_box": [
+    1032.25,
+    975.0,
+    1906.75,
+    1536.0
+  ],
+  "tight_box_local": [
+    28.25,
+    29.0,
+    902.75,
+    590.0
+  ],
+  "loose_box": [
+    1004,
+    946,
+    1934,
+    1536
+  ],
+  "crop_size": "930x590",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.65,
+  "det_confidence": "medium",
+  "source_tight_bbox": [
+    1178,
+    1075,
+    1761,
+    1475
+  ],
+  "locate_expand": 1.5
+}

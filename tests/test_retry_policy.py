@@ -1,5 +1,17 @@
 # -*- coding: utf-8 -*-
-"""工具级有界重试策略的离线回归。"""
+"""工具级有界重试策略的离线回归：验证失败计数只在允许范围内放大为熔断。
+
+主要定义：
+- ToolRetryPolicyTest: 覆盖 locate 一次失败不阻断、两次失败阻断，以及非可重试服务错误立即阻断。
+- ToolRetryPolicyTest.test_classify_failure_has_one_retry: 分类失败仅保留一次重试。
+- ToolRetryPolicyTest.test_initial_detection_and_feature_scan_have_one_service_retry: 初检与 feature_scan 各允许一次服务重试。
+- _runtime / _failed: 写入最小 operations 账本并构造失败条目，隔离文件系统。
+
+关联：
+- TCM_Fusion.lib.workflow_session: 被测的 blocked_tools 重试判定。
+- TCM_Fusion.lib.storage.write_json: 构造临时账本文件。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import tempfile
 import unittest
 from pathlib import Path
@@ -47,8 +59,8 @@ class ToolRetryPolicyTest(unittest.TestCase):
             obj = _runtime(root, {"c1": _failed("classify_target")})
             self.assertEqual(WorkflowSession.blocked_tools(obj), {})
 
-    def test_initial_detection_and_roi_screen_have_one_service_retry(self):
-        for tool in ('detect_fov_initial', 'roi_screen'):
+    def test_initial_detection_and_feature_scan_have_one_service_retry(self):
+        for tool in ('detect_fov_initial', 'feature_scan'):
             with self.subTest(tool=tool), tempfile.TemporaryDirectory() as root:
                 first = _runtime(root, {'1': _failed(tool)})
                 self.assertNotIn(tool, WorkflowSession.blocked_tools(first))

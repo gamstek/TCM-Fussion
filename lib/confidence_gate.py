@@ -1,4 +1,27 @@
-"""离线温度缩放与冻结策略风险验证；真实放行只消费经过复验的版本，不自动造真值。"""
+"""离线温度缩放与冻结策略的风险验证：真实放行只消费通过复验的版本，不自动造真值。
+
+校准、开发、冻结测试三份数据必须在样品与图像层面隔离，真实模式下还须提供训练集
+重叠审计；风险以 Clopper-Pearson 上界表述，样品独立性仍依赖数据负责人确认。
+
+主要定义：
+- seal: 给工件附加自摘要 sha256。
+- check: 校验工件 schema 与自摘要一致性。
+- model_identity: 由权重/脚本/解释器哈希与类别集合生成模型身份摘要。
+- dataset_rows: 校验评估集结构、原图哈希、模型一致性与训练重叠审计。
+- calibrated: 用温度对排序概率做 log 缩放并重新归一化。
+- fit: 在网格温度上最小化 NLL，产出带封印的校准工件。
+- upper_error: 计算二项错误率的一侧 Clopper-Pearson 上界。
+- validate: 在冻结测试集上复验放行风险，输出带封印的验证报告。
+- publish: 重跑验证通过后发布可信放行版本。
+- decide: 按已发布版本对单次 A 排序给出已验证的分流决策。
+- save: 把工件写入输出目录。
+
+关联：
+- .storage: 使用 IntegrationError、digest、file_hash、project_path、read_json、write_json 等。
+- .routing_policy: 复用 route 与 validate_policy 保证放行规则与冻结测试一致。
+- .collaboration: 借 knowledge_base 读取药材判据清单。
+- cli/offline.py 与 tests/offline/test_confidence_gate.py: 离线校准/验证入口与回归。
+"""
 import copy
 import math
 import uuid

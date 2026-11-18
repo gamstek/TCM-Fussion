@@ -1,4 +1,17 @@
-"""运行后独立真值评估；不向在线planner注入标签，不用自评作真值。"""
+"""运行后的独立真值评估：把轨迹结论与外部参考标签配对，不用模型自评充当真值。
+
+评估只在离线阶段进行，不向在线 planner 注入标签；结论范围与参考标签范围不一致时
+判定为不可比（correct 为 None），失败归因保持未解决，不推测根因。
+
+主要定义：
+- evaluate: 用参考标签与划分评估单条轨迹，输出是否正确、是否弃权、与 A 的修正关系。
+- summarize: 汇总多行评估结果，统计确定输出、弃权、纠正 A 与破坏正确 A 的计数及覆盖率。
+
+关联：
+- .storage: 使用 IntegrationError 校验参考字段、digest 绑定轨迹摘要。
+- .truth_prompt_validation / .workflow_prompt_validation / .ablation_evaluation:
+  复用 evaluate 与 summarize 做真值双回放、工作流对照与 B0—B3 配对评估。
+"""
 from .storage import IntegrationError,digest
 
 

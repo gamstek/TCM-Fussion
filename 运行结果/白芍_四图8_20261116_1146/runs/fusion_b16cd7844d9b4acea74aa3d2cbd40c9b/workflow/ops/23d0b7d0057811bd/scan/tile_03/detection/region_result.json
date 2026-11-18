@@ -1,0 +1,93 @@
+{
+  "dets": [
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        1908.5,
+        1329.25,
+        2031.5,
+        1489.75
+      ],
+      "confidence": "high",
+      "score": 0.92,
+      "morphology": "两端尖锐的细长透明针状结晶，无细胞壁与胞腔",
+      "source_tight_bbox": [
+        1929,
+        1356,
+        2011,
+        1463
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        1645.5,
+        1189.0,
+        1774.5,
+        1315.0
+      ],
+      "confidence": "high",
+      "score": 0.92,
+      "morphology": "透明针状结晶，成束排列，两端尖细",
+      "source_tight_bbox": [
+        1667,
+        1210,
+        1753,
+        1294
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        1441.0,
+        1151.0,
+        1531.0,
+        1241.0
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "细长针状透明结晶，两端尖锐",
+      "source_tight_bbox": [
+        1458,
+        1177,
+        1514,
+        1215
+      ],
+      "locate_expand": 1.5,
+      "min_box_side": 90,
+      "min_box_expanded": true
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        1627.5,
+        1117.25,
+        1714.5,
+        1259.75
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "半透明针状晶体，边缘清晰无胞腔",
+      "source_tight_bbox": [
+        1642,
+        1141,
+        1700,
+        1236
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1024,
+    768,
+    2048,
+    1536
+  ],
+  "feature_id": "needle_crystal",
+  "engine": "glm_targeted",
+  "count": 4,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

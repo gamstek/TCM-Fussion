@@ -1,10 +1,19 @@
-"""针晶旁路审计与 mask 实例拆分。
+"""针晶旁路审计与 mask 实例拆分：只在 workflow 结束后读取已有工件，生成非阻断审计。
 
-设计边界：
-- 本模块只在 workflow 结束后读取已有工件，生成非阻断审计；
-- 不参与 rule decide，不改变 det_score>=0.8 的 mask/measure 路径；
-- 不调用新模型，不补造不可见实例；
-- 源图、crop、mask 缺失时记录 unknown，不抛出到主流程。
+不参与 rule decide，不改变 det_score>=0.8 的 mask/measure 路径；不调用新模型、
+不补造不可见实例；源图、crop、mask 缺失时记录 unknown，不抛出到主流程。
+
+主要定义：
+- SCHEMA: 审计产物版本标识 `needle-audit/v1`。
+- split_mask: 按连通域拆分 mask 为实例图，不虚构实例。
+- build_feature_audit: 主链使用的特征旁路审计入口。
+- build_needle_audit: 旧针晶审计入口，写旁路 sidecar。
+- `_thin_zhang_suen` / `_instance_metrics` / `_crop_records` 系列：细化、度量与 crop 收集的内部工具。
+
+关联：
+- TCM_Fusion.lib.storage: read_json/write_json/file_hash 读写审计产物。
+- TCM_Fusion.lib.workflow_entry: feature_audit 开启时调用 build_feature_audit。
+- cv2 / numpy: 形态学细化与连通域统计。
 """
 from __future__ import annotations
 

@@ -1,4 +1,18 @@
-"""固定检测侧库包装：局部检测/重新标定；根目录以-m启动，绝不import CLI。"""
+"""固定检测侧库包装 worker：全图/局部检测、重新标定与 GLM 定向定位，从项目根以 `-m` 启动，绝不 import CLI。
+
+主要定义：
+- main: 读取 `--context` 绑定上下文，按 `ctx['tool']` 分发 `calibrate_fov`、`detect_fov_initial`、`detect_region`、`locate_feature`，写回标定、裁图与框清单。
+- calibrate_fov 分支: 双引擎标定，状态不属可信集合时以 `SCALE_UNTRUSTED` 失败。
+- detect_fov_initial / detect_region 分支: 消费 yolo_worker 输出的框，裁出 crop 并保留原图坐标。
+- locate_feature 分支: 在合法局部 ROI 内调用 GLM 定向定位，按 IOU 去重同 ROI 重复框，缺目标返回空。
+- 模块级约束: `locate_min_roi_side` 用于扩窗，`locate_min_box_side` 约束框边长，`feature_hint` 只作提示词补充。
+
+关联：
+- TCM_Fusion.lib.workflow_backend: 以 `-m TCM_Fusion.cli.workflow_worker` 子进程调用，承载检测、标定与定向定位工具。
+- TCM_Fusion.cli.yolo_worker: 本 worker 检测分支的上游框来源。
+- TCM_Fusion.lib.storage: 读取 context、写结果 JSON 与分析文件哈希。
+- 检测侧库（ls_common、detect_core、geom、contracts、prompts）: 提供读图、检测、IOU 去重与受信类别提示。
+"""
 import argparse
 from pathlib import Path
 from TCM_Fusion.lib.storage import read_json, write_json, IntegrationError
@@ -12,74 +26,6 @@ def main(argv=None):
     img=imread_cn(ctx['source'])
     if img is None:raise IntegrationError('IMAGE_INVALID','无法读取绑定原图')
     out=Path(ctx['output']);out.mkdir(parents=True,exist_ok=True)
-    if ctx['tool'] == 'propose_regions':
-        from TCM_Fusion.lib.recovery_regions import propose_regions
-        write_json(out/'regions.json', propose_regions(img, with_audit=True))
-        return 0
-    if ctx['tool'] == 'roi_screen':
-        import cv2
-        import numpy as np
-        from detect_core import FEATURE_ID
-        from ls_common import load_config, resolve_key
-        from prompts import CLASSIFY_HINTS
-        from vlm_api import call_vlm, encode_jpeg_b64, parse_vlm_json
-        regions = read_json(ctx['regions']).get('regions') or []
-        feature = ctx.get('feature_id')
-        label = next((name for name, fid in FEATURE_ID.items() if fid == feature), None)
-        if not label or label not in CLASSIFY_HINTS:
-            raise IntegrationError('SCREEN_INVALID', 'ROI screen 特征没有受信形态描述')
-        tile = 512
-        cols = 3
-        rows = max(1, (len(regions) + cols - 1) // cols)
-        sheet = np.zeros((rows * tile, cols * tile, 3), dtype=np.uint8)
-        for index, region in enumerate(regions):
-            x1, y1, x2, y2 = [int(v) for v in region['box']]
-            crop = img[max(0, y1):min(img.shape[0], y2), max(0, x1):min(img.shape[1], x2)]
-            if crop.size == 0:
-                continue
-            crop = cv2.resize(crop, (tile, tile), interpolation=cv2.INTER_AREA)
-            row, col = divmod(index, cols)
-            sheet[row * tile:(row + 1) * tile, col * tile:(col + 1) * tile] = crop
-            cv2.rectangle(sheet, (col * tile + 2, row * tile + 2),
-                          (col * tile + 64, row * tile + 44), (0, 0, 0), -1)
-            cv2.putText(sheet, str(index), (col * tile + 12, row * tile + 34),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2, cv2.LINE_AA)
-        b64, _ = encode_jpeg_b64(sheet, quality=90)
-        prompt = (f'这是 {rows}×{cols} 的局部拼图，每格左下角有索引。'
-                  f'特征：{label}；形态：{CLASSIFY_HINTS[label]}。'
-                  f'{ctx.get("feature_hint") or ""} '
-                  '只判断哪些局部值得做后续定向框选，不要输出任何框。'
-                  '按值得程度从高到低，返回所有非空局部；只输出 JSON：'
-                  '{"rois":[{"index":0,"score":0.0,"worth":true,"reason":"一句话"}]}')
-        cfg = load_config()
-        text, error = call_vlm(cfg['vlm'], resolve_key(cfg), b64, prompt)
-        if text is None:
-            raise IntegrationError('SCREEN_FAILED', f'ROI screen 请求失败: {error or "unknown"}')
-        try:
-            parsed = parse_vlm_json(text)
-        except Exception as exc:
-            raise IntegrationError('SCREEN_INVALID', f'ROI screen 解析失败: {exc}') from exc
-        ranking = []
-        for row in parsed.get('rois', []):
-            try:
-                index = int(row['index'])
-            except (KeyError, TypeError, ValueError):
-                continue
-            if 0 <= index < len(regions):
-                ranking.append({'index': index, 'score': float(row.get('score') or 0),
-                                'worth': bool(row.get('worth', True)),
-                                'reason': str(row.get('reason') or '')[:200]})
-        ranking.sort(key=lambda item: item['score'], reverse=True)
-        limit=int(ctx.get('screen_max_rois') or 0)
-        if limit > 0:
-            ranking = ranking[:limit]
-        write_json(out / 'screen.json', {'image_id': ctx.get('image_id'), 'feature_id': feature,
-                                         'engine': 'glm_screen', 'sheet': str(out / 'sheet.jpg'),
-                                         'rois': ranking})
-        ok, encoded = cv2.imencode('.jpg', sheet)
-        if ok:
-            (out / 'sheet.jpg').write_bytes(encoded.tobytes())
-        return 0
     if ctx['tool']=='calibrate_fov':
         info=lookup_px_per_um(ctx['source'],img,full=True)
         if info.get('status') not in TRUSTED_STATUSES:

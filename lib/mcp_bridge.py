@@ -1,6 +1,19 @@
-"""MCP stdio服务和真实客户端：工具与本地ReAct调用同一个LocalToolbox。
+"""MCP stdio 服务与真实客户端：工具调用与本地 ReAct 共用同一个 LocalToolbox。
 
-服务一次绑定一个样品/配置；不接受任意路径、shell或药材结论作为工具参数。
+服务一次绑定一个样品/配置；不接受任意路径、shell 或药材结论作为工具参数。
+
+主要定义：
+- load_bound_context: 从 context 文件恢复工作流运行时与工具账本。
+- make_server: 创建 FastMCP 服务并注册技能、证据、观察与工具读写端点。
+- MCPToolbox: 客户端侧包装 call/recompute/read/observe。
+- connect_stdio: 以 stdio 子进程方式连接服务，返回可用工具箱。
+
+关联：
+- TCM_Fusion.lib.agent_tools: 复用 LocalToolbox 与 FixtureBackend。
+- TCM_Fusion.lib.evidence_runtime: 提供证据读写与运行时基类。
+- TCM_Fusion.lib.workflow_runtime: from_task 恢复工作流运行时。
+- TCM_Fusion.lib.storage: context/账本读取与错误类型。
+- TCM_Fusion.lib.workflow_entry: transport=mcp 时调用 connect_stdio。
 """
 from __future__ import annotations
 
@@ -69,7 +82,13 @@ def make_server(context_path):
     @server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=True))
     async def observe(action: dict) -> dict:
         """执行白名单scene/presence观察；会消耗API，受配置、预算和持久去重约束。"""
-        return await toolbox.observe(action)
+        try:
+            return await toolbox.observe(action)
+        except IntegrationError as exc:
+            # 保留领域码；只对明确的前置网络禁令声明未发请求，其余计费未知。
+            return {'action_id':action.get('action_id'),'accepted':False,'status':'failed',
+                    'result':{'ok':False,'error_code':exc.code},'error_code':exc.code,
+                    'new_requests':0 if exc.code=='NETWORK_DISABLED' else None}
 
     @server.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False))
     def list_tools_registry() -> dict:
@@ -151,6 +170,12 @@ async def connect_stdio(context_path):
             if isinstance(section.get("api_key_env"),str):names.add(section["api_key_env"])
     for name in names:
         if name in os.environ:forwarded[name]=os.environ[name]
+    # MCP默认环境白名单不包含数值库线程限制；否则父进程限流而子worker仍大量分配栈。
+    # 仅透传调用方已明确设置的资源环境，不改机器/用户环境或生成新路径权威。
+    for name in ('OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS',
+                 'TEMP','TMP'):
+        if name in os.environ:
+            forwarded[name]=os.environ[name]
     parameters = StdioServerParameters(command=sys.executable,
         args=["-X", "utf8", "-m", "TCM_Fusion.cli.mcp_server", "--context", str(project_path(context_path))],
         cwd=str(paths.PROJECT_ROOT), env=forwarded)

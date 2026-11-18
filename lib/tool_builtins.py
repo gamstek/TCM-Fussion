@@ -1,5 +1,15 @@
-"""已审阅的工具实现；注册表只接受受信callable，不执行配置代码。"""
-from .storage import IntegrationError
+"""已审阅的只读工具实现；注册表只接受受信 callable，不执行配置代码。
+
+主要定义：
+- read_builtin: 按工具名分派 read_quality、read_evidence、read_action_catalog、read_evidence_detail、list_features、query_criteria、read_scale、list_fovs、criteria_diff、list_artifacts 等只读处理器，输出附带证据摘要与版本。
+
+关联：
+- .storage.IntegrationError: 统一拒绝未实现或越界工具。
+- .tool_registry: 在受信白名单内调用 read_builtin。
+- .artifact_index: 只读产物索引（list_artifacts / read_artifact_status）。
+- .evidence_runtime: 读取 runtime 的 score/summary/records/kb/images。
+"""
+from .storage import IntegrationError, read_json
 
 
 def read_builtin(runtime, name, args, state):
@@ -39,7 +49,27 @@ def read_builtin(runtime, name, args, state):
         workflow=getattr(runtime,'workflow',None)
         if workflow is None:
             raise IntegrationError('EVIDENCE_SCOPE','没有工作流证据可展开')
-        if kind=='classifications':
+        if kind == 'candidate_catalog':
+            rows = [{'id': row['id'], 'display': row.get('display', row['id']),
+                     'required': [c for c in row['criteria'] if c['role']=='required']}
+                    for row in runtime.kb.candidates()]
+        elif kind == 'provisional':
+            rows = runtime.provisional_state(scored['decision'])['ranking']
+        elif kind == 'observations':
+            rows = list(state.get('observations', []))
+        elif kind in {'eligibility','eligibility_facts','comparison','instances'}:
+            view = runtime.decision_view(state, scored=scored)
+            if kind == 'eligibility':
+                rows = view['eligibility']['projections']
+                common['candidate_audit']=view['candidate_audit']
+                common['investigation_focus']=view['investigation_focus']
+            elif kind == 'eligibility_facts':
+                rows = view['eligibility']['facts']
+            elif kind == 'comparison':
+                rows = view['comparison']['questions'] + view['comparison']['boundaries']
+            else:
+                rows = list(view['instances']['instances'].values()) + view['instances']['associations']
+        elif kind=='classifications':
             rows=[]
             for v in workflow.store.current()['artifacts'].values():
                 if v.get('valid') and v.get('kind')=='classification':

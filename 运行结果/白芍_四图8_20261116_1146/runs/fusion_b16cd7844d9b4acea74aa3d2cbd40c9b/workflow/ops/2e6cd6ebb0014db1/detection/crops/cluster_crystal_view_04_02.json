@@ -1,0 +1,33 @@
+{
+  "crop_id": "cluster_crystal_view_04_02",
+  "png": "cluster_crystal_view_04_02.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\view_04.jpg",
+  "stem": "view_04",
+  "feature_id": "cluster_crystal",
+  "object_label": "草酸钙簇晶",
+  "herb": "",
+  "px_per_um": 11.65,
+  "tight_box": [
+    869.2,
+    854.7,
+    1079.1,
+    1074.2
+  ],
+  "tight_box_local": [
+    24.200000000000045,
+    24.700000000000045,
+    234.0999999999999,
+    244.20000000000005
+  ],
+  "loose_box": [
+    845,
+    830,
+    1103,
+    1098
+  ],
+  "crop_size": "258x268",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.9128,
+  "det_confidence": "high"
+}

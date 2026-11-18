@@ -1,8 +1,0 @@
-{
-  "schema": "code-signature/v1",
-  "stage": "pipeline_end",
-  "code_signature": "c13beb44f22d4c3db1de9e4e56a676edf8a483cf97f6632012906d96ed183c69",
-  "baseline": "c13beb44f22d4c3db1de9e4e56a676edf8a483cf97f6632012906d96ed183c69",
-  "changed": false,
-  "at": "2026-11-13T14:14:45+0800"
-}

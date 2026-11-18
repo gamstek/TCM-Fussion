@@ -1,4 +1,19 @@
-"""Per-action supporting budgets and presence context compaction; no model API."""
+"""支持性探测预算与 presence 上下文压缩的离线回归，不调用任何模型 API。
+
+主要定义：
+- ProbeBudgetTests（零消耗提议）: 反复生成 presence 动作不会改动预算账本。
+- ProbeBudgetTests（上下文压缩）: compact_round_context 去掉 artifacts/transform 与原始 metrics，保留空间重叠摘要且不改原对象。
+- ProbeBudgetTests（共享探测）: 同图同特征的探测在不同候选间共享 key 与配额，第二次预约返回 PROBE_ALREADY_ATTEMPTED。
+- ProbeBudgetTests（并发原子性）: 两个竞争调用者只能有一个成功预约，账本只记录一次。
+- ProbeBudgetTests（共享配额）: presence_check 与 feature_scan 共享 supporting 配额，用尽后不再提供扫描。
+
+关联：
+- TCM_Fusion.lib.probe_budget / resource_budget: 被测的 describe、check_reservation、reserve。
+- TCM_Fusion.lib.search_ledger.render_shared: 共享探测的状态渲染。
+- TCM_Fusion.lib.react_graph.compact_round_context: 上下文压缩行为。
+- TCM_Fusion.tests.test_workflow.StageFixture: 复用阶段替身。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import tempfile
 import unittest
 from pathlib import Path
@@ -6,6 +21,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from TCM_Fusion.lib.agent_tools import FixtureBackend, LocalToolbox
 from TCM_Fusion.lib.probe_budget import describe, check_reservation
+from TCM_Fusion.lib.search_ledger import render_shared
 from TCM_Fusion.lib.react_graph import compact_round_context
 from TCM_Fusion.lib.resource_budget import reserve
 from TCM_Fusion.lib.storage import IntegrationError, read_json, write_json
@@ -68,19 +84,25 @@ class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('artifacts', shadow)
         self.assertEqual(len(shadow['quality_diagnostic']['metrics']['large']), 5000)
 
-    async def test_same_probe_is_deduped_but_candidate_morph_is_allowed(self):
+    async def test_same_image_feature_presence_is_shared_across_candidates(self):
         actions = self.presence_actions()
         first = next(a for a in actions if a['args'].get('feature_id'))
+        second = {**first, 'args': {**first['args'], 'morph_hint': 'different candidate morphology'}}
         first_probe = describe(self.runtime, first)
-        second_probe = {**first_probe, 'key': 'different-morph-question'}
-        reserve(self.runtime.workflow.budget_path, 'observation', 'dedupe-first',
+        second_probe = describe(self.runtime, second)
+        self.assertIsNotNone(second_probe)
+        self.assertEqual(first_probe['key'], second_probe['key'])
+        self.assertEqual(first_probe['candidate_ids'], second_probe['candidate_ids'])
+        reserve(self.runtime.workflow.budget_path, 'observation', 'shared-first',
                 self.runtime.workflow.limits, extra_pool='network', probe=first_probe)
         book = read_json(self.runtime.workflow.budget_path)
-        # Exact same physical question remains deduped.
-        self.assertEqual(check_reservation(book, first_probe), 'PROBE_ALREADY_ATTEMPTED')
-        # A different candidate morphology on the same image/feature is a
-        # different question and must remain available for candidate-group review.
-        self.assertIsNone(check_reservation(book, second_probe))
+        self.assertEqual(check_reservation(book, second_probe), 'PROBE_ALREADY_ATTEMPTED')
+        state = {'observations': [{'action': first,
+            'accepted': True, 'result': {'ok': True, 'present': True, 'conf': .9}}]}
+        shared = render_shared(self.runtime, state)
+        self.assertTrue(shared)
+        self.assertEqual(shared[0]['status'], 'shareable')
+        self.assertEqual(shared[0]['candidate_ids'], first_probe['candidate_ids'])
 
     async def test_shared_reservation_is_atomic_across_competing_callers(self):
         first = describe(self.runtime, self.presence_actions()[0])

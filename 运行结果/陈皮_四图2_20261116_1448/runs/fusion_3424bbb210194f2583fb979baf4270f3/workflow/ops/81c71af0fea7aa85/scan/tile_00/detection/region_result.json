@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "草酸钙簇晶",
+      "tight_bbox": [
+        181.75,
+        139.5,
+        1191.25,
+        892.5
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "右下方不规则半透明团块，边缘呈多个棱角，可见放射状/多角形纹理，符合簇晶特征但部分截断且略模糊",
+      "source_tight_bbox": [
+        350,
+        265,
+        1023,
+        767
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    0,
+    0,
+    1024,
+    768
+  ],
+  "feature_id": "cluster_crystal",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

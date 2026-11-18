@@ -1,7 +1,20 @@
-"""按 group_key 做确定性训练/开发/测试划分；只做数据清单，不推断标签。
+"""按 group_key 做确定性的训练/开发/测试划分，只产出数据清单，不推断标签。
 
-用途：调提示词、关联阈值和边界策略时，开发集用于反复试验，冻结测试集只在最后评估；
-禁止同一 group_key 跨 split，禁止同一个图像文件落进两个组。
+用于调提示词、关联阈值和边界策略时：开发集可反复试验，冻结测试集只在最后评估。
+禁止同一 group_key 跨 split，禁止同一图像文件落进不同组或不同 split。
+
+主要定义：
+- SPLITS: 三个划分名称常量（training / development / test）。
+- read_groups: 读取一个或多个 attributes.csv，汇总 group_key 下的图像/药材/特征清单。
+- assign: 按种子散列确定性分配划分，支持 explicit 人工覆盖并校验无空 split。
+- validate: 校验划分覆盖全部 group、取值合法且无图像跨 split 泄漏。
+- build: 组合读入与分配，产出 dataset-split/v1 清单与摘要。
+- write / load: 写出或读入划分清单文件。
+- split_of: 查询单个 group 所属划分，未知 group 报错。
+
+关联：
+- .storage: 使用 IntegrationError 与 project_path 做输入校验与路径解析。
+- cli/offline.py 与 tests/offline/test_dataset_split.py: 调用本模块完成离线划分与回归。
 """
 from __future__ import annotations
 

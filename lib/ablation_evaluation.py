@@ -1,4 +1,18 @@
-"""B0—B3既有报告配对评估；不生成观察，不向策略泄漏答案。"""
+"""B0—B3 既有报告的配对评估与用途资格误拦/误放统计，不生成观察、不泄漏答案。
+
+只接受开发或冻结测试集，模拟/诊断报告与重复样品一律拒绝；不拟合测试阈值，
+不宣称风险已验收，区间仅作描述性统计并用 Wilson 置信区间表达。
+
+主要定义：
+- wilson: 计算比例的二项 Wilson 置信区间。
+- compare: 对每个样品的四组报告配对评估，输出分组摘要与错误输出风险区间。
+- quality_compare: 用人工用途参考统计新旧资格的误拦/误放计数及置信区间。
+
+关联：
+- .outcome_evaluation: 复用 evaluate 与 summarize 生成单例与分组指标。
+- .storage: 使用 read_json、project_path、IntegrationError 读取报告并校验输入。
+- contracts: 读取 QUALITY_USES 与质量评估工件，判断各用途是否放行。
+"""
 import math
 from .outcome_evaluation import evaluate,summarize
 from .storage import read_json,project_path,IntegrationError

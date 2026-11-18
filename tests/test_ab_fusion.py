@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
-"""A/B 加权融合的离线回归。"""
+"""A/B 加权融合的离线回归。
+
+主要定义：
+- `_a_dragon`: 构造五视图、每折均给龙胆高概率的 A 预测夹具。
+- ABFusionTest.test_reranking_cannot_keep_stale_confirmed_conclusion: 重排后不得保留过期的 confirmed 结论，需降为 insufficient_evidence 并复核。
+- ABFusionTest.test_a_prior_lifts_dragon_above_zero_b: A 先验可抬升 B 分为 0 的候选，并校验 `fusion_weights` 与 `fused_score`。
+
+关联：
+- TCM_Fusion.lib.ab_fusion: 被测的 `apply_ab_fusion`。
+- rule_engine.KnowledgeBase: 加载 `herb_criteria.json` 提供判据。
+- paths: 提供 `JUDGE_DIR` 等路径常量。
+"""
 import unittest
 from pathlib import Path
 

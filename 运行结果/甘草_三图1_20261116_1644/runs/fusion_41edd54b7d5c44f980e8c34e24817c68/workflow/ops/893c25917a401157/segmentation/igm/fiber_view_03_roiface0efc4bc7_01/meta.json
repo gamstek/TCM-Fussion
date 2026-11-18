@@ -1,0 +1,117 @@
+{
+  "image": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\893c25917a401157\\crops\\fiber_view_03_roiface0efc4bc7_01.png",
+  "image_hw": [
+    1536,
+    1882
+  ],
+  "stem": "fiber_view_03_roiface0efc4bc7_01",
+  "prompt": "请完成图像的二值分割任务（只有一个前景和一个背景的图像分割），图中的前景是纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离。\n只分割位于画面中央的那一个目标：画面边缘、四角出现的其他同类实体属于背景，不要分割、不要补全、不要描出轮廓。\n请严格按图中所见该实体的实际轮廓，把它从背景中完整分割出来，保留原本形状，不要简化和复杂化，不要凭空生成图中不存在的实体。\n输出二值掩码图：前景为纯白色，背景为纯黑色，不做灰度渐变、不画轮廓线。\n背景必须整幅均匀纯黑：不允许出现半幅灰/白背景，也不允许出现对角或渐变的明暗分界。\n不要添加任何文字、数字、水印、标识、logo、边框或装饰元素。",
+  "prompt_source": "模板+本体表(fiber)",
+  "feature": "fiber",
+  "feature_desc": "纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离",
+  "model": "doubao-seedream-5-0-flash-260915",
+  "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+  "size_requested": "2048x2048",
+  "size_mode": "cli:--size",
+  "size_note": null,
+  "pad_ratio": 0.1841,
+  "input_sent": "input_sent.jpg",
+  "input_sent_hw": [
+    2048,
+    2048
+  ],
+  "gen_hw": [
+    2048,
+    2048
+  ],
+  "letterbox": {
+    "out_w": 2048,
+    "out_h": 2048,
+    "content_w": 2048,
+    "content_h": 1671,
+    "top_ratio": 0.091796875,
+    "left_ratio": 0.0,
+    "cw_ratio": 1.0,
+    "ch_ratio": 0.81591796875,
+    "scale": 1.088204
+  },
+  "key_source": "igm.api_key",
+  "threshold": 126.0,
+  "invert": false,
+  "polarity_note": "极性探针取亮侧；四角平坦块 0/4 亮（角块 33px，相对 Otsu 126；4/4 块可信）→ invert=False",
+  "mask_source": "gray",
+  "polarity_hint": false,
+  "polarity_conflict": false,
+  "box": [
+    5,
+    0,
+    1806,
+    1536
+  ],
+  "box_margin_ratio": 0.1,
+  "box_keep_overlap": 0.5,
+  "box_iou": 0.2803,
+  "fg_outside_box_ratio": 0.0451,
+  "center_comp_ratio": 0.297,
+  "box_association": "region_component",
+  "association_version": "association-policy-v1-trial",
+  "center_region_box": [
+    455,
+    384,
+    1355,
+    1152
+  ],
+  "center_region_hit": true,
+  "association_candidates": 1,
+  "association_method": "center_region",
+  "associated_bbox_ratio": 0.628906,
+  "associated_comp_ratio": 0.297434,
+  "associated_touches_border": true,
+  "association_valid": false,
+  "association_status": "ok",
+  "association_reasons": [
+    "SINGLE_COMPONENT"
+  ],
+  "association_trace": [
+    {
+      "rule": "unique",
+      "matched": true,
+      "reasons": []
+    }
+  ],
+  "dominance": {
+    "components": 1,
+    "total_area": 822803,
+    "selected_area": 822803,
+    "dropped_area": 0,
+    "dropped_area_ratio": 0.0,
+    "largest_share": 1.0,
+    "second_share": 0.0,
+    "dropped_components": 0,
+    "center_hit": true,
+    "tight_overlap": 0.9549017200958188
+  },
+  "width_only": false,
+  "association_dropped_components": 0,
+  "association_dropped_px": 0,
+  "review_reason_codes": [
+    "TARGET_ASSOCIATION_AMBIGUOUS_OR_TOO_SMALL",
+    "POSSIBLE_TRUNCATION"
+  ],
+  "dropped_components": 0,
+  "dropped_px": 0,
+  "clipped_px": 0,
+  "max_hole_ratio": 0.0,
+  "hole_fill": "all",
+  "area_ratio": 0.284633,
+  "n_components": 1,
+  "status": "review",
+  "mask_hw": [
+    1536,
+    1882
+  ],
+  "size_match": true,
+  "revised_prompt": null,
+  "elapsed_s": 22.0,
+  "note": "IGM 是现役图像分割通路的产物（非预标注件）；status!=ok 的实例在判药侧被整条丢弃，尺寸量值仅在 status==ok 时可用"
+}

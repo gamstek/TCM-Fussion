@@ -1,0 +1,33 @@
+{
+  "crop_id": "fiber_view_03_roicb69e0ad12b9_01",
+  "png": "fiber_view_03_roicb69e0ad12b9_01.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\view_03.tif",
+  "stem": "view_03",
+  "feature_id": "fiber",
+  "object_label": "纤维",
+  "herb": "",
+  "px_per_um": 11.65,
+  "tight_box": [
+    3.7,
+    10.7,
+    1664.8,
+    1532.5
+  ],
+  "tight_box_local": [
+    3.7,
+    10.7,
+    1664.8,
+    1532.5
+  ],
+  "loose_box": [
+    0,
+    0,
+    1740,
+    1536
+  ],
+  "crop_size": "1740x1536",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.8974,
+  "det_confidence": "high"
+}

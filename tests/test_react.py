@@ -1,4 +1,23 @@
-"""真实LangGraph与stdio MCP边界回归；模型响应使用可控替身，绝不联网推理。"""
+"""真实 LangGraph 与 stdio MCP 边界回归；模型响应使用可控替身，绝不联网推理。
+
+主要定义：
+- ReactTests.test_graph_actually_changes_evidence_and_rule_verdict: `run_react` 真正改变证据与规则判决，且不覆盖原始判定。
+- test_mandatory_precedes_planner_and_budget_is_shared、test_zero_budget_no_backend、test_max_steps_stops、test_no_gain_twice_stops: 强制初检先于规划、请求预算共享与各类停止条件。
+- test_illegal_planner_falls_back_without_arbitrary_tool、test_planner_finish_does_not_clear_review、test_scene_failure_requires_review: 规划器降级与复核不可被清除。
+- test_sizes_cannot_be_injected、test_skip_mandatory_denied、test_p0_tool_and_skill_bypass_denied、test_strict_observation_types: 尺寸注入、强制项跳过、P0/skill 越界与观测类型校验。
+- test_tool_cache_persists_across_toolbox_restart、test_pending_entry_never_automatically_retried、test_image_mutation_rejected_before_request: 缓存持久、pending 不自动重试、图像变更前置拒绝。
+- test_mcp_stdio_handshake_tools_and_active_loop、test_cold_workflow_mcp_returns_denial_without_native_import_stall: stdio MCP 工具集、去重与冷启动拒绝。
+- test_from_b_binding_and_live_backend_paths、test_live_backend_reuses_original_visual_client_and_strict_parse: B 工件绑定与真实后端的分支覆盖。
+- test_original_fixed_policy_comparison_counts_planning: 调用固定策略对照辅助，校验规划请求与重复请求计数。
+
+关联：
+- TCM_Fusion.lib.react_graph: 主链 `run_react` 与 `ScriptedPlanner`。
+- TCM_Fusion.lib.agent_tools: `LocalToolbox`/`FixtureBackend`/`LiveBackend`。
+- TCM_Fusion.lib.mcp_bridge: `connect_stdio` 握手与工具清单。
+- TCM_Fusion.lib.evidence_runtime: `EvidenceRuntime` 与 `from_b_artifacts`。
+- TCM_Fusion.tests.fixed_baseline: 提供 `compare_fixed_fixture` 同起点对照。
+- tests/fixtures/react_case.json: 记录与模型答复夹具。
+"""
 from __future__ import annotations
 
 import copy
@@ -257,6 +276,13 @@ class ReactTests(unittest.IsolatedAsyncioTestCase):
                 snapshot=await tools.call('read_evidence')
                 self.assertIn('G1',snapshot['candidate_interest']['inactive_ids'])
                 self.assertNotIn('G1',snapshot['candidate_interest']['ids'])
+                # D2：真实stdio MCP转发新只读kind，不能只测本地handler。
+                for kind in ('eligibility','eligibility_facts','comparison','instances',
+                             'candidate_catalog','provisional','observations'):
+                    detail=await tools.read('read_evidence_detail',{'kind':kind,'offset':0,'limit':1},{})
+                    self.assertEqual(detail['kind'],kind)
+                    self.assertLessEqual(len(detail['rows']),1)
+                    self.assertEqual(detail['evidence_version'],runtime.workflow.store.current()['version'])
                 return await tools.recompute(action)
         result=await asyncio.wait_for(check(),20)
         self.assertFalse(result['accepted'])

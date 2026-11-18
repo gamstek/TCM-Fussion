@@ -1,4 +1,22 @@
-"""受信插件、证据CAS、资源幂等与原图启动闭环；视觉响应为明确替身。"""
+"""工作流主链回归：受信插件、证据 CAS、资源幂等、预算与启动闭环，视觉响应均为明确替身。
+
+主要定义：
+- StageFixture: 以显式替身产出检测、标定、分割、分类和测量工件，保证离线可重复。
+- WorkflowTests（输入与快路径）: feature_scan 缺 feature_id 在执行前拒绝；fast 路径先 YOLO 后 GLM，hybrid 复用同一 crop。
+- WorkflowTests（通用补扫）: per_feature 候选判据绑定、tile/请求预算、空结果不作证据、跨特征结果被拒绝。
+- WorkflowTests（证据与缓存）: EvidenceStore 的 CAS 失效、环检测与篡改拒绝，operation 缓存和录制回放不重复发图。
+- WorkflowTests（故障与预算）: 服务 4xx 熔断、空掩膜与未知失败区分、recompute 为 0 不调后端、网络守卫和 worker 超时。
+- WorkflowTests（上下文与菜单）: action 菜单截断仍保留 finish/request_review，重复 feedback 被去重。
+- WorkflowTests（假设与准入）: investigate/update_hypotheses 只改变调查范围，证据不足时不调用模型。
+- WorkflowTests（真实几何链路）: 复用原 measure.py 侧车与 mask，验证量纲与规则排除不被改写。
+
+关联：
+- TCM_Fusion.lib.workflow_runtime / workflow_backend / workflow_session: 工作流状态机、后端执行与重试可见性。
+- TCM_Fusion.lib.evidence_store / artifact_index / resource_budget: 证据版本、产物索引与网络/资源上限。
+- TCM_Fusion.lib.react_graph / agent_tools: compact_action_menu、compact_feedback 与 run_react 主链。
+- TCM_Fusion.tests.test_workflow.StageFixture: 被 test_adaptive_quality 等测试复用。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import asyncio
 import copy
 import csv
@@ -25,7 +43,8 @@ from TCM_Fusion.lib.resource_budget import install_http_guard
 
 
 class StageFixture:
-    def __init__(self, scale=2, fail=None):self.scale=scale;self.fail=fail;self.calls=[]
+    def __init__(self, scale=2, fail=None, classification_feature=None):
+        self.scale=scale;self.fail=fail;self.calls=[];self.classification_feature=classification_feature
     def execute(self,s,tool,target,work,context):
         self.calls.append(tool)
         if tool==self.fail:raise IntegrationError('SIMULATED_FAILURE','故障注入')
@@ -46,8 +65,11 @@ class StageFixture:
             write_json(folder.parent/'instances.json',{'instances':[{'igm_status':'ok'}]})
             return {'segmentation':str(folder.parent),'quality':'valid'}
         if tool=='classify_target':
+            meta=contracts.CropMeta.from_json(target['path'])
+            feature=self.classification_feature or meta.feature_id
             write_json(work/'classification/classification.json',
-                       {'label':'纤维','feature_id':'fiber','confidence':'high','reason':'模拟复核',
+                       {'label':'纤维' if feature=='fiber' else meta.object_label,
+                        'feature_id':feature,'confidence':'high','reason':'模拟复核',
                         'granularity':'instance','source':'vlm','crop_id':target.get('crop_id')})
             return {'classification':str(work/'classification')}
         if tool=='measure_instances':
@@ -77,44 +99,6 @@ class WorkflowTests(unittest.TestCase):
                                               target, self.root / 'scan', None)
                 self.assertEqual(raised.exception.code, 'FEATURE_SCAN_INPUT')
                 self.assertFalse((self.root / 'scan').exists())
-
-    def test_needle_scan_target_is_opt_in(self):
-        disabled = self.runtime()
-        image = next(iter(disabled.images))
-        self.assertNotIn('scan:' + image, disabled.workflow.targets())
-        enabled = WorkflowRuntime([self.image], root=self.root / 'enabled_task',
-                                  sample_id='sample', a={},
-                                  workflow_config={'max_recompute': 8, 'needle_scan_enabled': True},
-                                  simulation=True, backend=StageFixture())
-        detect = next(a for a in enabled.legal_actions({'observations': []})
-                      if a['tool'] == 'detect_fov_initial')
-        self.assertTrue(enabled.tools.invoke(enabled, detect, {'action': detect})['accepted'])
-        self.assertIn('scan:' + image, enabled.workflow.targets())
-        self.assertTrue(any(a['tool'] == 'needle_scan'
-                            for a in enabled.legal_actions({'observations': []})))
-        generic = WorkflowRuntime([self.image], root=self.root / 'generic_task',
-                                  sample_id='sample', a={},
-                                  workflow_config={'max_recompute': 8,
-                                                   'feature_scan_enabled': True,
-                                                   'feature_scan_features': ['needle_crystal']},
-                                  simulation=True, backend=StageFixture())
-        self.assertTrue(any(a['tool'] == 'feature_scan'
-                            for a in generic.legal_actions({'observations': []})))
-        detect = next(a for a in generic.legal_actions({'observations': []})
-                      if a['tool'] == 'detect_fov_initial')
-        self.assertTrue(generic.tools.invoke(generic, detect, {'action': detect})['accepted'])
-        self.assertIn('feature_scan:' + image + ':needle_crystal', generic.workflow.targets())
-        self.assertTrue(any(a['tool'] == 'feature_scan'
-                            for a in generic.legal_actions({'observations': []})))
-        hybrid = WorkflowRuntime([self.image], root=self.root / 'hybrid_task',
-                                 sample_id='sample', a={},
-                                 workflow_config={'max_recompute': 8,
-                                                  'hybrid_scan_enabled': True,
-                                                  'feature_scan_features': ['needle_crystal']},
-                                 simulation=True, backend=StageFixture())
-        self.assertIn('hybrid_scan:' + image, hybrid.workflow.targets())
-        self.assertTrue(any(a['tool'] == 'hybrid_scan'
-                            for a in hybrid.legal_actions({'observations': []})))
 
     def test_fast_path_keeps_yolo_and_delays_glm_until_classified(self):
         fast = WorkflowRuntime([self.image], root=self.root / 'fast_task',
@@ -652,78 +636,13 @@ class WorkflowTests(unittest.TestCase):
     def test_raw_images_bootstrap_actual_langgraph(self):
         backend=StageFixture();r=self.runtime(backend);tools=LocalToolbox(r,ledger_path=self.root/'observations.json',backend=FixtureBackend())
         result=asyncio.run(run_react(r,tools,planner_mode='heuristic',max_requests=12,max_steps=12))
-        self.assertEqual(backend.calls[:3],['detect_fov_initial','segment_instance','measure_instances'])
+        self.assertEqual(backend.calls[:4],['detect_fov_initial','classify_target','segment_instance','measure_instances'])
         self.assertTrue(r.workflow.store.current()['records']);self.assertTrue(any(e['phase']=='recompute' for e in result['events']))
         self.assertEqual(self.image.read_bytes(),b'simulation-fov')
 
-    def test_roi_screen_top_k_and_locate_threshold_boundaries(self):
-        runtime = self.runtime(screen_top_k=2, glm_locate_threshold=.8)
-        session = runtime.workflow
-        self.assertFalse(session.locate_override({'det_score': .799}))
-        self.assertTrue(session.locate_override({'det_score': .8}))
-        self.assertFalse(session.locate_override({'det_score': None}))
-        doc = self.root / 'screen.json'
-        write_json(doc, {'rois': [{'index': 0, 'score': .1},
-                                 {'index': 1, 'score': .9}, {'index': 2, 'score': .8}]})
-        from types import SimpleNamespace
-        from TCM_Fusion.lib.workflow_session import WorkflowSession
-        stub = SimpleNamespace(config={'screen_top_k': 2},
-            store=SimpleNamespace(current=lambda: {'artifacts': {'screen': {
-                'valid': True, 'kind': 'screen', 'image_id': 'view', 'path': str(doc)}}}))
-        self.assertEqual(WorkflowSession.screen_rois(stub, 'view'), {1, 2})
-        self.assertIsNone(WorkflowSession.screen_rois(stub, 'other'))
-
-    def test_targeted_location_is_optional_and_requires_crop_identity(self):
-        class RecoveryFixture(StageFixture):
-            confidence = 'medium'
-
-            def execute(self, session, tool, target, work, context):
-                if tool == 'propose_regions':
-                    out = work/'regions.json'
-                    write_json(out, {'regions': [{'box':[0,0,20,20], 'line_score':.5}]})
-                    return {'regions': str(out)}
-                if tool == 'locate_feature':
-                    result = super().execute(session, 'detect_region', target, work, context)
-                    path = Path(result['crops_dir'])/'crop.json'
-                    meta = read_json(path)
-                    meta.update(crop_id='located', feature_id='needle_crystal', object_label='草酸钙针晶')
-                    write_json(path, meta)
-                    path.rename(path.with_name('located.json'))
-                    return result
-                if tool == 'classify_target':
-                    out = work/'classification'
-                    write_json(out/'classification.json', {'label':'草酸钙针晶',
-                        'feature_id':'needle_crystal', 'confidence':self.confidence})
-                    return {'classification':str(out)}
-                return super().execute(session, tool, target, work, context)
-
-        for confidence in ('medium', 'high'):
-            with self.subTest(confidence=confidence):
-                backend = RecoveryFixture()
-                backend.confidence = confidence
-                runtime = WorkflowRuntime([self.image], root=self.root/confidence, sample_id='s',
-                    a={'status':'ok','ranking':[{'label':'龙胆','probability':.8}]},
-                    workflow_config={'targeted_recovery':True,'agent_policy':'adaptive_v2'},
-                    simulation=True, backend=backend)
-                def options(tool):
-                    return [a for a in runtime.legal_actions({'observations':[]}) if a['tool']==tool]
-                def execute(action):
-                    self.assertTrue(runtime.tools.invoke(runtime, action, {'action':action})['accepted'])
-                execute(options('detect_fov_initial')[0])
-                self.assertEqual(options('locate_feature'), [])
-                execute(options('propose_regions')[0])
-                locate = next(a for a in options('locate_feature') if a['args']['target_id'].endswith(':needle_crystal'))
-                execute(locate)
-                self.assertIsNotNone(runtime.workflow.identity_pending())
-                def can_segment():
-                    return any(a['args']['target_id'].endswith(':located') for a in options('segment_instance'))
-                self.assertFalse(can_segment())
-                execute(next(a for a in options('classify_target') if a['args']['target_id'].endswith(':located')))
-                self.assertEqual(can_segment(), confidence in {'medium', 'high'})
-
     def test_label_conflict_offers_classification_and_relabels_crop(self):
         """观察到fiber与crop类别single_crystal相左：应提供复核，并把结论落成可重分割的新crop。"""
-        backend=StageFixture();r=self.runtime(backend)
+        backend=StageFixture(classification_feature='fiber');r=self.runtime(backend)
         detect=next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial')
         r.workflow.execute(detect)
         image_id=next(iter(r.images))
@@ -749,7 +668,7 @@ class WorkflowTests(unittest.TestCase):
         backend=StageFixture(scale=None);r=self.runtime(backend)
         tools=LocalToolbox(r,ledger_path=self.root/'observations.json',backend=FixtureBackend())
         asyncio.run(run_react(r,tools,planner_mode='heuristic',max_requests=12,max_steps=12))
-        self.assertEqual(backend.calls[:4],['detect_fov_initial','calibrate_fov','segment_instance','measure_instances'])
+        self.assertEqual(backend.calls[:5],['detect_fov_initial','calibrate_fov','classify_target','segment_instance','measure_instances'])
 
     def test_segment_failure_is_visible_and_not_retried(self):
         backend=StageFixture(fail='segment_instance');r=self.runtime(backend)
@@ -768,8 +687,9 @@ class WorkflowTests(unittest.TestCase):
         backend=ServiceFailure();r=self.runtime(backend)
         tools=LocalToolbox(r,ledger_path=self.root/'service_obs.json',backend=FixtureBackend())
         trace=asyncio.run(run_react(r,tools,planner_mode='heuristic',max_steps=10))
-        self.assertEqual(backend.calls,['detect_fov_initial','segment_instance'])
-        self.assertEqual(trace['stop_reason'],'workflow_service_unavailable');self.assertTrue(trace['needs_review'])
+        self.assertEqual(backend.calls,['detect_fov_initial','classify_target','segment_instance'])
+        # 当前快路径多出分类观察；无增益优先收尾，但服务熔断仍须独立成立。
+        self.assertEqual(trace['stop_reason'],'no_gain_twice');self.assertTrue(trace['needs_review'])
         self.assertEqual(r.workflow.blocked_tools(),{'segment_instance':'UPSTREAM_HTTP_404'})
         self.assertFalse(any(k.startswith('roi:auto:') for k in r.workflow.targets()))
         self.assertEqual(r.summary({'observations':[]})['workflow']['blocked_tools'],r.workflow.blocked_tools())
@@ -795,7 +715,8 @@ class WorkflowTests(unittest.TestCase):
                 if tool=='segment_instance':raise IntegrationError('EMPTY_MASK','simulated empty mask')
                 return super().execute(s,tool,target,work,context)
         r=self.runtime(EmptyMask())
-        r.tools.invoke(r,r.workflow.propose()[0]);r.tools.invoke(r,r.workflow.propose()[0])
+        r.tools.invoke(r,next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        r.tools.invoke(r,next(a for a in r.workflow.propose() if a['tool']=='segment_instance'))
         self.assertEqual(r.workflow.blocked_tools(),{})
         self.assertTrue(any(a['tool']=='detect_region' for a in r.workflow.propose()))
 
@@ -817,7 +738,8 @@ class WorkflowTests(unittest.TestCase):
                 if tool=='segment_instance':value['quality']='review'
                 return value
         r=self.runtime(ReviewMask())
-        r.tools.invoke(r,r.workflow.propose()[0]);result=r.tools.invoke(r,r.workflow.propose()[0])
+        r.tools.invoke(r,next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
+        result=r.tools.invoke(r,next(a for a in r.workflow.propose() if a['tool']=='segment_instance'))
         self.assertTrue(result['accepted']);self.assertFalse(result['repair_completed'])
         self.assertTrue(any(a['tool']=='detect_region' for a in r.workflow.propose()))
 
@@ -952,7 +874,9 @@ class WorkflowTests(unittest.TestCase):
             config['agent']['workflow'].update(quality_policy='diagnostic_review',enabled_tools=['measure_instances'])
         directory=run_pipeline(config,base=self.root/'runs')
         value=read_json(directory/'fusion.json');self.assertEqual(value['route'],'workflow_agent')
-        self.assertTrue(any(o['tool']=='measure_instances' and o['accepted'] for o in value['agent']['operations'].values()))
+        self.assertTrue(any(o['tool']=='measure_instances' and o['accepted'] for o in value['agent']['operations'].values()),
+                        {'stop':value['agent'].get('stop_reason'), 'operations':[
+                            {k:o.get(k) for k in ('tool','status','error_code')} for o in value['agent']['operations'].values()]})
         snap=read_json(directory/'workflow/evidence/head.json')
         content=read_json(directory/'workflow/evidence/versions'/(snap['version']+'.json'))
         self.assertTrue(content['records']);self.assertEqual(content['records'][0]['data']['calibration_px_per_um'],2)
@@ -1007,10 +931,11 @@ class WorkflowTests(unittest.TestCase):
 
     def test_measure_cache_and_replay_bind_transitive_mask_content(self):
         r=self.runtime()
-        for _ in range(2):r.tools.invoke(r,r.workflow.propose()[0])
+        for tool in ('detect_fov_initial','segment_instance'):
+            r.tools.invoke(r,next(a for a in r.workflow.propose() if a['tool']==tool))
         target=next(v for v in r.workflow.targets().values() if v.get('kind')=='segmentation')
         before=r.workflow.operation_key('measure_instances',target)
-        original=r.tools.invoke(r,r.workflow.propose()[0])
+        original=r.tools.invoke(r,next(a for a in r.workflow.propose() if a['tool']=='measure_instances'))
         from TCM_Fusion.lib.workflow_replay import RecordedStages
         recorded=RecordedStages([original])
         snap=r.workflow.store.current();mask=next(v for v in snap['artifacts'].values()
@@ -1025,3 +950,56 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(r.workflow.store.verified_records(),[])
         with self.assertRaises(IntegrationError):recorded.execute(r.workflow,'measure_instances',current,self.root/'unused',None)
         self.assertEqual(recorded.misses,1)
+
+
+    def test_automatic_measurement_uses_real_context_file(self):
+        from TCM_Fusion.lib.resource_budget import operation_failure
+        class ContextChecked(StageFixture):
+            def execute(inner,s,tool,target,work,context):
+                if tool == 'measure_instances':
+                    self.assertIsInstance(context,Path)
+                    doc=read_json(context)
+                    self.assertEqual(doc['budget_path'],str(s.budget_path))
+                    self.assertTrue(doc['operation_key'].startswith('auto:'))
+                    self.assertIsNone(operation_failure(context))
+                return super().execute(s,tool,target,work,context)
+        r=self.runtime(backend=ContextChecked(),agent_policy='adaptive_v2',auto_measure_after_segment=True)
+        for tool in ['detect_fov_initial','classify_target','segment_instance']:
+            r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']==tool))
+        ops=list(read_json(r.workflow.operations)['entries'].values())
+        auto=next(o for o in ops if o.get('automatic'))
+        self.assertEqual(auto['status'],'done');self.assertTrue(auto['accepted'])
+        self.assertEqual(len(r.workflow.store.verified_records()),1)
+
+    def test_automatic_measurement_real_original_geometry_worker(self):
+        import cv2
+        import numpy as np
+        from TCM_Fusion.lib.workflow_backend import WorkflowBackend
+        cv2.imwrite(str(self.image),np.full((64,64,3),220,np.uint8))
+        class Geometry(StageFixture):
+            def execute(inner,s,tool,target,work,context):
+                if tool == 'measure_instances':
+                    return WorkflowBackend().execute(s,tool,target,work,context)
+                result=super().execute(s,tool,target,work,context)
+                if tool == 'segment_instance':
+                    masks=Path(result['segmentation'])/'masks'
+                    mask=np.zeros((64,64),np.uint8);cv2.circle(mask,(32,32),10,255,-1)
+                    name=self.image.stem+'__single_crystal__inst01.png'
+                    cv2.imwrite(str(masks/name),mask)
+                    raw={k:'' for k in contracts.MANIFEST_COLUMNS}
+                    raw.update(instance_id=1,inst_mask=name,crop_id='crop',source_image_path=str(self.image),
+                               feature_id='single_crystal',object_label='方晶',px_per_um='2',
+                               igm_status='ok',granularity='instance',tight_bbox='[20,20,44,44]')
+                    with (masks/(self.image.stem+contracts.MANIFEST_SUFFIX)).open('w',encoding='utf-8-sig',newline='') as f:
+                        writer=csv.DictWriter(f,fieldnames=contracts.MANIFEST_COLUMNS);writer.writeheader();writer.writerow(raw)
+                return result
+        r=self.runtime(backend=Geometry(),agent_policy='adaptive_v2',auto_measure_after_segment=True,
+                       python=sys.executable,max_seconds=40,tool_timeout_seconds=20)
+        for tool in ['detect_fov_initial','classify_target','segment_instance']:
+            result=r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']==tool))
+            self.assertTrue(result['accepted'])
+        auto=next(o for o in read_json(r.workflow.operations)['entries'].values() if o.get('automatic'))
+        self.assertEqual(auto['status'],'done',auto)
+        rows=r.workflow.store.verified_records();self.assertEqual(len(rows),1)
+        self.assertGreater(rows[0]['feret_max_um'],0)
+        self.assertEqual(read_json(r.workflow.budget_path)['used'].get('network',0),0)

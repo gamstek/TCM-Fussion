@@ -1,0 +1,45 @@
+{
+  "identity": "843414ce72ee0ead67db3fefb487073d64eb20441cda2b2473c3708837317ac1",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "G3",
+    "茯苓"
+  ],
+  "hypotheses": {
+    "G3": {
+      "status": "investigating",
+      "reason": "G3的single_crystal与已测簇晶(19.8μm)形态互补，若检出方晶需重新比较；茯苓hypha/fungal_mass与结晶场景判别性强，视本轮结果决定是否下轮查",
+      "evidence_digest": "d05ebdeb864b77c30e9f457c45b40fbc97e4d3d31436da5d46925789f962f7d3",
+      "decision_source": "model"
+    },
+    "茯苓": {
+      "status": "investigating",
+      "reason": "G3的single_crystal与已测簇晶(19.8μm)形态互补，若检出方晶需重新比较；茯苓hypha/fungal_mass与结晶场景判别性强，视本轮结果决定是否下轮查",
+      "evidence_digest": "d05ebdeb864b77c30e9f457c45b40fbc97e4d3d31436da5d46925789f962f7d3",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "G3的single_crystal与已测簇晶(19.8μm)形态互补，若检出方晶需重新比较；茯苓hypha/fungal_mass与结晶场景判别性强，视本轮结果决定是否下轮查"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "G3的single_crystal与已测簇晶(19.8μm)形态互补，若检出方晶需重新比较；茯苓hypha/fungal_mass与结晶场景判别性强，视本轮结果决定是否下轮查"
+        }
+      ],
+      "evidence_digest": "d05ebdeb864b77c30e9f457c45b40fbc97e4d3d31436da5d46925789f962f7d3",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

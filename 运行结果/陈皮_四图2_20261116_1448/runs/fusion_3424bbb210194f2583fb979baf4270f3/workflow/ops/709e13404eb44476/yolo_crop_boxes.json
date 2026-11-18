@@ -1,0 +1,57 @@
+{
+  "source_sha256": "f5318a173d788d317d4d556c2d91afb730567fe7b318b62e660af7136ae25bea",
+  "image_size": [
+    1084,
+    829
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "549fcbeb0eead19e808c1e1f1c064f70ce499921d473bc372a3e1fe97ff975c6"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "草酸钙方晶",
+      "tight_bbox": [
+        722.5,
+        176.3,
+        1001.4,
+        391.3
+      ],
+      "confidence": "low",
+      "score": 0.2924,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "草酸钙方晶",
+      "tight_bbox": [
+        357.6,
+        420.8,
+        582.3,
+        666.5
+      ],
+      "confidence": "medium",
+      "score": 0.7472,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "草酸钙方晶",
+      "tight_bbox": [
+        658.9,
+        469.7,
+        859.0,
+        711.1
+      ],
+      "confidence": "high",
+      "score": 0.777,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ]
+}

@@ -1,6 +1,22 @@
-"""LangMem离线提示优化与封闭工具回放；发布显式版本，在线仅加载提示。
+"""LangMem 离线提示优化与封闭工具回放：发布显式版本，在线只加载提示。
 
-优化器看脱敏执行信号；回放规划器只看当时已发生的观察。没有录制的动作令验证失败。
+优化器只看脱敏执行信号；回放规划器只看当时已发生的观察，未录制的动作令验证失败。
+
+主要定义：
+- profile: 返回模型配置文件的哈希，用于绑定优化/验证时的配置。
+- save: 把优化产物写入 output_root/prompt_optimization/<kind>/。
+- chat_model: 构造 LangMem 使用的 ChatOpenAI 客户端。
+- optimize: 从 training 轨迹生成 prompt-candidate/v1，拒绝验证/测试集与未显式联网。
+- RecordedTools: 录制动作回放器，未知动作或同动作不同响应直接失败。
+- check_candidate / runtime_context: 校验候选提示与固定守卫；摘要运行时上下文。
+- validate / publish / load_release: 双回放对照验证、发布版本与在线加载校验。
+
+关联：
+- .prompt_defaults: 提供 DEFAULT_INSTRUCTION 与 GUARD 基线/守卫。
+- .storage: IntegrationError、digest、file_hash、JSON 读写。
+- .evidence_runtime、.react_graph: 回放时构造运行时并驱动 ReAct。
+- .workflow_prompt_validation、.truth_prompt_validation: 分别承接 workflow 与 truth 模式的验证。
+- cli/offline.py: 离线入口调用优化/验证/发布。
 """
 from __future__ import annotations
 

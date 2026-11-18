@@ -1,0 +1,219 @@
+{
+  "identity": "1b37a2f0fcdb93931640235568259e5fb7aed3632b8cc52ab98b9e1272a59f1e",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "白芍",
+    "G1",
+    "茯苓",
+    "郁金",
+    "G3"
+  ],
+  "hypotheses": {
+    "白芍": {
+      "status": "investigating",
+      "reason": "簇晶已IN_RANGE但fiber/vessel/starch_grain均未核验，fiber presence本轮可解决白芍与茯苓的分歧",
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "与白芍共享簇晶required且组内不可分，fiber/cork_cell阴性不排除，随白芍证据联动评估",
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "decision_source": "model"
+    },
+    "茯苓": {
+      "status": "investigating",
+      "reason": "G3为唯一remaining P0缺口候选；扫描结果决定是维持还是暂停G3/郁金方向。",
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "decision_source": "model"
+    },
+    "郁金": {
+      "status": "investigating",
+      "reason": "G3为唯一remaining P0缺口候选；扫描结果决定是维持还是暂停G3/郁金方向。",
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "decision_source": "model"
+    },
+    "G3": {
+      "status": "investigating",
+      "reason": "model task-reflection patch",
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍为A先验首位且簇晶P0未查；G1共享同一required簇晶；茯苓依赖菌丝/真菌团块，若簇晶阳性则茯苓优先级下降。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "白芍为A先验首位且簇晶P0未查；G1共享同一required簇晶；茯苓依赖菌丝/真菌团块，若簇晶阳性则茯苓优先级下降。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "白芍为A先验首位且簇晶P0未查；G1共享同一required簇晶；茯苓依赖菌丝/真菌团块，若簇晶阳性则茯苓优先级下降。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "茯苓依赖菌丝/真菌团块、郁金依赖糊化淀粉粒、G3依赖方晶，均为当前NOT_DETECTED且可由下一轮只读presence动作核查的活动候选，与已确认簇晶的白芍最具区分性"
+        },
+        {
+          "candidate_id": "郁金",
+          "status": "investigating",
+          "reason": "茯苓依赖菌丝/真菌团块、郁金依赖糊化淀粉粒、G3依赖方晶，均为当前NOT_DETECTED且可由下一轮只读presence动作核查的活动候选，与已确认簇晶的白芍最具区分性"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "茯苓依赖菌丝/真菌团块、郁金依赖糊化淀粉粒、G3依赖方晶，均为当前NOT_DETECTED且可由下一轮只读presence动作核查的活动候选，与已确认簇晶的白芍最具区分性"
+        }
+      ],
+      "evidence_digest": "0158fb2bf67dbbeacdc7255de4f80486ec99ef444444e21087c0a26b0543d341",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "郁金",
+          "status": "investigating",
+          "reason": "白芍与G1共享簇晶required且本视野未见方晶/纤维/导管，需更多视野；茯苓依赖菌丝（已局部阴性但scope有限）与真菌团块（A6可核验）；郁金若A5阴性则应降级；G3依赖方晶成片，与当前团块场景不匹配，视后续视野再定。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "白芍与G1共享簇晶required且本视野未见方晶/纤维/导管，需更多视野；茯苓依赖菌丝（已局部阴性但scope有限）与真菌团块（A6可核验）；郁金若A5阴性则应降级；G3依赖方晶成片，与当前团块场景不匹配，视后续视野再定。"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍与G1共享簇晶required且本视野未见方晶/纤维/导管，需更多视野；茯苓依赖菌丝（已局部阴性但scope有限）与真菌团块（A6可核验）；郁金若A5阴性则应降级；G3依赖方晶成片，与当前团块场景不匹配，视后续视野再定。"
+        }
+      ],
+      "evidence_digest": "dded28a70c8f63529cd441f9ccda3ea19c81083f8d288ce1b048147ce5745476",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "簇晶已IN_RANGE但fiber/vessel/starch_grain均未核验，fiber presence本轮可解决白芍与茯苓的分歧"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "与白芍共享簇晶required且组内不可分，fiber/cork_cell阴性不排除，随白芍证据联动评估"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "fungal_mass present但仅大框阴影定位、identity pending，且hypha阴性scope有限；若fiber阳性则优先级下降，若阴性需再核验真菌团块身份"
+        }
+      ],
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "A1核验后若第二实例仍IN_RANGE，白芍G1共享簇晶已稳定；茯苓依赖的菌丝已局部阴性且fungal_mass无核验通道，宜下轮评估是否暂停；郁金/G3依赖本视野未见特征，随新视野再定。"
+        },
+        {
+          "candidate_id": "郁金",
+          "status": "investigating",
+          "reason": "A1核验后若第二实例仍IN_RANGE，白芍G1共享簇晶已稳定；茯苓依赖的菌丝已局部阴性且fungal_mass无核验通道，宜下轮评估是否暂停；郁金/G3依赖本视野未见特征，随新视野再定。"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "A1核验后若第二实例仍IN_RANGE，白芍G1共享簇晶已稳定；茯苓依赖的菌丝已局部阴性且fungal_mass无核验通道，宜下轮评估是否暂停；郁金/G3依赖本视野未见特征，随新视野再定。"
+        }
+      ],
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "G3为唯一remaining P0缺口候选；扫描结果决定是维持还是暂停G3/郁金方向。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "G3为唯一remaining P0缺口候选；扫描结果决定是维持还是暂停G3/郁金方向。"
+        },
+        {
+          "candidate_id": "郁金",
+          "status": "investigating",
+          "reason": "G3为唯一remaining P0缺口候选；扫描结果决定是维持还是暂停G3/郁金方向。"
+        }
+      ],
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        }
+      ],
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        }
+      ],
+      "evidence_digest": "514c719ae792944fbf13dd104b0f1ebb22f514eaad19318abc9bbd3404efb205",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

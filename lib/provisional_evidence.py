@@ -1,9 +1,17 @@
-"""Provisional evidence ranking.
+"""把已产生的分类结果转成暂定候选排序，供超时场景保留中间证据。
 
-This module is deliberately **outside** the formal rule engine.  It turns
-already-produced classifications into a temporary candidate ordering so a
-timeout does not throw away useful intermediate evidence.  Formal scores,
-support counts and verdicts remain untouched.
+本模块刻意位于正式规则引擎之外：只读当前有效分类快照，不改 formal score、support_count 或 verdict；一个 crop 出现多个非空 feature_id 时记为冲突，不能凭置信度静默合并。
+
+主要定义：
+- build: 返回 provisional-ranking/v1 排序与逐判据状态，正式裁决保持不变。
+- VERIFIED / PENDING / PARTIAL / CONFLICT / NOT_DETECTED / UNKNOWN: 暂定状态枚举。
+- TIER: 各暂定状态的权重（VERIFIED 1.0、PENDING 0.5、PARTIAL 0.25、其余 0）。
+- _classifications / _best_classes / _tier_for: 内部工具，负责分类快照、逐 crop 择优与判据定级。
+
+关联：
+- .storage.read_json: 读取 classification.json 工件。
+- .output_projection、.final_assessment、.workflow_runtime: 调用 build 生成暂定排序。
+- tests/test_provisional_evidence.py: 回归暂定排序与冲突处理。
 """
 from __future__ import annotations
 

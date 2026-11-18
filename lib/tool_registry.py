@@ -1,4 +1,21 @@
-"""受信handler/precondition注册；Draft2020-12校验；配置不执行Python。"""
+"""受信 handler/precondition 注册与 Draft2020-12 参数校验；配置不执行 Python。
+
+主要定义：
+- PRESENCE_BOX_SCHEMA: presence 可选 box 提示的响应 Schema，只是诊断元数据。
+- ToolSpec: 工具规格（schema、技能、预算类、handler/precondition/guard 绑定）。
+- object_schema: 生成 required 全覆盖的简单对象 Schema。
+- local_refs: 拒绝外部 `$ref`，只允许文档内引用。
+- validate_arguments: 校验 Schema 合法性与动作参数，失败转为 ACTION_DENIED。
+- ToolRegistry: 注册并调用工具、前置条件、守卫与提议器。
+
+关联：
+- TCM_Fusion.lib.storage: IntegrationError 与 digest。
+- TCM_Fusion.lib.evidence_runtime: 持有并使用 ToolRegistry。
+- TCM_Fusion.lib.workflow_runtime: 注册工作流工具规格。
+- TCM_Fusion.lib.workflow_entry: validate_arguments 校验 workflow 配置。
+- TCM_Fusion.lib.final_assessment: validate_arguments 校验收尾回复。
+- TCM_Fusion.lib.presence_localization: 复用 PRESENCE_BOX_SCHEMA。
+"""
 from dataclasses import dataclass, asdict
 import json
 from jsonschema import Draft202012Validator
@@ -80,7 +97,9 @@ class ToolRegistry:
                     'limit':{'type':'integer','minimum':1,'maximum':200}},'additionalProperties':False}
             if name=='read_evidence_detail':
                 schema={'type':'object','properties':{
-                    'kind':{'enum':['classifications','operations','quality','measurements']},
+                    'kind':{'enum':['classifications','operations','quality','measurements',
+                                    'eligibility','eligibility_facts','comparison','instances',
+                                    'candidate_catalog','provisional','observations']},
                     'offset':{'type':'integer','minimum':0},
                     'limit':{'type':'integer','minimum':1,'maximum':50}},
                     'required':['kind'],'additionalProperties':False}
@@ -89,7 +108,7 @@ class ToolRegistry:
                                       'limit':{'type':'integer','minimum':1,'maximum':50}}
             if name in {'list_artifacts','read_artifact_status'}:
                 schema={'type':'object','properties':{'offset':{'type':'integer','minimum':0},'limit':{'type':'integer','minimum':1,'maximum':200}},'additionalProperties':False}
-            self.register(ToolSpec(name,'read','1',schema,{'type':'object'},
+            self.register(ToolSpec(name,'read','3' if name=='read_evidence_detail' else '1',schema,{'type':'object'},
                 ('evidence_inspection',),'read',False,name))
     def _bind(self,table,name,fn):
         if name in table or not callable(fn):raise IntegrationError('TOOL_BINDING','重复/非法绑定')

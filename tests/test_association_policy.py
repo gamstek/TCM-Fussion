@@ -1,4 +1,18 @@
-"""连通域关联策略：规则表、主导连通域、粒度守卫与保守回退。"""
+"""连通域关联策略回归：规则表、主导连通域、粒度守卫与保守回退。
+
+主要定义：
+- `_comp`/`_ctx`: 构造 `Component` 与 `AssociationContext` 测试夹具。
+- AssociationPolicyTest.test_dominant_keeps_main_and_records_dropped、test_comparable_components_stay_ambiguous: `evaluate` 选主导连通域或判为歧义并转 review。
+- test_bundle_granularity_never_takes_largest、test_unknown_feature_keeps_conservative_fallback、test_other_elongated_feature_is_not_eligible、test_dropped_component_touching_border_disqualifies: 粒度、特征白名单与触边失格规则。
+- test_mask_level_dominant_removes_extra_component、test_mask_level_without_feature_keeps_old_ambiguous_behavior: `apply_box_prior` 在 mask 级的区域连通域处理与旧行为兼容。
+- test_quality_eval_allows_width_but_not_length_for_dominant: `quality_eval.assess` 对主导结果只允许 width 用途。
+
+关联：
+- association_policy: 被测的 `evaluate`/`load_policy`/`Component`/`AssociationContext`。
+- igm_segment: `apply_box_prior` 的 mask 级集成。
+- quality_eval: `assess` 的用途门校验。
+- paths: 在 `results/ui_out/.../verification` 下生成临时目录。
+"""
 import json
 import shutil
 import unittest

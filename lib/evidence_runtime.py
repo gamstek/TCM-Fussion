@@ -1,6 +1,17 @@
-"""Agent领域运行时：原测量→原规则卡池→动作/观察→原decide；不修改原B工件。
+"""构造 Agent 领域运行时：原测量→规则卡池→动作/观察→原 decide，只读原图、不修改原 B 工件。
 
-由LangGraph和MCP共同消费，唯一写入是独立Agent轨迹；原图只读，P0/尺寸不由LLM补造。
+主要定义：
+- Skills: 加载 skills/registry.json 与 SKILL.md 的领域策略卡；工具权限来自代码白名单。
+- EvidenceRuntime: 持有 records/images/知识库/工具表，提供 score、action、legal_actions、candidate_interest、read_revision、validate_action、validate_observation、summary。
+- from_b_artifacts: 从原 B 的 run_dir/measurements 还原运行时，拒绝缺完整轨迹的旧 VLM 补查与样品不绑定的图像。
+
+关联：
+- rule_engine: 复用 KnowledgeBase、EvidenceCard、pool_evidence、decide，不重写判据评分。
+- scene_attributes: 构建并合并 VLM 场景属性。
+- .tool_registry / .candidate_policy / .storage: 工具注册表、A 候选与摘要/哈希工具。
+- paths: 定位 skills 注册表与 herb_criteria.json。
+- .mcp_bridge / .workflow_runtime / .prompt_optimization: 构造或消费运行时。
+- tests/test_react.py / tests/offline/test_routing.py: 直接构造运行时做回归。
 """
 from __future__ import annotations
 

@@ -1,4 +1,16 @@
-"""Offline evaluation/reporting tests; not part of the live five-view chain."""
+"""离线评估与报告回归，不属于线上五视图链路。
+
+主要定义：
+- EvaluationTests.test_true_reference_is_not_exposed_by_task_feedback: 真实参考标签不进入任务反馈，`reflection_card` 不标注使用参考标签，review 视为弃答。
+- test_image_label_is_not_silently_sample_identity_truth: `image_class` 标签不得被静默当作样本身份真值。
+- test_zero_errors_does_not_imply_zero_risk: Wilson 上界在零错误时仍大于 0；空用例 `compare` 直接报错。
+
+关联：
+- TCM_Fusion.lib.outcome_evaluation: 被测的 `evaluate`。
+- TCM_Fusion.lib.action_feedback: `reflection_card` 的参考标签隔离。
+- TCM_Fusion.lib.ablation_evaluation: `compare`/`wilson` 统计。
+- TCM_Fusion.lib.storage: `IntegrationError`。
+"""
 import unittest
 
 from TCM_Fusion.lib.action_feedback import reflection_card

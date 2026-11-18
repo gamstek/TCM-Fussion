@@ -1,0 +1,248 @@
+{
+  "schema": "task-reflection-controller/d3",
+  "scope": "task_policy_only",
+  "evidence_effect": "none",
+  "rows": [
+    {
+      "key": "d8746913e2db2ffcef459d37c8aabfe247d784b8a5dca42a7d221bc1e3c1d549",
+      "tool": "presence_check",
+      "problem_id": "gelatinized_starch",
+      "question_id": "physical-question:b59e160c1af9ffdfdc897d16",
+      "progress_axes": {},
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 25422.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [
+        "郁金:gelatinized_starch"
+      ],
+      "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+      "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+    },
+    {
+      "key": "8ccf878a4e86bcd38aac0878013f0f3dfa47f71678ddf6348da97ac2cafb40e0",
+      "tool": "presence_check",
+      "problem_id": "fungal_mass",
+      "question_id": "physical-question:fcfae036152dd3d0d0d79740",
+      "progress_axes": {},
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 41844.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [
+        "茯苓:fungal_mass"
+      ],
+      "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+      "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+    },
+    {
+      "key": "70afdd6edb89df0e88bec0475822af83d84d6e7b7d3780fbc3d9de7b2f6692f3",
+      "tool": "presence_check",
+      "problem_id": "hypha",
+      "question_id": "physical-question:0a9dfc47373d8d6c7c17a7b0",
+      "progress_axes": {},
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 11438.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+      "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+    },
+    {
+      "key": "2ad4ab0312ec9b57900f420c86bfe92f011f345d62f84d1c2521280774a74ca3",
+      "tool": "presence_check",
+      "problem_id": "fiber",
+      "question_id": "physical-question:7a45d7abbff446c2d232d1d7",
+      "progress_axes": {},
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 17015.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+      "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+    }
+  ],
+  "cards": [
+    {
+      "reflection_id": "reflection:0cff33fbc9ea3e27703240b8",
+      "scope": "task",
+      "failure_type": "candidate_stagnation",
+      "affected_candidates": [
+        "白芍",
+        "G1",
+        "郁金",
+        "G3",
+        "茯苓"
+      ],
+      "evidence_refs": [
+        "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad"
+      ],
+      "trigger_fingerprint": "0cff33fbc9ea3e27703240b853610c5062865ee1fd029ae1c603a0d7299ecdee",
+      "facts": [
+        {
+          "key": "8ccf878a4e86bcd38aac0878013f0f3dfa47f71678ddf6348da97ac2cafb40e0",
+          "tool": "presence_check",
+          "problem_id": "fungal_mass",
+          "question_id": "physical-question:fcfae036152dd3d0d0d79740",
+          "progress_axes": {},
+          "progress": true,
+          "accepted": true,
+          "failure_code": null,
+          "latency_ms": 41844.0,
+          "objective": "核验合法候选差异特征",
+          "resolved_criteria": [
+            "茯苓:fungal_mass"
+          ],
+          "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+          "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+          "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+          "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+        },
+        {
+          "key": "70afdd6edb89df0e88bec0475822af83d84d6e7b7d3780fbc3d9de7b2f6692f3",
+          "tool": "presence_check",
+          "problem_id": "hypha",
+          "question_id": "physical-question:0a9dfc47373d8d6c7c17a7b0",
+          "progress_axes": {},
+          "progress": true,
+          "accepted": true,
+          "failure_code": null,
+          "latency_ms": 11438.0,
+          "objective": "核验合法候选差异特征",
+          "resolved_criteria": [],
+          "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+          "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+          "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+          "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+        },
+        {
+          "key": "2ad4ab0312ec9b57900f420c86bfe92f011f345d62f84d1c2521280774a74ca3",
+          "tool": "presence_check",
+          "problem_id": "fiber",
+          "question_id": "physical-question:7a45d7abbff446c2d232d1d7",
+          "progress_axes": {},
+          "progress": true,
+          "accepted": true,
+          "failure_code": null,
+          "latency_ms": 17015.0,
+          "objective": "核验合法候选差异特征",
+          "resolved_criteria": [],
+          "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+          "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+          "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+          "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+        }
+      ],
+      "change_condition": "switch_question",
+      "proposed_patch": {
+        "avoid_action_keys": [],
+        "activate_candidates": [],
+        "recommended_exit": "review",
+        "reflection_id": "reflection:0cff33fbc9ea3e27703240b8",
+        "change_condition": "switch_question"
+      },
+      "expected_gain": "resolve a different gap or supply verifiably changed input",
+      "stop_condition": "no valid change or repeated no progress within existing budgets",
+      "evidence_effect": "none"
+    }
+  ],
+  "applications": [],
+  "rejections": [],
+  "pending": {
+    "reflection_id": "reflection:0cff33fbc9ea3e27703240b8",
+    "scope": "task",
+    "failure_type": "candidate_stagnation",
+    "affected_candidates": [
+      "白芍",
+      "G1",
+      "郁金",
+      "G3",
+      "茯苓"
+    ],
+    "evidence_refs": [
+      "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad"
+    ],
+    "trigger_fingerprint": "0cff33fbc9ea3e27703240b853610c5062865ee1fd029ae1c603a0d7299ecdee",
+    "facts": [
+      {
+        "key": "8ccf878a4e86bcd38aac0878013f0f3dfa47f71678ddf6348da97ac2cafb40e0",
+        "tool": "presence_check",
+        "problem_id": "fungal_mass",
+        "question_id": "physical-question:fcfae036152dd3d0d0d79740",
+        "progress_axes": {},
+        "progress": true,
+        "accepted": true,
+        "failure_code": null,
+        "latency_ms": 41844.0,
+        "objective": "核验合法候选差异特征",
+        "resolved_criteria": [
+          "茯苓:fungal_mass"
+        ],
+        "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+        "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+        "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+        "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+      },
+      {
+        "key": "70afdd6edb89df0e88bec0475822af83d84d6e7b7d3780fbc3d9de7b2f6692f3",
+        "tool": "presence_check",
+        "problem_id": "hypha",
+        "question_id": "physical-question:0a9dfc47373d8d6c7c17a7b0",
+        "progress_axes": {},
+        "progress": true,
+        "accepted": true,
+        "failure_code": null,
+        "latency_ms": 11438.0,
+        "objective": "核验合法候选差异特征",
+        "resolved_criteria": [],
+        "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+        "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+        "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+        "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+      },
+      {
+        "key": "2ad4ab0312ec9b57900f420c86bfe92f011f345d62f84d1c2521280774a74ca3",
+        "tool": "presence_check",
+        "problem_id": "fiber",
+        "question_id": "physical-question:7a45d7abbff446c2d232d1d7",
+        "progress_axes": {},
+        "progress": true,
+        "accepted": true,
+        "failure_code": null,
+        "latency_ms": 17015.0,
+        "objective": "核验合法候选差异特征",
+        "resolved_criteria": [],
+        "evidence_version": "a72580e303fec4a56785fb64865082e11180f497dc23fe297de842ad01b0d4ad",
+        "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+        "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+        "candidate_signature": "d930a3db8514ae64fdc2ffa33134baa799f52b5ea5b7d57c1a34945d014102b0"
+      }
+    ],
+    "change_condition": "switch_question",
+    "proposed_patch": {
+      "avoid_action_keys": [],
+      "activate_candidates": [],
+      "recommended_exit": "review",
+      "reflection_id": "reflection:0cff33fbc9ea3e27703240b8",
+      "change_condition": "switch_question"
+    },
+    "expected_gain": "resolve a different gap or supply verifiably changed input",
+    "stop_condition": "no valid change or repeated no progress within existing budgets",
+    "evidence_effect": "none"
+  },
+  "avoided": []
+}

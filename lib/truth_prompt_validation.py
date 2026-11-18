@@ -1,4 +1,17 @@
-"""带独立真值的策略双回放：允许有证据的纠错，不要求新旧答案机械相同。"""
+"""带独立真值的提示策略双回放：新旧指令配对比较，允许有证据的纠错。
+
+只允许独立开发集，禁止分组与训练重叠；真值未知、标签范围不适配或回放未覆盖时直接失败，
+不把模拟回放结果当作已验证的真实准确率，也不新发图像请求。
+
+主要定义：
+- validate_truth: 对每个开发样品回放基线/候选两条指令，按配对正确性、弃权与有界成本判定是否通过。
+
+关联：
+- .storage: 使用 IntegrationError、digest 做输入校验与工件绑定。
+- .outcome_evaluation: 复用 evaluate 与 summarize 统计配对结果。
+- .evidence_runtime / .react_graph: 用录制证据构造运行时并驱动 ReAct 回放。
+- .prompt_optimization: 提供 RecordedTools 与 runtime_context，并在发布前调用 validate_truth。
+"""
 from .storage import IntegrationError,digest,read_json
 from .outcome_evaluation import evaluate,summarize
 

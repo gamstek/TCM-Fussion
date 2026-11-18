@@ -1,4 +1,16 @@
-﻿"""数据集划分：group 隔离、确定性、显式覆盖与泄漏检查。"""
+"""数据集划分回归：group 隔离、确定性、显式覆盖与泄漏检查。
+
+主要定义：
+- `_write_attributes`: 写出含 image/herb/feature_id/group_key 的 `attributes.csv` 测试夹具。
+- DatasetSplitTest.test_groups_are_isolated_and_deterministic: 同 seed 两次划分一致，group 全覆盖且 summary 计数一致。
+- test_explicit_override_and_unknown_group: 显式指定划分生效，未知 group 报错。
+- test_same_image_in_two_groups_is_rejected、test_empty_split_is_rejected: 跨组泄漏与空划分（无 test 等）被拒。
+
+关联：
+- TCM_Fusion.lib.dataset_split: `build`/`assign`/`read_groups`/`split_of`。
+- TCM_Fusion.lib.storage: `IntegrationError` 表达划分约束失败。
+- paths: 在 `results/ui_out/.../verification` 下建临时目录并在 tearDown 清理。
+"""
 import csv
 import shutil
 import unittest

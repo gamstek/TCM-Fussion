@@ -1,0 +1,448 @@
+{
+  "identity": "19e4fae1c9b3fc380441ea1bb0486693fa93af4d002f907642292dc0e7f67f2b",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "马齿苋",
+    "G1",
+    "G4",
+    "G3",
+    "麻黄",
+    "猪苓",
+    "茯苓",
+    "地黄",
+    "桔梗"
+  ],
+  "hypotheses": {
+    "马齿苋": {
+      "status": "investigating",
+      "reason": "G3为当前主假设待stoma定量增强；马齿苋/G1依赖cluster_crystal crop分类结果，是方晶结论的竞争解释，待核验后决定是否进入测量",
+      "evidence_digest": "1765da3318488cc61516b790e7f04d67c471f57da39ba565230c706647e6cbe2",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "G3为当前主假设待stoma定量增强；马齿苋/G1依赖cluster_crystal crop分类结果，是方晶结论的竞争解释，待核验后决定是否进入测量",
+      "evidence_digest": "1765da3318488cc61516b790e7f04d67c471f57da39ba565230c706647e6cbe2",
+      "decision_source": "model"
+    },
+    "G4": {
+      "status": "investigating",
+      "reason": "A2针晶阳性则G4转尺寸核验，阴性则下一轮撤销/暂停G4；G3维持主假设，stoma定量已无新增益机会",
+      "evidence_digest": "de457e2ba5c42c14d9d6ff7c37bd54d88fd84a7cbeb295df94487f8cbec182ba",
+      "decision_source": "model"
+    },
+    "G3": {
+      "status": "investigating",
+      "reason": "A2针晶阳性则G4转尺寸核验，阴性则下一轮撤销/暂停G4；G3维持主假设，stoma定量已无新增益机会",
+      "evidence_digest": "de457e2ba5c42c14d9d6ff7c37bd54d88fd84a7cbeb295df94487f8cbec182ba",
+      "decision_source": "model"
+    },
+    "麻黄": {
+      "status": "withdrawn",
+      "reason": "stoma为麻黄required，两次feature_scan未见且两视野stoma观察为阴性/仅一视野present_pending，哑铃状保卫细胞特异性未获任何支持",
+      "evidence_digest": "de457e2ba5c42c14d9d6ff7c37bd54d88fd84a7cbeb295df94487f8cbec182ba",
+      "decision_source": "model"
+    },
+    "猪苓": {
+      "status": "paused",
+      "reason": "hypha在两个视野均NOT_DETECTED，stoma阴性，连续无新进展，暂停以聚焦G3的stoma定量与簇晶crop分类",
+      "evidence_digest": "1765da3318488cc61516b790e7f04d67c471f57da39ba565230c706647e6cbe2",
+      "decision_source": "model"
+    },
+    "茯苓": {
+      "status": "paused",
+      "reason": "hypha/fungal_mass 已 present 但判定为低细节影子定位且与 G3 的方晶证据冲突有限；无新可验证依据，暂停以聚焦 A3 收尾。",
+      "evidence_digest": "b0f6dda8eb11a13b2ae5eb70e01b1f2e534a91fceee7936ab205a01df9432e6a",
+      "decision_source": "model"
+    },
+    "地黄": {
+      "status": "withdrawn",
+      "reason": "secretory_tissue为地黄关键补充特征，四视野多次阴性（含橙红色油滴提示）；parenchyma_cell阳性仅来自低细节大框影子定位，无独立佐证，与G3方晶证据冲突",
+      "evidence_digest": "de457e2ba5c42c14d9d6ff7c37bd54d88fd84a7cbeb295df94487f8cbec182ba",
+      "decision_source": "model"
+    },
+    "桔梗": {
+      "status": "withdrawn",
+      "reason": "secretory_tissue为桔梗required(P1)，四视野含两次不同形态提示均阴性，且未检出不排除但无进一步可验证依据",
+      "evidence_digest": "de457e2ba5c42c14d9d6ff7c37bd54d88fd84a7cbeb295df94487f8cbec182ba",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "马齿苋",
+          "status": "investigating",
+          "reason": "scene_check在该视野描述到星状簇晶样结晶，提示G3之外可能存在竞争候选；下一步初检后拟对该视野核查簇晶/针晶判据以区分马齿苋、G1与G4，当前仅提名待查，不构成确认。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "scene_check在该视野描述到星状簇晶样结晶，提示G3之外可能存在竞争候选；下一步初检后拟对该视野核查簇晶/针晶判据以区分马齿苋、G1与G4，当前仅提名待查，不构成确认。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "scene_check在该视野描述到星状簇晶样结晶，提示G3之外可能存在竞争候选；下一步初检后拟对该视野核查簇晶/针晶判据以区分马齿苋、G1与G4，当前仅提名待查，不构成确认。"
+        }
+      ],
+      "evidence_digest": "2dbc71fc3837f5da4a5413df66acca106c0628300d0545e6042184cd78286e2d",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "马齿苋",
+          "status": "investigating",
+          "reason": "簇晶扫描结果若为阳性且尺寸∈[7,108]μm将支持马齿苋/G1，若为阴性则维持G3假设；stoma扫描可在下一步核验G3的枳壳补充判据。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "簇晶扫描结果若为阳性且尺寸∈[7,108]μm将支持马齿苋/G1，若为阴性则维持G3假设；stoma扫描可在下一步核验G3的枳壳补充判据。"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "簇晶扫描结果若为阳性且尺寸∈[7,108]μm将支持马齿苋/G1，若为阴性则维持G3假设；stoma扫描可在下一步核验G3的枳壳补充判据。"
+        }
+      ],
+      "evidence_digest": "2dbc71fc3837f5da4a5413df66acca106c0628300d0545e6042184cd78286e2d",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "若stoma阳性且形态/尺寸符合环式16-34μm，将增强G3枳壳分支；若为哑铃状则支持麻黄；若未见则stoma仍为unknown，不据此排除G3。"
+        },
+        {
+          "candidate_id": "麻黄",
+          "status": "investigating",
+          "reason": "若stoma阳性且形态/尺寸符合环式16-34μm，将增强G3枳壳分支；若为哑铃状则支持麻黄；若未见则stoma仍为unknown，不据此排除G3。"
+        }
+      ],
+      "evidence_digest": "2dbc71fc3837f5da4a5413df66acca106c0628300d0545e6042184cd78286e2d",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "马齿苋",
+          "status": "investigating",
+          "reason": "簇晶扫描结果用于在马齿苋/G1与G3之间做存在性区分；未检出不代表排除，仅维持G3假设。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "簇晶扫描结果用于在马齿苋/G1与G3之间做存在性区分；未检出不代表排除，仅维持G3假设。"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "簇晶扫描结果用于在马齿苋/G1与G3之间做存在性区分；未检出不代表排除，仅维持G3假设。"
+        }
+      ],
+      "evidence_digest": "2dbc71fc3837f5da4a5413df66acca106c0628300d0545e6042184cd78286e2d",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "马齿苋",
+          "status": "investigating",
+          "reason": "簇晶crop分类结果将决定马齿苋/G1假设是进入测量还是暂停；G3若仍无簇晶反证则维持。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "簇晶crop分类结果将决定马齿苋/G1假设是进入测量还是暂停；G3若仍无簇晶反证则维持。"
+        }
+      ],
+      "evidence_digest": "2dbc71fc3837f5da4a5413df66acca106c0628300d0545e6042184cd78286e2d",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "马齿苋",
+          "status": "investigating",
+          "reason": "簇晶crop分类将决定马齿苋/G1是否进入测量核验；若确认为簇晶且尺寸符合，需对G3单一方晶结论提出竞争解释。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "簇晶crop分类将决定马齿苋/G1是否进入测量核验；若确认为簇晶且尺寸符合，需对G3单一方晶结论提出竞争解释。"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "簇晶crop分类将决定马齿苋/G1是否进入测量核验；若确认为簇晶且尺寸符合，需对G3单一方晶结论提出竞争解释。"
+        }
+      ],
+      "evidence_digest": "2dbc71fc3837f5da4a5413df66acca106c0628300d0545e6042184cd78286e2d",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "猪苓",
+          "status": "investigating",
+          "reason": "若hypha未见，维持G3主假设并计划对stoma(枳壳环式16-34μm)做一次小范围核验；若hypha阳性，转入猪苓/茯苓菌丝宽度判据核验。"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "若hypha未见，维持G3主假设并计划对stoma(枳壳环式16-34μm)做一次小范围核验；若hypha阳性，转入猪苓/茯苓菌丝宽度判据核验。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "若hypha未见，维持G3主假设并计划对stoma(枳壳环式16-34μm)做一次小范围核验；若hypha阳性，转入猪苓/茯苓菌丝宽度判据核验。"
+        }
+      ],
+      "evidence_digest": "6e62ff3db17638c259e36782b2fd98892e714b33c94c895ede45c46c06a7eff6",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "stoma若阳性且环式尺寸符合将增强G3枳壳分支；若未见则继续维持G3并考虑view_01/view_03视野补查一次后停止。"
+        },
+        {
+          "candidate_id": "麻黄",
+          "status": "investigating",
+          "reason": "stoma若阳性且环式尺寸符合将增强G3枳壳分支；若未见则继续维持G3并考虑view_01/view_03视野补查一次后停止。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "stoma若阳性且环式尺寸符合将增强G3枳壳分支；若未见则继续维持G3并考虑view_01/view_03视野补查一次后停止。"
+        }
+      ],
+      "evidence_digest": "6e62ff3db17638c259e36782b2fd98892e714b33c94c895ede45c46c06a7eff6",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "G3：stoma补查后决定枳壳分支证据强度；马齿苋/G1：cluster_crystal crop待分类测量，是G3方晶结论的竞争解释；猪苓：hypha未见已两次，若stoma仍阴性且无新进展可暂停"
+        },
+        {
+          "candidate_id": "马齿苋",
+          "status": "investigating",
+          "reason": "G3：stoma补查后决定枳壳分支证据强度；马齿苋/G1：cluster_crystal crop待分类测量，是G3方晶结论的竞争解释；猪苓：hypha未见已两次，若stoma仍阴性且无新进展可暂停"
+        },
+        {
+          "candidate_id": "猪苓",
+          "status": "investigating",
+          "reason": "G3：stoma补查后决定枳壳分支证据强度；马齿苋/G1：cluster_crystal crop待分类测量，是G3方晶结论的竞争解释；猪苓：hypha未见已两次，若stoma仍阴性且无新进展可暂停"
+        }
+      ],
+      "evidence_digest": "6e62ff3db17638c259e36782b2fd98892e714b33c94c895ede45c46c06a7eff6",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "猪苓",
+          "status": "paused",
+          "reason": "hypha在两个视野均NOT_DETECTED，stoma阴性，连续无新进展，暂停以聚焦G3的stoma定量与簇晶crop分类"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "single_crystal已VERIFIED_MATCH，stoma present_pending低细节；分类未核验方晶crop可排除簇晶竞争解释"
+        }
+      ],
+      "evidence_digest": "1765da3318488cc61516b790e7f04d67c471f57da39ba565230c706647e6cbe2",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "G3为当前主假设待stoma定量增强；马齿苋/G1依赖cluster_crystal crop分类结果，是方晶结论的竞争解释，待核验后决定是否进入测量"
+        },
+        {
+          "candidate_id": "马齿苋",
+          "status": "investigating",
+          "reason": "G3为当前主假设待stoma定量增强；马齿苋/G1依赖cluster_crystal crop分类结果，是方晶结论的竞争解释，待核验后决定是否进入测量"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "G3为当前主假设待stoma定量增强；马齿苋/G1依赖cluster_crystal crop分类结果，是方晶结论的竞争解释，待核验后决定是否进入测量"
+        }
+      ],
+      "evidence_digest": "1765da3318488cc61516b790e7f04d67c471f57da39ba565230c706647e6cbe2",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "下一轮若G4纤维阴性可考虑撤销或暂停G4；若阳性转G4尺寸核验；地黄仅在secretory_tissue阳性时升级。"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "下一轮若G4纤维阴性可考虑撤销或暂停G4；若阳性转G4尺寸核验；地黄仅在secretory_tissue阳性时升级。"
+        },
+        {
+          "candidate_id": "地黄",
+          "status": "investigating",
+          "reason": "下一轮若G4纤维阴性可考虑撤销或暂停G4；若阳性转G4尺寸核验；地黄仅在secretory_tissue阳性时升级。"
+        }
+      ],
+      "evidence_digest": "1765da3318488cc61516b790e7f04d67c471f57da39ba565230c706647e6cbe2",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "hypha为茯苓required且与G3直接互斥；img_2e4fe138为新视野的unchecked机会，非重复失败依赖。"
+        }
+      ],
+      "evidence_digest": "1765da3318488cc61516b790e7f04d67c471f57da39ba565230c706647e6cbe2",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "桔梗的secretory_tissue为P1 required且尚未核验，本轮A13结果直接决定其升级或降权；地黄依赖parenchyma_cell与secretory_tissue双线索，若A13提示分泌组织存在可在下一轮扩展parenchyma_cell核验（A8-A11中的unchecked机会），二者均为A候选先验、非已确认身份。"
+        },
+        {
+          "candidate_id": "地黄",
+          "status": "investigating",
+          "reason": "桔梗的secretory_tissue为P1 required且尚未核验，本轮A13结果直接决定其升级或降权；地黄依赖parenchyma_cell与secretory_tissue双线索，若A13提示分泌组织存在可在下一轮扩展parenchyma_cell核验（A8-A11中的unchecked机会），二者均为A候选先验、非已确认身份。"
+        }
+      ],
+      "evidence_digest": "b0f6dda8eb11a13b2ae5eb70e01b1f2e534a91fceee7936ab205a01df9432e6a",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "桔梗",
+          "status": "investigating",
+          "reason": "secretory_tissue 三个视野阴性后，img_2e4fe138 重试（A3）结果直接决定桔梗升级或降权；一次传输失败不构成阴性。"
+        },
+        {
+          "candidate_id": "地黄",
+          "status": "investigating",
+          "reason": "secretory_tissue 已三视野阴性，地黄依赖 parenchyma_cell 与 secretory_tissue 双线索；A3 结果若仍阴性可进一步考虑撤销，不在本轮提前撤销。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "paused",
+          "reason": "hypha/fungal_mass 已 present 但判定为低细节影子定位且与 G3 的方晶证据冲突有限；无新可验证依据，暂停以聚焦 A3 收尾。"
+        }
+      ],
+      "evidence_digest": "b0f6dda8eb11a13b2ae5eb70e01b1f2e534a91fceee7936ab205a01df9432e6a",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "A2针晶阳性则G4转尺寸核验，阴性则下一轮撤销/暂停G4；G3维持主假设，stoma定量已无新增益机会"
+        },
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "A2针晶阳性则G4转尺寸核验，阴性则下一轮撤销/暂停G4；G3维持主假设，stoma定量已无新增益机会"
+        }
+      ],
+      "evidence_digest": "de457e2ba5c42c14d9d6ff7c37bd54d88fd84a7cbeb295df94487f8cbec182ba",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "地黄",
+          "status": "withdrawn",
+          "reason": "secretory_tissue为地黄关键补充特征，四视野多次阴性（含橙红色油滴提示）；parenchyma_cell阳性仅来自低细节大框影子定位，无独立佐证，与G3方晶证据冲突"
+        },
+        {
+          "candidate_id": "桔梗",
+          "status": "withdrawn",
+          "reason": "secretory_tissue为桔梗required(P1)，四视野含两次不同形态提示均阴性，且未检出不排除但无进一步可验证依据"
+        },
+        {
+          "candidate_id": "麻黄",
+          "status": "withdrawn",
+          "reason": "stoma为麻黄required，两次feature_scan未见且两视野stoma观察为阴性/仅一视野present_pending，哑铃状保卫细胞特异性未获任何支持"
+        }
+      ],
+      "evidence_digest": "de457e2ba5c42c14d9d6ff7c37bd54d88fd84a7cbeb295df94487f8cbec182ba",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

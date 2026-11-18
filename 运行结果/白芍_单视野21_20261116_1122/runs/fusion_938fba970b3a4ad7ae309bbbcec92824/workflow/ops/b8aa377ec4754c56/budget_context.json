@@ -1,0 +1,14 @@
+{
+  "operation_key": "b8aa377ec4754c568e3ca36ce255d3396a7db6930e844df7cea19048914069fd",
+  "budget_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_单视野21_20261116_1122\\runs\\fusion_938fba970b3a4ad7ae309bbbcec92824\\workflow\\resources.json",
+  "limits": {
+    "initialization": 2,
+    "recompute": 30,
+    "network": 200,
+    "planning": 60,
+    "observation": 40,
+    "total": 400,
+    "finalization": 1
+  },
+  "identity": "a7b803ca037d6a627d672d5b2270a2829ce696882ef58d6691fff9135b87d848"
+}

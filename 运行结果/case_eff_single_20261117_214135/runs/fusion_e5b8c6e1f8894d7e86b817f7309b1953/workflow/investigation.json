@@ -1,0 +1,199 @@
+{
+  "identity": "75a196e3aabc17ce7e0985ab364ae0098f390c8d634889fcc733e85ff8359997",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "白芍",
+    "G1",
+    "茯苓",
+    "G3",
+    "郁金"
+  ],
+  "hypotheses": {
+    "白芍": {
+      "status": "investigating",
+      "reason": "fiber存在与否将帮助区分白芍与G1；本轮以presence_check核查，后续若检出可按白芍宽度范围测量。",
+      "evidence_digest": "c3469d03f9eb6b910b9eb4326eeb7b30ac46bc118143aafc07f119906fbbdb21",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "fiber存在与否将帮助区分白芍与G1；本轮以presence_check核查，后续若检出可按白芍宽度范围测量。",
+      "evidence_digest": "c3469d03f9eb6b910b9eb4326eeb7b30ac46bc118143aafc07f119906fbbdb21",
+      "decision_source": "model"
+    },
+    "茯苓": {
+      "status": "investigating",
+      "reason": "hypha与fungal_mass在当前视野两处阴性反证，若本轮后仍无新支持，下一轮可暂停茯苓调查。",
+      "evidence_digest": "c3469d03f9eb6b910b9eb4326eeb7b30ac46bc118143aafc07f119906fbbdb21",
+      "decision_source": "model"
+    },
+    "G3": {
+      "status": "investigating",
+      "reason": "model task-reflection patch",
+      "evidence_digest": "c3469d03f9eb6b910b9eb4326eeb7b30ac46bc118143aafc07f119906fbbdb21",
+      "decision_source": "model"
+    },
+    "郁金": {
+      "status": "investigating",
+      "reason": "其required判据gelatinized_starch为本轮动作A5的核验目标，进入调查。",
+      "evidence_digest": "c3469d03f9eb6b910b9eb4326eeb7b30ac46bc118143aafc07f119906fbbdb21",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "A先验以白芍最强，白芍与G1共享required簇晶判据可同视野核验；茯苓的菌丝/真菌团块形态独特，与根茎类候选区分性高，便于快速排除或确认。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "A先验以白芍最强，白芍与G1共享required簇晶判据可同视野核验；茯苓的菌丝/真菌团块形态独特，与根茎类候选区分性高，便于快速排除或确认。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "A先验以白芍最强，白芍与G1共享required簇晶判据可同视野核验；茯苓的菌丝/真菌团块形态独特，与根茎类候选区分性高，便于快速排除或确认。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍与G1共享required簇晶判据，本轮分类第二个簇晶crop后可决定是否测量；茯苓的菌丝/真菌团块与根茎类区分性高，若簇晶路径受阻可快速排除或确认。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "白芍与G1共享required簇晶判据，本轮分类第二个簇晶crop后可决定是否测量；茯苓的菌丝/真菌团块与根茎类区分性高，若簇晶路径受阻可快速排除或确认。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "白芍与G1共享required簇晶判据，本轮分类第二个簇晶crop后可决定是否测量；茯苓的菌丝/真菌团块与根茎类区分性高，若簇晶路径受阻可快速排除或确认。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍与G1共享簇晶判据、组内不可分，需supporting特征（fiber/cork_cell/starch_grain）进一步区分；茯苓已有两处required阴性反证，若再次确认可暂停。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "白芍与G1共享簇晶判据、组内不可分，需supporting特征（fiber/cork_cell/starch_grain）进一步区分；茯苓已有两处required阴性反证，若再次确认可暂停。"
+        },
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "白芍与G1共享簇晶判据、组内不可分，需supporting特征（fiber/cork_cell/starch_grain）进一步区分；茯苓已有两处required阴性反证，若再次确认可暂停。"
+        }
+      ],
+      "evidence_digest": "e81c30c41d437788624fb56e1645c71651e4b92f6588b759366f896aec36a74e",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        }
+      ],
+      "evidence_digest": "c3469d03f9eb6b910b9eb4326eeb7b30ac46bc118143aafc07f119906fbbdb21",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "fiber存在与否将帮助区分白芍与G1；本轮以presence_check核查，后续若检出可按白芍宽度范围测量。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "fiber存在与否将帮助区分白芍与G1；本轮以presence_check核查，后续若检出可按白芍宽度范围测量。"
+        }
+      ],
+      "evidence_digest": "c3469d03f9eb6b910b9eb4326eeb7b30ac46bc118143aafc07f119906fbbdb21",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "茯苓",
+          "status": "investigating",
+          "reason": "hypha与fungal_mass在当前视野两处阴性反证，若本轮后仍无新支持，下一轮可暂停茯苓调查。"
+        },
+        {
+          "candidate_id": "郁金",
+          "status": "investigating",
+          "reason": "其required判据gelatinized_starch为本轮动作A5的核验目标，进入调查。"
+        }
+      ],
+      "evidence_digest": "c3469d03f9eb6b910b9eb4326eeb7b30ac46bc118143aafc07f119906fbbdb21",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

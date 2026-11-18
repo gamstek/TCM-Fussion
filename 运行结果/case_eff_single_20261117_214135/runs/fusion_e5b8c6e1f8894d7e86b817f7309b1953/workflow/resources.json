@@ -1,0 +1,335 @@
+{
+  "identity": "75a196e3aabc17ce7e0985ab364ae0098f390c8d634889fcc733e85ff8359997",
+  "deadline": 1794925306.3481598,
+  "used": {
+    "planning": 14,
+    "network": 32,
+    "initialization": 1,
+    "observation": 9,
+    "recompute": 3,
+    "finalization": 1
+  },
+  "entries": {
+    "planning:0:0": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:0:0": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "38a3dd0dd065098a490924c5248b959b747142d70db8da4bc76155ff7d5bc8ad": {
+      "pool": "initialization",
+      "status": "pending"
+    },
+    "9a58f91817f6d42a7051ad12c4879f665c381c650d17d504b1c4d815d1cb436c": {
+      "pool": "network",
+      "status": "pending",
+      "operation_key": "38a3dd0dd065098a490924c5248b959b747142d70db8da4bc76155ff7d5bc8ad"
+    },
+    "b1954358c2d8c51c1e2defd3cc8dab4d919a75654a00551df280da81f037a4e4": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "38a3dd0dd065098a490924c5248b959b747142d70db8da4bc76155ff7d5bc8ad",
+      "http_status": 200,
+      "error_type": null
+    },
+    "planning:1:1": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:1:1": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "0dc6c8faf0482fc1f56285b26c00df49ee9ad0eb8e6abb9b2401076be4517d04": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "planning:2:2": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:2:2": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "1bb3bf83dea8e3952eb5c48f7291be31f4bde837c3bba4b1ac31e3192358c54f": {
+      "pool": "recompute",
+      "status": "pending"
+    },
+    "f561e44a2deb4a125252dc8e668193c07efb10a6372f2c3091c7f2581cecace0": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "1bb3bf83dea8e3952eb5c48f7291be31f4bde837c3bba4b1ac31e3192358c54f",
+      "http_status": 200,
+      "error_type": null
+    },
+    "aaa7f4d797e3eeaae1e4ef877a9f7a4fe4743f4d875d2eb8e01a9d7348fe5b59": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "1bb3bf83dea8e3952eb5c48f7291be31f4bde837c3bba4b1ac31e3192358c54f",
+      "http_status": 200,
+      "error_type": null
+    },
+    "planning:3:3": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:3:3": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "30ad1ff85fb99ee960889771c6b22623d774c8884e61e3634efde5336339e53a": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "planning:4:4": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:4:4": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:14785384e8d94dc425e8af944614320ccedef6401bcff837b7829b599f0068c8": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:14785384e8d94dc425e8af944614320ccedef6401bcff837b7829b599f0068c8": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:5:5": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:5:5": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:faf3dbe75dd9d28ecf40ef237c65c08eb82f8376e337afd6b2c074dfa8ba51fc": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:faf3dbe75dd9d28ecf40ef237c65c08eb82f8376e337afd6b2c074dfa8ba51fc": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:6:6": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:6:6": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "49a2e2161aab3556e39015dc73b0df3d50d9b4636037f89f928eeb8846a3caed": {
+      "pool": "recompute",
+      "status": "pending"
+    },
+    "0623b42b383fb34c829d90add7e703e10a8efbbbe4bf001974bc89324f0154a1": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "49a2e2161aab3556e39015dc73b0df3d50d9b4636037f89f928eeb8846a3caed",
+      "http_status": 200,
+      "error_type": null
+    },
+    "7e0a294ba64157812ccecc5103815c526b234da2a97f303d7f78d1b3cb8fad38": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "49a2e2161aab3556e39015dc73b0df3d50d9b4636037f89f928eeb8846a3caed",
+      "http_status": 200,
+      "error_type": null
+    },
+    "planning:7:7": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:7:7": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:a81fc3d7fd14e58d7788d5e57ae2d7821524174b4fe6c18d738955075d4d5d7d": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:a81fc3d7fd14e58d7788d5e57ae2d7821524174b4fe6c18d738955075d4d5d7d": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:8:8": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:8:8": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:2d0de08373d29886ea9c4c93a6b3e6b5b45acfba7ae188f225dcd458fa8905fb": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:2d0de08373d29886ea9c4c93a6b3e6b5b45acfba7ae188f225dcd458fa8905fb": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:9:9": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:9:9": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "3e3b18ed5e306baa1a10ca0ddad221b32def3f275ea208323e3d5c6de2fef243": {
+      "pool": "recompute",
+      "status": "pending"
+    },
+    "602ec2081a91ccf4f8af4a1ef3ca7f87dce584635152414347e0d893a1784e26": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "3e3b18ed5e306baa1a10ca0ddad221b32def3f275ea208323e3d5c6de2fef243",
+      "http_status": 200,
+      "error_type": null
+    },
+    "81860aaabf590aa59dec1c12558da67e712d32970021e901a712cf77278f88e7": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "3e3b18ed5e306baa1a10ca0ddad221b32def3f275ea208323e3d5c6de2fef243",
+      "http_status": 200,
+      "error_type": null
+    },
+    "5f4457054d4e8eb6f4bf029f60a56c4422e2fea12c67cb49b080f28f301bc7f6": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "3e3b18ed5e306baa1a10ca0ddad221b32def3f275ea208323e3d5c6de2fef243",
+      "http_status": 200,
+      "error_type": null
+    },
+    "24905f27b2b41b37e5dd1bfde24fdbbda716a8a49956b849c87bb81427469c4d": {
+      "pool": "network",
+      "status": "response_received",
+      "operation_key": "3e3b18ed5e306baa1a10ca0ddad221b32def3f275ea208323e3d5c6de2fef243",
+      "http_status": 200,
+      "error_type": null
+    },
+    "planning:10:10": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:10:10": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:6746e5d950b50e31102370a3f15b0e39c312553d6d5f4eb213c0574d20fa3302": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:6746e5d950b50e31102370a3f15b0e39c312553d6d5f4eb213c0574d20fa3302": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:11:11": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:11:11": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:2b8fb74ff677be32d9b3232f7111ac124cd887161a20fec90a5175fcf12ba6e3": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:2b8fb74ff677be32d9b3232f7111ac124cd887161a20fec90a5175fcf12ba6e3": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:12:12": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:12:12": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:241102d14f15026b8363b727e75bfa78f502b04de10eaaf2ff9bb71d0117a5d1": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:241102d14f15026b8363b727e75bfa78f502b04de10eaaf2ff9bb71d0117a5d1": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:13:13": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:13:13": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "final:d686cf126067cfc71f5a35a3baa9f24fb3c00b27b9124a802adb5ed6c8cbe311": {
+      "pool": "finalization",
+      "status": "pending"
+    },
+    "api:final:d686cf126067cfc71f5a35a3baa9f24fb3c00b27b9124a802adb5ed6c8cbe311": {
+      "pool": "network",
+      "status": "pending"
+    }
+  },
+  "supporting_probes": {
+    "d7a258e7eaab16b182da76003f43c332ed10a40b2731da724d6e97035947aaa2": {
+      "key": "d7a258e7eaab16b182da76003f43c332ed10a40b2731da724d6e97035947aaa2",
+      "tool": "presence_check",
+      "question_group": "presence",
+      "question": "仅核验这类显微特征是否可见，不判药材或物理尺寸。木栓细胞：表面观类长方形或多角形，排列整齐紧密，呈砖砌状成片",
+      "target_id": null,
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "feature_id": "cork_cell",
+      "candidate_ids": [
+        "G1"
+      ],
+      "total_limit": 6,
+      "candidate_limit": 2,
+      "reservation_owner": "observation:2d0de08373d29886ea9c4c93a6b3e6b5b45acfba7ae188f225dcd458fa8905fb",
+      "pool": "observation"
+    },
+    "b1f90cf657208ebca6b0734f3a621cf88bb22501253086c39c537369cf70915d": {
+      "key": "b1f90cf657208ebca6b0734f3a621cf88bb22501253086c39c537369cf70915d",
+      "tool": "presence_check",
+      "question_group": "presence",
+      "question": "仅核验这类显微特征是否可见，不判药材或物理尺寸。纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离",
+      "target_id": null,
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "feature_id": "fiber",
+      "candidate_ids": [
+        "G1",
+        "白芍"
+      ],
+      "total_limit": 6,
+      "candidate_limit": 2,
+      "reservation_owner": "observation:6746e5d950b50e31102370a3f15b0e39c312553d6d5f4eb213c0574d20fa3302",
+      "pool": "observation"
+    },
+    "71b8b7682c5f2a4463f96f5cf3fb3482e274789b03abc6f61305c5e76983de75": {
+      "key": "71b8b7682c5f2a4463f96f5cf3fb3482e274789b03abc6f61305c5e76983de75",
+      "tool": "presence_check",
+      "question_group": "presence",
+      "question": "仅核验这类显微特征是否可见，不判药材或物理尺寸。气孔：由两个保卫细胞围成的通气结构，两保卫细胞相对呈肾形、半月形或哑铃形，中间为孔缝，周围有副卫细胞环绕",
+      "target_id": null,
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "feature_id": "stoma",
+      "candidate_ids": [
+        "G3"
+      ],
+      "total_limit": 6,
+      "candidate_limit": 2,
+      "reservation_owner": "observation:241102d14f15026b8363b727e75bfa78f502b04de10eaaf2ff9bb71d0117a5d1",
+      "pool": "observation"
+    }
+  },
+  "closed": true,
+  "stop_reason": "planner_request_review"
+}

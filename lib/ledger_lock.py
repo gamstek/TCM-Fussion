@@ -1,4 +1,17 @@
-"""标准库OS文件锁：序列化同账本的跨实例/进程观察；崩溃由OS释放，pending不重发。"""
+"""标准库实现的 OS 文件锁：串行化同一账本上的跨实例/跨进程观察写入。
+
+锁在进程崩溃时由操作系统自动释放；超时只报 LEDGER_BUSY，不自动重试模型请求，
+以免在状态不明时重复发出计费调用。
+
+主要定义：
+- acquire: 非阻塞尝试获取账本锁文件句柄，超时后抛错并关闭句柄。
+- release: 解锁并关闭锁文件句柄。
+
+关联：
+- .storage: 使用 IntegrationError 表达锁超时错误。
+- .evidence_store / .workflow_session / .resource_budget / .agent_tools / .mcp_bridge:
+  在提交证据、写账本或预算时调用 acquire/release 互斥。
+"""
 import os
 import time
 from pathlib import Path

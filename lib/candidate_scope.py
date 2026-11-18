@@ -1,5 +1,17 @@
 # -*- coding: utf-8 -*-
-"""候选范围门：Plan B 的候选必须来自 Plan A Top-K，或通过严格非 A 证明。"""
+"""候选范围门：Plan B 候选必须来自 Plan A Top-K，或通过严格非 A 证明。
+
+主要定义：
+- apply_candidate_scope: 就地收窄 verdict ranking，记录 kept/dropped，并为缺失的 A 候选补零支持占位。
+- GENERIC_FEATURES: 不具判别力的通用特征（表皮细胞、分泌组织）。
+- _strict_non_a: 内部工具，要求所有 required/supporting 为 present 且至少一个特异性 required。
+
+关联：
+- .candidate_policy.candidates: 取得 Plan A 候选 id。
+- .workflow_entry: 在 A/B 融合前应用候选范围。
+- .output_projection: 输出 candidate_scope 的保留/剔除明细。
+- tests/test_candidate_scope.py: 回归 a_topk 与 open_strict 两种范围。
+"""
 from __future__ import annotations
 
 from .candidate_policy import candidates as a_candidates

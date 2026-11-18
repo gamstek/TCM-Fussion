@@ -1,4 +1,14 @@
-"""离线替身；实际LangMem优化器保持真实，仅替换外部聊天模型与规划响应。"""
+"""离线提示测试替身；保留真实 LangMem 优化器，仅替换外部聊天模型与规划响应。
+
+主要定义：
+- `IMPROVED`: 固定的改进提示文本，供断言发布后的 planning instruction。
+- `OfflineOptimizerModel`: `BaseChatModel` 替身，`bind_tools` 返回 `OptimizedPromptOutput` 工具调用（analysis + improved_prompt），不访问网络。
+- `OfflinePlanner(instruction)`: 规划替身，记录 `contexts`；提示含阴性观察处理要求且有既往观察时选 review，否则取首个动作。
+
+关联：
+- TCM_Fusion.tests.offline.test_prompt_optimization: 导入 `OfflineOptimizerModel`/`OfflinePlanner`/`IMPROVED` 做 LangMem 与发布回归。
+- langchain_core: 提供 `BaseChatModel`/`AIMessage`/`ChatGeneration`/`ChatResult`/`RunnableLambda`。
+"""
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 from langchain_core.outputs import ChatGeneration, ChatResult

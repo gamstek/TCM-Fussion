@@ -1,6 +1,19 @@
-"""领域工具执行层：本地/MCP共用；内容去重、失败计费、写前记账与严格观察守卫。
+"""领域工具执行层：本地与 MCP 共用，负责内容去重、失败计费、写前记账与严格观察守卫。
 
-真实图像观察复用原agent_loop.VLMClient；fixture仅供明确标注的离线闭环测试。
+真实图像观察复用原 agent_loop.VLMClient；fixture 仅供明确标注的离线闭环测试。
+
+主要定义：
+- LiveBackend: 真实观察后端，负责图像编码、调用 VLM 与释放载荷。
+- FixtureBackend: 离线测试用回复替身，只用于 simulation 场景。
+- LocalToolbox: 工具调用入口，维护请求账本、预算与幂等的 recompute/read/observe。
+
+关联：
+- TCM_Fusion.lib.presence_localization: sanitize_proposal/observation_context/assess_presence 处理可选定位。
+- TCM_Fusion.lib.probe_budget: describe 提供探测绑定信息。
+- TCM_Fusion.lib.storage: 账本与工件读写、哈希。
+- TCM_Fusion.lib.mcp_bridge: MCP 服务复用同一工具箱。
+- TCM_Fusion.lib.react_graph: ReAct 循环调用工具箱执行动作。
+- TCM_Fusion.lib.reflection: 离线验证注入 FixtureBackend/LocalToolbox。
 """
 from __future__ import annotations
 

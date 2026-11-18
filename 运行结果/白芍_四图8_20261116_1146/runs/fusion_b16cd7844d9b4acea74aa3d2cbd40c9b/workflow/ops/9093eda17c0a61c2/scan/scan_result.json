@@ -1,0 +1,24 @@
+{
+  "engine": "glm_full_scan",
+  "count": 3,
+  "tiles": [
+    [
+      0,
+      0,
+      1024,
+      1536
+    ],
+    [
+      1024,
+      0,
+      2048,
+      1536
+    ]
+  ],
+  "roi": null,
+  "feature_id": "stone_cell",
+  "partial": false,
+  "errors": [],
+  "tile_policy": "full",
+  "coordinate_system": "original_pixels"
+}

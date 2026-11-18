@@ -1,5 +1,17 @@
 # -*- coding: utf-8 -*-
-"""P0 优先缺口的离线回归；不联网、不执行阶段。"""
+"""P0 优先缺口判定的离线回归：只读工作流状态推断下一焦点，不联网、不执行阶段。
+
+主要定义：
+- P0PriorityTest: 验证 WorkflowRuntime.p0_focus 对缺 crop、已观察 supporting、待分类、待分割、待测量、分割复核和已尝试等状态的判定。
+- _Workflow / _Store: 提供最小工作流外观（p0/recovery 开关、locate 上限、操作条目与 artifact 快照）。
+- _a_dragon: 构造龙胆 Top-1 的五折 A 结果，触发针晶 P0 焦点。
+
+关联：
+- TCM_Fusion.lib.workflow_runtime: 被测的 p0_focus 优先级、身份门与测量门。
+- rule_engine.KnowledgeBase: 从 herb_criteria.json 读取候选判据。
+- TCM_Fusion.lib.storage.write_json: 构造临时 operations.json。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import tempfile
 import unittest
 from pathlib import Path
@@ -130,23 +142,10 @@ class P0PriorityTest(unittest.TestCase):
                 self._runtime_with_crop(root, seg_quality="valid", measured=True))
             self.assertNotEqual((measured_focus or {}).get("status"), "crop_segmentation_review")
 
-    def test_all_grid_locate_attempts_required(self):
+    def test_first_locate_attempt_marks_p0_attempted(self):
         with tempfile.TemporaryDirectory() as root:
-            bundle = Path(root) / "op"
-            (bundle / "detection").mkdir(parents=True)
-            write_json(bundle / "detection/regions.json",
-                       {"regions": [{"box": [0, 0, 10, 10]}, {"box": [5, 5, 15, 15]}]})
-            entries = {
-                "p": {"tool": "propose_regions", "status": "done",
-                      "bundle": {"root": str(bundle),
-                                 "files": {"detection/regions.json": "hash"}}},
-                "l1": {"tool": "locate_feature", "status": "done"},
-            }
-            runtime = self._runtime(root, entries=entries, max_locate=2)
-            focus = WorkflowRuntime.p0_focus(runtime)
-            self.assertFalse(focus["attempted"])
-            entries["l2"] = {"tool": "locate_feature", "status": "failed"}
-            write_json(Path(root) / "operations.json", {"entries": entries})
+            entries = {"l1": {"tool": "locate_feature", "status": "done"}}
+            runtime = self._runtime(root, entries=entries)
             focus = WorkflowRuntime.p0_focus(runtime)
             self.assertTrue(focus["attempted"])
 

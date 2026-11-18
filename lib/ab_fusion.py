@@ -1,8 +1,18 @@
 # -*- coding: utf-8 -*-
-"""A/B 候选融合：A 的逐折概率与 B 的规则置信度按权重合并，再交给输出层。
+"""A/B 候选融合：把 A 的逐折概率与 B 的规则置信度按权重合并后重排候选。
 
-A 是候选先验（Plan A），B 是显微证据（Plan B）。这里只重排候选并记录分项，
-不改变 B 的 verdict、不把 A 概率当成显微证据。
+A 是候选先验（Plan A），B 是显微证据（Plan B）；这里只重排候选并记录分项，不改 B verdict、不把 A 概率当显微证据。
+
+主要定义：
+- a_probabilities: 按全部折/视野求 A 的平均概率，未进 Top-K 的候选记 0。
+- apply_ab_fusion: 计算 fused_score 并重排 ranking；若 top 改变则清空结论并要求复核。
+- _group_map / _candidate_id: 内部工具，把别名/药材标签映射到候选组 id。
+
+关联：
+- 独立计算模块：不 import 项目内其他模块。
+- .workflow_entry: 在候选范围门之后调用 apply_ab_fusion。
+- .output_projection: 输出 fusion_weights 与 alternatives。
+- tests/test_ab_fusion.py: 回归权重归一与 top 变化处理。
 """
 from __future__ import annotations
 

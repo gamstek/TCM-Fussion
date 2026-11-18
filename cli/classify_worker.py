@@ -1,10 +1,19 @@
-"""单crop类别复核worker：在受控子进程内复用检测侧 classify_crop。
+"""单 crop 类别复核 worker：在受控子进程内复用检测侧 `classify_crop`，从项目根以 `-m` 启动。
 
-为什么存在：融合链路此前的工具集只有检测/分割/测量/重裁，无法在「已观察到的存在特征」与
-「crop 类别」相左时复核类别。本入口只做一件事：读入一个已绑定crop，调一次分类，写结构化结果。
+为什么存在：融合链路此前的工具集只有检测/分割/测量/重裁，无法在「已观察到的存在特征」与「crop 类别」相左时复核类别。本入口只做一件事：读入一个已绑定 crop，调一次 GLM 分类，写结构化结果。
 
-独立进程而非进程内调用的理由与 detect_region 相同：图像读取/编码/HTTP 失败不会拖垮主循环；
-并且 `worker_bootstrap` 的HTTP守卫会把这次请求记进同一份资源账本（不另立第二套预算）。
+独立进程而非进程内调用的理由与 detect_region 相同：图像读取/编码/HTTP 失败不会拖垮主循环；并且 `worker_bootstrap` 的 HTTP 守卫会把这次请求记进同一份资源账本（不另立第二套预算）。YOLO crop 复核只是辅助，不替代 GLM。
+
+主要定义：
+- main: 解析 `--context`，读取绑定 crop（可选 `tight_box_local` 二次裁剪），调用一次分类并写 `classification.json`。
+- geometry_context: 与 `detect_sample._geom_ctx` 同口径的纯几何提示文本（长宽比、尺寸、占画面比例），只影响提示词，不参与判定。
+- 模块级约束: 文字型 confidence 按 glm high=0.90 / medium=0.65 / low=0.30 折算为 `confidence_score`。
+
+关联：
+- TCM_Fusion.lib.workflow_backend: 以 `-m TCM_Fusion.cli.classify_worker` 子进程调用，对应 `classify_target` 单 crop 动作。
+- 检测侧库（classify_crop、ls_common）: 提供分类实现与配置/API key。
+- TCM_Fusion.lib.storage: 读取 context、写结果 JSON 与 IntegrationError。
+- TCM_Fusion.lib.worker_bootstrap: 子进程启动钩子，把 HTTP 请求纳入同一资源账本。
 """
 import argparse
 from pathlib import Path

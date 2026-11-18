@@ -1,30 +1,22 @@
 # -*- coding: utf-8 -*-
-"""detector_yolo.py — P2 推理适配器：训练好的 YOLO 权重 → 与 VLM 同形的 `dets`。
+"""将训练好的 Ultralytics YOLO 权重适配为与 VLM 同形的 `dets`（原图像素坐标）。
 
-P1 产出的是 Ultralytics checkpoint，而下游（`detect_sample` → `crop_sidecar`
-→ 分割/几何）只认 `detect_core.detect_once` 的框形：
-`{label, tight_bbox, confidence, score, morphology}`（**原图像素坐标**）。本适配器只做这一层
-翻译，不另写 IoU/坐标规则——跨窗去重走 `detect_core.nms_merge`，像素框夹紧走
-`geom.clamp_box`，类别顺序走 `det_dataset.class_table`（`vlm_config.json → yolo.classes`
-排除 pending 后重编 0..N-1，即 P0 训练集 `classes.txt` 的顺序）。
+主要定义：
+- load_settings: 读 `detector.json` 推理键与命令行覆盖，产出含类别表/粒度的参数字典。
+- resolve_names: 决定模型 class id → 中文类别名；只允许 `det_dataset.class_table` 一套类别事实源，数量或名称不符即报错。
+- windows_of: 生成 tile/overlap 滑窗（原图坐标，含边缘对齐窗）。
+- detect: 整图或滑窗推理，跨窗按 `nms_merge` 去重、按 `geom.clamp_box` 夹紧，输出 label/tight_bbox/confidence/score/morphology。
+- SCORE_HIGH / SCORE_MEDIUM: confidence 粗档切点，只影响目检/复核排序，不参与判药。
+- DETECTOR_DEFAULTS: 推理缺省参数（imgsz/conf/iou/device/max_det/tile/overlap）。
 
-**类别名**：本项目的 checkpoint 里 `model.names` 是 `class_0..class_13`（训练时 data_local.yaml
-用了 ASCII 占位名），不是中文。故适配器按 `class_table` 把模型 class id 映射回中文类别；
-若权重自带中文 `names`（自描述），则直接采用，但要求全部在 `vlm_config` 的类别表里，
-防止"第二份类别表"悄悄生效。
-
-**score 口径**：YOLO 的 `score` 是模型置信度（0~1），**未经校准**（方案 §6.5 第 4 条）。
-`confidence` 只是给目检图/复核清单用的粗档（high/medium/low），不是判药证据；需要类级
-温度/等距校准后再接入下游。
-
-**「其他」类**：照常输出（第 14 个训练类），交付过滤由 `det_dataset.split_delivery` 在
-调用方做——本模块不静默丢框。
-
-**tile/overlap**：大图按 `tile` 像素窗口、`overlap` 比例切窗推理，框先映射回原图再跨窗
-NMS。`tile=0`（默认）表示整图一次推理（Ultralytics 自己 letterbox 到 `imgsz`）。
-
-依赖白名单：`det_dataset`（类别表）、`detect_core`（NMS 原语）、`geom`（夹紧原语）、
-`ls_common`（配置读取）。**不得 import 入口脚本**。
+关联：
+- .det_dataset.class_table: 提供训练 class id 0..N-1 的中文类别表。
+- detect_core.nms_merge: 跨窗重复框聚簇的唯一贪心实现。
+- geom.clamp_box: 与 VLM 分块路径共用同一份像素框夹紧规则。
+- ls_common: 读取 DET_CONFIG/PROJECT_ROOT 与 `vlm_config.json`。
+- contracts: 提供粒度默认值与合法级别。
+- cli/yolo_worker.py: 调用 `load_settings` 与 `detect` 的 P2 worker。
+- `score` 为未经校准的模型置信度；「其他」类照常输出，交付分流由 `split_delivery` 在调用方完成，本模块不 import 入口脚本。
 """
 import json
 import os

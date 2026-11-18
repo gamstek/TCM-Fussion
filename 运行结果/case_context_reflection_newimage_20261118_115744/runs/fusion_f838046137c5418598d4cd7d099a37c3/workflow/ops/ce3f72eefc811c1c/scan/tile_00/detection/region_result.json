@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "导管",
+      "tight_bbox": [
+        299.25,
+        572.25,
+        837.75,
+        1194.75
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "管状分子碎片，壁上可见规则的梯状/网状加厚纹理，排列平行规则",
+      "source_tight_bbox": [
+        389,
+        676,
+        748,
+        1091
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    0,
+    0,
+    1024,
+    1536
+  ],
+  "feature_id": "vessel",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

@@ -1,4 +1,22 @@
-"""Closing judgement, provenance and shared budget; no live model requests."""
+"""收尾研判回归：只读判定、来源区分、共享预算与非法引用回退，不发起真实模型请求。
+
+主要定义：
+- FinalAssessmentTests（停止码收尾）: 任一 stop_reason 都仍产出只读 judgement，且不改证据版本与判决对象。
+- FinalAssessmentTests（上报包）: compact_packet 限制载荷体积同时保留事实 ID、候选支持关系与融合分。
+- FinalAssessmentTests（来源区分）: 注入 finalizer 标记为 tentative/simulation，不冒充规则确认。
+- FinalAssessmentTests（终止与复核）: termination.reason 与 review_reasons 分离，D8b 单类复核不被服务中断掩盖。
+- FinalAssessmentTests（数值防护）: 模型自由文本中的错误融合分被替换为确定性数值摘要并留警告。
+- FinalAssessmentTests（引用校验）: 未知候选、伪造引用和失败观察都不能作为正向支持。
+- FinalAssessmentTests（预算与时限）: 收尾保留单独请求池；超时或关闭后不再请求模型。
+- FinalAssessmentTests（真实范围）: 非 simulation 下拒绝注入 finalizer。
+
+关联：
+- TCM_Fusion.lib.final_assessment: 被测的 build_packet / compact_packet / finalize / validate_reply / request_model。
+- TCM_Fusion.lib.workflow_runtime: 证据版本、预算池与收尾时间预留。
+- TCM_Fusion.lib.react_graph: run_react 的 finalization_time_reserve 停机。
+- TCM_Fusion.tests.test_workflow.StageFixture: 复用阶段替身。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import asyncio
 import copy
 import json
@@ -73,6 +91,84 @@ class FinalAssessmentTests(unittest.TestCase):
         self.assertEqual(value['method'],'injected_finalizer')
         self.assertEqual(value['status'],'tentative');self.assertTrue(value['simulation'])
         self.assertIsNone(value['confidence_basis']['calibrated_probability'])
+
+    def single_feature_verdict(self):
+        verdict=copy.deepcopy(self.verdict)
+        verdict.update(verdict='confirmed',conclusion={'id':'秦皮'},needs_review=True,
+                       notes=['D8b 单类证据条件放行：独立证据仅 1 类，仍需复核'])
+        for row in verdict['ranking']:
+            row['fused_score']=.872168 if row['id']=='秦皮' else .240057
+        scored=self.runtime.score(self.result['observations'])
+        top=next(r for r in scored['decision']['ranking'] if r['id']=='秦皮')
+        top.update(confidence=1.0,support_count=1)
+        return verdict,scored
+
+    def test_service_termination_and_d8b_review_have_separate_causes(self):
+        verdict,scored=self.single_feature_verdict();original=copy.deepcopy(verdict)
+        result={**self.result,'stop_reason':'runtime_request_review','planner_degraded':True,
+                'events':[{'phase':'stop','decision_source':'runtime_fallback',
+                           'reason':'UPSTREAM_REMOTE_DISCONNECTED'}]}
+        with patch.object(self.runtime,'score',return_value=scored):
+            value=finalize(self.runtime,verdict,result,self.root/'d8b',responder=self.reply)
+        self.assertEqual(value['termination']['reason'],'UPSTREAM_REMOTE_DISCONNECTED')
+        self.assertEqual(value['termination']['category'],'service')
+        self.assertEqual(value['formal_verdict'],'confirmed')
+        self.assertEqual(value['status'],'tentative');self.assertTrue(value['review_required'])
+        self.assertIn('INSUFFICIENT_FEATURE_TYPES',value['review_reasons'])
+        self.assertNotIn('UPSTREAM_REMOTE_DISCONNECTED',value['review_reasons'])
+        self.assertEqual(value['confidence_basis']['rule_confidence'],1.0)
+        self.assertEqual(value['confidence_basis']['support_count'],1)
+        self.assertEqual(value['confidence_basis']['fused_score'],.872168)
+        self.assertEqual(verdict,original)
+
+    def test_swapped_candidate_score_cannot_enter_published_explanation(self):
+        verdict,scored=self.single_feature_verdict()
+        def swapped(packet):
+            reply,usage=self.reply(packet)
+            reply['explanation']='倾向秦皮但融合分 0.240057，仍需复核。'
+            return reply,usage
+        with patch.object(self.runtime,'score',return_value=scored):
+            value=finalize(self.runtime,verdict,self.result,self.root/'swapped',responder=swapped)
+        self.assertNotIn('0.240057',value['explanation'])
+        self.assertIn('0.240057',value['model_proposal']['explanation'])
+        self.assertEqual(value['explanation_source'],'deterministic_numeric_guard')
+        self.assertIn('0.872168',value['score_summary'])
+        self.assertIn('MODEL_NUMERIC_CLAIM_UNVERIFIED',value['narrative_warnings'])
+        self.assertEqual(value['status'],'tentative')
+
+    def test_service_interruption_alone_does_not_revoke_formal_authorization(self):
+        verdict,scored=self.single_feature_verdict()
+        verdict.update(needs_review=False,notes=[])
+        next(r for r in scored['decision']['ranking'] if r['id']=='秦皮')['support_count']=2
+        result={**self.result,'stop_reason':'runtime_request_review',
+                'termination_reason':'UPSTREAM_REMOTE_DISCONNECTED','planner_degraded':True}
+        # 此例仅隔离“服务中断本身”：明确提供已完成的审查，覆盖缺口另有独立回归。
+        from TCM_Fusion.lib.candidate_audit import build as audit_candidates
+        audit=audit_candidates(self.runtime,scored,result['observations'])
+        audit.update(complete=True,incomplete_candidate_ids=[],unmapped=[])
+        with patch.object(self.runtime,'score',return_value=scored), \
+             patch('TCM_Fusion.lib.candidate_audit.build',return_value=audit):
+            value=finalize(self.runtime,verdict,result,self.root/'authorized',responder=self.reply)
+        self.assertEqual(value['termination']['category'],'service')
+        self.assertEqual(value['status'],'confirmed');self.assertFalse(value['review_required'])
+        self.assertEqual(value['review_reasons'],[])
+
+    def test_fact_reference_numbers_do_not_discard_valid_model_analysis(self):
+        def referenced(packet):
+            reply,usage=self.reply(packet)
+            reply['explanation']='见 '+reply['support_refs'][0]+'，砂晶支持秦皮，但证据不足。'
+            return reply,usage
+        value=finalize(self.runtime,self.verdict,self.result,self.root/'refs',responder=referenced)
+        self.assertEqual(value['explanation_source'],'injected_finalizer')
+        self.assertEqual(value['narrative_warnings'],[])
+
+    def test_compact_packet_preserves_fused_scores_by_candidate_id(self):
+        verdict,_=self.single_feature_verdict()
+        packet=build_packet(self.runtime,verdict,self.result)
+        compact=compact_packet(packet)
+        indexed={r['id']:r for r in compact['formal_verdict']['ranking']}
+        self.assertEqual(indexed['秦皮']['fused_score'],.872168)
+        self.assertEqual(indexed['桔梗']['fused_score'],.240057)
 
     def test_snapshot_does_not_trigger_legacy_planning_or_review_calls(self):
         with patch.object(self.runtime,'summary',side_effect=AssertionError('no planning callbacks')):
@@ -162,3 +258,21 @@ class FinalAssessmentTests(unittest.TestCase):
             planner=ScriptedPlanner(),planner_mode='scripted'))
         self.assertEqual(result['stop_reason'],'finalization_time_reserve')
         self.assertEqual(result['steps'],0)
+
+
+    def test_provisional_selection_rebinds_explanation_and_support_to_same_candidate(self):
+        provisional={'ranking':[{'candidate_id':'桔梗',
+            'criterion_states':[{'state':'DETECTED_PENDING'}],
+            'pending_verification':[{'role':'required','feature_id':'inulin'}]}]}
+        before=self.runtime.workflow.store.current()['version']
+        with patch('TCM_Fusion.lib.provisional_evidence.build',return_value=provisional):
+            value=finalize(self.runtime,self.verdict,self.result,self.root/'rebound',responder=self.reply)
+        self.assertEqual(value['candidate_id'],'桔梗')
+        self.assertEqual(value['model_proposal']['candidate_id'],'秦皮')
+        self.assertEqual(value['explanation_source'],'deterministic_selection_guard')
+        self.assertIn('ASSESSMENT_SELECTION_REBOUND',value['narrative_warnings'])
+        self.assertFalse(value['supporting_evidence']);self.assertFalse(value['confidence_basis']['has_admitted_b_support'])
+        self.assertNotIn('砂晶存在性支持秦皮',value['explanation'])
+        self.assertIn('待核验',value['judgement']);self.assertNotIn('仅有A先验',value['judgement'])
+        self.assertEqual(self.runtime.workflow.store.current()['version'],before)
+        self.assertTrue(value['review_required'])

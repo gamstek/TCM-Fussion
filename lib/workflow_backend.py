@@ -1,4 +1,17 @@
-"""真实B阶段包装：固定入口子进程/具名库worker；单视野或单crop，不重跑整条B。"""
+"""真实 B 阶段包装：以固定入口子进程或具名库 worker 执行单视野/单 crop 重算，不重跑整条 B。
+
+主要定义：
+- WorkflowBackend: 提供 code_signature 与 execute；execute 按工具类型调用检测、分割、分类或定位入口。
+- `_timeout`：读取会话剩余时间或调用超时的内部工具。
+
+关联：
+- TCM_Fusion.lib.controlled_process: run 受控启动子进程并支持取消。
+- TCM_Fusion.lib.image_tiling: uniform_tiles 提供分块扫描的 tile。
+- TCM_Fusion.lib.stage2_classifier: classify 前校验模型档案与请求指纹。
+- TCM_Fusion.lib.workflow_session: 由会话调用 execute 完成工具执行。
+- TCM_Fusion.lib.pipeline: 在启动前后比对 code_signature。
+- contracts / paths: 项目级数据契约与路径常量。
+"""
 import shutil
 from pathlib import Path
 import contracts
@@ -35,45 +48,9 @@ class WorkflowBackend:
             override = session.config.get('feature_profiles') or {}
             profile = profile_for(feature_id, override)
             return hint_text(profile)
-        if tool == 'roi_screen_batch':
-            from concurrent.futures import ThreadPoolExecutor
-            items=list(target.get('items') or [])
-            if not items:
-                raise IntegrationError('SCREEN_INPUT','批量筛选没有输入视野')
-            out=work/'screening_batch';out.mkdir(parents=True,exist_ok=True)
-            workers=max(1,min(int(session.config.get('screen_concurrency',2)),len(items)))
-            def one(index_item):
-                index,item=index_item
-                sub=out/f'{index:02d}';sub.mkdir()
-                ctx=sub/'screen.json'
-                write_json(ctx,{'tool':'roi_screen','source':str(item['source']),
-                                'regions':str(item['regions']),'feature_id':item.get('feature_id'),
-                                'image_id':item['image_id'],'output':str(sub/'result'),
-                                'screen_max_rois':int(session.config.get('screen_max_rois',4)),
-                                'feature_hint':feature_hint(item.get('feature_id'))})
-                run([str(session.python),'-X','utf8','-m','TCM_Fusion.cli.workflow_worker',
-                     '--context',str(ctx)],context_path=context,timeout=_timeout(session),
-                    log_path=sub/'stage.log',cancel_event=session.cancel_event)
-                return str(sub/'result'/'screen.json')
-            with ThreadPoolExecutor(max_workers=workers) as pool:
-                screens=list(pool.map(one,enumerate(items)))
-            return {'screens':screens}
-        if tool == 'roi_screen':
-            out = work / 'screening'
-            ctx = work / 'screen.json'
-            write_json(ctx, {'tool': tool, 'source': str(target['source']),
-                             'regions': str(target['regions']),
-                             'feature_id': target.get('feature_id'),
-                             'image_id': target['image_id'], 'output': str(out),
-                             'screen_max_rois':int(session.config.get('screen_max_rois',4)),
-                             'feature_hint': feature_hint(target.get('feature_id'))})
-            command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
-            return {'screen': str(out / 'screen.json')}
-        if tool in {'needle_scan', 'feature_scan'}:
+        if tool in {'feature_scan'}:
             feature_id = target.get('feature_id')
-            if tool == 'needle_scan':
-                feature_id = feature_id or 'needle_crystal'
-            elif not isinstance(feature_id, str) or not feature_id.strip():
+            if not isinstance(feature_id, str) or not feature_id.strip():
                 raise IntegrationError('FEATURE_SCAN_INPUT', 'feature_scan 必须显式提供 feature_id')
             from detect_core import FEATURE_ID
             from prompts import CLASSIFY_HINTS
@@ -83,7 +60,7 @@ class WorkflowBackend:
             from concurrent.futures import ThreadPoolExecutor, as_completed
             from PIL import Image, ImageFilter, ImageStat
             source = Path(target['source'])
-            prefix = 'feature_scan' if tool == 'feature_scan' else 'needle_scan'
+            prefix = 'feature_scan'
             with Image.open(source) as handle:
                 width, height = handle.size
             tile = max(256, min(2048, int(session.config.get(prefix + '_tile_size', 1024))))
@@ -243,22 +220,19 @@ class WorkflowBackend:
             return {'detections': yolo_result or {},
                     'feature_scan': {'crops_dir': str(crops), 'completion': str(completion)},
                     'partial': bool(errors), 'errors': errors}
-        if tool in {'propose_regions', 'locate_feature'}:
+        if tool == 'locate_feature':
             out = work / 'detection'
             ctx = work / 'recovery.json'
             data = {'tool': tool, 'source': str(target['source']), 'output': str(out)}
-            if tool == 'locate_feature':
-                data.update(roi=target['roi'], feature_id=target['feature_id'],
-                            px_per_um=target.get('px_per_um'),
-                            locate_expand=session.config.get('locate_expand', 1.5),
-                            locate_min_box_side=session.config.get('locate_min_box_side', 90),
-                            locate_min_roi_side=session.config.get('locate_min_roi_side', 256),
-                            feature_hint=feature_hint(target['feature_id']),
-                            existing_boxes=session.existing_boxes(target['image_id']))
+            data.update(roi=target['roi'], feature_id=target['feature_id'],
+                        px_per_um=target.get('px_per_um'),
+                        locate_expand=session.config.get('locate_expand', 1.5),
+                        locate_min_box_side=session.config.get('locate_min_box_side', 90),
+                        locate_min_roi_side=session.config.get('locate_min_roi_side', 256),
+                        feature_hint=feature_hint(target['feature_id']),
+                        existing_boxes=session.existing_boxes(target['image_id']))
             write_json(ctx, data)
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
-            if tool == 'propose_regions':
-                return {'regions': str(out / 'regions.json')}
             return {'crops_dir': str(out / 'crops'), 'completion': str(out / 'region_result.json')}
         if tool in {'detect_fov_initial', 'detect_region'}:
             initial = tool == 'detect_fov_initial'
@@ -335,30 +309,29 @@ class WorkflowBackend:
             meta=contracts.CropMeta.from_json(target['path'])
             cnn_info=None
             cnn_error=None
-            if session.config.get('cnn_weights') and session.config.get('cnn_meta'):
+            if session.config.get('cnn_weights') or session.config.get('cnn_meta'):
                 try:
-                    cache=session.root/'cnn'/'predictions.json'
-                    cnn_doc=read_json(cache) if cache.is_file() else None
-                    rows={str(row.get('id')):row for row in ((cnn_doc or {}).get('rows') or [])}
-                    if cnn_doc is None or target['id'] not in rows:
-                        # cache 只含首次批次的 crop；后续新 crop 到来时失效重跑。
-                        crops=[]
-                        for tid,crop in session.targets().items():
-                            if crop.get('kind')!='crop':
-                                continue
+                    from .stage2_classifier import model_profile, request_signature, cache_matches
+                    profile=model_profile(session.config)
+                    if getattr(session,'cnn_signature',profile)!=profile:
+                        raise IntegrationError('CNN_ASSET_CHANGED','任务启动后 stage2 模型或 meta 已变化')
+                    crops=[]
+                    for tid,crop in session.targets().items():
+                        if crop.get('kind')=='crop':
                             m=contracts.CropMeta.from_json(crop['path'])
                             crops.append({'id':tid,'png':str(m.png)})
-                        if not crops:
-                            raise IntegrationError('CNN_EMPTY','CNN 没有待分类 crop')
-                        weights=project_path(session.config.get('cnn_weights') or
-                            '分类器设计与权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/best.pt')
-                        cnn_meta=project_path(session.config.get('cnn_meta') or
-                            '分类器设计与权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/model_meta.json')
-                        if not weights.is_file() or not cnn_meta.is_file():
-                            raise IntegrationError('CNN_ASSET_MISSING','CNN 权重或 meta 缺失')
+                    crops.sort(key=lambda row:row['id'])
+                    signature=request_signature(profile,crops,session.yolo_python)
+                    cache=session.root/'cnn'/'predictions.json'
+                    try:
+                        cnn_doc=read_json(cache) if cache.is_file() else None
+                    except (OSError,ValueError):
+                        cnn_doc=None
+                    if not cache_matches(cnn_doc,signature):
                         cnn_output=session.root/'cnn'/'predictions.json'
                         cnn_context=work/'cnn_context.json'
-                        write_json(cnn_context,{'crops':crops,'weights':str(weights),'meta':str(cnn_meta),
+                        write_json(cnn_context,{'crops':crops,'weights':profile['weights'],'meta':profile['meta'],
+                            'signature':signature,
                             'output':str(cnn_output),'batch_size':int(session.config.get('cnn_batch_size',16))})
                         run([str(session.yolo_python),'-X','utf8','-m',
                              'TCM_Fusion.cli.cnn_classifier_worker','--context',str(cnn_context)],
@@ -367,14 +340,16 @@ class WorkflowBackend:
                         if not cnn_output.is_file():
                             raise IntegrationError('CNN_INCOMPLETE','CNN 没有产出 predictions.json')
                         cnn_doc=read_json(cnn_output)
-                        rows={str(row.get('id')):row for row in (cnn_doc.get('rows') or [])}
+                        if not cache_matches(cnn_doc,signature):
+                            raise IntegrationError('CNN_OUTPUT_INVALID','CNN 返回与本次输入/模型不匹配')
+                    rows={str(row.get('id')):row for row in cnn_doc['rows']}
                     cnn_info=rows.get(target['id'])
                     threshold=float(session.config.get('cnn_threshold',.75))
                     entropy_limit=float(session.config.get('cnn_entropy_threshold',.8))
                     if cnn_info:
                         top1=str(cnn_info.get('top1') or '')
                         prob=float(cnn_info.get('top1_prob') or 0)
-                        entropy=float(cnn_info.get('entropy') or 1)
+                        entropy=float(cnn_info.get('entropy',1))
                         other_fallback=bool(session.config.get('cnn_other_fallback',True))
                         direct=(top1 not in {'other',''} and prob>=threshold and entropy<=entropy_limit
                                 and not (other_fallback and top1=='other'))
@@ -394,12 +369,16 @@ class WorkflowBackend:
                                 'crop_id':meta.crop_id,'crop_png':str(meta.png),
                                 'glm_confidence':None,'yolo_confidence':None,'yolo_checked':False,
                                 'confidence_source':'cnn','cnn_score':round(prob,6),
-                                'cnn_entropy':round(entropy,6),'cnn_topk':cnn_info.get('topk') or []}
+                                'cnn_entropy':round(entropy,6),'cnn_topk':cnn_info.get('topk') or [],
+                                'cnn_model_signature':profile}
                             write_json(out/'classification.json',doc)
                             return {'classification':str(out)}
                 except Exception as exc:
-                    cnn_error=str(exc)[:240]
+                    cnn_error={'code':getattr(exc,'code','CNN_FAILED'),'detail':str(exc)[:240]}
             if target.get('batch_cnn_only'):
+                if cnn_error:
+                    # 工程失败单独进入 batch.failures，不冒充“低置信/other”。
+                    raise IntegrationError(cnn_error['code'],cnn_error['detail'])
                 out=work/'classification'
                 doc={'label':'待复核','reject':'pending_review','raw_label':'待复核',
                      'feature_id':'','second':'','confidence':'low',
@@ -407,7 +386,10 @@ class WorkflowBackend:
                      'confidence_score':0.0,'confidence_source':'cnn',
                      'crop_id':meta.crop_id,'crop_png':str(meta.png),
                      'glm_confidence':None,'yolo_confidence':None,'yolo_checked':False,
-                     'cnn_score':None,'cnn_entropy':None,'cnn_topk':[]}
+                     'cnn_score':cnn_info.get('top1_prob') if cnn_info else None,
+                     'cnn_entropy':cnn_info.get('entropy') if cnn_info else None,
+                     'cnn_topk':cnn_info.get('topk',[]) if cnn_info else [],
+                     'cnn_model_signature':profile if cnn_info else None}
                 write_json(out/'classification.json',doc)
                 return {'classification':str(out)}
             ctx={'tool':tool,'crop_id':meta.crop_id,'crop_json':str(target['path']),
@@ -465,14 +447,15 @@ class WorkflowBackend:
                     doc['yolo_checked']=False
                     doc['yolo_error']=str(exc)[:200]
                     doc['confidence_source']='glm'
-                if cnn_info:
-                    doc['cnn_score']=cnn_info.get('top1_prob')
-                    doc['cnn_entropy']=cnn_info.get('entropy')
-                    doc['cnn_topk']=cnn_info.get('topk') or []
-                    doc['cnn_fallback_reason']='low_confidence_or_other'
-                elif cnn_error:
-                    doc['cnn_error']=cnn_error
-                write_json(out/'classification.json',doc)
+            if cnn_info:
+                doc['cnn_score']=cnn_info.get('top1_prob')
+                doc['cnn_entropy']=cnn_info.get('entropy')
+                doc['cnn_topk']=cnn_info.get('topk') or []
+                doc['cnn_model_signature']=profile
+                doc['cnn_fallback_reason']='low_confidence_or_other'
+            elif cnn_error:
+                doc['cnn_error']=cnn_error
+            write_json(out/'classification.json',doc)
             return {'classification':str(out)}
         if tool=='segment_instance':
             src=Path(target['path']);meta=contracts.CropMeta.from_json(str(src))

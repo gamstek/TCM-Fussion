@@ -1,4 +1,17 @@
-"""同一起点对照原B固定补查策略；仅用于显式模拟环境，不把回放当在线收益。"""
+"""同起点对照原 B 固定补查策略；仅用于显式模拟环境，不把回放当在线收益。
+
+主要定义：
+- `compare_fixed_fixture(runtime, backend, agent_result, *, max_calls=6)`: 在相同测量起点用固定 scene/presence 补查跑原 B 规则，返回固定策略与 React 各自的决定、observation/planning/重复请求计数。
+- `FixedClient`: 内部适配器，把固定补查包装为 `runtime.action` + backend 调用并累计 calls。
+- `simulation`/`accuracy_gain`/`real_cost_gain`: 显式标注模拟性质，收益字段保持未验证（None）。
+- `EVAL_REPLAY_ONLY`: 非模拟运行时抛出，禁止把回放当真实对照。
+
+关联：
+- TCM_Fusion.tests.test_react: `test_original_fixed_policy_comparison_counts_planning` 调用本模块。
+- agent_loop.augment_and_rescore: 固定补查策略的执行主体。
+- rule_engine.pool_evidence/decide、scene_attributes.build_scene: 计算同起点判决。
+- TCM_Fusion.lib.storage: 复用 `IntegrationError` 表达拒绝原因。
+"""
 from __future__ import annotations
 
 import copy

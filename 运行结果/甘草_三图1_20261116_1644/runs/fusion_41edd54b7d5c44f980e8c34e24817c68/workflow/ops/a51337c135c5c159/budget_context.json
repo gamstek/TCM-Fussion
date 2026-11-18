@@ -1,0 +1,14 @@
+{
+  "operation_key": "a51337c135c5c1596a117f3d14d74d96c0dd350e063eb97fffa166601f22e9c8",
+  "budget_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\resources.json",
+  "limits": {
+    "initialization": 4,
+    "recompute": 30,
+    "network": 200,
+    "planning": 60,
+    "observation": 40,
+    "total": 400,
+    "finalization": 1
+  },
+  "identity": "0f2301d4f675b77121fb9a77e53eb6d474d7f05d75741b3d018339e77da67354"
+}

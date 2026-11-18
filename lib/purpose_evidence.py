@@ -1,7 +1,25 @@
-"""受信用途适配：只消费当前证据库绑定评估；旧flags保留，原规则仅见合格投影。"""
+"""受信用途适配：只消费当前证据库绑定评估，把测量记录投影成规则引擎可用的行。
+
+旧 flags 字段保留兼容，但只有通过合格质量投影的字段才向下游暴露；量纲不被许可时
+清空数值并标记 unqualified，形态许可不足时剥离形状字段，绝不修改原记录本身。
+
+主要定义：
+- project: 遍历当前证据快照，校验图像/crop/mask 绑定与用途资格后输出合格测量行。
+
+关联：
+- contracts: 使用 CropMeta 与 parse_flags 解析 crop 工件与记录旗标。
+- .storage: 使用 file_hash 校验工件哈希、IntegrationError 报告范围失配。
+- .workflow_runtime / .workflow_entry: 在生成测量投影时调用 project。
+- rule_engine: 提供 SHAPE_KEYS，用于在形态不合格时剥离形状字段。
+"""
 import copy
 import contracts
 from .storage import file_hash,IntegrationError
+
+
+def dimension_use(field):
+    """原用途投影的统一量纲分类；供语义目标检查复用，不改现有字段语义。"""
+    return 'width' if 'width' in field else 'area' if 'area' in field else 'length'
 
 
 def project(runtime):
@@ -24,7 +42,7 @@ def project(runtime):
             raise IntegrationError('QUALITY_SCOPE','关联mask变化')
         if not qa['integrity'] or not qa['uses']['existence']['allowed']:continue
         # 仅投影，不修改原记录旗标。按量纲显式剥离不允许的量化和形状。
-        pd=row.get('primary_dimension','');use='width' if 'width' in pd else 'area' if 'area' in pd else 'length'
+        pd=row.get('primary_dimension','');use=dimension_use(pd)
         if not qa['uses'][use]['allowed'] or use=='area' or not any(x in pd for x in ('width','feret_max')):
             row['primary_value_um']=None;row['calibration_status']='unqualified'
         row['flags']=[f for f in contracts.parse_flags(row.get('flags')) if f!='igm_review']
@@ -33,7 +51,7 @@ def project(runtime):
             for key in SHAPE_KEYS:row.pop(key,None)
         for key in list(row):
             if any(s in key for s in ('feret','width','area','perimeter')) and key not in {'primary_dimension'}:
-                field_use='width' if 'width' in key else 'area' if 'area' in key else 'length'
+                field_use=dimension_use(key)
                 if not qa['uses'][field_use]['allowed']:row[key]=None
         rows.append(row)
     return rows

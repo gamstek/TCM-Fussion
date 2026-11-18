@@ -1,4 +1,17 @@
-"""图片示例审计：contact sheet 与分数规范化；不调用真实 VLM。"""
+"""图片示例审计回归：contact sheet 拼图与分数规范化，不调用真实 VLM。
+
+主要定义：
+- ImageExemplarAuditTests.test_contact_sheet_and_normalization: 生成 contact sheet，并把审计回复规范化为非阻断的 auto_unreviewed 记录。
+- ImageExemplarAuditTests.test_scores_are_clamped: 越界分数被夹到 [0,1]，负边际由输入分数推导。
+- ImageExemplarAuditTests.test_generic_feature_uses_target_score: 通用特征使用 target_score，不再写入 needle_score。
+- ImageExemplarAuditTests.test_generic_bank_has_14_targets_and_fiber_entry: 校验示例库含 14 个目标且 fiber 有正负例。
+
+关联：
+- TCM_Fusion.lib.image_exemplar_audit: 被测的 build_contact_sheet 与 normalize_audit。
+- TCM_Fusion/config/feature_exemplar_bank.json: 通用示例库结构来源。
+- PIL.Image: 生成临时目标/正例/负例图片。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import tempfile
 import unittest
 import json

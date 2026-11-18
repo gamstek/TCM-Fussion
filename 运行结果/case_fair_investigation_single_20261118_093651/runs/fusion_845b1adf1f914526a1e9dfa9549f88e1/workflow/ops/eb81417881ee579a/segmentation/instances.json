@@ -1,0 +1,34 @@
+{
+  "n_crops": 1,
+  "n_instances": 1,
+  "instances": [
+    {
+      "crop_id": "cluster_crystal_view_01_02",
+      "stem": "view_01",
+      "feature_id": "cluster_crystal",
+      "object_label": "草酸钙簇晶",
+      "herb": "",
+      "px_per_um": "11.65",
+      "mask_file": "masks/view_01__cluster_crystal__inst01.png",
+      "igm_dir": "igm/cluster_crystal_view_01_02",
+      "igm_status": "ok",
+      "igm_area_ratio": 0.298004,
+      "granularity": "instance",
+      "n_components": 1,
+      "igm_polarity_conflict": false,
+      "igm_box": [
+        24,
+        24,
+        261,
+        254
+      ],
+      "igm_dropped_components": 0,
+      "igm_dropped_px": 0,
+      "igm_clipped_px": 0,
+      "igm_fg_outside_box_ratio": 0.0,
+      "igm_touches_border": "",
+      "igm_border_contact_ratio": "",
+      "igm_center_comp_ratio": 0.432
+    }
+  ]
+}

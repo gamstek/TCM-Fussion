@@ -1,4 +1,17 @@
-"""固定argv运行原入口；超时/取消杀进程树，预算钩子由paths派生环境注入。"""
+"""以固定 argv 启动原入口子进程，超时/取消时整树终止，并经环境注入预算钩子。
+
+主要定义：
+- safe_log: 日志上下文管理器，落盘后把环境与配置中的凭据替换为 [REDACTED]。
+- kill_tree: 有界整树终止；Windows 用 taskkill /T /F，未退出立即 kill/reap，失败则显式报错。
+- run: 启动 worker，写入 command.json，轮询 HTTP 失败/超时/取消并返回失败码。
+
+关联：
+- paths: 提供 PROJECT_ROOT、MODULE_DIRS 与检测配置目录。
+- .storage: IntegrationError 与 write_json。
+- .resource_budget.operation_failure: 轮询预算账本中的 HTTP 失败。
+- .worker_bootstrap/sitecustomize.py: 子进程经 FUSION_BUDGET_CONTEXT 安装预算守卫。
+- .workflow_backend、.hard_calls: 调用 run / kill_tree 管理原 B worker。
+"""
 import os
 import signal
 import subprocess
@@ -61,6 +74,8 @@ parent is an explicit failure rather than a silently successful cleanup.
 
 
 def run(argv, *, context_path, timeout, log_path, cancel_event=None):
+    if not isinstance(context_path, (str, os.PathLike)):
+        raise IntegrationError('BUDGET_CONTEXT_INVALID', 'worker预算上下文必须是文件路径')
     hook=Path(paths.PROJECT_ROOT)/'TCM_Fusion/lib/worker_bootstrap'
     env=dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUNBUFFERED='1', FUSION_BUDGET_CONTEXT=str(context_path),
              PYTHONPATH=os.pathsep.join([str(hook),str(paths.PROJECT_ROOT),*map(str,paths.MODULE_DIRS)]))
@@ -68,13 +83,18 @@ def run(argv, *, context_path, timeout, log_path, cancel_event=None):
     from .storage import write_json
     from .resource_budget import operation_failure
     def check_http_failure():
-        failure=operation_failure(context_path)
+        try:
+            failure=operation_failure(context_path)
+        except (OSError, TypeError, KeyError, ValueError) as exc:
+            raise IntegrationError('BUDGET_CONTEXT_INVALID', 'worker预算上下文不可读取或字段不完整') from exc
         if failure:
             status=failure.get('http_status')
             code='UPSTREAM_HTTP_'+str(status) if isinstance(status,int) else 'UPSTREAM_NETWORK_FAILED'
             raise IntegrationError(code,'原B模型请求失败；停止本阶段且不接受空检测产物，详见资源账本')
+    check_http_failure()  # 无效上下文在启动子进程前失败，不产生幽灵worker。
     write_json(Path(log_path).parent/'command.json', {'argv':list(map(str,argv)),'timeout_seconds':timeout})
     with safe_log(log_path,env) as stream:
+        started = time.monotonic(); started_at = time.time()
         p=subprocess.Popen(list(map(str,argv)),cwd=paths.PROJECT_ROOT,env=env,
             stdin=subprocess.DEVNULL,stdout=stream,stderr=stream,start_new_session=os.name!='nt',
             creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name=='nt' else 0)
@@ -90,5 +110,15 @@ def run(argv, *, context_path, timeout, log_path, cancel_event=None):
         except BaseException as exc:
             kill_tree(p)
             if isinstance(exc,IntegrationError):raise
-            raise IntegrationError('WORKFLOW_TIMEOUT','任务超时或取消；进程树已终止，不自动重发')
+            if isinstance(exc, TimeoutError):
+                raise IntegrationError('WORKFLOW_TIMEOUT','任务超时或取消；进程树已终止，不自动重发') from exc
+            if isinstance(exc, (KeyboardInterrupt, SystemExit)):
+                raise
+            raise IntegrationError('WORKER_CONTROL_FAILED',
+                                   '本地worker监管异常：'+type(exc).__name__+'；已清理，不自动重发') from exc
+        finally:
+            write_json(Path(log_path).parent/'process_timing.json', {
+                'started_at':started_at,'ended_at':time.time(),
+                'elapsed_seconds':round(time.monotonic()-started,6),
+                'returncode':p.poll(),'scope':'subprocess including local startup and cleanup'})
     if code:raise IntegrationError('WORKER_FAILED',f'受控阶段退出码{code}；日志仅保留本地')

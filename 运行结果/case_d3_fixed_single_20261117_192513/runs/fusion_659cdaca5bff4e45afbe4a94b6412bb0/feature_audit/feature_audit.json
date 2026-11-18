@@ -1,0 +1,71 @@
+{
+  "schema": "feature-audit/v1",
+  "non_blocking": true,
+  "feature_ids": [
+    "cluster_crystal",
+    "single_crystal",
+    "needle_crystal",
+    "vessel",
+    "stone_cell",
+    "starch_grain",
+    "non_glandular_hair",
+    "secretory_tissue",
+    "stoma",
+    "epidermis_cell",
+    "hypha",
+    "fiber",
+    "pollen_grain",
+    "other"
+  ],
+  "note": "旁路审计；不参与 rule decide，不阻断 det_score>=0.8 的 mask/measure",
+  "summary": {
+    "feature_ids": [
+      "cluster_crystal",
+      "single_crystal",
+      "needle_crystal",
+      "vessel",
+      "stone_cell",
+      "starch_grain",
+      "non_glandular_hair",
+      "secretory_tissue",
+      "stoma",
+      "epidermis_cell",
+      "hypha",
+      "fiber",
+      "pollen_grain",
+      "other"
+    ],
+    "n_candidates": 0,
+    "classified_target": 0,
+    "classified_non_target": 0,
+    "high_score_unclassified": 0,
+    "low_score_unclassified": 0,
+    "n_masks": 1,
+    "n_instances": 1,
+    "merged_masks": 1
+  },
+  "candidates": [],
+  "instances": [
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_fixed_single_20261117_192513\\runs\\fusion_659cdaca5bff4e45afbe4a94b6412bb0\\workflow\\ops\\70e81d0ea2842072\\segmentation\\igm\\cluster_crystal_view_01_01\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 24403,
+          "skeleton_px": 467,
+          "endpoints": 7,
+          "branch_points": 176,
+          "length_px": 467.0,
+          "major_axis_px": 144.07,
+          "width_px": 141.89,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_fixed_single_20261117_192513\\runs\\fusion_659cdaca5bff4e45afbe4a94b6412bb0\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,20 @@
-"""真实LangMem处理、提示消费、封闭回放/发布隔离与共享账本回归。"""
+"""真实 LangMem 优化、提示消费、封闭回放/发布隔离与共享账本回归。
+
+主要定义：
+- PromptTests 优化与真值校验: `P.optimize` 生成新 instruction；truth 模式接受已验证纠正而非要求答案一致。
+- 发布与消费: `P.validate`+`P.publish` 后 `run_react` 实际使用发布提示，候选请求数低于基线。
+- 数据集隔离: train/development 重叠、test 集参与优化或校验、未知观察被编造都报错或被判失败。
+- 防伪造: guard 摘要变更、篡改报告、模拟 release 用于真实运行均被拒。
+- 规划客户端: `LLMPlanner` 载荷含发布 instruction 与 GUARD，短编号 A1/A2 映射回注册 action_id。
+- 共享账本与跨进程锁: 同账本两实例去重计费，`ledger_lock` 在另一进程持锁时返回 `LEDGER_BUSY`。
+
+关联：
+- TCM_Fusion.lib.prompt_optimization: `optimize`/`validate`/`publish`/`load_release`/`RecordedTools`。
+- TCM_Fusion.lib.react_graph: `run_react` 与 `LLMPlanner`。
+- TCM_Fusion.lib.agent_tools: `LocalToolbox`/`FixtureBackend`。
+- TCM_Fusion.tests.prompt_support: 提供离线模型与规划替身。
+- TCM_Fusion.lib.ledger_lock、adjudicator.AdjudicatorClient: 跨进程锁与模型客户端。
+"""
 import asyncio
 import copy
 import json

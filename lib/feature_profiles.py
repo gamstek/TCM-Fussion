@@ -1,7 +1,17 @@
-"""特征 profile：以 taxonomy 为全集，避免把针晶提示写进所有特征。
+"""特征 profile：以 taxonomy 为全集，提供提示/负例/几何标签，不决定工具可用性。
 
-profile 只提供提示/负例/几何标签，不决定工具是否可用；模型不支持的特征仍由
-worker 的受信类别表拒绝，不能因为 profile 存在就假装可识别。
+主要定义：
+- load_taxonomy: 读取项目根 feature_taxonomy.json。
+- default_profiles: 从 taxonomy 生成逐特征 profile（positive/negative/geometry/source）。
+- build_profiles: 用配置覆盖默认 profile，仅接受已存在特征。
+- profile_for: 返回单个特征的深拷贝 profile。
+- hint_text: 拼出正例与易混负例提示文本。
+
+关联：
+- paths、.storage.read_json: 定位并读取 taxonomy。
+- .workflow_backend: 用 hint_text/profile_for 构造特征提示。
+- .workflow_entry: feature_profiles 配置项传入覆盖值。
+- tests/test_feature_profiles.py、tests/test_multi_view.py: 回归 profile 生成。
 """
 from __future__ import annotations
 

@@ -1,0 +1,33 @@
+{
+  "crop_id": "single_crystal_view_01_07",
+  "png": "single_crystal_view_01_07.png",
+  "source_image_path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\view_01.jpg",
+  "stem": "view_01",
+  "feature_id": "single_crystal",
+  "object_label": "草酸钙方晶",
+  "herb": "",
+  "px_per_um": 11.65,
+  "tight_box": [
+    757.0,
+    782.6,
+    880.2,
+    951.3
+  ],
+  "tight_box_local": [
+    24.0,
+    24.600000000000023,
+    147.20000000000005,
+    193.29999999999995
+  ],
+  "loose_box": [
+    733,
+    758,
+    904,
+    975
+  ],
+  "crop_size": "171x217",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.7503,
+  "det_confidence": "high"
+}

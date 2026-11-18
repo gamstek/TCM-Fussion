@@ -1,4 +1,19 @@
-"""反思发布的有效性、数据隔离与回放反例；不调用模型。"""
+"""反思发布的有效性、数据隔离与回放反例回归；不调用真实模型。
+
+主要定义：
+- ReflectionTests.test_publish_load_and_no_network: `propose`→`validate`→`publish`→`load_memory` 全链路且不联网。
+- test_second_view_evidence_rejects_early_stop: 后续视图出现阳性时否定提前停止策略。
+- test_feedback_cannot_be_unbound_or_unsupported、test_no_gain_claim_checked_against_trace: feedback 摘要必须绑定 trace、来源受支持，且无增益声明须与 trace 一致。
+- test_test_set_and_missing_truth_rejected、test_arbitrary_policy_rejected: test 集、缺真值、任意 policy 均被拒。
+- test_forged_pass_replayed、test_simulation_memory_not_used_in_production: 伪造报告重放失败，模拟记忆不能在真实运行使用或被篡改。
+- test_llm_reflection_requires_opt_in、test_llm_path_uses_text_feedback_only: LLM 反思需显式 opt-in，且载荷不含图像。
+
+关联：
+- TCM_Fusion.lib.reflection: `propose`/`validate`/`publish`/`load_memory`。
+- TCM_Fusion.lib.storage: `digest`/`read_json`/`write_json`/`IntegrationError`。
+- TCM_Fusion.lib.agent_tools: `FixtureBackend` 的回放对照。
+- adjudicator.AdjudicatorClient: LLM 反思客户端替身。
+"""
 import copy
 import tempfile
 import unittest

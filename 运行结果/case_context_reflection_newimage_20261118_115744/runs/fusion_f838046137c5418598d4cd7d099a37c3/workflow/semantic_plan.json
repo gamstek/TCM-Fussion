@@ -1,0 +1,105 @@
+{
+  "schema": "serial-semantic-plan/d3",
+  "plan_id": "plan:0a3b4820353199a788626055",
+  "goal": {
+    "semantic_task": "measure_width",
+    "instance_ref": "inst:bf952e76291d1ecdb8fe1593a1154830960865517570152d2752c8ffa3ae36d2",
+    "problem_id": "instance-question:b02a39cf4fea9876a0a5"
+  },
+  "dimension": "width",
+  "bound_input": "6cf4ed2df6462b2075aabdd10748f04df0f7dc57c78c97e57a5ff89fdefcd036",
+  "nodes": [
+    {
+      "node_id": "verify_identity",
+      "semantic_task": "verify_identity",
+      "instance_ref": "inst:bf952e76291d1ecdb8fe1593a1154830960865517570152d2752c8ffa3ae36d2",
+      "depends_on": [],
+      "status": "blocked",
+      "required_facts": [
+        "instance_exists"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "obtain_mask",
+      "semantic_task": "obtain_mask",
+      "instance_ref": "inst:bf952e76291d1ecdb8fe1593a1154830960865517570152d2752c8ffa3ae36d2",
+      "depends_on": [
+        "verify_identity"
+      ],
+      "status": "blocked",
+      "required_facts": [
+        "identity_eligible",
+        "calibration_trusted"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "check_use",
+      "semantic_task": "check_use",
+      "instance_ref": "inst:bf952e76291d1ecdb8fe1593a1154830960865517570152d2752c8ffa3ae36d2",
+      "depends_on": [
+        "obtain_mask"
+      ],
+      "status": "blocked",
+      "required_facts": [
+        "identity_eligible",
+        "mask_valid",
+        "calibration_trusted",
+        "dimension_eligible"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "measure",
+      "semantic_task": "measure",
+      "instance_ref": "inst:bf952e76291d1ecdb8fe1593a1154830960865517570152d2752c8ffa3ae36d2",
+      "depends_on": [
+        "check_use"
+      ],
+      "status": "blocked",
+      "required_facts": [
+        "identity_eligible",
+        "mask_valid",
+        "calibration_trusted",
+        "dimension_eligible"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "update_criteria",
+      "semantic_task": "update_criteria",
+      "instance_ref": "inst:bf952e76291d1ecdb8fe1593a1154830960865517570152d2752c8ffa3ae36d2",
+      "depends_on": [
+        "measure"
+      ],
+      "status": "blocked",
+      "required_facts": [
+        "measurement_available"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    }
+  ],
+  "status": "returned_to_react",
+  "return_reason": "identity_rejected"
+}

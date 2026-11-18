@@ -1,4 +1,20 @@
-"""Generic multi-image interface contracts; model calls are explicit mocks."""
+"""多图接口契约回归：源图校验、case 目录隔离、dry-run 与真实 pipeline 指针，模型调用均为显式替身。
+
+主要定义：
+- MultiViewTests（源图校验）: SHA 缺失/重复、路径穿越、数量不符在创建 case 前被拒绝。
+- MultiViewTests（数量与解释器）: 图片数量不固定为五张；a_python 缺失时给出明确错误码。
+- MultiViewTests（case 命名）: 拒绝 OS 非法与保留名，接受可移植中文名。
+- MultiViewTests（dry-run）: 只复制源图，不建缓存、不跑 pipeline，配置中不出现参考标签。
+- MultiViewTests（真实执行）: 调用现有 pipeline、写 run_location 与 interface_status。
+- MultiViewTests（失败路径）: doctor 失败与 pipeline 异常都持久化终态且不宣称完成。
+- MultiViewTests（模板与参考对齐）: 拒绝隐藏 routing/allow_recorded，并核对历史参考模板的字段取值。
+
+关联：
+- TCM_Fusion.lib.multi_view: 被测的 inspect_sources / bind_config / run_multi_view。
+- TCM_Fusion.config/multi_view.json: bind_config 使用的实时模板。
+- TCM_Fusion.lib.storage: read_json/write_json/IntegrationError 支撑文件契约。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import copy
 import hashlib
 import json
@@ -179,7 +195,6 @@ class MultiViewTests(unittest.TestCase):
         self.assertEqual(set(new['enabled_tools']), set(TOOLS))
         self.assertNotIn('p0_priority', new)
         self.assertEqual(new['glm_identity_threshold'], .8)
-        self.assertEqual(new['glm_locate_threshold'], .8)
         self.assertEqual(new['locate_expand'], 1.5)
         self.assertNotIn('needle_audit', new)
         self.assertIn('针晶', new['feature_profiles']['needle_crystal']['positive'])

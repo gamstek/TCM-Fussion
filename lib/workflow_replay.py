@@ -1,4 +1,20 @@
-"""重算闭环的封闭回放：复用录制物理工件，未知动作/依赖拒绝；不新发看图请求。"""
+"""重算闭环的封闭回放：复用录制的物理工件与视觉观察，重跑规划链做对照评估。
+
+回放不发起新的看图请求；未知动作或依赖指纹不唯一的录制记录一律拒绝（REPLAY_MISS），
+录制产物越界、缺失或哈希变化同样失败，因此回放结果不代表独立真值或策略发布。
+
+主要定义：
+- bundle: 把一次后端运行的关键产物路径与文件哈希收拢成可回放的录制包。
+- RecordedStages: 按工具/目标/依赖指纹匹配唯一录制动作并复制其工件，替代真实后端。
+- RecordedObservations: 按 action_id 返回唯一录制的视觉观察与 usage，替代真实模型调用。
+- replay_report: 重放整条 ReAct 工作流，输出证据摘要、签名、覆盖率与源裁决对照报告。
+
+关联：
+- .storage: 使用 IntegrationError、file_hash、read_json、write_json、digest 做校验与落盘。
+- .workflow_runtime / .agent_tools / .react_graph: 分别提供运行时、工具账本与回放驱动器。
+- .workflow_prompt_validation: 其 validate_workflow 调用 replay_report 做开发集双回放。
+- contracts: 读取 CropMeta 与质量评估工件，还原可比较的物理证据摘要。
+"""
 import shutil
 from pathlib import Path
 from .storage import IntegrationError, file_hash, read_json

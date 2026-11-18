@@ -1,0 +1,18 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\view_02.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\ad924c7cd871215c\\scan\\tile_03\\detection",
+  "roi": [
+    1024,
+    768,
+    2048,
+    1536
+  ],
+  "feature_id": "stone_cell",
+  "px_per_um": 11.65,
+  "locate_expand": 1.5,
+  "locate_min_box_side": 90,
+  "locate_min_roi_side": 256,
+  "feature_hint": "目标正例：石细胞：细胞壁显著增厚、中央胞腔小的厚壁细胞，外形类方形、类圆形、多角形、分枝状或波状弯曲，壁上可见层纹与孔沟 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；表皮细胞：片状/多边形边界；分泌组织：油室/油管/腔隙",
+  "existing_boxes": []
+}

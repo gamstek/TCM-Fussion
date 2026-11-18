@@ -1,4 +1,17 @@
-"""本地配置检查与启动前失败；替身仅覆盖检查分支，绝不发起模型请求。"""
+"""本地配置检查与启动前失败回归；替身只覆盖检查分支，绝不发起模型请求。
+
+主要定义：
+- ReadinessTests（配置解析）: 缺失、非法 JSON 与 BOM 编码分别给出 CONFIG_MISSING/CONFIG_INVALID/CONFIG_ENCODING_UNSUPPORTED。
+- ReadinessTests（凭据与端点）: 模板无 key 不可 ready；文件与环境凭据冲突、含用户信息的端点被拒绝且不回显密钥。
+- ReadinessTests（离线放行）: heuristic 本地规划不要求凭据即可 ready。
+- ReadinessTests（启动拦截）: preflight 失败时不构造 runtime/MCP，并持久化 agent_preflight.json。
+
+关联：
+- TCM_Fusion.lib.runtime_readiness: 被测的 profile_checks 与 planner_preflight。
+- TCM_Fusion.lib.workflow_entry.execute_workflow: 启动前检查与失败拦截路径。
+- paths.DETECTION_CONFIG_DIR: 被临时目录替换以隔离真实配置。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import asyncio
 import json
 import os

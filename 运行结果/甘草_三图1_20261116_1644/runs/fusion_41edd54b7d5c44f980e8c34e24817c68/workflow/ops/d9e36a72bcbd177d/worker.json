@@ -1,0 +1,15 @@
+{
+  "tool": "classify_target",
+  "crop_id": "needle_crystal_view_01_03",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\needle_crystal_view_01_03.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\c7cd3ca936ab2b50\\detection\\crops\\needle_crystal_view_01_03.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\view_01.tif",
+  "tight_box": [
+    2126.8,
+    1788.2,
+    2661.8,
+    2158.0
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\d9e36a72bcbd177d\\classification",
+  "feature_hint": "目标正例：针晶可散在，也常多根成束、密集、相邻或连续分布；优先框可分辨的针状结晶及其集合，不因成簇、堆叠或相邻出现而排除。 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；表皮细胞：片状/多边形边界；导管：管腔/环纹/网纹；石细胞：厚壁/胞腔；分泌组织：油室/油管/腔隙内容物；簇晶/方晶/花粉粒仅作软负例"
+}

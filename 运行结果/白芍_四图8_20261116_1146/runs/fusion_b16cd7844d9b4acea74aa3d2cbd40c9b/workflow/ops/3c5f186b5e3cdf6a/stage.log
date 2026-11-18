@@ -1,0 +1,10 @@
+[info] crop 1 个 | 源图 1 张 ['view_04'] | 药材 [''] | 输出 D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_四图8_20261116_1146\runs\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\workflow\ops\3c5f186b5e3cdf6a\segmentation
+
+[1/1] cluster_crystal_view_04_02 | feature=cluster_crystal | px_per_um=11.65
+[结果] cluster_crystal_view_04_02: mask 258x268 | 占比 0.441 | 连通域 1 | 阈值 127.0 | invert=False | 状态 ok | 框先验: 丢邻粒 0 块, 裁 0px
+[输出] D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_四图8_20261116_1146\runs\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\workflow\ops\3c5f186b5e3cdf6a\segmentation\igm\cluster_crystal_view_04_02
+
+[done] 实例 1 个 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_四图8_20261116_1146\runs\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\workflow\ops\3c5f186b5e3cdf6a\segmentation\masks
+       IGM 原始产物 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_四图8_20261116_1146\runs\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\workflow\ops\3c5f186b5e3cdf6a\segmentation\igm
+       实例清单 → D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_四图8_20261116_1146\runs\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\workflow\ops\3c5f186b5e3cdf6a\segmentation\instances.json
+       （几何测量）--masks "D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\白芍_四图8_20261116_1146\runs\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\workflow\ops\3c5f186b5e3cdf6a\segmentation\masks"

@@ -1,1 +1,1 @@
-"""Optional offline validation; still discovered by the unified selftest."""
+"""离线测试包，供 selftest 递归发现。"""

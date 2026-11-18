@@ -1,4 +1,15 @@
-"""受控 YOLO 子进程，仅输出原图坐标和模型溯源。"""
+"""受控 YOLO 检测 worker：只输出原图坐标与模型溯源，从项目根以 `-m` 启动。
+
+主要定义：
+- main: 读取 `--context`，校验权重/类别表/检测配置的哈希签名，在可选 ROI 上检测并把框平移回原图坐标，最后复查资产与原图未变。
+- 模块级约束: 强制 `YOLO_AUTOINSTALL=false`；类别表必须与项目类别顺序一致，否则 `YOLO_CLASS_MAP` 失败；资产或原图在推理期间变化即 `YOLO_ASSET_CHANGED`。
+
+关联：
+- TCM_Fusion.lib.workflow_backend: 以 `-m TCM_Fusion.cli.yolo_worker` 子进程调用，服务于 `detect_fov_initial` 与 `detect_region`。
+- TCM_Fusion.lib.detector_yolo: 提供 `load_settings` 与 `detect`。
+- TCM_Fusion.cli.workflow_worker: 消费本 worker 写出的 boxes 继续裁 crop。
+- TCM_Fusion.lib.storage: 读取 context、文件哈希与写结果 JSON。
+"""
 import argparse
 import os
 from pathlib import Path

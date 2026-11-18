@@ -1,0 +1,35 @@
+{
+  "identity": "0f2301d4f675b77121fb9a77e53eb6d474d7f05d75741b3d018339e77da67354",
+  "parent": "22216084442721cfcc4784f523d135f4c1c9211c8b30da64cdc4b58e8afc3acb",
+  "artifacts": {
+    "img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305": {
+      "id": "img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\view_01.tif",
+      "sha256": "2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305",
+      "parents": [],
+      "image_id": "img_2e6fa242d69544301d0d15aa1492d80629401971aca8b65c97b40daaecfdb305",
+      "valid": true
+    },
+    "img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1": {
+      "id": "img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\view_02.jpg",
+      "sha256": "39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1",
+      "parents": [],
+      "image_id": "img_39109e4655b3267f99ddaa12bd0b65990dd0b574f6d04131aed976624c4e36e1",
+      "valid": true
+    },
+    "img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051": {
+      "id": "img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051",
+      "kind": "image",
+      "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\view_03.tif",
+      "sha256": "1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051",
+      "parents": [],
+      "image_id": "img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "dd2aab4923665de0736722f670abb11a486289f9a556020628cea02192ada253"
+}

@@ -1,0 +1,86 @@
+{
+  "tool": "detect_region",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\view_03.tif",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\9715e1b8fcbd75be\\detection",
+  "boxes": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\甘草_三图1_20261116_1644\\runs\\fusion_41edd54b7d5c44f980e8c34e24817c68\\workflow\\ops\\9715e1b8fcbd75be\\boxes.json",
+  "roi": [
+    0,
+    0,
+    1882,
+    1536
+  ],
+  "px_per_um": 11.65,
+  "existing_boxes": [
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_01",
+      "label": "纤维",
+      "box": [
+        4.7,
+        0.0,
+        1805.6,
+        1536.0
+      ]
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_02",
+      "label": "纤维",
+      "box": [
+        143.0,
+        863.0,
+        1895.5,
+        1534.9
+      ]
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:cluster_crystal_view_03_glm3667244f60f3_01",
+      "label": "草酸钙簇晶",
+      "box": [
+        1210.0,
+        423.0,
+        1426.0,
+        573.0
+      ]
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:cluster_crystal_view_03_glm8a09306abb41_01",
+      "label": "草酸钙簇晶",
+      "box": [
+        1366.5,
+        1058.75,
+        1759.5,
+        1366.25
+      ]
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:starch_grain_view_03_glm492a993e9139_01",
+      "label": "淀粉粒",
+      "box": [
+        1159.75,
+        1074.25,
+        1377.25,
+        1366.75
+      ]
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_roic19725a4d127_02",
+      "label": "纤维",
+      "box": [
+        297.5,
+        863.1,
+        2046.2,
+        1190.8
+      ]
+    },
+    {
+      "id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_roic19725a4d127_03",
+      "label": "纤维",
+      "box": [
+        297.7,
+        1218.2,
+        2048.0,
+        1534.9
+      ]
+    }
+  ],
+  "replace_id": "crop:img_1710284bde6a8dae582cdcf7774e478fd736fd7a18499b69c911433bf14f2051:fiber_view_03_01"
+}

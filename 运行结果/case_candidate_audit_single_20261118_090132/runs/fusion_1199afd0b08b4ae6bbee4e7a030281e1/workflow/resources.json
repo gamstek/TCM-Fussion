@@ -1,0 +1,97 @@
+{
+  "identity": "246317ac552031f04e6b60af68dd91b4656d0d953476926aa7f4bea8552ea3ad",
+  "deadline": 1794966104.2521784,
+  "used": {
+    "planning": 3,
+    "network": 8,
+    "observation": 4,
+    "finalization": 1
+  },
+  "entries": {
+    "planning:0:0": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:0:0": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:2b8fb74ff677be32d9b3232f7111ac124cd887161a20fec90a5175fcf12ba6e3": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:2b8fb74ff677be32d9b3232f7111ac124cd887161a20fec90a5175fcf12ba6e3": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:faf3dbe75dd9d28ecf40ef237c65c08eb82f8376e337afd6b2c074dfa8ba51fc": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:faf3dbe75dd9d28ecf40ef237c65c08eb82f8376e337afd6b2c074dfa8ba51fc": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:1:2": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:1:2": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:14785384e8d94dc425e8af944614320ccedef6401bcff837b7829b599f0068c8": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:14785384e8d94dc425e8af944614320ccedef6401bcff837b7829b599f0068c8": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "observation:6746e5d950b50e31102370a3f15b0e39c312553d6d5f4eb213c0574d20fa3302": {
+      "pool": "observation",
+      "status": "pending"
+    },
+    "api:observation:6746e5d950b50e31102370a3f15b0e39c312553d6d5f4eb213c0574d20fa3302": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "planning:2:4": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:2:4": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "final:f134fdedbda5390ed470b88c5fc8bbe11984665487bfcca4d9c77a591ac74460": {
+      "pool": "finalization",
+      "status": "pending"
+    },
+    "api:final:f134fdedbda5390ed470b88c5fc8bbe11984665487bfcca4d9c77a591ac74460": {
+      "pool": "network",
+      "status": "pending"
+    }
+  },
+  "supporting_probes": {
+    "b1f90cf657208ebca6b0734f3a621cf88bb22501253086c39c537369cf70915d": {
+      "key": "b1f90cf657208ebca6b0734f3a621cf88bb22501253086c39c537369cf70915d",
+      "tool": "presence_check",
+      "question_group": "presence",
+      "question": "仅核验这类显微特征是否可见，不判药材或物理尺寸。纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离",
+      "target_id": null,
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "feature_id": "fiber",
+      "candidate_ids": [
+        "G1",
+        "白芍"
+      ],
+      "total_limit": 6,
+      "candidate_limit": 2,
+      "reservation_owner": "observation:6746e5d950b50e31102370a3f15b0e39c312553d6d5f4eb213c0574d20fa3302",
+      "pool": "observation"
+    }
+  },
+  "closed": true,
+  "stop_reason": "runtime_request_review"
+}

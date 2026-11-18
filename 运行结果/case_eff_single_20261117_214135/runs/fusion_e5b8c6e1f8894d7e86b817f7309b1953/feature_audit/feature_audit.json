@@ -1,0 +1,140 @@
+{
+  "schema": "feature-audit/v1",
+  "non_blocking": true,
+  "feature_ids": [
+    "cluster_crystal",
+    "single_crystal",
+    "needle_crystal",
+    "vessel",
+    "stone_cell",
+    "starch_grain",
+    "non_glandular_hair",
+    "secretory_tissue",
+    "stoma",
+    "epidermis_cell",
+    "hypha",
+    "fiber",
+    "pollen_grain",
+    "other"
+  ],
+  "note": "旁路审计；不参与 rule decide，不阻断 det_score>=0.8 的 mask/measure",
+  "summary": {
+    "feature_ids": [
+      "cluster_crystal",
+      "single_crystal",
+      "needle_crystal",
+      "vessel",
+      "stone_cell",
+      "starch_grain",
+      "non_glandular_hair",
+      "secretory_tissue",
+      "stoma",
+      "epidermis_cell",
+      "hypha",
+      "fiber",
+      "pollen_grain",
+      "other"
+    ],
+    "n_candidates": 0,
+    "classified_target": 0,
+    "classified_non_target": 0,
+    "high_score_unclassified": 0,
+    "low_score_unclassified": 0,
+    "n_masks": 2,
+    "n_instances": 6,
+    "merged_masks": 2
+  },
+  "candidates": [],
+  "instances": [
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\runs\\fusion_e5b8c6e1f8894d7e86b817f7309b1953\\workflow\\ops\\1bb3bf83dea8e395\\segmentation\\igm\\cluster_crystal_view_01_01\\mask.png",
+      "n_components": 5,
+      "n_instances": 5,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 1892,
+          "skeleton_px": 32,
+          "endpoints": 2,
+          "branch_points": 3,
+          "length_px": 32.0,
+          "major_axis_px": 32.1,
+          "width_px": 82.75,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\runs\\fusion_e5b8c6e1f8894d7e86b817f7309b1953\\feature_audit\\instances\\mask__inst01.png"
+        },
+        {
+          "instance_index": 2,
+          "area_px": 1925,
+          "skeleton_px": 10,
+          "endpoints": 2,
+          "branch_points": 0,
+          "length_px": 10.0,
+          "major_axis_px": 12.11,
+          "width_px": 72.76,
+          "merged": false,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\runs\\fusion_e5b8c6e1f8894d7e86b817f7309b1953\\feature_audit\\instances\\mask__inst02.png"
+        },
+        {
+          "instance_index": 3,
+          "area_px": 40588,
+          "skeleton_px": 325,
+          "endpoints": 4,
+          "branch_points": 84,
+          "length_px": 325.0,
+          "major_axis_px": 163.62,
+          "width_px": 186.6,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\runs\\fusion_e5b8c6e1f8894d7e86b817f7309b1953\\feature_audit\\instances\\mask__inst03.png"
+        },
+        {
+          "instance_index": 4,
+          "area_px": 593,
+          "skeleton_px": 59,
+          "endpoints": 2,
+          "branch_points": 0,
+          "length_px": 59.0,
+          "major_axis_px": 68.7,
+          "width_px": 25.18,
+          "merged": false,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\runs\\fusion_e5b8c6e1f8894d7e86b817f7309b1953\\feature_audit\\instances\\mask__inst04.png"
+        },
+        {
+          "instance_index": 5,
+          "area_px": 1415,
+          "skeleton_px": 57,
+          "endpoints": 2,
+          "branch_points": 0,
+          "length_px": 57.0,
+          "major_axis_px": 66.39,
+          "width_px": 71.98,
+          "merged": false,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\runs\\fusion_e5b8c6e1f8894d7e86b817f7309b1953\\feature_audit\\instances\\mask__inst05.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\runs\\fusion_e5b8c6e1f8894d7e86b817f7309b1953\\workflow\\ops\\49a2e2161aab3556\\segmentation\\igm\\cluster_crystal_view_01_02\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 20872,
+          "skeleton_px": 646,
+          "endpoints": 11,
+          "branch_points": 212,
+          "length_px": 646.0,
+          "major_axis_px": 159.0,
+          "width_px": 126.26,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_eff_single_20261117_214135\\runs\\fusion_e5b8c6e1f8894d7e86b817f7309b1953\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    }
+  ]
+}

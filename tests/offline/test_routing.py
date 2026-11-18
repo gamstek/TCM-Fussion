@@ -1,4 +1,19 @@
-"""路由真实编排分支、候选权限与零API只读验证；不把替身当识别效果。"""
+"""路由真实编排分支、候选权限与零 API 只读验证；不把替身当识别效果。
+
+主要定义：
+- RoutingTests shadow/trial 路由: shadow 只建议、trial 真正跳过 B；边界分数、非法概率分布与不支持的结构标签都不释放。
+- 候选与多视图: `candidates` 的 top_k、未知 mass 不重归一化、跨视图折序与视图顺序保持。
+- 只读工具: `LocalToolbox.read` 不产生模型请求、不改变证据摘要，越权动作与超限参数被拒。
+- 动作注册与权限: `action_id` 摘要稳定，额外参数（如 `size_um`）在执行前被拒。
+- stdio MCP: 工具注册表条目、只读读取不含真实标签、预算耗尽返回 `RESOURCE_BUDGET` 且不落账。
+
+关联：
+- TCM_Fusion.lib.routing_policy: `route` 与 `validate_policy`。
+- TCM_Fusion.lib.pipeline: `run_pipeline` 与 `validate_config`。
+- TCM_Fusion.lib.candidate_policy: `candidates` 候选重组。
+- TCM_Fusion.lib.evidence_runtime/agent_tools/react_graph/mcp_bridge: 运行时、工具、ReAct 与 MCP 边界。
+- tests/fixtures/recorded_pipeline.json、react_case.json: 配置与记录夹具。
+"""
 import asyncio
 import copy
 import tempfile

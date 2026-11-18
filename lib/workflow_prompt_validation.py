@@ -1,4 +1,19 @@
-"""LangMem工作流提示的开发集双回放门；原B物理工件录制重放，不新发图片。"""
+"""工作流提示的开发集双回放门：重放原 B 物理工件，不新发任何图像请求。
+
+只使用独立 development 回放集并要求报告与参考反馈哈希绑定；非真值模式下答案必须
+来自独立参考裁决，不能直接把模型结果当真值。通过条件同时约束覆盖率、退化、
+物理证据摘要一致与请求/阶段尝试不增加。
+
+主要定义：
+- validate_workflow: 对每个开发样品分别以 baseline/candidate 指令回放，输出是否放行。
+
+关联：
+- .workflow_replay: 调用 replay_report 执行封闭回放并复用其录制工件。
+- .storage: 使用 IntegrationError、digest、output_root、read_json 做校验与目录定位。
+- .react_graph: 提供 LLMPlanner 作为真实规划器。
+- .outcome_evaluation: 真值模式下复用 evaluate 计算样品级裁决正确性。
+- .prompt_optimization: 由 prompt_optimization.validate 调用，发布时经同一入口重新回放。
+"""
 import uuid
 from .storage import IntegrationError, digest, output_root,read_json
 from .workflow_replay import replay_report

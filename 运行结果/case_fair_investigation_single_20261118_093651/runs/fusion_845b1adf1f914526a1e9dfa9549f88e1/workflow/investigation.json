@@ -1,0 +1,95 @@
+{
+  "identity": "caf14011d61f8ef25288227ee74a2d2111eaa2891577565a22a312e6dae4c91b",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "G3",
+    "白芍",
+    "G1"
+  ],
+  "hypotheses": {
+    "G3": {
+      "status": "investigating",
+      "reason": "single_crystal身份确认后区分G3与白芍/G1路线；若A1确认为方晶，下一轮申请feret_max测量。",
+      "evidence_digest": "db27e0d2e9b00bb58ccd67dc701efed296d152fb75ececf59f4de80c649d3bbf",
+      "decision_source": "model"
+    },
+    "白芍": {
+      "status": "investigating",
+      "reason": "model task-reflection patch",
+      "evidence_digest": "dfb0974f609f116d9f0ae137b8c40a5f85877bad6b517e0fd52fe0fe5e0695b7",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "model task-reflection patch",
+      "evidence_digest": "dfb0974f609f116d9f0ae137b8c40a5f85877bad6b517e0fd52fe0fe5e0695b7",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "G3",
+          "status": "investigating",
+          "reason": "single_crystal身份确认后区分G3与白芍/G1路线；若A1确认为方晶，下一轮申请feret_max测量。"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "single_crystal身份确认后区分G3与白芍/G1路线；若A1确认为方晶，下一轮申请feret_max测量。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "single_crystal身份确认后区分G3与白芍/G1路线；若A1确认为方晶，下一轮申请feret_max测量。"
+        }
+      ],
+      "evidence_digest": "db27e0d2e9b00bb58ccd67dc701efed296d152fb75ececf59f4de80c649d3bbf",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        }
+      ],
+      "evidence_digest": "db27e0d2e9b00bb58ccd67dc701efed296d152fb75ececf59f4de80c649d3bbf",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "model task-reflection patch"
+        }
+      ],
+      "evidence_digest": "dfb0974f609f116d9f0ae137b8c40a5f85877bad6b517e0fd52fe0fe5e0695b7",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

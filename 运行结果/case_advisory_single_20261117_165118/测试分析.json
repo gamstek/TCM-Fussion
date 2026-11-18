@@ -1,0 +1,528 @@
+{
+  "schema": "live-smoke-review/v1",
+  "date": "2026-11-17",
+  "case": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118",
+  "run": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\runs\\fusion_d366038539dc412699c4c08bc58564ca",
+  "reference_evaluation_only": {
+    "label": "白芍",
+    "image": "TCM_Fusion/dataset/白芍4图/B20180126.jpg",
+    "sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+    "label_used_in_planning": false,
+    "label_independently_audited": false,
+    "training_overlap_checked": false
+  },
+  "execution": {
+    "simulation": false,
+    "transport": "mcp",
+    "planner": "llm",
+    "previous_visual_artifacts_reused": false,
+    "a_cache_hit": false,
+    "process_exit_code": 0,
+    "interface_completed": true,
+    "process_seconds": 420.375,
+    "pipeline_seconds": 417.1893074999989
+  },
+  "a": {
+    "folds": 5,
+    "top_k_per_fold": 3,
+    "fold_top3": [
+      [
+        {
+          "rank": 1,
+          "label": "白芍",
+          "probability": 0.9990787506103516
+        },
+        {
+          "rank": 2,
+          "label": "玄明粉",
+          "probability": 0.00034282414708286524
+        },
+        {
+          "rank": 3,
+          "label": "牡丹皮",
+          "probability": 0.00026711804093793035
+        }
+      ],
+      [
+        {
+          "rank": 1,
+          "label": "白芍",
+          "probability": 0.9978896975517273
+        },
+        {
+          "rank": 2,
+          "label": "玄明粉",
+          "probability": 0.0012029048521071672
+        },
+        {
+          "rank": 3,
+          "label": "郁金",
+          "probability": 0.0005071419291198254
+        }
+      ],
+      [
+        {
+          "rank": 1,
+          "label": "白芍",
+          "probability": 0.9998369216918945
+        },
+        {
+          "rank": 2,
+          "label": "牡丹皮",
+          "probability": 0.0001017876056721434
+        },
+        {
+          "rank": 3,
+          "label": "陈皮",
+          "probability": 8.375539437111001e-06
+        }
+      ],
+      [
+        {
+          "rank": 1,
+          "label": "白芍",
+          "probability": 0.9376733899116516
+        },
+        {
+          "rank": 2,
+          "label": "郁金",
+          "probability": 0.050461459904909134
+        },
+        {
+          "rank": 3,
+          "label": "茯苓",
+          "probability": 0.00598461227491498
+        }
+      ],
+      [
+        {
+          "rank": 1,
+          "label": "玄明粉",
+          "probability": 0.9833046197891235
+        },
+        {
+          "rank": 2,
+          "label": "郁金",
+          "probability": 0.005736360792070627
+        },
+        {
+          "rank": 3,
+          "label": "茯苓",
+          "probability": 0.004857730586081743
+        }
+      ]
+    ],
+    "elapsed_seconds": 9.02621999999974,
+    "agent_candidate_input": "per-fold rankings; averaged ranking not substituted for model input"
+  },
+  "outcome": {
+    "status": "tentative",
+    "candidate": "白芍",
+    "formal_verdict": "insufficient_evidence",
+    "support_count": 0,
+    "fused_score": 0.472168,
+    "score_is_accuracy": false,
+    "stop_reason": "no_legal_action",
+    "final_method": "model",
+    "review_reasons": [
+      "FORMAL_REQUIRES_REVIEW",
+      "INSUFFICIENT_FEATURE_TYPES",
+      "CANDIDATE_NOT_FORMAL_CONCLUSION",
+      "FORMAL_VERDICT_NOT_AUTHORIZED"
+    ],
+    "narrative_warnings": [
+      "MODEL_NUMERIC_CLAIM_UNVERIFIED"
+    ]
+  },
+  "metrics": {
+    "steps": 11,
+    "planning_requests": 11,
+    "observations": 6,
+    "rejected_stop_events": 0,
+    "stop_projected_events": 0,
+    "segment_operations": 0,
+    "measurement_operations": 0,
+    "planning_and_final_usage": {
+      "prompt_tokens": 627909,
+      "completion_tokens": 3803,
+      "total_tokens": 631712
+    },
+    "presence_usage": {
+      "prompt_tokens": 15147,
+      "completion_tokens": 3958,
+      "total_tokens": 19105
+    },
+    "usage_total_is_complete_billed_total": false,
+    "resource_used_counters": {
+      "planning": 11,
+      "network": 28,
+      "initialization": 1,
+      "recompute": 3,
+      "observation": 7,
+      "finalization": 1
+    }
+  },
+  "sequence": [
+    {
+      "step": 1,
+      "decision_source": "model",
+      "decision_summary": "当前无任何观察记录（operations_total=0，视野未做初检），多数核验动作存在missing_prerequisite。先对唯一视野执行detect_fov_initial恢复初检工件，为后续presence_check（糊化淀粉粒/菌丝/真菌团块等required缺口）和可能的簇晶/方晶调查解除前置阻塞。",
+      "usage": {
+        "completion_tokens": 111,
+        "completion_tokens_details": {
+          "reasoning_tokens": 21
+        },
+        "prompt_tokens": 52905,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 53016
+      },
+      "tool": "detect_fov_initial",
+      "target_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "status": "done",
+      "investigation_progress": true
+    },
+    {
+      "step": 2,
+      "decision_source": "model",
+      "decision_summary": "尚无任何显微观察证据，当前视野已生成cluster_crystal相关crop。批量分类所有crop（优先级0）能一次性确定簇晶/方晶类实例的类别归属，直接服务白芍与G1共同且互相冲突的required判据（簇晶feret_max 11~35μm vs 无量化），比单个crop分类更省预算、覆盖更全，是当前候选间最具区分性的下一步；分类结果出来后再决定是否对可信实例做分割与测量。",
+      "usage": {
+        "completion_tokens": 337,
+        "completion_tokens_details": {
+          "reasoning_tokens": 178
+        },
+        "prompt_tokens": 51560,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 51897
+      },
+      "tool": "classify_crops_batch",
+      "target_id": "classify_batch:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "status": "done",
+      "investigation_progress": true
+    },
+    {
+      "step": 3,
+      "decision_source": "model",
+      "decision_summary": "当前最关键缺口是茯苓的required特征hypha（另需fungal_mass）尚未扫描，且hypha可将真菌类候选（茯苓/猪苓）与植物类候选（白芍/G1/G3/郁金）区分开，是本轮最具区分性的合法观察；A4（single_crystal，G3）与A6同样优先级，但先补茯苓缺口。本轮动作完成后可再查G3的single_crystal。",
+      "usage": {
+        "completion_tokens": 194,
+        "completion_tokens_details": {
+          "reasoning_tokens": 79
+        },
+        "prompt_tokens": 54733,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 54927
+      },
+      "tool": "feature_scan",
+      "target_id": "feature_scan:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:hypha",
+      "status": "done",
+      "investigation_progress": false
+    },
+    {
+      "step": 4,
+      "decision_source": "model",
+      "decision_summary": "当前存在一个已检出待身份确认的菌丝实例（identity_pending, det_score 0.65），是茯苓required判据(hypha/fungal_mass)与竞争候选(白芍/G1簇晶路线)之间最有区分性的核查点：A1确认该实例是否为真菌丝，直接推进茯苓假设，且为后续hypha宽度测量建立身份前置。A候选Top-K不排除茯苓等候选，因此不把白芍高分当排他证据。",
+      "usage": {
+        "completion_tokens": 222,
+        "completion_tokens_details": {
+          "reasoning_tokens": 39
+        },
+        "prompt_tokens": 53945,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 54167
+      },
+      "tool": "classify_target",
+      "target_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:hypha_view_01_glm8a09306abb41_01",
+      "status": "done",
+      "investigation_progress": false
+    },
+    {
+      "step": 5,
+      "decision_source": "model",
+      "decision_summary": "当前多视野A先验与pending簇晶提示白芍/G1/虎杖方向，但簇晶实例尚无合法核验动作；本轮最有区分性的缺口是G3（枳壳/陈皮）required方晶（3~53μm）尚未检出，A4对方晶做全视野目标条件扫描可直接补齐一个required判据缺口，并有机会与簇晶并存解释出别的候选；同时A先验中的郁金、茯苓候选分别依赖糊化淀粉与菌丝，本视野中若方晶阴性也不能排除它们，后续可按缺口再查。维持白芍/G1簇晶pending假设与G3方晶假设为调查方向",
+      "usage": {
+        "completion_tokens": 276,
+        "completion_tokens_details": {
+          "reasoning_tokens": 85
+        },
+        "prompt_tokens": 55045,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 55321
+      },
+      "tool": "feature_scan",
+      "target_id": "feature_scan:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:single_crystal",
+      "status": "done",
+      "investigation_progress": false
+    },
+    {
+      "step": 6,
+      "decision_source": "model",
+      "decision_summary": "当前簇晶实例仍为DETECTED_PENDING但本轮无分割/测量类合法动作，改查候选间区分度最高的存在性判据：郁金的required判据糊化淀粉粒（C层），可直接在白芍/G1（簇晶系）与郁金（糊化淀粉系）之间产生阳性/阴性区分；阴性不排除郁金，但阳性将显著改变排序。维持白芍/G1/郁金为主要假设，茯苓/G3保持proposed待后续核验。",
+      "usage": {
+        "completion_tokens": 293,
+        "completion_tokens_details": {
+          "reasoning_tokens": 91
+        },
+        "prompt_tokens": 54236,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 54529
+      },
+      "tool": "presence_check",
+      "feature_id": "gelatinized_starch",
+      "accepted": true,
+      "present": true,
+      "observation_reason": "视野右侧可见一大团半透明胶质状物质，边界模糊、内部均质无单粒淀粉的脐点与轮廓，符合糊化淀粉粘连成团的形态特征",
+      "usage_visual": {
+        "prompt_tokens": 2527,
+        "completion_tokens": 692,
+        "total_tokens": 3219
+      },
+      "cache_hit": false
+    },
+    {
+      "step": 7,
+      "decision_source": "model",
+      "decision_summary": "郁金的糊化淀粉粒已阳性，当前最可区分的合法观察是茯苓的required特征菌丝（P1）：上一轮hypha扫描已产生一个待核验crop（与糊化淀粉定位IoU约0.23），存在性核验可判定茯苓假设的真伪，并区分真菌类候选与根类候选（白芍/G1/郁金）。单晶（G3）feature_scan刚无进展，避免重复同一依赖；白芍/G1簇晶的核验需分割/测量，不在本轮presence动作中。hypothesis_updates维持白芍、G1 investigating待簇晶结果，郁金维持in",
+      "usage": {
+        "completion_tokens": 467,
+        "completion_tokens_details": {
+          "reasoning_tokens": 191
+        },
+        "prompt_tokens": 55921,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 56388
+      },
+      "tool": "presence_check",
+      "feature_id": "hypha",
+      "accepted": true,
+      "present": false,
+      "observation_reason": "视野中仅见一团具有明显边界的大型椭圆形半透明体（内部呈颗粒/絮状内容物），未见有分枝和横隔、交错缠绕的细长丝状菌丝结构。",
+      "usage_visual": {
+        "prompt_tokens": 2520,
+        "completion_tokens": 587,
+        "total_tokens": 3107
+      },
+      "cache_hit": false
+    },
+    {
+      "step": 8,
+      "decision_source": "model",
+      "decision_summary": "茯苓的两个required中hypha已在本视野查阴性，但fungal_mass（C判据，不规则分枝状团块）尚未核查，且其形态与上次观察到的'大型椭圆形半透明体'可直接对照，一次presence_check即可解决茯苓假设的存在性分歧；同时郁金的糊化淀粉presence阳性但定位框大且身份pending，白芍/G1簇晶仍待分割测量，可在后续轮次处理。",
+      "usage": {
+        "completion_tokens": 166,
+        "completion_tokens_details": {
+          "reasoning_tokens": 56
+        },
+        "prompt_tokens": 56438,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 56604
+      },
+      "tool": "presence_check",
+      "feature_id": "fungal_mass",
+      "accepted": true,
+      "present": false,
+      "observation_reason": "视野中的大型半透明团块呈光滑连续的泪滴状轮廓，边缘规整而非参差不齐，亦无不规则分枝状形态，不符合真菌团块特征，疑似气泡或液滴类异物。",
+      "usage_visual": {
+        "prompt_tokens": 2516,
+        "completion_tokens": 1529,
+        "total_tokens": 4045
+      },
+      "cache_hit": false
+    },
+    {
+      "step": 9,
+      "decision_source": "model",
+      "decision_summary": "当前活动候选为白芍/G1/郁金/G3/茯苓，纤维的存在性核验同时覆盖白芍与G1的supporting判据（一次观察服务两个候选），区分价值高于仅服务G3的气孔或仅服务G1的木栓细胞；茯苓核心特征（菌丝/真菌团块）与郁金糊化淀粉已有本轮前观察，不再重复。选择只读+presence类动作核查判据，不编造尺寸结论。",
+      "usage": {
+        "completion_tokens": 306,
+        "completion_tokens_details": {
+          "reasoning_tokens": 107
+        },
+        "prompt_tokens": 56756,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 57062
+      },
+      "tool": "presence_check",
+      "feature_id": "fiber",
+      "accepted": true,
+      "present": false,
+      "observation_reason": "图中仅见一个大型椭圆形半透明结构，内部含颗粒状内容物，形态不符纤维细长梭形、壁厚两端渐尖的特征",
+      "usage_visual": {
+        "prompt_tokens": 2529,
+        "completion_tokens": 334,
+        "total_tokens": 2863
+      },
+      "cache_hit": false
+    },
+    {
+      "step": 10,
+      "decision_source": "model",
+      "decision_summary": "选择A1核验G1的supporting特征木栓细胞（当前unchecked）。它是G1与白芍之间可用的小范围区分线索：若检出，倾向支持G1（赤芍/牡丹皮）而削弱白芍；若未检出仅为当前视野阴性，不排除G1。白芍/G1共有的簇晶P0缺口需分割→测量feret_max，但本轮合法动作中没有该修复工具，故先做低成本presence核验，避免重复已无增益的single_crystal扫描。下一轮视结果再决定是否推进簇晶分割测量或维持郁金领先假设。",
+      "usage": {
+        "completion_tokens": 384,
+        "completion_tokens_details": {
+          "reasoning_tokens": 174
+        },
+        "prompt_tokens": 57363,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 57747
+      },
+      "tool": "presence_check",
+      "feature_id": "cork_cell",
+      "accepted": true,
+      "present": false,
+      "observation_reason": "图中仅见一大块不规则半透明团块，未见类长方形或多角形细胞整齐紧密排列成砖砌状的典型木栓细胞特征。",
+      "usage_visual": {
+        "prompt_tokens": 2518,
+        "completion_tokens": 397,
+        "total_tokens": 2915
+      },
+      "cache_hit": false
+    },
+    {
+      "step": 11,
+      "decision_source": "model",
+      "decision_summary": "当前最可执行的合法观察是A1气孔存在性检查：G3的P1 supporting缺口(stoma)仍unchecked，一次只读presence_check即可补上该缺口；茯苓hypha/fungal_mass与G3 single_crystal在本视野均已有阴性观察记录，重复检查无新价值。同时维持白芍/G1/郁金三个活动假设不变，cluster_crystal的DETECTED_PENDING需分割测量前置，暂无可完成核验的合法动作。",
+      "usage": {
+        "completion_tokens": 207,
+        "completion_tokens_details": {
+          "reasoning_tokens": 44
+        },
+        "prompt_tokens": 57806,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "total_tokens": 58013
+      },
+      "tool": "presence_check",
+      "feature_id": "stoma",
+      "accepted": true,
+      "present": false,
+      "observation_reason": "视野中仅见一块形状不规则的大片段结构（内部含颗粒状内容物），未见两个肾形/半月形保卫细胞对合围成孔缝的气孔器结构。",
+      "usage_visual": {
+        "prompt_tokens": 2537,
+        "completion_tokens": 419,
+        "total_tokens": 2956
+      },
+      "cache_hit": false
+    }
+  ],
+  "blockers": {
+    "cluster_crops": [
+      {
+        "id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+        "box_quality": "low_detail",
+        "box_quality_score": 0.3059,
+        "box_quality_metrics": {
+          "std": 0.071,
+          "edge": 0.00442,
+          "width": 306,
+          "height": 321,
+          "area_ratio": 0.0224
+        },
+        "det_score": 0.9434,
+        "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\runs\\fusion_d366038539dc412699c4c08bc58564ca\\workflow\\ops\\aeca44dfedd0d1c6\\detection\\crops\\cluster_crystal_view_01_01.json"
+      },
+      {
+        "id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+        "box_quality": "low_detail",
+        "box_quality_score": 0.3277,
+        "box_quality_metrics": {
+          "std": 0.064,
+          "edge": 0.00606,
+          "width": 284,
+          "height": 278,
+          "area_ratio": 0.0173
+        },
+        "det_score": 0.6806,
+        "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\runs\\fusion_d366038539dc412699c4c08bc58564ca\\workflow\\ops\\aeca44dfedd0d1c6\\detection\\crops\\cluster_crystal_view_01_02.json"
+      }
+    ],
+    "stage2_confidences": [
+      0.870225,
+      0.926682
+    ],
+    "segment_block_reason": "box_quality=low_detail; box_quality_block_low_detail=true; formal scale and identity existed",
+    "refined_remediation_menu": "no segment/measure action offered for those crops; no new low_detail recovery selected",
+    "confirmed_threshold_false_positive": false
+  },
+  "reflection": {
+    "task_reflection_applied": true,
+    "artifact": {
+      "schema": "task-reflection/v1",
+      "facts": [
+        {
+          "problem_id": "feature_scan:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:single_crystal",
+          "objective": "按 feature_id 做全视野分块的目标条件候选扫描",
+          "expected_resolution": "增加有效证据/反证或解除实际前置阻塞",
+          "stop_condition": "同依赖重复动作、服务失败、预算或截止，不以生成过门为成功",
+          "accepted": true,
+          "new_features": [],
+          "new_counterevidence": [],
+          "resolved_criteria": [],
+          "candidate_order_changed": false,
+          "capability_progress": false,
+          "useful": false,
+          "latency_ms": 7797.0,
+          "failure_code": null,
+          "continue_reason": "无已验证进展；换路线或停止"
+        }
+      ],
+      "hypothesis": "当前路线未产生已验证进展",
+      "avoid_problem_ids": [
+        "feature_scan:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:single_crystal"
+      ],
+      "questions": [
+        "哪些观察支持/反驳当前假设，哪些只是unknown？",
+        "重复调查同一特征是否仍有新的可验证依据？",
+        "是否应查知识库中A候选外的假设、换视野，或停止？"
+      ],
+      "next_plan_requires": "说明假设、剩余缺口、预期增益和停止依据；建议不是强制路线",
+      "scope": "task_policy_only",
+      "changes_evidence": false,
+      "uses_reference_label": false
+    },
+    "cross_task_policy_published": false,
+    "weight_update": false
+  },
+  "historical_comparison": {
+    "case": "白芍_单视野21_20261116_1122",
+    "seconds": 509.6,
+    "planning_requests": 8,
+    "planning_and_final_tokens": 411853,
+    "formal_support_count": 1,
+    "same_source_sha256": true,
+    "matched_ab_test": false,
+    "known_differences": [
+      "auto_prepare_stage/auto_required_measurement true -> false",
+      "max_seconds 1800 -> 2400",
+      "source code versions and generative responses differ"
+    ],
+    "conclusion": "fewer elapsed seconds but more planning tokens and no quantitative support this run; no net-efficiency or accuracy improvement established"
+  },
+  "issues": [
+    "low_detail blocks otherwise high-confidence cluster crops; no mask or measurement",
+    "per-call planner input remains 51k-58k returned prompt-token scale; total trace planning+final tokens rose",
+    "reflection card changed route away from failed scan but did not repair main cluster measurement gap",
+    "final numeric narrative guard activated; raw model proposal retained and deterministic explanation used"
+  ]
+}

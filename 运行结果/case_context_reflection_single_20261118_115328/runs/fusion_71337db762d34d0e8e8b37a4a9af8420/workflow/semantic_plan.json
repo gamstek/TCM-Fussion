@@ -1,0 +1,105 @@
+{
+  "schema": "serial-semantic-plan/d3",
+  "plan_id": "plan:438f6becb4d25bab92dc289f",
+  "goal": {
+    "semantic_task": "measure_length",
+    "instance_ref": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+    "problem_id": "instance-question:5237990498f96d92cf3d"
+  },
+  "dimension": "length",
+  "bound_input": "1c6383a7daa777da1696d011220ef3de4e1461eb8999dab36f8558d0e14fcc48",
+  "nodes": [
+    {
+      "node_id": "verify_identity",
+      "semantic_task": "verify_identity",
+      "instance_ref": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "depends_on": [],
+      "status": "succeeded",
+      "required_facts": [
+        "instance_exists"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "obtain_mask",
+      "semantic_task": "obtain_mask",
+      "instance_ref": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "depends_on": [
+        "verify_identity"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "calibration_trusted"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "check_use",
+      "semantic_task": "check_use",
+      "instance_ref": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "depends_on": [
+        "obtain_mask"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "mask_valid",
+        "calibration_trusted",
+        "dimension_eligible"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "measure",
+      "semantic_task": "measure",
+      "instance_ref": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "depends_on": [
+        "check_use"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "mask_valid",
+        "calibration_trusted",
+        "dimension_eligible"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "update_criteria",
+      "semantic_task": "update_criteria",
+      "instance_ref": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "depends_on": [
+        "measure"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "measurement_available"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    }
+  ],
+  "status": "completed",
+  "return_reason": "local_goal_satisfied"
+}

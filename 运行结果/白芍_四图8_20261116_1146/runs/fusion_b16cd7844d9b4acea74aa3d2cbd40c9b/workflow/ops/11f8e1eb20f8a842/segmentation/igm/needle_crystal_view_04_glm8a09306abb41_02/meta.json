@@ -1,0 +1,114 @@
+{
+  "image": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\11f8e1eb20f8a842\\crops\\needle_crystal_view_04_glm8a09306abb41_02.png",
+  "image_hw": [
+    174,
+    177
+  ],
+  "stem": "needle_crystal_view_04_glm8a09306abb41_02",
+  "prompt": "请完成图像的二值分割任务（只有一个前景和一个背景的图像分割），图中的前景是草酸钙针晶：细长的针状结晶，两端尖锐、两缘平直；常多根成束聚集在一起，也可散在。\n只分割位于画面中央的那一个目标：画面边缘、四角出现的其他同类实体属于背景，不要分割、不要补全、不要描出轮廓。\n请严格按图中所见该实体的实际轮廓，把它从背景中完整分割出来，保留原本形状，不要简化和复杂化，不要凭空生成图中不存在的实体。\n输出二值掩码图：前景为纯白色，背景为纯黑色，不做灰度渐变、不画轮廓线。\n背景必须整幅均匀纯黑：不允许出现半幅灰/白背景，也不允许出现对角或渐变的明暗分界。\n不要添加任何文字、数字、水印、标识、logo、边框或装饰元素。",
+  "prompt_source": "模板+本体表(needle_crystal)",
+  "feature": "needle_crystal",
+  "feature_desc": "草酸钙针晶：细长的针状结晶，两端尖锐、两缘平直；常多根成束聚集在一起，也可散在",
+  "model": "doubao-seedream-5-0-flash-260915",
+  "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+  "size_requested": "2048x2048",
+  "size_mode": "cli:--size",
+  "size_note": null,
+  "pad_ratio": 0.0171,
+  "input_sent": "input_sent.jpg",
+  "input_sent_hw": [
+    2048,
+    2048
+  ],
+  "gen_hw": [
+    2048,
+    2048
+  ],
+  "letterbox": {
+    "out_w": 2048,
+    "out_h": 2048,
+    "content_w": 2048,
+    "content_h": 2013,
+    "top_ratio": 0.00830078125,
+    "left_ratio": 0.0,
+    "cw_ratio": 1.0,
+    "ch_ratio": 0.98291015625,
+    "scale": 11.570621
+  },
+  "key_source": "igm.api_key",
+  "threshold": 103.0,
+  "invert": false,
+  "polarity_note": "极性探针取亮侧；四角平坦块 0/4 亮（角块 40px，相对 Otsu 103；4/4 块可信）→ invert=False",
+  "mask_source": "gray",
+  "polarity_hint": false,
+  "polarity_conflict": false,
+  "box": [
+    24,
+    24,
+    154,
+    150
+  ],
+  "box_margin_ratio": 0.1,
+  "box_keep_overlap": 0.5,
+  "box_iou": 0.1602,
+  "fg_outside_box_ratio": 0.0,
+  "center_comp_ratio": 0.16,
+  "box_association": "region_component",
+  "association_version": "association-policy-v1-trial",
+  "center_region_box": [
+    56,
+    55,
+    121,
+    118
+  ],
+  "center_region_hit": true,
+  "association_candidates": 1,
+  "association_method": "center_region",
+  "associated_bbox_ratio": 0.427595,
+  "associated_comp_ratio": 0.160195,
+  "associated_touches_border": false,
+  "association_valid": true,
+  "association_status": "ok",
+  "association_reasons": [
+    "SINGLE_COMPONENT"
+  ],
+  "association_trace": [
+    {
+      "rule": "unique",
+      "matched": true,
+      "reasons": []
+    }
+  ],
+  "dominance": {
+    "components": 1,
+    "total_area": 2624,
+    "selected_area": 2624,
+    "dropped_area": 0,
+    "dropped_area_ratio": 0.0,
+    "largest_share": 1.0,
+    "second_share": 0.0,
+    "dropped_components": 0,
+    "center_hit": true,
+    "tight_overlap": 1.0
+  },
+  "width_only": false,
+  "association_dropped_components": 0,
+  "association_dropped_px": 0,
+  "review_reason_codes": [],
+  "dropped_components": 4,
+  "dropped_px": 2537,
+  "clipped_px": 0,
+  "max_hole_ratio": 0.0,
+  "hole_fill": "all",
+  "area_ratio": 0.0852,
+  "n_components": 1,
+  "status": "ok",
+  "mask_hw": [
+    174,
+    177
+  ],
+  "size_match": true,
+  "revised_prompt": null,
+  "elapsed_s": 21.2,
+  "note": "IGM 是现役图像分割通路的产物（非预标注件）；status!=ok 的实例在判药侧被整条丢弃，尺寸量值仅在 status==ok 时可用"
+}

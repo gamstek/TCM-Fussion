@@ -1,0 +1,79 @@
+{
+  "label": "草酸钙方晶",
+  "raw_label": "01_single_crystal",
+  "feature_id": "single_crystal",
+  "second": "",
+  "confidence": "high",
+  "reason": "CNN 高置信初判",
+  "source": "cnn",
+  "focus": null,
+  "sent_hw": null,
+  "granularity": "instance",
+  "confidence_score": 0.770109,
+  "confidence_scale": "cnn_prob",
+  "crop_id": "single_crystal_view_02_01",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\dae83b0418ef5397\\detection\\crops\\single_crystal_view_02_01.png",
+  "glm_confidence": null,
+  "yolo_confidence": null,
+  "yolo_checked": false,
+  "confidence_source": "cnn",
+  "cnn_score": 0.770109,
+  "cnn_entropy": 0.407518,
+  "cnn_topk": [
+    {
+      "class": "01_single_crystal",
+      "feature_id": "single_crystal",
+      "prob": 0.7701089978218079
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.04373947158455849
+    },
+    {
+      "class": "13_other",
+      "feature_id": "other",
+      "prob": 0.035265855491161346
+    }
+  ],
+  "cnn_model_signature": {
+    "weights": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+    "meta": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+    "metadata": {
+      "arch": "resnet18",
+      "imgsz": 320,
+      "input_mode": "letterbox",
+      "classes": [
+        "00_cluster_crystal",
+        "01_single_crystal",
+        "02_needle_crystal",
+        "03_vessel",
+        "04_stone_cell",
+        "05_starch_grain",
+        "06_non_glandular_hair",
+        "07_secretory_tissue",
+        "08_stoma",
+        "09_epidermis_cell",
+        "10_hypha",
+        "11_fiber",
+        "12_pollen_grain",
+        "13_other"
+      ],
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "checkpoint": "best.pt"
+    },
+    "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+    "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+    "preprocessor_sha256": "bd6f8a77fd9218704715c357ddc4999023370101c9e82bf372c5c0a148c1ed66",
+    "adapter_sha256": "287c33cc90d809274c029d417c4e1136e61b97c8ed85ba833d921b8c30695636"
+  }
+}

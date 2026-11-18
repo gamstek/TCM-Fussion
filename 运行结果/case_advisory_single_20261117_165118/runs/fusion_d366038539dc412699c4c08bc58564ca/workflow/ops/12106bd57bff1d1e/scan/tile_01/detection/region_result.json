@@ -1,0 +1,14 @@
+{
+  "dets": [],
+  "roi": [
+    1024,
+    0,
+    2048,
+    768
+  ],
+  "feature_id": "hypha",
+  "engine": "glm_targeted",
+  "count": 0,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

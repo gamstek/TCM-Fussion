@@ -1,4 +1,19 @@
-"""融合路由后的自主B工具入口；无需B完成清单，产物位于独立fusion任务。"""
+"""融合路由后的自主 B 工具入口：预检→ReAct 调查→旁路审计→融合→收尾研判，产物写入独立 fusion 任务。
+
+主要定义：
+- WORKFLOW_SCHEMA: `agent.workflow` 配置的 JSON Schema（fast 为标准路径，字段缺失按 true 补齐）。
+- execute_workflow: 异步执行整条工作流，固定证据后生成 verdict/output/fusion/report。
+
+关联：
+- TCM_Fusion.lib.pipeline: run_pipeline 在路由需要 B 时调用 execute_workflow。
+- TCM_Fusion.lib.workflow_runtime: from_task 构造工作流运行时。
+- TCM_Fusion.lib.react_graph: run_react 执行 ReAct 调查循环。
+- TCM_Fusion.lib.agent_tools: 本地 transport 使用 LocalToolbox。
+- TCM_Fusion.lib.mcp_bridge: transport=mcp 时通过 connect_stdio 取得工具。
+- TCM_Fusion.lib.needle_observation: build_feature_audit 生成非阻断旁路审计。
+- TCM_Fusion.lib.final_assessment: finalize 生成只读收尾研判。
+- TCM_Fusion.lib.output_projection: project_output 生成交付视图。
+"""
 import time
 import copy
 from pathlib import Path
@@ -15,6 +30,7 @@ from .collaboration import fuse, knowledge_base
 
 
 WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
+    'semantic_execution':{'type':'boolean'},
     'python':{'type':'string'},
     'detector':{'enum':['yolo']},
     'targeted_recovery':{'type':'boolean'},
@@ -55,9 +71,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'agent_policy':{'enum':['legacy','adaptive_v1','adaptive_v2']},
     'quality_evaluation':{'enum':['legacy','purpose_v1']},
     'max_parallel':{'type':'integer','minimum':1,'maximum':2},
-    'screen_top_k':{'type':'integer','minimum':1,'maximum':6},
-    'screen_max_rois':{'type':'integer','minimum':1,'maximum':20},
-    'fast_yolo_stage2':{'type':'boolean'},
+    'fast_yolo_stage2':{'const':True},  # fast 为标准路径；仅兼容历史配置，不再允许 false
     'early_verification':{'type':'boolean'},
     'fast_recovery_selection':{'enum':['legacy_bundle','per_feature']},
     'fast_recovery_roles':{'type':'array','minItems':1,'uniqueItems':True,
@@ -70,6 +84,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'context_max_actions':{'type':'integer','minimum':5,'maximum':64},
     'auto_measure_after_segment':{'type':'boolean'},
     'auto_prepare_stage':{'type':'boolean'},
+    'auto_required_measurement':{'type':'boolean'},
     'candidate_group_verification':{'type':'boolean'},
     'suppress_repeated_measurement':{'type':'boolean'},
     'supporting_probe_total':{'type':'integer','minimum':0,'maximum':20},
@@ -78,35 +93,24 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'context_recent_operations':{'type':'integer','minimum':1,'maximum':64},
     'tool_timeout_seconds':{'type':'integer','minimum':30,'maximum':3600},
     'feature_scan_tile_policy':{'enum':['prescreen','full']},
-    'screen_concurrency':{'type':'integer','minimum':1,'maximum':8},
-    'needle_scan_enabled':{'type':'boolean'},
-    'needle_scan_tile_size':{'type':'integer','minimum':256,'maximum':2048},
-    'needle_scan_overlap':{'type':'number','minimum':0,'maximum':0.5},
-    'needle_scan_max_tiles':{'type':'integer','minimum':1,'maximum':50},
-    'needle_scan_concurrency':{'type':'integer','minimum':1,'maximum':8},
     'feature_scan_enabled':{'type':'boolean'},
     'feature_scan_features':{'type':'array','items':{'type':'string'}},
-    'feature_scan_from_candidates':{'type':'boolean'},
-    'feature_scan_max_features':{'type':'integer','minimum':1,'maximum':14},
     'feature_scan_tile_size':{'type':'integer','minimum':256,'maximum':2048},
     'feature_scan_overlap':{'type':'number','minimum':0,'maximum':0.5},
     'feature_scan_max_tiles':{'type':'integer','minimum':1,'maximum':50},
     'feature_scan_concurrency':{'type':'integer','minimum':1,'maximum':8},
     'hybrid_scan_enabled':{'type':'boolean'},
-    'hybrid_scan_max_features':{'type':'integer','minimum':1,'maximum':14},
     'feature_profiles':{'type':'object'},
     'glm_identity_threshold':{'type':'number','minimum':0,'maximum':1},
-    'glm_locate_threshold':{'type':'number','minimum':0,'maximum':1},
     'locate_expand':{'type':'number','minimum':1,'maximum':3},
     'locate_min_box_side':{'type':'integer','minimum':16,'maximum':1024},
     'locate_min_roi_side':{'type':'integer','minimum':64,'maximum':2048},
     'box_quality_enabled':{'type':'boolean'},
-    'box_quality_block_low_detail':{'type':'boolean'},
     'igm_size':{'type':'string','pattern':'^[0-9]{3,4}x[0-9]{3,4}$'},
     'box_quality_retry':{'type':'boolean'},
     'enabled_tools':{'type':'array','uniqueItems':True,'items':{'enum':[
         'detect_fov_initial','calibrate_fov','segment_instance','classify_target','classify_crops_batch','measure_instances','detect_region',
-        'propose_regions','roi_screen','roi_screen_batch','locate_feature','needle_scan','feature_scan','hybrid_scan','image_exemplar_audit']}},
+        'locate_feature','feature_scan','hybrid_scan','image_exemplar_audit']}},
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
     'agent_driven_coverage':{'type':'boolean'},
@@ -125,6 +129,8 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
 
 async def execute_workflow(config,a,directory,*,routing,start,job,status_path,code_baseline=None):
     workflow = config['agent']['workflow']
+    # fast 是唯一标准路径：配置不再提供 false 开关，缺失时补成 true。
+    workflow.setdefault('fast_yolo_stage2', True)
     if 'agent_policy' not in workflow and config['agent'].get('planner', 'llm') == 'llm':
         from copy import deepcopy
         config = deepcopy(config)
@@ -257,13 +263,22 @@ async def execute_workflow(config,a,directory,*,routing,start,job,status_path,co
         f"- 内部复核标记：{fusion['needs_review']}；交付层 review_required={output['review_required']}\n"
         f"- 强观察：{len(output['strong_observations'])} 条；备选：{len(output['alternatives'])} 个\n"
         f"- 停止原因：{result['stop_reason']}\n- 证据版本：{result['evidence_version']}\n"
+        f"- 执行终止原因：{assessment['termination']['reason']}；类型：{assessment['termination']['category']}\n"
+        f"- 交付复核原因：{assessment['review_reasons']}（与执行中断原因分开记录）\n"
         '- 原图及原B目录未覆盖；阶段失败/资源明细见agent_trace.json。\n\n'
         '## 收尾综合研判\n\n'
         f"{assessment['judgement']}\n\n{assessment['explanation']}\n\n"
+        f"{assessment['score_summary']}\n\n"
+        f"- 解释来源：{assessment['explanation_source']}；文本警告：{assessment['narrative_warnings']}\n"
         f"- 研判来源：{assessment['method']}；模型失败原因：{assessment['model_failure']}\n"
         f"- 支持证据：{[f['id'] for f in assessment['supporting_evidence']]}\n"
         f"- 反证：{[f['id'] for f in assessment['counterevidence']]}\n"
         f"- 未解决：{[f['id'] for f in assessment['unresolved']]}\n"
+        f"- 候选组审查完成：{assessment['candidate_review_complete']}；未完成候选："
+        f"{assessment['candidate_audit']['incomplete_candidate_ids']}；未映射："
+        f"{[x['label'] for x in assessment['candidate_audit']['unmapped']]}\n"
+          f"- 判定充分性影子结果：{assessment['decision_readiness_shadow']}（不提升生产确认资格）\n"
+        '- 上述未解决引用不等于全部候选缺口清零；完整required/supporting状态见candidate_audit。\n'
         '- 全部证据及采信边界：final_evidence.json；结论与依据：final_assessment.json。\n\n'
         '| 候选 | B规则分 | 融合排序分（非正确率） | 支持判据数 | 必需判据缺口数 |\n'
         '|---|---|---|---|---|\n'+comparison+'\n',encoding='utf-8')

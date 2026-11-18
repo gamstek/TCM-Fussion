@@ -1,0 +1,105 @@
+{
+  "schema": "serial-semantic-plan/d3",
+  "plan_id": "plan:22da65b002a916f4a1bef69d",
+  "goal": {
+    "semantic_task": "measure_length",
+    "instance_ref": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+    "problem_id": "instance-question:495d059643f82350c999"
+  },
+  "dimension": "length",
+  "bound_input": "f77701ce3916e2c7f9cb9842b147d8881a1eafaafe7c9d40559d349132c7e012",
+  "nodes": [
+    {
+      "node_id": "verify_identity",
+      "semantic_task": "verify_identity",
+      "instance_ref": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "depends_on": [],
+      "status": "succeeded",
+      "required_facts": [
+        "instance_exists"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "obtain_mask",
+      "semantic_task": "obtain_mask",
+      "instance_ref": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "depends_on": [
+        "verify_identity"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "calibration_trusted"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "check_use",
+      "semantic_task": "check_use",
+      "instance_ref": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "depends_on": [
+        "obtain_mask"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "mask_valid",
+        "calibration_trusted",
+        "dimension_eligible"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "measure",
+      "semantic_task": "measure",
+      "instance_ref": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "depends_on": [
+        "check_use"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "mask_valid",
+        "calibration_trusted",
+        "dimension_eligible"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "update_criteria",
+      "semantic_task": "update_criteria",
+      "instance_ref": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "depends_on": [
+        "measure"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "measurement_available"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    }
+  ],
+  "status": "completed",
+  "return_reason": "local_goal_satisfied"
+}

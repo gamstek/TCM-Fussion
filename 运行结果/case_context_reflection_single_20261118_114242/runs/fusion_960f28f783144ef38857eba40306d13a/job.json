@@ -1,0 +1,21 @@
+{
+  "job_id": "fusion_960f28f783144ef38857eba40306d13a",
+  "sample_id": "case_context_reflection_single_20261118_114242",
+  "status": "completed",
+  "stage": "done",
+  "config_sha256": "63d13a3184e4d2f435087a0b8afa7a7d8b730c7df1450affc103133bcaba9bf3",
+  "result": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_context_reflection_single_20261118_114242\\runs\\fusion_960f28f783144ef38857eba40306d13a\\fusion.json",
+  "needs_review": true,
+  "route": "workflow_agent",
+  "elapsed_seconds": 134.44443319999846,
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_context_reflection_single_20261118_114242\\runs\\fusion_960f28f783144ef38857eba40306d13a\\output.json",
+  "code_signature": {
+    "baseline": "eab4ae7b3183e61f1c783ddc8465309d19c99ce37f4f8ca470097efc4086f243",
+    "current": "eab4ae7b3183e61f1c783ddc8465309d19c99ce37f4f8ca470097efc4086f243",
+    "changed": false,
+    "changed_at": null,
+    "checks": 14,
+    "started_at": "2026-11-18T11:42:54+0800",
+    "path": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_context_reflection_single_20261118_114242\\runs\\fusion_960f28f783144ef38857eba40306d13a\\code_signature.json"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "tool": "classify_target",
+  "crop_id": "hypha_view_01_glm8a09306abb41_01",
+  "crop_json": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\runs\\fusion_d366038539dc412699c4c08bc58564ca\\workflow\\ops\\12106bd57bff1d1e\\scan\\crops\\hypha_view_01_glm8a09306abb41_01.json",
+  "crop_png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\runs\\fusion_d366038539dc412699c4c08bc58564ca\\workflow\\ops\\12106bd57bff1d1e\\scan\\crops\\hypha_view_01_glm8a09306abb41_01.png",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\view_01.jpg",
+  "tight_box": [
+    1032.25,
+    975.0,
+    1906.75,
+    1536.0
+  ],
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_advisory_single_20261117_165118\\runs\\fusion_d366038539dc412699c4c08bc58564ca\\workflow\\ops\\6e179d490cbf0073\\classification",
+  "feature_hint": "目标正例：菌丝：无色或淡棕色的细长丝状体，有分枝和横壁，常交错缠绕成团",
+  "tight_box_local": [
+    28.25,
+    29.0,
+    902.75,
+    590.0
+  ]
+}

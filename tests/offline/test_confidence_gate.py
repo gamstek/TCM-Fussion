@@ -1,4 +1,19 @@
-"""统计门控离线单测；临时构造数据不证明真实分类效果或样品独立性。"""
+"""统计门控离线单测；临时构造数据不证明真实分类效果或样品独立性。
+
+主要定义：
+- ConfidenceTests 温度拟合与模型身份: `G.fit` 的 NLL 不升、权重签名不一致时报错。
+- 数据隔离: calibration/test 的 group 与 image 重叠被拒，真实数据集拒绝 fixture 预测。
+- 上界与发布: `G.upper_error` 边界值，风险未达标不可 `publish`，发布后测试图变更使回放失效。
+- 路由门: 模拟 release 无法开启真实路由（`GATE_SCOPE`），缺失 release 时 fail-closed。
+- training audit: 训练集重叠审计必填、参与身份校验并与门控报告绑定。
+- validated 正路径: 冻结规则下 `route` 可 skip 且标记 calibrated，权重变更后不再 skip。
+
+关联：
+- TCM_Fusion.lib.confidence_gate: `fit`/`validate`/`publish`/`upper_error`/`model_identity`。
+- TCM_Fusion.lib.routing_policy: `route` 与 `validate_policy`。
+- TCM_Fusion.lib.storage: `file_hash`/`write_json`/`IntegrationError` 绑定工件与错误。
+- TCM_Fusion.lib.collaboration: `knowledge_base` 提供判据。
+"""
 import copy
 import tempfile
 import unittest

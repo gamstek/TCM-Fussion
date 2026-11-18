@@ -1,0 +1,18 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\view_01.jpg",
+  "output": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\46ecb13dc5fd0efb\\scan\\tile_00\\detection",
+  "roi": [
+    0,
+    0,
+    1024,
+    1536
+  ],
+  "feature_id": "hypha",
+  "px_per_um": 11.65,
+  "locate_expand": 1.5,
+  "locate_min_box_side": 90,
+  "locate_min_roi_side": 256,
+  "feature_hint": "目标正例：菌丝：无色或淡棕色的细长丝状体，有分枝和横壁，常交错缠绕成团",
+  "existing_boxes": []
+}

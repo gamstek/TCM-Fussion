@@ -1,0 +1,239 @@
+{
+  "schema": "feature-audit/v1",
+  "non_blocking": true,
+  "feature_ids": [
+    "cluster_crystal",
+    "single_crystal",
+    "needle_crystal",
+    "vessel",
+    "stone_cell",
+    "starch_grain",
+    "non_glandular_hair",
+    "secretory_tissue",
+    "stoma",
+    "epidermis_cell",
+    "hypha",
+    "fiber",
+    "pollen_grain",
+    "other"
+  ],
+  "note": "旁路审计；不参与 rule decide，不阻断 det_score>=0.8 的 mask/measure",
+  "summary": {
+    "feature_ids": [
+      "cluster_crystal",
+      "single_crystal",
+      "needle_crystal",
+      "vessel",
+      "stone_cell",
+      "starch_grain",
+      "non_glandular_hair",
+      "secretory_tissue",
+      "stoma",
+      "epidermis_cell",
+      "hypha",
+      "fiber",
+      "pollen_grain",
+      "other"
+    ],
+    "n_candidates": 0,
+    "classified_target": 0,
+    "classified_non_target": 0,
+    "high_score_unclassified": 0,
+    "low_score_unclassified": 0,
+    "n_masks": 9,
+    "n_instances": 9,
+    "merged_masks": 9
+  },
+  "candidates": [],
+  "instances": [
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\cec53849e916bb80\\segmentation\\igm\\cluster_crystal_view_02_01\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 41576,
+          "skeleton_px": 577,
+          "endpoints": 4,
+          "branch_points": 296,
+          "length_px": 577.0,
+          "major_axis_px": 181.5,
+          "width_px": 182.15,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\2f0a6113b0d1257f\\segmentation\\igm\\cluster_crystal_view_03_01\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 76858,
+          "skeleton_px": 5705,
+          "endpoints": 4,
+          "branch_points": 5480,
+          "length_px": 5705.0,
+          "major_axis_px": 119.07,
+          "width_px": 249.41,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\7fd87201b35a86e0\\segmentation\\igm\\cluster_crystal_view_03_02\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 48306,
+          "skeleton_px": 963,
+          "endpoints": 5,
+          "branch_points": 699,
+          "length_px": 963.0,
+          "major_axis_px": 144.72,
+          "width_px": 210.54,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\3a39166112c9480c\\segmentation\\igm\\cluster_crystal_view_04_01\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 55831,
+          "skeleton_px": 1204,
+          "endpoints": 3,
+          "branch_points": 1081,
+          "length_px": 1204.0,
+          "major_axis_px": 78.98,
+          "width_px": 230.3,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\3c5f186b5e3cdf6a\\segmentation\\igm\\cluster_crystal_view_04_02\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 30513,
+          "skeleton_px": 616,
+          "endpoints": 6,
+          "branch_points": 324,
+          "length_px": 616.0,
+          "major_axis_px": 206.41,
+          "width_px": 174.24,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\0cf6c9c3f8825b08\\segmentation\\igm\\needle_crystal_view_04_glm8a09306abb41_01\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 3862,
+          "skeleton_px": 214,
+          "endpoints": 3,
+          "branch_points": 122,
+          "length_px": 214.0,
+          "major_axis_px": 198.22,
+          "width_px": 27.18,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\9bf41f2cb43f66cf\\segmentation\\igm\\cluster_crystal_view_04_03\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 9500,
+          "skeleton_px": 94,
+          "endpoints": 3,
+          "branch_points": 25,
+          "length_px": 94.0,
+          "major_axis_px": 54.57,
+          "width_px": 89.58,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\11f8e1eb20f8a842\\segmentation\\igm\\needle_crystal_view_04_glm8a09306abb41_02\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 2624,
+          "skeleton_px": 105,
+          "endpoints": 2,
+          "branch_points": 66,
+          "length_px": 105.0,
+          "major_axis_px": 114.03,
+          "width_px": 28.78,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    },
+    {
+      "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\workflow\\ops\\f1a23af175402cc5\\segmentation\\igm\\cluster_crystal_view_01_01\\mask.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 37409,
+          "skeleton_px": 833,
+          "endpoints": 9,
+          "branch_points": 425,
+          "length_px": 833.0,
+          "major_axis_px": 184.2,
+          "width_px": 163.84,
+          "merged": true,
+          "mask": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\白芍_四图8_20261116_1146\\runs\\fusion_b16cd7844d9b4acea74aa3d2cbd40c9b\\feature_audit\\instances\\mask__inst01.png"
+        }
+      ]
+    }
+  ]
+}

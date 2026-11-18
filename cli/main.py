@@ -1,6 +1,19 @@
-"""真实入口：项目根 python -m TCM_Fusion.cli.main run|doctor|selftest|multi-view。
+"""项目主 CLI 入口：`python -m TCM_Fusion.cli.main run|doctor|selftest|multi-view|five-view`。
 
-是兼容别名；任意数量原图统一走 lib.multi_view。离线命令统一在 cli.offline。
+主要定义：
+- main: 构建 argparse 子命令并按 `args.command` 分发。
+- run: 要求 `agent.mode=active` 且含 `agent.workflow`，转交 `lib.pipeline.run_pipeline`。
+- doctor: 转交 `lib.pipeline.doctor` 输出就绪报告，未就绪返回码 2。
+- selftest: 用 `unittest` 递归发现 `TCM_Fusion/tests`，并额外执行原 B 的 rule_engine/adjudicator/scene 三组测试。
+- multi-view: 转交 `lib.multi_view.run_multi_view`；图片数量由 manifest 决定，`--dry-run` 只准备与本地 doctor。
+- five-view: 兼容旧名的等价别名，不带独立逻辑。
+- 错误处理: 捕获 `IntegrationError/OSError/ValueError/KeyError`，按 `[CODE] message` 写 stderr 并返回 2。
+
+关联：
+- TCM_Fusion.lib.pipeline: 提供 doctor 与 run_pipeline。
+- TCM_Fusion.lib.multi_view: 任意数量原图的建任务、配置准备与工作流启动。
+- TCM_Fusion.lib.storage: 配置读取、路径解析与 IntegrationError。
+- TCM_Fusion.cli.offline: 离线回放/评估/优化/发布统一入口，不在本文件。
 """
 from __future__ import annotations
 import argparse
@@ -34,9 +47,16 @@ def main(argv=None):
         item.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
     if args.command == "selftest":
+        import gc
+        class RegressionResult(unittest.TextTestResult):
+            def stopTest(self, test):
+                super().stopTest(test)
+                # 用例构造闭环运行时/图回调；结束后回收循环引用，避免整套累计占用。
+                # 不改断言、时限或生产运行的GC/线程配置。
+                gc.collect()
         package = Path(paths.PROJECT_ROOT) / "TCM_Fusion"
         suite = unittest.defaultTestLoader.discover(str(package / "tests"), top_level_dir=paths.PROJECT_ROOT)
-        passed = unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful()
+        passed = unittest.TextTestRunner(verbosity=2, resultclass=RegressionResult).run(suite).wasSuccessful()
         for name in ("test_rule_engine.py", "test_adjudicator.py", "test_scene.py"):
             cp = subprocess.run([sys.executable, "-X", "utf8", str(Path(paths.JUDGE_DIR) / "tests" / name)], cwd=paths.PROJECT_ROOT)
             passed = cp.returncode == 0 and passed

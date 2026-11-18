@@ -1,0 +1,2 @@
+﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity
+37386327420001,view_01__single_crystal__inst37386327420001.png,single_crystal_view_01_09,D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\陈皮_四图2_20261116_1448\view_01.jpg,single_crystal,草酸钙方晶,,"[24, 25, 224, 179]",11.65,ok,0.323733,instance

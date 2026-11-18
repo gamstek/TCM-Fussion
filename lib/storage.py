@@ -1,4 +1,23 @@
-"""只消费paths路径权威；管理集成诊断工件，原图和原B工件只读。"""
+"""集成层的基础设施：路径权威、原子 JSON 读写、哈希/摘要与输入快照工具。
+
+只消费 paths 提供的路径权威；只维护集成诊断工件，原图与原 B 工件始终只读。
+写出采用同目录临时文件后原子替换，避免读到半个 JSON，也不重发任何 API 请求。
+
+主要定义：
+- IntegrationError: 带机器可读 code 的集成层异常类型。
+- project_path: 把相对路径按项目根解析为绝对路径。
+- output_root: 返回集成输出的根目录。
+- read_json: 以 utf-8-sig 读取 JSON 文件。
+- write_json: 临时写后原子替换，含 Windows 占用重试。
+- file_hash: 计算文件的 SHA256。
+- digest: 对对象做稳定排序序列化后取 SHA256 摘要。
+- fingerprint: 生成文件或目录内容快照摘要，不把目录名当样品真值。
+- finite_number: 判断是否为范围内有限数值（排除布尔与 NaN/Inf）。
+
+关联：
+- paths: 提供 PROJECT_ROOT 与 UI_OUT_ROOT 路径权威。
+- 本包其余模块（adapters、evidence_store、confidence_gate、reflection 等）统一复用上述工具。
+"""
 from __future__ import annotations
 
 import hashlib
@@ -28,8 +47,16 @@ def output_root():
 
 
 def read_json(path):
-    with Path(path).open(encoding="utf-8-sig") as stream:
-        return json.load(stream)
+    # Windows原子替换瞬间可能拒绝并行读者；仅重试本地读，不重发任何模型请求。
+    for attempt in range(4):
+        try:
+            with Path(path).open(encoding="utf-8-sig") as stream:
+                return json.load(stream)
+        except PermissionError as exc:
+            if os.name != 'nt' or (getattr(exc,'winerror',None) not in {5,32,33}
+                                  and exc.errno != 13) or attempt == 3:
+                raise
+            time.sleep(.01 * (2**attempt))
 
 
 def write_json(path, obj):

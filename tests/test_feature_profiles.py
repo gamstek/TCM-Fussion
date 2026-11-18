@@ -1,4 +1,15 @@
-"""特征 profile：taxonomy 默认全集 + 针对特征覆盖；不把针晶负例施加给其他特征。"""
+"""特征 profile 回归：taxonomy 提供默认全集，覆盖项只作用于目标特征，不串扰其他特征。
+
+主要定义：
+- FeatureProfileTests.test_taxonomy_is_default_for_all_features: 未覆盖时所有已知特征都取 taxonomy 来源与正例。
+- FeatureProfileTests.test_needle_override_does_not_leak_to_fiber: 针晶覆盖不泄漏到 fiber，fiber 负例保持为空。
+- FeatureProfileTests.test_unknown_feature_has_no_profile: 未知特征返回空 profile 与空提示文本。
+- FeatureProfileTests.test_hint_text_contains_positive_and_negative: hint_text 同时包含正例与负例描述。
+
+关联：
+- TCM_Fusion.lib.feature_profiles: 被测的 build_profiles / profile_for / hint_text。
+- 位于 tests/ 下，随 selftest 递归发现。
+"""
 import unittest
 
 from TCM_Fusion.lib.feature_profiles import build_profiles, hint_text, profile_for

@@ -1,6 +1,14 @@
-"""图片示例审计的公共部分：contact sheet、分数规范化。
+"""图片示例审计的公共部分：生成目标+正负示例拼图，并规范化审计 JSON。
 
-只做旁路证据；不参与 rule decide，不阻断 det_score>=0.8 的 mask/measure。
+主要定义：
+- build_contact_sheet: 把目标裁图与正/负示例拼成带标签的 contact sheet。
+- normalize_audit: 把 VLM 审计输出规范成 image-exemplar-audit/v2；只做旁路证据，不做通过/拒绝。
+- _thumb: 内部工具，读取并缩放示例图。
+
+关联：
+- PIL: 拼图与字体渲染。
+- cli/image_audit_worker.py: 子进程调用 build_contact_sheet 与 normalize_audit。
+- .workflow_session / .output_projection: 以 image_exemplar_audit 操作与交付视图消费审计结果。
 """
 from __future__ import annotations
 

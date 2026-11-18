@@ -1,6 +1,21 @@
-"""统一集成：配置→A缓存/原CLI→原B/完成工件→融合→影子Agent→独立报告。
+"""统一集成入口：配置→A 缓存/原 CLI→原 B/完成工件→融合→影子 Agent→独立报告。
 
-结果全部位于paths.UI_OUT_ROOT；原代码、图片、B verdict均不被修改。
+结果全部位于 paths.UI_OUT_ROOT；原代码、图片与 B verdict 均不被修改。
+
+主要定义：
+- validate_config: 校验配置字段与取值，拒绝未知键。
+- run_pipeline: 建独立任务目录，执行 A 推理、路由、工作流或融合，并写 job/fusion/report。
+- doctor: 只读环境检查，不加载模型、不下载权重、不联网。
+
+关联：
+- TCM_Fusion.lib.routing_policy / candidate_policy: 路由与候选策略校验。
+- TCM_Fusion.lib.adapters: predict_a/execute_b 调用原 A/B 入口。
+- TCM_Fusion.lib.collaboration: fuse/knowledge_base/select_shadow。
+- TCM_Fusion.lib.workflow_entry: execute_workflow 执行自主 B 工作流。
+- TCM_Fusion.lib.workflow_backend: 启动前后比对代码签名。
+- TCM_Fusion.lib.stage2_classifier: doctor 检查 stage2 模型/元信息。
+- TCM_Fusion.lib.multi_view: 多图建任务后转交 run_pipeline/doctor。
+- TCM_Fusion.cli.main: CLI 的 run/doctor 子命令最终调用本模块。
 """
 from __future__ import annotations
 
@@ -291,6 +306,14 @@ def doctor(config):
     from .runtime_readiness import profile_checks, planner_preflight
     if workflow is not None:
         checks.extend(planner_preflight(cfg)['checks'])
+        if workflow.get('cnn_weights') or workflow.get('cnn_meta'):
+            from .stage2_classifier import model_profile
+            try:
+                profile=model_profile(workflow)
+                check('stage2模型/元信息',True,
+                      '显微特征 '+profile['metadata']['arch']+'；仅文件/元信息检查，未加载权重')
+            except (IntegrationError,OSError,ValueError) as exc:
+                check('stage2模型/元信息',False,getattr(exc,'code','CNN_META_INVALID'))
     if workflow is None and b.get("mode", "run") == "run":
         check("B输入", project_path(b.get("input", "MICROSCOPE-main/显微镜像/甘草")).exists(), b.get("input"))
         py = project_path(b.get("python", paths.VENV_PY))

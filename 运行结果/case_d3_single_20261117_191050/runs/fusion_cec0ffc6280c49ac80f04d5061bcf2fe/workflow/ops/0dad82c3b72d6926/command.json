@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "D:\\TCM-Microscopic-Image-Recognition-main\\.venv\\vision\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\图像分割\\cli\\igm_segment_batch.py",
+    "--crops",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_single_20261117_191050\\runs\\fusion_cec0ffc6280c49ac80f04d5061bcf2fe\\workflow\\ops\\0dad82c3b72d6926\\crops",
+    "--out-dir",
+    "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_d3_single_20261117_191050\\runs\\fusion_cec0ffc6280c49ac80f04d5061bcf2fe\\workflow\\ops\\0dad82c3b72d6926\\segmentation",
+    "--box-association",
+    "region_component",
+    "--size",
+    "2048x2048"
+  ],
+  "timeout_seconds": 180.0
+}

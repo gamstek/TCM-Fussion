@@ -1,4 +1,18 @@
-"""Offline LangMem/prompt-release workflow test, excluded from main-chain tests."""
+"""离线 LangMem/prompt 发布工作流回归，被 selftest 递归发现但不属于主链测试。
+
+主要定义：
+- WorkflowPromptTests.setUp/runtime: 构造临时图像与 `WorkflowRuntime`（`StageFixture` 后端、模拟模式）。
+- test_workflow_prompt_dual_replay_and_release 的 report/dataset 段: 由 workflow 轨迹生成 report 与 development 数据集，`validate` 通过后 `publish` 并校验 release 仍标记 simulation。
+- test_workflow_prompt_dual_replay_and_release 的 truth 段: 切换 `workflow_truth` 模式校验 paired 指标，并删除 `segment_instance` 后重算摘要以验证篡改被拒。
+- `Planner`（测试内类）: 基线提示下额外读一次证据，用于比较候选提示是否减少请求。
+
+关联：
+- TCM_Fusion.lib.prompt_optimization: `validate`/`publish`/`load_release`/`DEFAULT_INSTRUCTION`/`GUARD`/`profile`。
+- TCM_Fusion.lib.workflow_runtime: `WorkflowRuntime` 提供 workflow 配置与操作账本。
+- TCM_Fusion.lib.react_graph: `run_react` 产出可回放轨迹。
+- TCM_Fusion.tests.test_workflow.StageFixture: 测试替身后端。
+- TCM_Fusion.lib.storage: `digest`/`read_json` 绑定报告与数据集。
+"""
 import asyncio
 import copy
 import tempfile

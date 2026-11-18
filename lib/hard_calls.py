@@ -1,4 +1,22 @@
-"""为视觉编码与模型请求提供可终止的子进程，临时载荷用完删除。"""
+"""为视觉编码与模型请求提供可终止的子进程执行通道，临时载荷用完即删。
+
+请求通过独立 worker 子进程完成，使用文件 IPC 且不继承 MCP 协议管道；
+超时即整树终止，失败不自动重试（尤其不重发付费请求），响应正文不保留。
+
+主要定义：
+- encode_image: 经 worker 子进程把本地图像编码为模型可用的 data URL。
+- post: 经 worker 子进程发送模型请求，返回响应正文或抛出结构化上游错误。
+- worker: worker 子进程入口，负责图像编码或转发模型 HTTP 请求并写结果文件。
+- _run_worker: 私有辅助，负责建临时目录、起子进程、按截止时间终止并读取结果。
+
+关联：
+- .storage: 使用 output_root、write_json、read_json、IntegrationError 处理结果与错误。
+- .controlled_process: 借 kill_tree 在超时或异常时整树终止 worker。
+- .service_errors: worker 内调用 service_error 归一化上游异常分类。
+- adjudicator: 复用 AdjudicatorClient 发送 HTTP 请求，不复制传输原语。
+- paths: 提供项目根与检测配置目录定位。
+- .agent_tools / .decision_llm / .react_graph / .final_assessment: 分别是 post 与 encode_image 的调用方。
+"""
 import base64
 import os
 import sys
@@ -6,6 +24,7 @@ import io
 import json
 import tempfile
 import subprocess
+import time
 from pathlib import Path
 from http.client import RemoteDisconnected
 from urllib.error import HTTPError, URLError
@@ -17,6 +36,7 @@ from .controlled_process import kill_tree
 def _run_worker(request, seconds, timeout_code, *, diagnostics=None):
     if seconds<=0:raise IntegrationError('WORKFLOW_TIMEOUT','提交前时间预算耗尽')
     root=output_root()/'request_work';root.mkdir(parents=True,exist_ok=True)
+    started = time.monotonic()
     with tempfile.TemporaryDirectory(dir=root,prefix='request_') as temp:
         p=Path(temp);write_json(p/'input.json',request)
         command=[sys.executable,'-X','utf8','-m','TCM_Fusion.cli.api_worker','--input',str(p/'input.json'),'--output',str(p/'output.json')]
@@ -35,6 +55,8 @@ def _run_worker(request, seconds, timeout_code, *, diagnostics=None):
             headers = p/'http_headers.json'
             if diagnostics is not None and headers.is_file():
                 diagnostics.update(read_json(headers))
+            if diagnostics is not None:
+                diagnostics['worker_elapsed_seconds'] = round(time.monotonic()-started,6)
         if child.returncode or not (p/'output.json').is_file():raise IntegrationError('API_WORKER_FAILED','请求worker未产生合法结果')
         return read_json(p/'output.json')
 
@@ -53,6 +75,8 @@ def post(payload,seconds, *, diagnostics=None):
         for key in ('http_status', 'vendor_code', 'error_type', 'transport_error_type', 'errno', 'winerror'):
             if key in result:
                 diagnostics[key] = result[key]
+        if 'http_timing' in result:
+            diagnostics['http_timing'] = result['http_timing']
     if 'body' in result:return result['body']
     if result.get('http_status', 0) >= 400:
         code=result.get('vendor_code','')
@@ -95,11 +119,14 @@ def worker(input_path,output_path):
     class WorkerClient(AdjudicatorClient):
         def _http_headers_received(self, status):
             super()._http_headers_received(status)
+            self.headers_seconds = time.monotonic()-http_started
             write_json(Path(output_path).with_name('http_headers.json'),
-                       {'stage': 'http_body_read', 'http_status': status})
+                       {'stage': 'http_body_read', 'http_status': status,
+                        'send_to_headers_seconds':round(self.headers_seconds,6)})
 
     client=WorkerClient(Path(paths.DETECTION_CONFIG_DIR)/'vlm_config.json')
     client.timeout_s=min(client.timeout_s,request['timeout'])
+    http_started = time.monotonic()
     try:result={'body':client._post(request['payload'])}
     except Exception as exc:
         result,_=service_error(exc)
@@ -119,4 +146,9 @@ def worker(input_path,output_path):
             result['error_code'] = 'UPSTREAM_NETWORK_FAILED'
     if hasattr(client, 'last_http_status'):
         result['http_status'] = client.last_http_status
+    http_total = time.monotonic()-http_started
+    result['http_timing'] = {'send_to_completion_seconds':round(http_total,6),
+        'send_to_headers_seconds':round(client.headers_seconds,6) if hasattr(client,'headers_seconds') else None,
+        'headers_to_completion_seconds':round(http_total-client.headers_seconds,6) if hasattr(client,'headers_seconds') else None,
+        'scope':'HTTP call and parse; send-to-headers includes connect/upload/server wait'}
     write_json(output_path,result)

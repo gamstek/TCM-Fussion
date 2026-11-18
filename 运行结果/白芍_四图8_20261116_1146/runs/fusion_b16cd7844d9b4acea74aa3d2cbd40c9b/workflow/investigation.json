@@ -1,0 +1,280 @@
+{
+  "identity": "21904b4943505bbdfee96544b8878cfd6b30608f2fb5f48ce27db961f8a0e50f",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "白芍",
+    "G1",
+    "G4",
+    "知母"
+  ],
+  "hypotheses": {
+    "白芍": {
+      "status": "investigating",
+      "reason": "白芍required已匹配但G1共享簇晶仍pending，需导管/木栓/淀粉粒supporting判据区分；G4依赖针晶与石细胞，其针晶VERIFIED_MATCH但石细胞未检出，保留调查以决定是否撤销。提名仅为下轮扩展方向，不等于证据。",
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "白芍required已匹配但G1共享簇晶仍pending，需导管/木栓/淀粉粒supporting判据区分；G4依赖针晶与石细胞，其针晶VERIFIED_MATCH但石细胞未检出，保留调查以决定是否撤销。提名仅为下轮扩展方向，不等于证据。",
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "decision_source": "model"
+    },
+    "G4": {
+      "status": "investigating",
+      "reason": "白芍required已匹配但G1共享簇晶仍pending，需导管/木栓/淀粉粒supporting判据区分；G4依赖针晶与石细胞，其针晶VERIFIED_MATCH但石细胞未检出，保留调查以决定是否撤销。提名仅为下轮扩展方向，不等于证据。",
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "decision_source": "model"
+    },
+    "知母": {
+      "status": "withdrawn",
+      "reason": "维持撤销：针晶尺寸低于P0下界，已有尺寸反证",
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍需starch_grain/vessel/fiber supporting核验；G1与白芍在簇晶上重叠，淀粉粒形态与导管宽度是下一区分判据；G4保持proposed观察针晶是否出现"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "白芍需starch_grain/vessel/fiber supporting核验；G1与白芍在簇晶上重叠，淀粉粒形态与导管宽度是下一区分判据；G4保持proposed观察针晶是否出现"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "白芍需starch_grain/vessel/fiber supporting核验；G1与白芍在簇晶上重叠，淀粉粒形态与导管宽度是下一区分判据；G4保持proposed观察针晶是否出现"
+        }
+      ],
+      "evidence_digest": "6554c1dcfc4375d656805afb73aecb620d4fd5fc1930106ba97789d5a3103076",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "保持白芍/G1 investigating；G4与知母因针晶判据待测量核验，本轮分割+后续测量可判定其针晶尺寸是否在任一候选范围内"
+        },
+        {
+          "candidate_id": "知母",
+          "status": "investigating",
+          "reason": "保持白芍/G1 investigating；G4与知母因针晶判据待测量核验，本轮分割+后续测量可判定其针晶尺寸是否在任一候选范围内"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "保持白芍/G1 investigating；G4与知母因针晶判据待测量核验，本轮分割+后续测量可判定其针晶尺寸是否在任一候选范围内"
+        }
+      ],
+      "evidence_digest": "6554c1dcfc4375d656805afb73aecb620d4fd5fc1930106ba97789d5a3103076",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "保留G4 investigating（本轮stone_cell扫描可判定其P0 supporting）；白芍与G1因簇晶重叠保持investigating，若石细胞未检出则转向其vessel/starch判据"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "保留G4 investigating（本轮stone_cell扫描可判定其P0 supporting）；白芍与G1因簇晶重叠保持investigating，若石细胞未检出则转向其vessel/starch判据"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "保留G4 investigating（本轮stone_cell扫描可判定其P0 supporting）；白芍与G1因簇晶重叠保持investigating，若石细胞未检出则转向其vessel/starch判据"
+        }
+      ],
+      "evidence_digest": "aa78d42eda78fa862dff9bcb87198c7f85afe99f766d6ea338ee896a2a2d970e",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "G4的stone_cell/inulin supporting仍未核验（仅一视野扫描未见，非阴性）；白芍与G1簇晶判据重叠待进一步区分"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "G4的stone_cell/inulin supporting仍未核验（仅一视野扫描未见，非阴性）；白芍与G1簇晶判据重叠待进一步区分"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "G4的stone_cell/inulin supporting仍未核验（仅一视野扫描未见，非阴性）；白芍与G1簇晶判据重叠待进一步区分"
+        }
+      ],
+      "evidence_digest": "aa78d42eda78fa862dff9bcb87198c7f85afe99f766d6ea338ee896a2a2d970e",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "知母",
+          "status": "withdrawn",
+          "reason": "针晶median 14.4μm低于知母P0下界26μm，required OUT_OF_RANGE，尺寸反证明确"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "针晶VERIFIED_MATCH但仅1例；修复掩码后可扩测确认其在G4范围内的稳定性"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "簇晶判据与白芍重叠，需后续以淀粉粒/导管等supporting区分"
+        }
+      ],
+      "evidence_digest": "0fc6e3c05fd6ebb0bce326bbda95dae68c78d98141f547d2b4fc3a9d407ee52b",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "簇晶已VERIFIED_MATCH，但糊化淀粉粒等supporting仍未核验，与G1判据重叠待区分"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "簇晶判据与白芍重叠且required仍为DETECTED_PENDING，需supporting特征区分"
+        },
+        {
+          "candidate_id": "知母",
+          "status": "withdrawn",
+          "reason": "维持撤销：针晶尺寸低于P0下界，已有尺寸反证"
+        }
+      ],
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "fiber实例分类结果直接决定G4是否获得第二个支持、白芍/G1的fiber supporting是否成立；三候选仍需该定量判据区分。"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "fiber实例分类结果直接决定G4是否获得第二个支持、白芍/G1的fiber supporting是否成立；三候选仍需该定量判据区分。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "fiber实例分类结果直接决定G4是否获得第二个支持、白芍/G1的fiber supporting是否成立；三候选仍需该定量判据区分。"
+        }
+      ],
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "fiber实例分类结果决定三候选的supporting判据走向，仅作下轮扩展方向，不等于证据。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "fiber实例分类结果决定三候选的supporting判据走向，仅作下轮扩展方向，不等于证据。"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "fiber实例分类结果决定三候选的supporting判据走向，仅作下轮扩展方向，不等于证据。"
+        }
+      ],
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "G1与白芍共享簇晶required，需导管/木栓/淀粉粒supporting判据区分；G4依赖needle_crystal与stone_cell，保留调查以判断是否撤销；提名仅为下轮扩展方向。"
+        },
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "G1与白芍共享簇晶required，需导管/木栓/淀粉粒supporting判据区分；G4依赖needle_crystal与stone_cell，保留调查以判断是否撤销；提名仅为下轮扩展方向。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "G1与白芍共享簇晶required，需导管/木栓/淀粉粒supporting判据区分；G4依赖needle_crystal与stone_cell，保留调查以判断是否撤销；提名仅为下轮扩展方向。"
+        }
+      ],
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍required已匹配但G1共享簇晶仍pending，需导管/木栓/淀粉粒supporting判据区分；G4依赖针晶与石细胞，其针晶VERIFIED_MATCH但石细胞未检出，保留调查以决定是否撤销。提名仅为下轮扩展方向，不等于证据。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "白芍required已匹配但G1共享簇晶仍pending，需导管/木栓/淀粉粒supporting判据区分；G4依赖针晶与石细胞，其针晶VERIFIED_MATCH但石细胞未检出，保留调查以决定是否撤销。提名仅为下轮扩展方向，不等于证据。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "白芍required已匹配但G1共享簇晶仍pending，需导管/木栓/淀粉粒supporting判据区分；G4依赖针晶与石细胞，其针晶VERIFIED_MATCH但石细胞未检出，保留调查以决定是否撤销。提名仅为下轮扩展方向，不等于证据。"
+        }
+      ],
+      "evidence_digest": "299d805ca7cd52220f5e6a76fffbc2cc710b2dd7ec3de8e89d62b0031a987ea5",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

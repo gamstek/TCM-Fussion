@@ -1,0 +1,88 @@
+{
+  "schema": "instance-ledger/d2",
+  "evidence_version": "3187893e4374bcbe788f9dbc949bb3511d2d96019ca4c75af9fbe27d55565c58",
+  "instances": {
+    "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2": {
+      "instance_id": "inst:1376e749388b381d2b727ee9f87660e72190e08c968310544b48464066e8c0b2",
+      "source_image_sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "source_bbox": [
+        858.8,
+        506.1,
+        1116.5,
+        779.9
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+          "sha256": "95e96f2990bea4f3d26b0513ff6e35ef4608a6e404b2e77b1a2c7694224ea7b3",
+          "pixels_sha256": "ec4d401d26534fd293500333de9f01b359d21726bfaf7150a08a96341707739f"
+        }
+      ],
+      "classifications": [
+        {
+          "artifact_id": "classification:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+          "sha256": "6319d07453407ea95171aefaf6a5edce6580ae154fba9c4e07e72c775105eac7"
+        }
+      ],
+      "mask_versions": [
+        {
+          "artifact_id": "seg:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+          "sha256": "2a6e56eaaffa93fea867c3428cdc3b67ffac829db5a91eafa9a9f96aeb05d60a"
+        }
+      ],
+      "measurements": [
+        {
+          "artifact_id": "measurement:seg:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+          "sha256": "0a0a280caefc473a0c8f875829ff806e008023a6e3a409378aad394374dc7d13"
+        }
+      ],
+      "attempts": [
+        {
+          "operation_key": "a5f0c8da5669e8def20795cc74a0f0a426ed7cc3607550369663f9cdfec93c5b",
+          "semantic_key": "c6b27700d720d170ebe5fe31fbddf50e7e5fab711e8b80c670dbf8eba9473086",
+          "tool": "classify_target",
+          "status": "done",
+          "error_code": null
+        },
+        {
+          "operation_key": "38333ccb5ac8d705c76df04e1cf9e47d9726aaf8aec39bd10aa303cb38611db5",
+          "semantic_key": "86d618af306fde5c42340f7990fc13411d318a87a881bcab00311ef22f18b385",
+          "tool": "segment_instance",
+          "status": "done",
+          "error_code": null
+        },
+        {
+          "operation_key": "auto:9c55caf5f0e5ed26a3660d3e4a84fc126e13cfb3413e88cbd3b44f0c57c7e10b",
+          "semantic_key": "9c55caf5f0e5ed26a3660d3e4a84fc126e13cfb3413e88cbd3b44f0c57c7e10b",
+          "tool": "measure_instances",
+          "status": "done",
+          "error_code": null
+        }
+      ]
+    },
+    "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318": {
+      "instance_id": "inst:af7250ae134677521bb6901e8736b2881a63e187c99cd53e6111093f988d0318",
+      "source_image_sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "source_bbox": [
+        1649.1,
+        526.3,
+        1885.9,
+        756.4
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_02",
+          "sha256": "bdc5f789113a3e00a97c80feb2142ac78942f5a945fcbc52e916f9c36c9430fc",
+          "pixels_sha256": "94d46c4ab26436bfc2b3b5361d5252bbd2f6951033cad22ff5f657bfeac4c0ba"
+        }
+      ],
+      "classifications": [],
+      "mask_versions": [],
+      "measurements": [],
+      "attempts": []
+    }
+  },
+  "associations": []
+}

@@ -1,4 +1,17 @@
-"""A原始完整排序→启发式分流；仅消费推理结果，不校准、不推造B证据。"""
+"""把 A 的原始完整排序转成启发式分流建议；只消费推理结果，不校准、不造 B 证据。
+
+shadow/trial 模式须显式给出分数阈值、差距与 buffer（覆盖文本舍入误差），
+validated 模式只读经过风险复验的发布文件，禁止现场覆盖阈值，失败时保守回退不跳过。
+
+主要定义：
+- validate_policy: 校验分流配置字段与取值范围，返回规范化策略（None 表示关闭）。
+- route: 依据 A 排序与策略给出建议跳过/跳过、原因、原始分数与差距。
+
+关联：
+- .storage: 使用 IntegrationError、digest、finite_number 做配置与概率校验。
+- .confidence_gate: validated 模式下调用 decide，异常时回退为不跳过。
+- .pipeline: 在离线流程中调用 validate_policy 与 route。
+"""
 from .storage import IntegrationError, digest, finite_number
 
 

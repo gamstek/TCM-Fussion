@@ -1,0 +1,181 @@
+{
+  "schema": "task-reflection-controller/d3",
+  "scope": "task_policy_only",
+  "evidence_effect": "none",
+  "rows": [
+    {
+      "key": "3e6a4817504eefcad627769fe164a3b4e46e9c1b6e0fdea93afcdc054ab6e20a",
+      "tool": "detect_fov_initial",
+      "problem_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "question_id": "physical-question:985afbbc614de32f3d8e0dcc",
+      "progress_axes": {
+        "evidence": false,
+        "capability": true,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 15078.0,
+      "objective": "读取或恢复有效证据",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "4e4eada2b226358a79d35f68ad634aa4c386f1749745799f08205feb8ac8cc29",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+      "candidate_signature": "d89835e0db4d1cdb6379f130a53473bb347ca1aa057d13b595911ea57225c963"
+    },
+    {
+      "key": "aff9907b8dba810952f624398cbdcdf1789278210325274c0c81bf12a6e7a506",
+      "tool": "classify_target",
+      "problem_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+      "question_id": "physical-question:b1c0a928c13a930415a25bcc",
+      "progress_axes": {
+        "evidence": false,
+        "capability": true,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 6328.0,
+      "objective": "读取或恢复有效证据",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "602bf2fa15578e77a34e5644a47ba540f3820bfa2153e6399781f424ffcf8e65",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "ffc0c1b79cc1654d816a5a78b1c7475cdeb09281bd73e7fdf15272fb2179f4f1",
+      "candidate_signature": "d89835e0db4d1cdb6379f130a53473bb347ca1aa057d13b595911ea57225c963"
+    },
+    {
+      "key": "54228858c63911644f7a955d4f9c6c82a5dbbd51030c3ed6879c2bd4bc2d2c80",
+      "tool": "segment_instance",
+      "problem_id": "crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+      "question_id": "physical-question:b1c0a928c13a930415a25bcc",
+      "progress_axes": {
+        "evidence": true,
+        "capability": true,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 26235.0,
+      "objective": "恢复可用目标掩码",
+      "resolved_criteria": [
+        "白芍:cluster_crystal",
+        "马齿苋:cluster_crystal",
+        "G1:cluster_crystal",
+        "辣蓼:cluster_crystal",
+        "川楝子:cluster_crystal",
+        "诃子:cluster_crystal",
+        "金银花:cluster_crystal",
+        "栀子:cluster_crystal",
+        "艾叶:cluster_crystal",
+        "虎杖:cluster_crystal",
+        "大黄:cluster_crystal"
+      ],
+      "candidate_support_changes": {
+        "白芍": [
+          "cluster_crystal"
+        ],
+        "马齿苋": [
+          "cluster_crystal"
+        ],
+        "G1": [
+          "cluster_crystal"
+        ],
+        "辣蓼": [
+          "cluster_crystal"
+        ],
+        "川楝子": [
+          "cluster_crystal"
+        ],
+        "诃子": [
+          "cluster_crystal"
+        ],
+        "金银花": [
+          "cluster_crystal"
+        ],
+        "栀子": [
+          "cluster_crystal"
+        ]
+      },
+      "qualified_counter_changes": [
+        "艾叶:cluster_crystal",
+        "虎杖:cluster_crystal",
+        "大黄:cluster_crystal"
+      ],
+      "primary_required_progress": true,
+      "discrimination_progress": "qualified_counter_added",
+      "evidence_version": "d43579053c6bd9f105b74a7fb7e6a7ab9a9533d9bd11f0e2bf9dd59c46cad62f",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "ffc0c1b79cc1654d816a5a78b1c7475cdeb09281bd73e7fdf15272fb2179f4f1",
+      "candidate_signature": "2c4f8bd53010039eca813472f8b81f7b6a23e34f8679ecaa210f64730636e42d"
+    },
+    {
+      "key": "12b883bea671fc7ef8080a6e8c793ccda3a0d181f60292fa4f4e726edd1f9aad",
+      "tool": "measure_instances",
+      "problem_id": "measurement:seg:crop:img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13:cluster_crystal_view_01_01",
+      "question_id": "physical-question:6f5beba8414820f12e59b93b",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 672.0,
+      "objective": "完成合格物理尺寸测量",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "d43579053c6bd9f105b74a7fb7e6a7ab9a9533d9bd11f0e2bf9dd59c46cad62f",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "ffc0c1b79cc1654d816a5a78b1c7475cdeb09281bd73e7fdf15272fb2179f4f1",
+      "candidate_signature": "2c4f8bd53010039eca813472f8b81f7b6a23e34f8679ecaa210f64730636e42d"
+    },
+    {
+      "key": "6b8321aa01274c27e6808723bc616043309ef370370b484d609ee3005605dd6d",
+      "tool": "scene_check",
+      "problem_id": "scene_check",
+      "question_id": "physical-question:5597ee2afea80051801f980d",
+      "progress_axes": {
+        "evidence": false,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": false,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 6843.0,
+      "objective": "完成强制场景上下文",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "d43579053c6bd9f105b74a7fb7e6a7ab9a9533d9bd11f0e2bf9dd59c46cad62f",
+      "image_id": "img_16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "input_fingerprint": "752e31d149a66abf1fa39262f917bfe84b99a1215f87efeb49a25a6b446a8436",
+      "candidate_signature": "545ce29ea277c3756c4c3361d7dc037c96849c2b0d5b5624aa11530d38a39cfb"
+    }
+  ],
+  "cards": [],
+  "applications": [],
+  "rejections": [],
+  "issues": {},
+  "responses": [],
+  "exposures": [],
+  "pending": null,
+  "avoided": []
+}

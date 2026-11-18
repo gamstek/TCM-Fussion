@@ -1,4 +1,19 @@
-"""子进程共享重算/网络预算；先预约再调用，失败和未知结果不退款不自动重发。"""
+"""子进程共享的重算/网络预算：先预约再调用，失败和未知结果不退款、不自动重发。
+
+主要定义：
+- reserve: 在账本锁内校验样品、任务关闭、截止时间与额度后登记 pending 预约，并为收尾研判保留额度。
+- finish_http: 保留第一次 HTTP 结果元数据，不读取或记录响应正文、凭据和 URL 参数。
+- operation_failure: 按 operation_key 查出已失败的预算条目。
+- install_http_guard: 仅在专用 worker 内替换 urlopen，拒绝同一请求重放与隐式重定向。
+
+关联：
+- .ledger_lock: 预算账本的跨进程锁。
+- .storage: IntegrationError、JSON 读写与 digest。
+- .probe_budget: reserve 内按需检查 supporting 探查额度。
+- .workflow_session: 调用 reserve 预约重算/网络资源。
+- .worker_bootstrap/sitecustomize.py: 在 worker 启动时安装 install_http_guard。
+- .controlled_process: 读取 operation_failure 把 HTTP 失败映射为受控阶段错误。
+"""
 import time
 from .ledger_lock import acquire, release
 from .storage import IntegrationError, read_json, write_json, digest

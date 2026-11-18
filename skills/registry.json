@@ -32,7 +32,9 @@
       "criteria_diff",
       "list_artifacts",
       "read_artifact_status",
-      "read_quality"
+      "read_quality",
+      "read_action_catalog",
+      "read_evidence_detail"
     ],
     "purpose": "只读完整证据与候选判据；不能扩权或生成新观察"
   },
@@ -45,11 +47,7 @@
       "measure_instances",
       "detect_region",
       "classify_target",
-      "propose_regions",
-      "roi_screen",
-      "roi_screen_batch",
       "locate_feature",
-      "needle_scan",
       "feature_scan",
       "hybrid_scan",
       "image_exemplar_audit",

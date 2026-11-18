@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "草酸钙簇晶",
+      "tight_bbox": [
+        1198.75,
+        165.5,
+        1566.25,
+        510.5
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "多个菱状小晶聚集成簇状团块，可见放射状排列的短棱角晶片，半透明",
+      "source_tight_bbox": [
+        1260,
+        223,
+        1505,
+        453
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1024,
+    0,
+    2048,
+    768
+  ],
+  "feature_id": "cluster_crystal",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

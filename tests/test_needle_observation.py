@@ -1,4 +1,13 @@
-"""旁路针晶审计与 mask 拆分：只验证非阻断输出，不证明识别准确率。"""
+"""旁路针晶审计与 mask 拆分的离线回归，只验证非阻断输出，不证明识别准确率。
+
+主要定义：
+- NeedleObservationTests.test_split_mask_separates_components_without_inventing_instances: 校验 `split_mask` 按连通域拆分实例，不虚构实例且每个实例落盘。
+- NeedleObservationTests.test_build_audit_is_sidecar_and_does_not_touch_operations: 校验 `build_needle_audit` 只写旁路 sidecar，`operations.json` 字节不变且标记 non_blocking。
+
+关联：
+- TCM_Fusion.lib.needle_observation: 被测的 `build_needle_audit` 与 `split_mask`。
+- TCM_Fusion.lib.storage: 测试用 `read_json`/`write_json` 构造运行目录与操作账本。
+"""
 import json
 import tempfile
 import unittest

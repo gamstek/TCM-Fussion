@@ -1,0 +1,724 @@
+{
+  "schema": "cnn-classifier/v2",
+  "model": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+  "imgsz": 320,
+  "input_mode": "letterbox",
+  "classes": [
+    "00_cluster_crystal",
+    "01_single_crystal",
+    "02_needle_crystal",
+    "03_vessel",
+    "04_stone_cell",
+    "05_starch_grain",
+    "06_non_glandular_hair",
+    "07_secretory_tissue",
+    "08_stoma",
+    "09_epidermis_cell",
+    "10_hypha",
+    "11_fiber",
+    "12_pollen_grain",
+    "13_other"
+  ],
+  "preprocessing": "目标检测.lib.cls_net.build_transforms",
+  "signature": {
+    "schema": "stage2-request/v2",
+    "profile": {
+      "weights": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+      "meta": "D:\\TCM-Microscopic-Image-Recognition-main\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+      "metadata": {
+        "arch": "resnet18",
+        "imgsz": 320,
+        "input_mode": "letterbox",
+        "classes": [
+          "00_cluster_crystal",
+          "01_single_crystal",
+          "02_needle_crystal",
+          "03_vessel",
+          "04_stone_cell",
+          "05_starch_grain",
+          "06_non_glandular_hair",
+          "07_secretory_tissue",
+          "08_stoma",
+          "09_epidermis_cell",
+          "10_hypha",
+          "11_fiber",
+          "12_pollen_grain",
+          "13_other"
+        ],
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ],
+        "checkpoint": "best.pt"
+      },
+      "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+      "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+      "preprocessor_sha256": "bd6f8a77fd9218704715c357ddc4999023370101c9e82bf372c5c0a148c1ed66",
+      "adapter_sha256": "287c33cc90d809274c029d417c4e1136e61b97c8ed85ba833d921b8c30695636"
+    },
+    "crops": [
+      {
+        "id": "crop:img_2e4fe138752048a8a5ffc8b2479935b143efdca0b3ebbe412f92676b06a633c1:single_crystal_view_04_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\3bca23367603c05a\\detection\\crops\\single_crystal_view_04_01.png",
+        "sha256": "61e9c84317fa30715d2c6a03eec61ec0e712af91e1800e8df2ee8d9ac8645a6c"
+      },
+      {
+        "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:cluster_crystal_view_02_glm0abfd40672a2_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\81c71af0fea7aa85\\scan\\crops\\cluster_crystal_view_02_glm0abfd40672a2_01.png",
+        "sha256": "f5318a173d788d317d4d556c2d91afb730567fe7b318b62e660af7136ae25bea"
+      },
+      {
+        "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:cluster_crystal_view_02_glm3667244f60f3_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\81c71af0fea7aa85\\scan\\crops\\cluster_crystal_view_02_glm3667244f60f3_01.png",
+        "sha256": "eb390f34964ebf5b305874388259d555234ae1dfa08f1d1f99f864dc94a347e2"
+      },
+      {
+        "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:single_crystal_view_02_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\dae83b0418ef5397\\detection\\crops\\single_crystal_view_02_01.png",
+        "sha256": "afc621ead58cdd14a89a0b574f53c902225ef590221cfb0a252ac6e2443b8a5e"
+      },
+      {
+        "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:single_crystal_view_02_02",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\dae83b0418ef5397\\detection\\crops\\single_crystal_view_02_02.png",
+        "sha256": "20d19f4eff853a2ed064b8071142aec2593c4243ada04b68ee9d10d9b8423068"
+      },
+      {
+        "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:single_crystal_view_02_03",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\dae83b0418ef5397\\detection\\crops\\single_crystal_view_02_03.png",
+        "sha256": "266914fb67d42d570ad46622415233de672f602193e0f08aa74bcaaedcf23be7"
+      },
+      {
+        "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:single_crystal_view_02_04",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\dae83b0418ef5397\\detection\\crops\\single_crystal_view_02_04.png",
+        "sha256": "156d77ce3b6391189c7deb62dd4066a6898b4b9cd830d38582ab1fe45f9961e5"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:cluster_crystal_view_01_glm809388596c20_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\2a228573bb63e5ce\\scan\\crops\\cluster_crystal_view_01_glm809388596c20_01.png",
+        "sha256": "3abe494b4e13ffbd48102d6c875d013fd963361e1f4ce46f568dc2132476a06a"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_01.png",
+        "sha256": "31f82198bd6ec11912eb7c39c8d2a068b502ca241897ccfac91ef643d9eca795"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_02",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_02.png",
+        "sha256": "95938c3d02689768a579e8f79cf093797d1cc82280463a8f552831f72933e05b"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_03",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_03.png",
+        "sha256": "9493f87eef87d1e444f8513f5c860106dec9954a3cb8d1f56c9a7b3fa38a8949"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_04",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_04.png",
+        "sha256": "bc42af45d8fe885c59cace8624324dd5a1f3aa95c5003218bac3ddc924d3e2cb"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_05",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_05.png",
+        "sha256": "c1f221f0807c7a23a6e202375211402bccdfaa3835004898b999317e8b3f65ae"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_06",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_06.png",
+        "sha256": "14ce71f59ad3395a6db320059c6d079eec7cbefa42d911a667a8d5ece5661899"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_07",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_07.png",
+        "sha256": "a13adc908f1d3082fa7e105e557b79ca099ba37a59a1dd2339aa5ed12e836234"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_08",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_08.png",
+        "sha256": "3be7f197cc1cba8fd40078f362a13f11de95705e2d7ce60b584ffa093568dfb7"
+      },
+      {
+        "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_09",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\ccbdfca608624c1c\\detection\\crops\\single_crystal_view_01_09.png",
+        "sha256": "bc60b9a65e8ccd9f5731aa24dd8ca6e070fe7f490b15b1c9cf740a1b4a7532d5"
+      },
+      {
+        "id": "crop:img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03:cluster_crystal_view_03_glm809388596c20_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\d9210bc2567754d1\\scan\\crops\\cluster_crystal_view_03_glm809388596c20_01.png",
+        "sha256": "f0da081e3c1702c8f2ff6c598383788eb163bbf47450c125df30469dd24fe3dc"
+      },
+      {
+        "id": "crop:img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03:hypha_view_03_glm492a993e9139_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\c3b2a690fe6b302e\\scan\\crops\\hypha_view_03_glm492a993e9139_01.png",
+        "sha256": "7854751d1473ba0e95f7d8a005de15f09b4cb39c71791eaeff56a4f762ff0327"
+      },
+      {
+        "id": "crop:img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03:single_crystal_view_03_01",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\63da0be080dac850\\detection\\crops\\single_crystal_view_03_01.png",
+        "sha256": "dab9839824dfe2f2d060477979dae9fb989c52c8db055f81b93495955b9b663e"
+      },
+      {
+        "id": "crop:img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03:single_crystal_view_03_02",
+        "png": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\陈皮_四图2_20261116_1448\\runs\\fusion_3424bbb210194f2583fb979baf4270f3\\workflow\\ops\\63da0be080dac850\\detection\\crops\\single_crystal_view_03_02.png",
+        "sha256": "e3112acd55b3cd2a5430ac1b460ccd4ba27968acef2b8cedba05bacac3a0a931"
+      }
+    ],
+    "python": "D:\\TCM-Microscopic-Image-Recognition-main\\.venv\\yolo\\Scripts\\python.exe",
+    "python_sha256": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702"
+  },
+  "cache_key": "a6c1a478b4f154059b9e761a0aa19880d73f6505c0d6754455dd8385e25c3f62",
+  "rows": [
+    {
+      "id": "crop:img_2e4fe138752048a8a5ffc8b2479935b143efdca0b3ebbe412f92676b06a633c1:single_crystal_view_04_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.876713216304779
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.02404109388589859
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.015789808705449104
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.876713216304779,
+      "margin": 0.8526721224188805,
+      "entropy": 0.25465462381260534
+    },
+    {
+      "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:cluster_crystal_view_02_glm0abfd40672a2_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.7003017067909241
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.04794154688715935
+        },
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.04580777511000633
+        }
+      ],
+      "top1": "stoma",
+      "top1_class": "08_stoma",
+      "top1_prob": 0.7003017067909241,
+      "margin": 0.6523601599037647,
+      "entropy": 0.5003199151047985
+    },
+    {
+      "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:cluster_crystal_view_02_glm3667244f60f3_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.8132367134094238
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.043662697076797485
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.03047890029847622
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.8132367134094238,
+      "margin": 0.7695740163326263,
+      "entropy": 0.346264137023361
+    },
+    {
+      "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:single_crystal_view_02_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.7701089978218079
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.04373947158455849
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.035265855491161346
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.7701089978218079,
+      "margin": 0.7263695262372494,
+      "entropy": 0.4075184252373157
+    },
+    {
+      "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:single_crystal_view_02_02",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.8576837778091431
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.03030843287706375
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.022275229915976524
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.8576837778091431,
+      "margin": 0.8273753449320793,
+      "entropy": 0.28130034770939544
+    },
+    {
+      "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:single_crystal_view_02_03",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.9129005074501038
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.019589006900787354
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.012188117019832134
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.9129005074501038,
+      "margin": 0.8933115005493164,
+      "entropy": 0.18956433265586412
+    },
+    {
+      "id": "crop:img_d8df933e828f2211aee8f717d74c62297a1729aafaf492b12ac2c0df31c51056:single_crystal_view_02_04",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.9162964820861816
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.018170759081840515
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.011337514035403728
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.9162964820861816,
+      "margin": 0.8981257230043411,
+      "entropy": 0.18383441576450518
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:cluster_crystal_view_01_glm809388596c20_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.8000872731208801
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.04068324342370033
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.02375306375324726
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.8000872731208801,
+      "margin": 0.7594040296971798,
+      "entropy": 0.37256642456570604
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.6781789064407349
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.06157388538122177
+        },
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.05153914541006088
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.6781789064407349,
+      "margin": 0.6166050210595131,
+      "entropy": 0.5223473166818936
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_02",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.8595281839370728
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.03199645131826401
+        },
+        {
+          "class": "05_starch_grain",
+          "feature_id": "starch_grain",
+          "prob": 0.020597143098711967
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.8595281839370728,
+      "margin": 0.8275317326188087,
+      "entropy": 0.2778577630132272
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_03",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.7816810607910156
+        },
+        {
+          "class": "05_starch_grain",
+          "feature_id": "starch_grain",
+          "prob": 0.055730052292346954
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.030299663543701172
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.7816810607910156,
+      "margin": 0.7259510084986687,
+      "entropy": 0.3884640089428927
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_04",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.903072714805603
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.015957677736878395
+        },
+        {
+          "class": "02_needle_crystal",
+          "feature_id": "needle_crystal",
+          "prob": 0.012418339028954506
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.903072714805603,
+      "margin": 0.8871150370687246,
+      "entropy": 0.20898964937200856
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_05",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.7226285338401794
+        },
+        {
+          "class": "05_starch_grain",
+          "feature_id": "starch_grain",
+          "prob": 0.07974258810281754
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.04045344144105911
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.7226285338401794,
+      "margin": 0.6428859457373619,
+      "entropy": 0.4588054930025135
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_06",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.8073204755783081
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.03509572520852089
+        },
+        {
+          "class": "05_starch_grain",
+          "feature_id": "starch_grain",
+          "prob": 0.024066409096121788
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.8073204755783081,
+      "margin": 0.7722247503697872,
+      "entropy": 0.3632291385745203
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_07",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.8620779514312744
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.029987020418047905
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.019878940656781197
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.8620779514312744,
+      "margin": 0.8320909310132265,
+      "entropy": 0.27509312972120054
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_08",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.7613112926483154
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.03431151807308197
+        },
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.034038566052913666
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.7613112926483154,
+      "margin": 0.7269997745752335,
+      "entropy": 0.42490634180471754
+    },
+    {
+      "id": "crop:img_db567e24ba7156e24abb9b9f228a1ef8f4a88c3b841bd93a3993bf4f303f6858:single_crystal_view_01_09",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.4398055672645569
+        },
+        {
+          "class": "05_starch_grain",
+          "feature_id": "starch_grain",
+          "prob": 0.27026692032814026
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.06012570112943649
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.4398055672645569,
+      "margin": 0.16953864693641663,
+      "entropy": 0.6661596526510951
+    },
+    {
+      "id": "crop:img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03:cluster_crystal_view_03_glm809388596c20_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.27909523248672485
+        },
+        {
+          "class": "00_cluster_crystal",
+          "feature_id": "cluster_crystal",
+          "prob": 0.09293007850646973
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.09010033309459686
+        }
+      ],
+      "top1": "secretory_tissue",
+      "top1_class": "07_secretory_tissue",
+      "top1_prob": 0.27909523248672485,
+      "margin": 0.18616515398025513,
+      "entropy": 0.8849834030536639
+    },
+    {
+      "id": "crop:img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03:hypha_view_03_glm492a993e9139_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.7171691060066223
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.05045154690742493
+        },
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.034183476120233536
+        }
+      ],
+      "top1": "other",
+      "top1_class": "13_other",
+      "top1_prob": 0.7171691060066223,
+      "margin": 0.6667175590991974,
+      "entropy": 0.4841200453029181
+    },
+    {
+      "id": "crop:img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03:single_crystal_view_03_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.6134079694747925
+        },
+        {
+          "class": "05_starch_grain",
+          "feature_id": "starch_grain",
+          "prob": 0.1745528280735016
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.033824414014816284
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.6134079694747925,
+      "margin": 0.4388551414012909,
+      "entropy": 0.5472962535866809
+    },
+    {
+      "id": "crop:img_fc0a33d49cd74166d24a84970aca6440127c8c9893b5de4d67fc04f21fdd6e03:single_crystal_view_03_02",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.8335475921630859
+        },
+        {
+          "class": "05_starch_grain",
+          "feature_id": "starch_grain",
+          "prob": 0.026829207316040993
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.025806473568081856
+        }
+      ],
+      "top1": "single_crystal",
+      "top1_class": "01_single_crystal",
+      "top1_prob": 0.8335475921630859,
+      "margin": 0.806718384847045,
+      "entropy": 0.32243327675216893
+    }
+  ]
+}

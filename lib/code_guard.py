@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
-"""运行期代码签名冻结检查。
+"""运行期代码签名冻结检查：记录 baseline，供运行前、运行中和结束前复核。
 
+只做签名比对，不读写代码、不修改证据；签名函数由调用方注入（生产用 WorkflowBackend.code_signature）；写盘失败不阻断主流程，但签名变化不能被静默吞掉。
 
-设计边界：
-  * 只做签名比对，不读写代码、不修改证据；
-  * 签名函数由调用方注入（生产用 `WorkflowBackend.code_signature`），便于离线测试；
-  * 写盘失败不阻断主流程（检查本身仍生效），但不能静默吞掉签名变化。
+主要定义：
+- CodeSignatureGuard: 保存 baseline/current，提供 check、snapshot、start、stop、finish；变化时抛 CODE_CHANGED 或置位 cancel_event。
+
+关联：
+- .storage: IntegrationError 与 write_json。
+- .workflow_entry: 构造 CodeSignatureGuard 并在各阶段复核。
+- .workflow_backend: 提供生产用 code_signature 作为签名函数。
+- tests/test_code_guard.py: 回归签名变化检测。
 """
 from __future__ import annotations
 

@@ -1,9 +1,19 @@
-"""Generic multi-image input -> fresh case -> doctor -> existing workflow.
+"""通用多图入口：原图/manifest→新建 case→doctor→既有工作流；图片数量由 manifest 决定。
 
-Consumed by cli.main multi-view and Python callers. The number of source images
-is determined by the manifest, not by a fixed five-image contract. Only source
-pixels are copied; reference labels remain outside planner configuration.
-Dry-run never runs models.
+由 cli.main 的 multi-view 与 Python 调用方使用；只复制源像素，参考标签不进入规划
+配置；dry-run 只做准备与本地检查，不运行模型。
+
+主要定义：
+- inspect_sources: 校验目录/manifest 中的图片路径、SHA256 与重复性。
+- bind_config: 把源图与样品绑定进运行模板，生成新 case 配置。
+- run_multi_view: 创建独立 case、执行 doctor 并启动 run_pipeline。
+- `_validate_case_name` 等系列：Windows 合法/保留 case 名的内部校验。
+
+关联：
+- TCM_Fusion.lib.pipeline: doctor/run_pipeline/validate_config 执行实际流程。
+- TCM_Fusion.lib.storage: 路径解析、哈希与 JSON 读写。
+- TCM_Fusion.cli.main: multi-view 子命令调用 run_multi_view。
+- TCM_Fusion.lib.five_view: 旧五图接口的兼容别名层。
 """
 from __future__ import annotations
 
