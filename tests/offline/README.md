@@ -11,6 +11,7 @@
 | [test_reflection.py](test_reflection.py) | 反思发布的有效性、数据隔离与回放反例回归；不调用真实模型。 |
 | [test_routing.py](test_routing.py) | 路由真实编排分支、候选权限与零 API 只读验证；不把替身当识别效果。 |
 | [test_stage_replay.py](test_stage_replay.py) | 批量分类与示例审计往返、摘要校验、历史录制缺件。 |
+| [test_schedule_replay.py](test_schedule_replay.py) | 调度回放的源目录保护、版本篡改、越界读取与不支持的快照替换。 |
 | [test_workflow_prompt.py](test_workflow_prompt.py) | 离线 LangMem/prompt 发布工作流回归，被 selftest 递归发现但不属于主链测试。 |
 
 统一命令和测试输入边界见 [tests 导航](../README.md)。

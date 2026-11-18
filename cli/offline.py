@@ -8,6 +8,7 @@
 - outcome-evaluate / ablation-report / quality-report: 运行后独立真值反馈、B0—B3 配对评估、人工用途参考的误拦/误放统计。
 - gate-fit / gate-validate / gate-publish: 置信门离线校准、独立风险验证与复验发布。
 - workflow-replay: 封闭物理工件与观察回放，不新发看图请求。
+- schedule-replay: 从已完成的 case 冻结基线并检验跨视野初检的提交顺序。
 - dataset-split: 按 group_key 确定性划分训练/开发/测试，防止调参泄漏。
 - prompt-optimize / prompt-validate / prompt-publish: LangMem 离线文本优化、封闭工具回放与版本发布。
 - reflect / reflection-validate / reflection-publish: 从轨迹与程序反馈生成候选经验，再验证与发布。
@@ -49,6 +50,9 @@ def main(argv=None):
             gate.add_argument('--' + field, required=True)
     replay = sub.add_parser('workflow-replay', help='封闭物理工件及观察回放，不新发看图请求')
     replay.add_argument('--report', required=True)
+    schedule = sub.add_parser('schedule-replay', help='冻结实跑基线并在独立证据库回放初检乱序')
+    schedule.add_argument('--run', required=True, action='append', help='case/runs/fusion_<id>，可重复')
+    schedule.add_argument('--out-dir', required=True, help='原 case 之外的新目录')
     split = sub.add_parser('dataset-split', help='按group_key确定性划分训练/开发/测试，防止调参泄漏')
     split.add_argument('--attributes', nargs='+', required=True, help='一个或多个attributes.csv')
     split.add_argument('--out', required=True, help='输出dataset-split/v1 JSON')
@@ -74,6 +78,12 @@ def main(argv=None):
     args = parser.parse_args(argv)
     package = Path(paths.PROJECT_ROOT) / 'TCM_Fusion'
     try:
+        if args.command == 'schedule-replay':
+            from TCM_Fusion.lib.offline.schedule_replay import run
+            out = project_path(args.out_dir)
+            run([project_path(p) for p in args.run], out)
+            print(out / 'replay.json')
+            return 0
         if args.command == 'quality-replay':
             import contracts
             from quality_eval import replay

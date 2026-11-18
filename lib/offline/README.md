@@ -10,6 +10,7 @@
 | [outcome_evaluation.py](outcome_evaluation.py) | 运行后的独立真值评估：把轨迹结论与外部参考标签配对，不用模型自评充当真值。 |
 | [prompt_optimization.py](prompt_optimization.py) | LangMem 离线提示优化与封闭工具回放：发布显式版本，在线只加载提示。 |
 | [recorded_tools.py](recorded_tools.py) | 提示验证共享的观察回放接口，校验动作身份与录制冲突。 |
+| [schedule_replay.py](schedule_replay.py) | 从已完成的 case 冻结规划、时延、HTTP 预约与交付基线，在独立证据库重建原序并对拍跨视野初检的不同到达顺序。 |
 | [reflection.py](reflection.py) | 离线闭环反思：从程序可复核的轨迹反馈提出候选经验，经开发集回放后版本化发布。 |
 | [truth_prompt_validation.py](truth_prompt_validation.py) | 带独立真值的提示策略双回放：新旧指令配对比较，允许有证据的纠错。 |
 | [workflow_prompt_validation.py](workflow_prompt_validation.py) | 工作流提示的开发集双回放门：重放原 B 物理工件，不新发任何图像请求。 |
