@@ -313,33 +313,38 @@ def compact_feedback(events, limit=4):
     return list(reversed(rows))
 
 
-def compact_action_menu(actions, limit=20):
+def compact_action_menu(actions, limit=20, *, priority_ids=()):
     """Bound model-visible actions; full legal menu stays in choices for validation."""
     stops=[a for a in actions if a.get('tool') in {'finish','request_review'}]
     actionable=[a for a in actions if a not in stops]
     rank={'measure_instances':0,'segment_instance':1,'classify_crops_batch':2,'classify_target':2,'read_action_catalog':2,
           'feature_scan':3,'locate_feature':4,'detect_region':4,'detect_fov_initial':5,
           'calibrate_fov':6,'hybrid_scan':6}
-    actionable=sorted(enumerate(actionable),key=lambda pair:(rank.get(pair[1].get('tool'),8),pair[0]))
+    priority = set(priority_ids)
+    actionable=sorted(enumerate(actionable),key=lambda pair:(
+        bool(priority) and not pair[1].get('mandatory', False), pair[1]['action_id'] not in priority,
+        rank.get(pair[1].get('tool'),8),pair[0]))
     visible=[row for _,row in actionable[:max(1,int(limit))]]+stops
     detail=next((a for _,a in actionable if a.get('tool')=='read_evidence_detail'),None)
-    if detail is not None and detail not in visible:
+    if detail is not None and detail not in visible and visible[max(1,int(limit))-1]['action_id'] not in priority:
         # 有界摘要必须留一个可选的展开入口；不增加菜单额度、不强制执行读取。
         visible[max(1,int(limit))-1]=detail
     for offset, kind in enumerate(('candidate_catalog', 'provisional'), 2):
         reader = next((a for _, a in actionable if a.get('tool') == 'read_evidence_detail'
                        and a.get('args', {}).get('kind') == kind), None)
-        if reader is not None and reader not in visible and int(limit) >= offset:
+        if (reader is not None and reader not in visible and int(limit) >= offset
+                and visible[int(limit)-offset]['action_id'] not in priority):
             visible[int(limit)-offset] = reader
     return visible,{'total':len(actions),'shown':len(visible),'omitted':max(0,len(actions)-len(visible)),
                     'hint':'完整合法动作仍在 choices；本轮只展示按候选/成本排序的高价值子集'}
 
 
-def model_action_menu(runtime, actions, limit=20):
-    if getattr(runtime, 'simulation', False):
+def model_action_menu(runtime, actions, limit=20, *, priority_ids=()):
+    from TCM_Fusion.lib.runtime.probe_budget import split_enabled
+    if getattr(runtime, 'simulation', False) and not split_enabled(runtime):
         return actions, {'total':len(actions),'shown':len(actions),'omitted':0,
                          'hint':'simulation keeps full menu for fixture compatibility'}
-    return compact_action_menu(actions, limit)
+    return compact_action_menu(actions, limit, priority_ids=priority_ids)
 
 
 def compact_presence_localization(value):
@@ -793,8 +798,24 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                             and any(a["args"]["image_id"] == c.get("args", {}).get("target_id") for c in initial_choices)]
             from TCM_Fusion.lib.agent.action_feedback import objective
             from TCM_Fusion.lib.decision.comparison_problems import action_question
+            from TCM_Fusion.lib.runtime.probe_budget import split_enabled
+            opportunities_for_menu = []
+            if split_enabled(runtime):
+                from TCM_Fusion.lib.decision.candidate_audit import (
+                    investigation_opportunities, protect_investigation_budget)
+                opportunities_for_menu = investigation_opportunities(runtime,
+                    runtime.decision_view(state)['candidate_audit'], state['investigation_focus'],
+                    choices, current_budget)
+                choices, deferred = protect_investigation_budget(
+                    runtime, choices, opportunities_for_menu, current_budget)
+                if deferred:
+                    events.append({'phase': 'investigation_budget_protected',
+                                   'deferred': deferred, 'evidence_effect': 'none'})
+                allowed = {a['action_id'] for a in choices}
+                parallel = [a for a in parallel if a['action_id'] in allowed]
             model_actions, menu_meta = model_action_menu(
-                runtime, choices, int((getattr(workflow, 'config', {}) or {}).get('context_max_actions', 20)))
+                runtime, choices, int(workflow.config.get('context_max_actions', 20)),
+                priority_ids=[row['action_id'] for row in opportunities_for_menu])
             context = {
                 "actions": model_actions, "evidence": compact_evidence(runtime.summary(state)),
                 "parallel_observations": parallel,
@@ -810,6 +831,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 "skills": compact_skills(runtime),
                 "action_menu_meta": menu_meta,
             }
+            if opportunities_for_menu:
+                shown = {a['action_id'] for a in model_actions}
+                context['investigation_opportunities'] = [
+                    row for row in opportunities_for_menu if row['action_id'] in shown]
             if format_feedback is not None:
                 context['format_feedback'] = format_feedback
             choice_feedback=[e for e in events if e['phase']=='choice_partially_preserved']
@@ -897,6 +922,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     "只要 missing_useful 非空且预算/时间仍允许，先补其他缺失视野；"
                     "stage2/CNN 很快，空白框也应先识别而不是先丢弃；"
                     "同时参考 remaining_budget/remaining_seconds，避免耗尽时间。")
+            if context.get('investigation_opportunities'):
+                context['planning_instruction'] += (
+                    ' investigation_opportunities是关键判据的可选入口，cost为计划预算估计，'
+                    '不是已核验或保证成功；若申请复核，说明这些机会为何不足或不值得继续。')
             context = compact_round_context(context, workflow)
             if workflow.config.get('semantic_execution', False):
                 from TCM_Fusion.lib.agent.semantic_execution import options, GOAL_CONTRACT
@@ -1111,6 +1140,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                       "continuation_pending": bool(override and not is_stop),
                       "override_streak": state.get("override_streak", 0) + 1 if override and not is_stop else 0}
             if is_stop:
+                if chosen['tool'] == 'request_review' and context.get('investigation_opportunities'):
+                    events.append({'phase': 'review_with_open_opportunities',
+                                   'opportunities': context['investigation_opportunities'],
+                                   'decision_summary': str(reply.get('decision_summary', ''))[:240]})
                 controller.finalize('planner_' + chosen['tool'])
                 update['reflection_controller'] = controller.compact()
                 if updates:

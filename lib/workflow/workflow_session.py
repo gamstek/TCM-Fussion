@@ -638,6 +638,8 @@ class WorkflowSession:
                             'image_id': image, 'source': str(info['path']), 'parents': [image],
                             'px_per_um': arts.get('scale:' + image, {}).get('px_per_um'),
                             'max_tiles': min(tile_cap, remaining), 'fast_recovery': True,
+                            'remaining_scan_features': feature_cap - len(attempted),
+                            'remaining_scan_tiles': remaining,
                             'criteria': option['criteria']}
                 if unified and not available(self.runtime, {'tool': 'feature_scan',
                         'args': {'target_id': key}}, out[key]):

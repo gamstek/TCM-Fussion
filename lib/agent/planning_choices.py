@@ -79,9 +79,10 @@ def model_view(context):
     for field in ('actions','parallel_observations'):
         out[field] = [{**a,'action_id':aliases[a['action_id']]} for a in out.get(field,[])]
     out['action_objectives'] = {aliases[k]:v for k,v in out.get('action_objectives',{}).items() if k in aliases}
-    if 'verification_opportunities' in out:
-        out['verification_opportunities'] = [{**r,'action_id':aliases[r['action_id']]}
-            for r in out['verification_opportunities'] if r.get('action_id') in aliases]
+    for field in ('verification_opportunities', 'investigation_opportunities'):
+        if field in out:
+            out[field] = [{**r,'action_id':aliases[r['action_id']]}
+                          for r in out[field] if r.get('action_id') in aliases]
     offers = out.get('execution_options') or {}
     offers['goals'] = [{**g, 'goal_id':f'G{i}', 'entry_action_id':aliases[g['entry_action_id']]}
         for i,g in enumerate(offers.get('goals',[]),1) if g['entry_action_id'] in aliases]
@@ -196,6 +197,7 @@ def audit(context):
         'execution_options':context.get('execution_options',{}),
         'parallel_observations':context.get('parallel_observations',[]),
         'remaining_budget':context.get('remaining_budget'),
+        'investigation_opportunities':context.get('investigation_opportunities', []),
         'investigation': {k:((context.get('evidence')or{}).get('workflow')or{}).get(k)
                           for k in ('comparison_problems','investigation_focus')},
         'reflection_offer': {k:v for k,v in ((context.get('task_reflection')or{}).get('pending')or{}).items()

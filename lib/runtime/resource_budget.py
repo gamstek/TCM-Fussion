@@ -35,6 +35,9 @@ def reserve(path, pool, key, limits, *, identity=None, metadata=None, extra_pool
             from TCM_Fusion.lib.runtime.probe_budget import check_reservation
             code = check_reservation(value, probe)
             if code:raise IntegrationError(code, 'supporting探查重复或额度耗尽')
+            if 'pool_limit' in probe:
+                from TCM_Fusion.lib.runtime.probe_budget import sponsor
+                probe = {**probe, 'charged_candidate_ids': [sponsor(value, probe)]}
         held = max(0, limits.get('finalization',0)-value['used'].get('finalization',0))
         if pool != 'finalization' and held:
             network_after = value['used'].get('network',0)+sum(p=='network' for p,_ in reservations)

@@ -3,6 +3,8 @@
 主要定义：
 - build。
 - compact。每候选仅发状态与缺口，不重复判据全文；完整账本落盘/收尾可查。
+- investigation_opportunities。选择已获准的关键判据入口及预算需求，供有界规划菜单使用。
+- protect_investigation_budget。保留一个可执行的关键入口，阻止弱探查耗尽所需余额。
 - readiness_shadow。候选审计与判定充分性分离的影子评估；未经独立验证，不提升交付资格。
 
 关联：
@@ -105,6 +107,134 @@ def compact(value):
             'required':{x['feature_id']:x['state']for x in r['required']},
             'supporting':{x['feature_id']:x['state']for x in r['supporting']},
             'review_complete':r['review_complete']}for r in value['candidates']]}
+
+
+def investigation_opportunities(runtime, audit, focus, actions, remaining):
+    """Return at most two current alternatives per role, with one plausible path per feature."""
+    interest = runtime.candidate_interest()
+    active = set(interest['ids'])
+    key_candidates = ({focus.get('current_rule_lead'), *focus.get('a_leads', []),
+                       *focus.get('competing_support', {})} & active) or active
+    if len(key_candidates) < 2:
+        key_candidates |= set(interest.get('a_topk_ids', active)) & active
+    profiles = {}
+    for candidate in runtime.kb.candidates():
+        if candidate['id'] in key_candidates:
+            profiles[candidate['id']] = {c['feature']: c for c in candidate['criteria']}
+    by_id = {a['action_id']: a for a in actions}
+    targets = runtime.workflow.targets()
+    opportunities = {'required': {}, 'supporting': {}}
+    for row in audit['candidates']:
+        cid = row['candidate_id']
+        if cid not in profiles:
+            continue
+        for role, by_feature in opportunities.items():
+            for criterion in row[role]:
+                feature = criterion['feature_id']
+                if criterion['assessed']:
+                    continue
+                profile = profiles[cid][feature]
+                others = [p.get(feature) for id_, p in profiles.items() if id_ != cid]
+                differs = any(other != profile for other in others)
+                if role == 'supporting' and not differs:
+                    continue
+                quantitative = bool(profile.get('quant'))
+                for path in criterion['entry_paths']:
+                    aid, tool = path['action_id'], path['tool']
+                    if aid not in by_id:
+                        continue
+                    if tool == 'presence_check' and quantitative:
+                        continue  # a cheap observation cannot complete a dimension
+                    target = targets.get(by_id[aid].get('args', {}).get('target_id'), {})
+                    if tool == 'feature_scan':
+                        # Budget for locating and checking one instance, not all returned crops.
+                        if quantitative and not target.get('px_per_um'):
+                            continue
+                        tiles = target['max_tiles']
+                        followup_plans = 1 + int(quantitative and not
+                                                 runtime.workflow.config.get('semantic_execution'))
+                        cost = {'recompute': 1 + 2 * quantitative, 'observation': 1,
+                                'network': tiles + 1 + quantitative + followup_plans,
+                                'planning': followup_plans}
+                    elif tool == 'classify_target':
+                        cost = {'observation': 1, 'recompute': 2 * quantitative,
+                                'network': 1 + 2 * quantitative, 'planning': int(quantitative)}
+                    elif tool == 'segment_instance':
+                        cost = {'recompute': 2, 'network': 1}
+                    elif tool == 'measure_instances':
+                        cost = {'recompute': 1}
+                    elif tool == 'presence_check' and role == 'required':
+                        cost = {'observation': 1, 'network': 1}
+                    else:
+                        continue
+                    cost['total'] = sum(cost.values())
+                    if any(remaining.get(pool, 0) < count for pool, count in cost.items()):
+                        continue
+                    current = by_feature.get(feature)
+                    if current and current['action_id'] == aid:
+                        if cid not in current['candidate_ids']:
+                            current['candidate_ids'].append(cid)
+                        if cost['total'] > current['cost']['total']:
+                            current['cost'] = cost
+                    elif not current or cost['total'] < current['cost']['total']:
+                        by_feature[feature] = {'action_id': aid, 'role': role, 'feature_id': feature,
+                            'candidate_ids': [cid], 'cost': cost}
+    return [r for rows in opportunities.values()
+              for r in sorted(rows.values(), key=lambda r: r['cost']['total'])[:2]]
+
+
+def protect_investigation_budget(runtime, actions, opportunities, remaining):
+    """Do not sell the last feasible path to an unrelated supporting probe."""
+    protected = [r for r in opportunities if r['role'] == 'required'] or opportunities
+    if not protected:
+        return actions, []
+    from TCM_Fusion.lib.runtime.probe_budget import check_reservation, describe, sponsor
+    targets = runtime.workflow.targets()
+    book = read_json(runtime.workflow.budget_path)
+    selected = {a['action_id']: a for a in actions}
+    kept, deferred = [], []
+    for action in actions:
+        tool = action['tool']
+        if tool not in {'presence_check', 'feature_scan'}:
+            kept.append(action)
+            continue
+        target = targets.get(action.get('args', {}).get('target_id'))
+        probe = describe(runtime, action, target)
+        if probe is None or any(r['action_id'] == action['action_id'] for r in opportunities):
+            kept.append(action)
+            continue
+        if tool == 'presence_check':
+            spend = {'observation': 1, 'network': 2, 'planning': 1, 'total': 4}
+        else:
+            # Include the next ordinary planning call in the reserve check.
+            tiles = target['max_tiles']
+            spend = {'recompute': 1, 'network': tiles + 1, 'planning': 1, 'total': tiles + 3}
+        preview = {'supporting_probes': {**book.get('supporting_probes', {}),
+            probe['key']: {**probe, 'charged_candidate_ids': [sponsor(book, probe)]}}}
+        can_keep_path = False
+        for row in protected:
+            next_action = selected[row['action_id']]
+            if row['feature_id'] == probe['feature_id'] and next_action['tool'] == tool:
+                can_keep_path = True
+                break
+            if any(remaining.get(pool, 0) - spend.get(pool, 0) < count
+                   for pool, count in row['cost'].items()):
+                continue
+            next_target = targets.get(next_action.get('args', {}).get('target_id'))
+            if tool == next_action['tool'] == 'feature_scan':
+                if not next_target or (target['image_id'] == next_target['image_id'] and
+                        (target['remaining_scan_features'] <= 1 or target['remaining_scan_tiles'] <= tiles)):
+                    continue
+            next_probe = describe(runtime, next_action, next_target)
+            if next_probe is None or check_reservation(preview, next_probe) is None:
+                can_keep_path = True
+                break
+        if can_keep_path:
+            kept.append(action)
+        else:
+            deferred.append({'tool': tool, 'feature_id': probe['feature_id'],
+                             'reason': 'protect_remaining_investigation_budget'})
+    return kept, deferred
 
 
 def readiness_shadow(audit, formal):

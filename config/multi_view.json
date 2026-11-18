@@ -172,6 +172,8 @@
       "candidate_group_verification": true,
       "supporting_probe_total": 6,
       "supporting_probe_per_candidate": 2,
+      "supporting_probe_scan_total": 2,
+      "supporting_probe_scan_per_candidate": 1,
       "suppress_repeated_measurement": true
     }
   },
