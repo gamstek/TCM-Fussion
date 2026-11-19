@@ -288,9 +288,10 @@ def build(runtime, scored, eligibility, actions):
             'inactive_candidates': interest.get('inactive_ids', []),
             'questions': list(groups.values()), 'shared_queries': shared_queries, 'boundaries': boundaries,
             'physical_facts': physical_facts,
-            'score_semantics': {'required_confidence': 'original_B_required_score_not_probability',
+            'score_semantics': {'rule_score': 'b-rule/2，required基础分与独立佐证加分',
+                'required_confidence': '候选必需判据达成度，用于计算基础分与佐证加分上限',
                 'NO_REF': '缺KB参考，不等于未测量或超范围；重测不能生成参考；不排除消费者',
-                'supporting': '保留原B广度/排序作用，不进入required confidence分母'},
+                'supporting': '候选全部required核验通过后，独立supporting才可加分；已有观察可供其他候选核对'},
             'evidence_version': eligibility['evidence_version'],
             'candidate_reactivation_allowed': True}
 

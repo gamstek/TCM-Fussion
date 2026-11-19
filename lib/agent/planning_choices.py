@@ -174,7 +174,9 @@ def decision_instruction(context):
         )
         lines.append(
             '物理并发 {"decision":{"kind":"physical_group","action_ids":["A编号","另一A编号"]}} '
-            + group_rule + '各项都值得立即执行时才选。'
+            + group_rule + '逐路判断：假设其余路都已返回理想结果，这一路仍需单独做才并发。'
+            '在本轮decision_summary简述各路要解决的问题；同一待查项一次阳性就够、'
+            '或第一路结果决定是否追加时，先选单步。limit只是上限。'
         )
     if context.get('parallel_observations') and any(
             action['tool'] == 'detect_fov_initial' for action in context.get('actions', [])):

@@ -528,6 +528,8 @@ class WorkflowRuntime(EvidenceRuntime):
         targets = self.workflow.targets()
         active = set(self.candidate_interest()['ids'])
         candidates = [row for row in self.kb.candidates() if row['id'] in active]
+        pending_required = {row['id'] for row in (decision or {}).get('ranking', [])
+                            if (row.get('score_components') or {}).get('required_complete') is False}
         checks = {(row['id'], check['feature_id']): check
                   for row in (decision or {}).get('ranking', [])
                   for check in row.get('checks', [])}
@@ -558,7 +560,8 @@ class WorkflowRuntime(EvidenceRuntime):
                     criteria.append({'candidate_id': row['id'], 'role': criterion['role'],
                                      'quant': criterion['quant'], 'morph': criterion.get('morph'),
                                      'state': check.get('state', 'UNKNOWN')})
-            if not criteria:
+            if not criteria or all(c['role'] == 'supporting' and c['candidate_id'] in pending_required
+                                   for c in criteria):
                 continue
             steps = 2 if tool == 'segment_instance' else 1
             network = int(tool == 'segment_instance' and not self.simulation)

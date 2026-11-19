@@ -296,8 +296,8 @@ class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(offer['menu']['actions'], menus[-1]['actions'])
             opportunities = offer['menu']['investigation_opportunities']
             if name == 'split':
-                self.assertTrue(scan_features <= {r['feature_id'] for r in opportunities
-                                                  if r['role'] == 'supporting'})
+                # 两个补扫仍可依法选择。只有阴性观察、required 未齐时不为它们额外推荐付费调查。
+                self.assertFalse(any(r['role'] == 'supporting' for r in opportunities))
                 self.assertTrue(any(r['role'] == 'required' and r['feature_id'] == 'cluster_crystal'
                                     for r in opportunities))
                 self.assertTrue(any(e['phase'] == 'review_with_open_opportunities' for e in trace['events']))

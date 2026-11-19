@@ -132,16 +132,13 @@ def compact(value):
 
 
 def investigation_opportunities(runtime, audit, focus, actions, remaining):
-    """Return at most two current alternatives per role, with one plausible path per feature."""
+    """从所有活动候选中推荐可改变判据判断的入口。仅给推荐排序，合法动作由工具层决定。"""
     interest = runtime.candidate_interest()
     active = set(interest['ids'])
-    key_candidates = ({focus.get('current_rule_lead'), *focus.get('a_leads', []),
-                       *focus.get('competing_support', {})} & active) or active
-    if len(key_candidates) < 2:
-        key_candidates |= set(interest.get('a_topk_ids', active)) & active
+    leads = {focus.get('current_rule_lead'), *focus.get('a_leads', []), *focus.get('competing_support', {})}
     profiles = {}
     for candidate in runtime.kb.candidates():
-        if candidate['id'] in key_candidates:
+        if candidate['id'] in active:
             profiles[candidate['id']] = {c['feature']: c for c in candidate['criteria']}
     by_id = {a['action_id']: a for a in actions}
     targets = runtime.workflow.targets()
@@ -150,16 +147,19 @@ def investigation_opportunities(runtime, audit, focus, actions, remaining):
         cid = row['candidate_id']
         if cid not in profiles:
             continue
-        for role, by_feature in opportunities.items():
+        required_complete = bool(row['required']) and all(c['satisfies_criterion'] for c in row['required'])
+        for role, routes in opportunities.items():
+            if role == 'supporting' and not required_complete:
+                continue
             for criterion in row[role]:
                 feature = criterion['feature_id']
                 if criterion['assessed']:
                     continue
                 profile = profiles[cid][feature]
                 others = [p.get(feature) for id_, p in profiles.items() if id_ != cid]
-                differs = any(other != profile for other in others)
-                if role == 'supporting' and not differs:
-                    continue
+                differs = any(other is None or any(
+                    other.get(k) != profile.get(k) for k in ('role', 'quant', 'morph', 'abundance')
+                ) for other in others)
                 quantitative = bool(profile.get('quant'))
                 for path in criterion['entry_paths']:
                     aid, tool = path['action_id'], path['tool']
@@ -185,24 +185,37 @@ def investigation_opportunities(runtime, audit, focus, actions, remaining):
                         cost = {'recompute': 2, 'network': 1}
                     elif tool == 'measure_instances':
                         cost = {'recompute': 1}
-                    elif tool == 'presence_check' and role == 'required':
+                    elif tool == 'presence_check':
                         cost = {'observation': 1, 'network': 1}
                     else:
                         continue
                     cost['total'] = sum(cost.values())
                     if any(remaining.get(pool, 0) < count for pool, count in cost.items()):
                         continue
-                    current = by_feature.get(feature)
-                    if current and current['action_id'] == aid:
-                        if cid not in current['candidate_ids']:
-                            current['candidate_ids'].append(cid)
-                        if cost['total'] > current['cost']['total']:
-                            current['cost'] = cost
-                    elif not current or cost['total'] < current['cost']['total']:
-                        by_feature[feature] = {'action_id': aid, 'role': role, 'feature_id': feature,
-                            'candidate_ids': [cid], 'cost': cost}
-    return [r for rows in opportunities.values()
-              for r in sorted(rows.values(), key=lambda r: r['cost']['total'])[:2]]
+                    entry = routes.setdefault((feature, aid), {
+                        'action_id': aid, 'role': role, 'feature_id': feature, 'candidate_ids': [],
+                        'criteria_differ': False, 'cost': cost})
+                    if cid not in entry['candidate_ids']:
+                        entry['candidate_ids'].append(cid)
+                    entry['criteria_differ'] |= differs
+                    if cost['total'] > entry['cost']['total']:
+                        entry['cost'] = cost
+    recommended = {}
+    for routes in opportunities.values():
+        # 比较同一物理观察的各个消费者，再选可共用的入口。每类角色仍只展示两种特征。
+        by_feature = {}
+        for entry in sorted(routes.values(), key=lambda r: (
+                not r['criteria_differ'], r['cost']['total'], -len(r['candidate_ids']),
+                not leads.intersection(r['candidate_ids']))):
+            by_feature.setdefault(entry['feature_id'], entry)
+        for entry in list(by_feature.values())[:2]:
+            aid = entry['action_id']
+            if aid in recommended:
+                # required 入口已列出，同一动作还可服务这些候选的 supporting。
+                recommended[aid]['also_supporting_for'] = entry['candidate_ids']
+            else:
+                recommended[aid] = entry
+    return list(recommended.values())
 
 
 def protect_investigation_budget(runtime, actions, opportunities, remaining):

@@ -129,7 +129,8 @@ class LLMPlanner:
                         "presence_states只说明该视野该类已有的存在性观察，空数组表示无此类记录。"
                         "补扫若带existing_crop_actions，先比较复用同视野同类已有裁图的价值与max_scan_tiles成本；"
                         "需要新位置或已有裁图不足时仍可选补扫。现有裁图本身不证明身份或合格量纲。"
-                        "你比较各取证路线的价值与成本，自主选择顺序；不要求每个supporting逐项付费打卡。"
+                        "新增付费观察前，比较阳性、阴性或未知能改变哪个候选的判据、排序或复核理由。"
+                        "先复用同视野同问题的有效观察，各候选分别解释。保留可能推翻首选的required，即使候选当前分低。"
                          "可选investigate_candidates（hypothesis_catalog或hypothesis_catalog_index中最多3个ID）和investigation_reason，"
                         "用于下一轮扩展调查，不等于证据或确认。扩展时本轮宜选择只读动作核查判据。"
                         "也可改用hypothesis_updates，每轮最多3项，格式"
@@ -914,13 +915,9 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                         '不要为刷新首次测量时间而处理无关实例，也不要为覆盖每张图而重复同一判据。')
                     if context['supporting_gaps']:
                         context['planning_instruction'] += (
-                            ' 当前仍有未完成的 supporting 判据；required 完成不等于 supporting 已查完。'
-                            '若这些 supporting 有合法实例或适合视野，优先评估一次小范围核验；'
-                            '再次测量同一 required 特征必须说明它还能解决什么新问题，不能只因数值已有就重复测量。'
-                            'supporting_gaps 只是调查建议，不授予证据资格，也不要求全部查完。'
-                            'check_state=checked_negative 表示当前视野已查未见，不等于全样本不存在；'
-                            'unreadable_or_failed 不是阴性；优先补 unchecked 或可修复的合法机会，'
-                            '不要反复重试同一失败依赖。')
+                            ' supporting_gaps保留未查项。候选required未全核验时，暂缓仅为它补普通佐证；'
+                            '若同一动作能核验另一候选的required，仍值得考虑。required已齐时，优先能改变排序、'
+                            '证据广度或具体复核原因的独立佐证。当前视野未见只限该视野，失败仍记未知。')
                     events.append({'phase': 'planning_menu', 'policy': 'early_verification_v1',
                                    'evidence_version': context['evidence']['workflow']['evidence_version'],
                                    'action_keys': [a['tool'] + '|' + str(a.get('args', {}).get('target_id') or
@@ -929,12 +926,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                    'verification_keys': [row['tool'] + '|' + row['target_id'] for row in opportunities]})
                 elif agent_driven:
                     context["planning_instruction"] = planning_instruction + (
-                        " coverage/missing_useful 只是观察，不是强制路线：自行选择当前最值得的工具，"
-                        "优先让每个视野至少有一个非空 feature 的 classification；"
-                        "不得因单一 identity_pending 或单一视野的低分 crop 反复分类；"
-                        "只要 missing_useful 非空且预算/时间仍允许，先补其他缺失视野；"
-                        "stage2/CNN 很快，空白框也应先识别而不是先丢弃；"
-                        "同时参考 remaining_budget/remaining_seconds，避免耗尽时间。")
+                        " coverage/missing_useful 标明可调查的视野。结合已有裁图、候选分歧和剩余预算，"
+                        "选择能核验身份、量纲或关键判据的入口。仅在需要另一个视野的证据时追加观察。")
                 if context.get('investigation_opportunities'):
                     context['planning_instruction'] += (
                         ' investigation_opportunities是关键判据的可选入口，cost为计划预算估计，'
