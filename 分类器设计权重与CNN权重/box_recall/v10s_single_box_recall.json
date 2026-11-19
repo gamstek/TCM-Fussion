@@ -1,0 +1,130 @@
+{
+  "version": "box_recall_v10s_single_cls",
+  "weights": "results/detection/yolo_runs/v1_yolov10s_1024_single/weights/best.pt",
+  "n_gold_images": 60,
+  "val_best": {
+    "epoch": 80,
+    "mAP50": 0.67034,
+    "mAP50_95": 0.50113
+  },
+  "conf_sweep": [
+    {
+      "conf": 0.25,
+      "n_gt": 239,
+      "n_pred": 95,
+      "tp_loc": 60,
+      "recall_loc": 0.251,
+      "precision_loc": 0.6316,
+      "pred_per_image": 1.58
+    },
+    {
+      "conf": 0.1,
+      "n_gt": 239,
+      "n_pred": 138,
+      "tp_loc": 72,
+      "recall_loc": 0.3013,
+      "precision_loc": 0.5217,
+      "pred_per_image": 2.3
+    },
+    {
+      "conf": 0.05,
+      "n_gt": 239,
+      "n_pred": 190,
+      "tp_loc": 83,
+      "recall_loc": 0.3473,
+      "precision_loc": 0.4368,
+      "pred_per_image": 3.17
+    },
+    {
+      "conf": 0.01,
+      "n_gt": 239,
+      "n_pred": 395,
+      "tp_loc": 103,
+      "recall_loc": 0.431,
+      "precision_loc": 0.2608,
+      "pred_per_image": 6.58
+    },
+    {
+      "conf": 0.001,
+      "n_gt": 239,
+      "n_pred": 1275,
+      "tp_loc": 138,
+      "recall_loc": 0.5774,
+      "precision_loc": 0.1082,
+      "pred_per_image": 21.25
+    }
+  ],
+  "topk_sweep": [
+    {
+      "topk_per_image": 1,
+      "n_gt": 239,
+      "n_pred": 60,
+      "tp_loc": 41,
+      "recall_loc": 0.1715,
+      "precision_loc": 0.6833,
+      "pred_per_image": 1.0
+    },
+    {
+      "topk_per_image": 3,
+      "n_gt": 239,
+      "n_pred": 172,
+      "tp_loc": 55,
+      "recall_loc": 0.2301,
+      "precision_loc": 0.3198,
+      "pred_per_image": 2.87
+    },
+    {
+      "topk_per_image": 5,
+      "n_gt": 239,
+      "n_pred": 272,
+      "tp_loc": 68,
+      "recall_loc": 0.2845,
+      "precision_loc": 0.25,
+      "pred_per_image": 4.53
+    },
+    {
+      "topk_per_image": 10,
+      "n_gt": 239,
+      "n_pred": 486,
+      "tp_loc": 85,
+      "recall_loc": 0.3556,
+      "precision_loc": 0.1749,
+      "pred_per_image": 8.1
+    },
+    {
+      "topk_per_image": 20,
+      "n_gt": 239,
+      "n_pred": 777,
+      "tp_loc": 104,
+      "recall_loc": 0.4351,
+      "precision_loc": 0.1338,
+      "pred_per_image": 12.95
+    },
+    {
+      "topk_per_image": 50,
+      "n_gt": 239,
+      "n_pred": 1190,
+      "tp_loc": 134,
+      "recall_loc": 0.5607,
+      "precision_loc": 0.1126,
+      "pred_per_image": 19.83
+    },
+    {
+      "topk_per_image": 100,
+      "n_gt": 239,
+      "n_pred": 1275,
+      "tp_loc": 138,
+      "recall_loc": 0.5774,
+      "precision_loc": 0.1082,
+      "pred_per_image": 21.25
+    }
+  ],
+  "strict_iou75_conf025": {
+    "n_gt": 239,
+    "n_pred": 95,
+    "tp_loc": 46,
+    "recall_loc": 0.1925,
+    "precision_loc": 0.4842,
+    "pred_per_image": 1.58
+  }
+}

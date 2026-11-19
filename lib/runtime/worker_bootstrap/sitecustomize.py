@@ -10,10 +10,24 @@
 - 直接依赖 「lib/runtime/resource_budget.py」。
 - 由 runtime/controlled_process.py 设置 PYTHONPATH 触发。
 """
+import importlib.util
 import os
-if os.environ.get('FUSION_BUDGET_CONTEXT'):
+import sys
+
+root = os.environ.get('TCM_FUSION_ROOT')
+budget = os.environ.get('FUSION_BUDGET_CONTEXT')
+if root or budget:
     try:
-        from TCM_Fusion.lib.runtime.resource_budget import install_http_guard
-        install_http_guard(os.environ['FUSION_BUDGET_CONTEXT'])
+        if root:
+            filename = os.path.join(root, 'paths.py')
+            if getattr(sys.modules.get('paths'), '__file__', None) != filename:
+                spec = importlib.util.spec_from_file_location('paths', filename)
+                module = importlib.util.module_from_spec(spec)
+                sys.modules[spec.name] = module
+                spec.loader.exec_module(module)
+            sys.modules['paths'].activate()
+        if budget:
+            from TCM_Fusion.lib.runtime.resource_budget import install_http_guard
+            install_http_guard(budget)
     except Exception:
         os._exit(73)

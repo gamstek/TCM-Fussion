@@ -1,0 +1,32 @@
+{
+  "arch": "resnet18",
+  "imgsz": 448,
+  "input_mode": "squash",
+  "classes": [
+    "00_cluster_crystal",
+    "01_single_crystal",
+    "02_needle_crystal",
+    "03_vessel",
+    "04_stone_cell",
+    "05_starch_grain",
+    "06_non_glandular_hair",
+    "07_secretory_tissue",
+    "08_stoma",
+    "09_epidermis_cell",
+    "10_hypha",
+    "11_fiber",
+    "12_pollen_grain",
+    "13_other"
+  ],
+  "mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "checkpoint": "best.pt"
+}

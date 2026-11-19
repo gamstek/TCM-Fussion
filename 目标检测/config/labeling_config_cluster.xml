@@ -1,0 +1,19 @@
+<View>
+  <Header value="中药显微 草酸钙簇晶 检测训练集（单类）：真值层紧框规范——紧贴外接 ±2%，禁止切断实体，宁可稍松不可切断"/>
+  <Header value="本批【只标注草酸钙簇晶】一类；图中其他实体（淀粉粒/导管/薄壁组织/石细胞等）一律不标，视为背景。" style="color:#0369a1"/>
+  <Image name="image" value="$image" zoom="true" zoomControl="true" rotateControl="false"/>  <RectangleLabels name="feature" toName="image">
+    <Label value="草酸钙簇晶" background="#e6194b"/>
+  </RectangleLabels>
+  <Header value="选中框后填写该目标的判据核验（快捷键 8/9/0/q/w）"/>
+  <Header value="$criteria_hint" style="color:#b45309; font-weight:bold"/>
+  <Header value="$cluster_hint" style="color:#0f766e"/>
+  <Choices name="judge" toName="image" perItem="true" showInline="true">
+    <Choice value="尺寸在判据内"/>
+    <Choice value="接近判据下限-存疑"/>
+    <Choice value="接近判据上限-存疑"/>
+    <Choice value="超判据-需仲裁"/>
+    <Choice value="不适用"/>
+  </Choices>
+  <TextArea name="note" toName="image" placeholder="备注：形态/复核意见（可选）" maxRows="2"/>
+  <Style>lsf-main { font-family: 'Microsoft YaHei', sans-serif; }</Style>
+</View>

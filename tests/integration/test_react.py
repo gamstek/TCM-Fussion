@@ -41,7 +41,7 @@ class ReactTests(unittest.IsolatedAsyncioTestCase):
         self.root = Path(self.temp.name)
         self.image = self.root/"fov.png"
         self.image.write_bytes(b"simulation-only-not-decoded")
-        self.fixture = read_json(Path(paths.PROJECT_ROOT)/"TCM_Fusion/tests/fixtures/react_case.json")
+        self.fixture = read_json(Path(paths.PROJECT_ROOT)/"tests/fixtures/react_case.json")
         self.runtime = EvidenceRuntime(self.fixture["records"], [self.image], sample_id="react_demo",
                                        a=self.fixture["a"], simulation=True)
         self.backend = FixtureBackend(self.fixture["replies"])
@@ -250,7 +250,7 @@ class ReactTests(unittest.IsolatedAsyncioTestCase):
     async def test_cold_workflow_mcp_returns_denial_without_native_import_stall(self):
         import sys
         from TCM_Fusion.lib.workflow.workflow_runtime import from_task
-        weights=Path(paths.PROJECT_ROOT)/'TCM_Fusion/yolo-results/detection/yolo_runs/v1_yolov10s_1024/weights/best.pt'
+        weights=Path(paths.PROJECT_ROOT)/'yolo-results/detection/yolo_runs/v1_yolov10s_1024/weights/best.pt'
         if not weights.exists():
             self.skipTest('real workflow asset not installed')
         config={'sample_id':'cold_native_probe','allow_network':False,'b':{'input_mode':'images'},

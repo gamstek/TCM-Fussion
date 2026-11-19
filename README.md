@@ -38,7 +38,7 @@ flowchart TD
 | 应用入口与 A | 核验图像清单和摘要，为一个样品建立独立运行。每个视野各取五折模型的逐折 Top-3，再合并候选；只在某一折出现的候选也有机会被查证。盲测参考标签留在事后核对环节。[应用层](lib/application/README.md) · [候选生成](lib/decision/candidate_policy.py) |
 | Agent | 读取当前判据缺口、可用实例和预算，选择观察、测量、换路线或请求复核，并留下简短理由。候选的提出、暂停和恢复是调查状态，显微证据由工具取得。[规划与反馈](lib/agent/README.md) |
 | MCP、工作流与 worker | MCP 将工具调用绑定到本次样品。每个工具在注册表声明所需技能、参数、权限和前置条件。工作流核对目标、依赖、额度和截止时间，worker 执行获准的视觉或测量任务。并发分支分别准备工件，由协调者逐支发布。[MCP](lib/mcp/README.md) · [工具注册表](lib/tools/tool_registry.py) · [工作流](lib/workflow/README.md) |
-| 证据、判据与交付 | 证据层记录对象、来源、版本和用途。决策层按药材知识库核验判据，给出 B 分；应用层在收尾时组合 A、B 并生成报告。最终解释引用冻结证据，引用无效或文本研判失败时由程序生成可追溯的交付。[药材判据库](../Agent判药/data/herb_criteria.json) · [证据层](lib/evidence/README.md) · [最终研判](lib/decision/final_assessment.py) |
+| 证据、判据与交付 | 证据层记录对象、来源、版本和用途。决策层按药材知识库核验判据，给出 B 分；应用层在收尾时组合 A、B 并生成报告。最终解释引用冻结证据，引用无效或文本研判失败时由程序生成可追溯的交付。[药材判据库](Agent判药/data/herb_criteria.json) · [证据层](lib/evidence/README.md) · [最终研判](lib/decision/final_assessment.py) |
 
 ## ReAct 的设计取舍
 
@@ -51,7 +51,7 @@ flowchart TD
 | **Reflexion · 用执行反馈修订策略** | 本地控制器把失败或停滞绑定到具体问题。模型在下一次正常规划中可以采纳、维持、推迟或拒绝建议；采纳时说明要改变的条件和预期收益。后续用工件、合格证据和缺口变化核对实际效果。反思只作用于本次调查策略。[反思实施说明](融合链路文档/20_判据分值解释与反思策略增量方案.md) |
 | **BATS · 把预算和未完成状态带入决策** | 推荐取证路线时计入后续分类、分割、测量可能消耗的资源。派发前检查及预约额度，为最终研判留时间。便宜的原图观察能回答存在性，却不能替代一个定量判据所需的测量。预算不足时，已完成工作和仍不可核验的缺口一起交付。[调查成本估计](lib/decision/candidate_audit.py) · [资源账本](lib/runtime/resource_budget.py) |
 
-正式入口运行一个 ReAct 调查循环。计划编译、证据投影、预算校验和反馈评估由本地程序完成，模型在下一次必要规划中同时选择行动和回应反思。[方法来源与采用边界](../docs/方国昊/最终优化计划_v1.1_评估修订稿.md) · [实施与配对验收](融合链路文档/10_ReAct主导的证据优化与语义DAG实施部署方案.md)
+正式入口运行一个 ReAct 调查循环。计划编译、证据投影、预算校验和反馈评估由本地程序完成，模型在下一次必要规划中同时选择行动和回应反思。[方法来源与采用边界](docs/方国昊/最终优化计划_v1.1_评估修订稿.md) · [实施与配对验收](融合链路文档/10_ReAct主导的证据优化与语义DAG实施部署方案.md)
 
 ## 计划编译与语义 DAG
 
@@ -122,26 +122,7 @@ ReAct 保留每次调查方向的选择权。**C 处理同一实例内的前后�
 
 ## 部署准备
 
-以下命令从总项目根目录执行，也就是同时包含 `paths.py`、`MICROSCOPE-main/` 和 `TCM_Fusion/` 的目录。先在 Windows PowerShell 中准备三类解释器和本地模型资产。
-
-| 运行环境 | 所需组件与配置 |
-| --- | --- |
-| Agent 主环境 `.venv\Scripts\python.exe` | 当前工作区使用 Python 3.12。安装 [Agent 依赖锁文件](requirements-agent.lock.txt)，用于 CLI、LangGraph 和 MCP。 |
-| Plan A 解释器 | 使用能够运行 `MICROSCOPE-main/predictv3_resnet50.py` 的环境。依赖见 [Plan A requirements](../MICROSCOPE-main/requirements.txt)。通过 `--a-python` 或 `TCM_A_PYTHON` 提供解释器，模板从 `MICROSCOPE-main/v3_resnet50_full/` 加载 `fold1_best.pt` 至 `fold5_best.pt`。 |
-| 视觉与测量 worker | 模板用 `.venv\vision\Scripts\python.exe` 执行视觉和几何阶段，需具备 NumPy、OpenCV、Pillow、RapidOCR 等依赖。YOLO 及裁图 CNN 默认用 `.venv\yolo\Scripts\python.exe`，需具备 Ultralytics 和相匹配的 PyTorch、TorchVision。 |
-
-视觉模型资产由 [多视图配置](config/multi_view.json) 和 [检测配置](config/detector.json) 绑定。首次部署要准备 `TCM_Fusion/yolo-results/detection/yolo_runs/` 下的类别映射 `data_local.yaml` 和 `v1_yolov10s_1024/weights/best.pt`，以及模板 `cnn_weights`、`cnn_meta` 指定的 ResNet18 权重与配套元数据。
-
-首次部署或移动项目后，在已创建的 Agent 虚拟环境中安装依赖并登记项目导入路径。独立 worker 环境也需要能导入项目模块，可将根环境生成的 `tcm_project.pth` 放到对应环境的 `Lib/site-packages/`。
-
-```powershell
-$python = '.\.venv\Scripts\python.exe'
-& $python -m pip install -r .\TCM_Fusion\requirements-agent.lock.txt
-& $python -X utf8 .\paths.py --install
-& $python -X utf8 .\paths.py --check
-```
-
-真实运行需从 [模型服务配置模板](../目标检测/config/vlm_config.json.example) 建立本地 `目标检测/config/vlm_config.json`，以 UTF-8 无 BOM 保存。填写各段的 `base_url` 与 `model`。VLM 用于文本规划和图像观察，服务须支持项目所用的聊天补全接口。IGM 用于分割，服务须支持图像生成接口。按各段的 `api_key_env` 为启动进程提供凭据，模板使用 `VLM_API_KEY` 和 `IGM_API_KEY`。标准入口会为本次任务启动本地 stdio MCP 子进程。
+命令从本目录运行。仓内的 Plan A、YOLO、Stage2、原分割与测量组件由 [paths.py](paths.py) 定位。搬迁后重新登记三个本地环境。安装方法、模型摘要和远端服务配置见 [独立部署](独立部署.md)。
 
 ## 运行一次鉴别
 
@@ -172,11 +153,11 @@ $manifest = @{
 
 ### 2. 预检并实跑
 
-填入本机可用的 Plan A 解释器路径。使用相同参数先做预检，再创建一次独立的真实运行。预检会校验图片、准备任务配置并写出本地就绪报告。真实运行会按所选动作调用视觉服务，可能产生 API 费用。
+默认使用仓内视觉环境运行 Plan A，也可显式指定兼容解释器。使用相同参数先做预检，再创建一次独立的真实运行。预检会校验图片、准备任务配置并写出本地就绪报告。真实运行会按所选动作调用视觉服务，可能产生 API 费用。
 
 ```powershell
 $python = '.\.venv\Scripts\python.exe'
-$aPython = 'D:\Anaconda\python.exe'
+$aPython = '.\.venv\vision\Scripts\python.exe'
 $runArgs = @(
     '-X', 'utf8', '-m', 'TCM_Fusion.cli.main', 'multi-view'
     '--source-dir', $source, '--a-python', $aPython
@@ -189,7 +170,7 @@ if ($LASTEXITCODE -ne 0) { throw '预检失败，请查看 doctor.json 或终端
 & $python @runArgs
 ```
 
-每次调用独立创建 case 目录并生成中性图像副本。默认输出到 `TCM_Fusion/运行结果/`，用 `--output-root` 可另指定落点。目录名含运行类型、对象、图数、开始时间、目的及去重短 ID。预检的 JSON `directory` 指向 case 根，真实运行的 `directory` 指向正式工件目录 `runs/fusion_<id>/`。[运行目录命名与索引](运行结果/README.md)
+每次调用独立创建 case 目录并生成中性图像副本。默认输出到 `运行结果/`，用 `--output-root` 可另指定落点。目录名含运行类型、对象、图数、开始时间、目的及去重短 ID。预检的 JSON `directory` 指向 case 根，真实运行的 `directory` 指向正式工件目录 `runs/fusion_<id>/`。[运行目录命名与索引](运行结果/README.md)
 
 ## 查看结果
 

@@ -1,0 +1,32 @@
+<!--
+labeling_config_mask.xml — 实例分割人工标注界面（Label Studio）
+用途：单实例二值分割的 mask 标注，沿目标轮廓用 Brush 画闭合描边。
+      导出端用 label_studio_converter.decode_rle 解出轮廓，再 fill 最外层闭合轮廓内部成实心 mask。
+布局：左 = 干净 crop（画笔标注对象）；右 = 参考图（绿框=紧框）
+- 类别无关设计：只有一个画笔类"目标"（类别信息由任务元数据 feature_id 携带）
+- ⚠️ 子 Label 必须显式写 name（如 name="target"），否则报"non-unique names"
+- 歧义上报：无法判定边界时勾选，进人工仲裁队列（规则 R7）
+-->
+<View style="display:flex; flex-direction:column;">
+  <Header value="左图：用画笔沿目标轮廓画一圈闭合(让 LS 内部封闭) | 右图：参考（绿框=紧框）"
+          style="color:#1d4ed8; font-weight:bold"/>
+  <Header value="$herb · $feature_id · 难度组 $seg_group · crop_id $crop_id"/>
+  <Header value="$mask_rule_hint" style="color:#b45309; font-weight:bold"/>
+
+  <View style="display:flex; flex-direction:row; align-items:flex-start;">
+    <View style="flex:1; margin-right:8px;">
+      <Image name="image" value="$image" zoom="true" zoomControl="true" rotateControl="false"/>
+      <BrushLabels name="brush" toName="image">
+        <Label name="target" value="目标" background="#00a06a" hotkey="1"/>
+      </BrushLabels>
+    </View>
+    <View style="flex:1;">
+      <Image name="reference" value="$ref_image" zoom="true" zoomControl="true" maxWidth="640"/>
+    </View>
+  </View>
+
+  <Choices name="ambiguity" toName="image" choice="single" showInline="true">
+    <Choice value="正常"/>
+    <Choice value="边界歧义-需仲裁" hotkey="q"/>
+  </Choices>
+</View>

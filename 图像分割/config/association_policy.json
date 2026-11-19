@@ -1,0 +1,26 @@
+{
+  "version": "association-policy-v1-trial",
+  "calibrated": false,
+  "dominant": {
+    "enabled": true,
+    "features": ["fiber", "vessel"],
+    "shapes": ["elongated"],
+    "granularities": ["instance"],
+    "min_components": 2,
+    "max_components": 4,
+    "largest_share_min": 0.95,
+    "second_share_max": 0.03,
+    "dropped_area_ratio_max": 0.05,
+    "max_dropped_components": 2,
+    "min_tight_overlap": 0.5,
+    "require_center_hit": true,
+    "drop_touching_border": true,
+    "allow_width": true,
+    "allow_length": false,
+    "allow_area": false
+  },
+  "multipart": {
+    "shapes": ["multipart"],
+    "granularities": ["bundle", "sheet", "clump"]
+  }
+}

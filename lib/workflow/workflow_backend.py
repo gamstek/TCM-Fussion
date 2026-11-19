@@ -27,14 +27,14 @@ class WorkflowBackend:
     def code_signature():
         root=Path(paths.PROJECT_ROOT)
         roots=[Path(paths.DETECTION_LIB_DIR),Path(paths.SEGMENTATION_LIB_DIR),Path(paths.COMMON_DIR),
-               Path(paths.GEOM_DIR),Path(paths.JUDGE_SCRIPTS_DIR),root/'TCM_Fusion/lib',root/'TCM_Fusion/cli']
+               Path(paths.GEOM_DIR),Path(paths.JUDGE_SCRIPTS_DIR),root/'lib',root/'cli']
         files={p for folder in roots for p in folder.rglob('*.py')}
-        files.update([root/'contracts.py',root/'feature_taxonomy.json',
+        files.update([root/'paths.py',root/'__init__.py',root/'contracts.py',root/'feature_taxonomy.json',
                       Path(paths.SEGMENTATION_CONFIG_DIR)/'quality_policy.json',
                       Path(paths.SEGMENTATION_CONFIG_DIR)/'association_policy.json',
                       Path(paths.DETECTION_CLI_DIR)/'detect_sample.py',
                       Path(paths.SEGMENTATION_CLI_DIR)/'igm_segment_batch.py'])
-        skills = root / 'TCM_Fusion/skills'
+        skills = root / 'skills'
         files.add(skills / 'registry.json')
         files.update(skills.rglob('SKILL.md'))
         return digest([(p.relative_to(root).as_posix(),file_hash(p)) for p in sorted(files)])
@@ -273,7 +273,7 @@ class WorkflowBackend:
             meta=contracts.CropMeta.from_json(target['path'])
             feature_id=meta.feature_id
             bank_path=project_path(session.config.get('image_exemplar_bank') or
-                (Path(paths.PROJECT_ROOT)/'TCM_Fusion/config/feature_exemplar_bank.json'))
+                (Path(paths.PROJECT_ROOT)/'config/feature_exemplar_bank.json'))
             bank=read_json(bank_path)
             entry=(bank.get('targets') or {}).get(feature_id) or {}
             positives=[x.get('crop') for x in (entry.get('positives') or []) if x.get('crop')]

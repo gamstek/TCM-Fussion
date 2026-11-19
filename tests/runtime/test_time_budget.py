@@ -28,7 +28,7 @@ class TimeBudgetTest(unittest.TestCase):
         })
 
     def test_live_template_preserves_reference_time_budget(self):
-        path = Path(paths.PROJECT_ROOT) / "TCM_Fusion/config/multi_view.json"
+        path = Path(paths.PROJECT_ROOT) / "config/multi_view.json"
         workflow = read_json(path)["agent"]["workflow"]
         self.assertEqual(workflow["max_seconds"], 2400)
         self.assertEqual(workflow["max_observation_seconds"], 150)

@@ -73,11 +73,11 @@ parent is an explicit failure rather than a silently successful cleanup.
 def run(argv, *, context_path, timeout, log_path, cancel_event=None):
     if not isinstance(context_path, (str, os.PathLike)):
         raise IntegrationError('BUDGET_CONTEXT_INVALID', 'worker预算上下文必须是文件路径')
-    hook = Path(paths.PROJECT_ROOT) / 'TCM_Fusion/lib/runtime/worker_bootstrap'
+    hook = Path(paths.WORKER_BOOTSTRAP_DIR)
     if not (hook / 'sitecustomize.py').is_file():
         raise IntegrationError('WORKER_BOOTSTRAP_MISSING', '受控子进程缺少预算启动钩子')
-    env=dict(os.environ, PYTHONIOENCODING='utf-8', PYTHONUNBUFFERED='1', FUSION_BUDGET_CONTEXT=str(context_path),
-             PYTHONPATH=os.pathsep.join([str(hook),str(paths.PROJECT_ROOT),*map(str,paths.MODULE_DIRS)]))
+    env = paths.python_environment()
+    env.update(PYTHONIOENCODING='utf-8', PYTHONUNBUFFERED='1', FUSION_BUDGET_CONTEXT=str(context_path))
     Path(log_path).parent.mkdir(parents=True,exist_ok=True)
     from TCM_Fusion.lib.runtime.storage import write_json
     from TCM_Fusion.lib.runtime.resource_budget import operation_failure

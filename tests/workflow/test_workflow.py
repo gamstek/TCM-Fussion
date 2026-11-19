@@ -400,7 +400,7 @@ class WorkflowTests(WorkflowFixture, unittest.TestCase):
         self.assertEqual(len(compact_feedback(events)),1)
 
     def test_classify_crops_batch_is_declared_in_workflow_repair_skill(self):
-        registry = json.loads((Path(paths.PROJECT_ROOT) / 'TCM_Fusion' / 'skills' / 'registry.json')
+        registry = json.loads((Path(paths.PROJECT_ROOT) / 'skills' / 'registry.json')
                               .read_text(encoding='utf-8'))
         skill = next(row for row in registry if row['id'] == 'workflow_repair')
         self.assertIn('classify_crops_batch', skill['tools'])

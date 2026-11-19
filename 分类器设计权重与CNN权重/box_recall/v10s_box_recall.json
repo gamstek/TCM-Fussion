@@ -1,0 +1,171 @@
+{
+  "version": "box_recall_v10s",
+  "weights": "/workspace/TCM-Microscopic-Image-Recognition/results/detection/yolo_runs/v1_yolov10s_1024/weights/best.pt",
+  "n_gold_images": 60,
+  "p3_reference": {
+    "n_pred": 105,
+    "n_match_loc": 80,
+    "recall_loc": 0.3347,
+    "recall_e2e": 0.3096,
+    "precision_e2e": 0.7048
+  },
+  "conf_sweep": [
+    {
+      "conf": 0.25,
+      "n_gt": 239,
+      "n_pred": 114,
+      "tp_loc": 83,
+      "tp_e2e": 74,
+      "recall_loc": 0.3473,
+      "precision_loc": 0.7281,
+      "recall_e2e": 0.3096,
+      "precision_e2e": 0.6491,
+      "pred_per_image": 1.9
+    },
+    {
+      "conf": 0.1,
+      "n_gt": 239,
+      "n_pred": 150,
+      "tp_loc": 90,
+      "tp_e2e": 80,
+      "recall_loc": 0.3766,
+      "precision_loc": 0.6,
+      "recall_e2e": 0.3347,
+      "precision_e2e": 0.5333,
+      "pred_per_image": 2.5
+    },
+    {
+      "conf": 0.05,
+      "n_gt": 239,
+      "n_pred": 186,
+      "tp_loc": 95,
+      "tp_e2e": 81,
+      "recall_loc": 0.3975,
+      "precision_loc": 0.5108,
+      "recall_e2e": 0.3389,
+      "precision_e2e": 0.4355,
+      "pred_per_image": 3.1
+    },
+    {
+      "conf": 0.01,
+      "n_gt": 239,
+      "n_pred": 334,
+      "tp_loc": 107,
+      "tp_e2e": 92,
+      "recall_loc": 0.4477,
+      "precision_loc": 0.3204,
+      "recall_e2e": 0.3849,
+      "precision_e2e": 0.2754,
+      "pred_per_image": 5.57
+    },
+    {
+      "conf": 0.001,
+      "n_gt": 239,
+      "n_pred": 1015,
+      "tp_loc": 126,
+      "tp_e2e": 105,
+      "recall_loc": 0.5272,
+      "precision_loc": 0.1241,
+      "recall_e2e": 0.4393,
+      "precision_e2e": 0.1034,
+      "pred_per_image": 16.92
+    }
+  ],
+  "topk_sweep": [
+    {
+      "topk_per_image": 1,
+      "n_gt": 239,
+      "n_pred": 60,
+      "tp_loc": 43,
+      "tp_e2e": 33,
+      "recall_loc": 0.1799,
+      "precision_loc": 0.7167,
+      "recall_e2e": 0.1381,
+      "precision_e2e": 0.55,
+      "pred_per_image": 1.0
+    },
+    {
+      "topk_per_image": 3,
+      "n_gt": 239,
+      "n_pred": 168,
+      "tp_loc": 60,
+      "tp_e2e": 42,
+      "recall_loc": 0.251,
+      "precision_loc": 0.3571,
+      "recall_e2e": 0.1757,
+      "precision_e2e": 0.25,
+      "pred_per_image": 2.8
+    },
+    {
+      "topk_per_image": 5,
+      "n_gt": 239,
+      "n_pred": 266,
+      "tp_loc": 70,
+      "tp_e2e": 52,
+      "recall_loc": 0.2929,
+      "precision_loc": 0.2632,
+      "recall_e2e": 0.2176,
+      "precision_e2e": 0.1955,
+      "pred_per_image": 4.43
+    },
+    {
+      "topk_per_image": 10,
+      "n_gt": 239,
+      "n_pred": 459,
+      "tp_loc": 85,
+      "tp_e2e": 68,
+      "recall_loc": 0.3556,
+      "precision_loc": 0.1852,
+      "recall_e2e": 0.2845,
+      "precision_e2e": 0.1481,
+      "pred_per_image": 7.65
+    },
+    {
+      "topk_per_image": 20,
+      "n_gt": 239,
+      "n_pred": 676,
+      "tp_loc": 103,
+      "tp_e2e": 85,
+      "recall_loc": 0.431,
+      "precision_loc": 0.1524,
+      "recall_e2e": 0.3556,
+      "precision_e2e": 0.1257,
+      "pred_per_image": 11.27
+    },
+    {
+      "topk_per_image": 50,
+      "n_gt": 239,
+      "n_pred": 924,
+      "tp_loc": 122,
+      "tp_e2e": 101,
+      "recall_loc": 0.5105,
+      "precision_loc": 0.132,
+      "recall_e2e": 0.4226,
+      "precision_e2e": 0.1093,
+      "pred_per_image": 15.4
+    },
+    {
+      "topk_per_image": 100,
+      "n_gt": 239,
+      "n_pred": 1015,
+      "tp_loc": 126,
+      "tp_e2e": 105,
+      "recall_loc": 0.5272,
+      "precision_loc": 0.1241,
+      "recall_e2e": 0.4393,
+      "precision_e2e": 0.1034,
+      "pred_per_image": 16.92
+    }
+  ],
+  "strict_iou75_conf025": {
+    "n_gt": 239,
+    "n_pred": 114,
+    "tp_loc": 68,
+    "tp_e2e": 61,
+    "recall_loc": 0.2845,
+    "precision_loc": 0.5965,
+    "recall_e2e": 0.2552,
+    "precision_e2e": 0.5351,
+    "pred_per_image": 1.9
+  }
+}

@@ -1,0 +1,8 @@
+﻿image_path,root,folder_name,granule,herb,feature_label,ext,width,height,group_key,suggested_split,needs_review
+D:\demo\demo01_circle.jpg,demo,demo01_circle,feature,大黄,cluster_crystal,jpg,1,1,大黄-seq,test,
+D:\demo\demo02_ellipse.jpg,demo,demo02_ellipse,feature,大黄,starch_grain,jpg,1,1,大黄-seq,test,
+D:\demo\demo03_star.jpg,demo,demo03_star,feature,大黄,cluster_crystal,jpg,1,1,大黄-seq,test,
+D:\demo\demo04_needle.jpg,demo,demo04_needle,feature,半夏,needle_crystal,jpg,1,1,半夏-seq,test,
+D:\demo\demo05_fiber.jpg,demo,demo05_fiber,feature,板蓝根,fiber,jpg,1,1,板蓝根-seq,train,
+D:\demo\demo06_vessel.jpg,demo,demo06_vessel,feature,大黄,vessel,jpg,1,1,大黄-seq,test,
+D:\demo\demo07_compound.jpg,demo,demo07_compound,feature,大黄,starch_grain,jpg,1,1,大黄-seq,val,

@@ -277,8 +277,13 @@ class ReflectionStrategyTests(unittest.TestCase):
                                                      if a['tool']=='request_review')})
             return {'choices':[{'message':{'content':json.dumps({'decision':choice})}}],
                     'usage':{'total_tokens':31+len(bodies)}}
+        write_json(self.root / 'vlm_config.json', {'vlm': {
+            'base_url': 'https://fixture.invalid', 'model': 'fixture', 'api_key': 'fixture',
+        }})
+        with patch('paths.DETECTION_CONFIG_DIR', str(self.root)):
+            planner = LLMPlanner()
         with patch('TCM_Fusion.lib.runtime.hard_calls.post',side_effect=http):
-            trace=self.run_agent(r,LLMPlanner())
+            trace=self.run_agent(r,planner)
         self.assertEqual(trace['planning_requests'],2)
         self.assertEqual(trace['stop_reason'],'planner_request_review')
         errors=[e for e in trace['events'] if e['phase']=='planning_error']

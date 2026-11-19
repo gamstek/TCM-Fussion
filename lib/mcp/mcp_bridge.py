@@ -186,7 +186,7 @@ async def connect_stdio(context_path):
             forwarded[name]=os.environ[name]
     parameters = StdioServerParameters(command=sys.executable,
         args=["-X", "utf8", "-m", "TCM_Fusion.cli.mcp_server", "--context", str(project_path(context_path))],
-        cwd=str(paths.PROJECT_ROOT), env=forwarded)
+        cwd=str(paths.PROJECT_ROOT), env=paths.python_environment(forwarded))
     async with stdio_client(parameters) as (read, write):
         context=read_json(project_path(context_path))
         deadline=context.get('workflow_config',{}).get('agent',{}).get('workflow',{}).get('max_seconds',600)

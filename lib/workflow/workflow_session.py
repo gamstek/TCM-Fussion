@@ -47,12 +47,12 @@ class WorkflowSession:
         if config.get('detector', 'yolo') != 'yolo':
             raise IntegrationError('CONFIG_INVALID', '出框后端仅支持 YOLO')
         if not runtime.simulation:
-            assets = Path(paths.PROJECT_ROOT) / 'TCM_Fusion' / 'yolo-results' / 'detection' / 'yolo_runs'
+            assets = Path(paths.PROJECT_ROOT) / 'yolo-results' / 'detection' / 'yolo_runs'
             yolo = {
                 'weights': str(assets / 'v1_yolov10s_1024' / 'weights' / 'best.pt'),
                 'class_map': str(assets / 'data_local.yaml'),
-                'detector_config': str(Path(paths.PROJECT_ROOT) / 'TCM_Fusion' / 'config' / 'detector.json'),
-                'python': str(Path(paths.VENV_PY).parent.parent / 'yolo' / 'Scripts' / 'python.exe'),
+                'detector_config': str(Path(paths.PROJECT_ROOT) / 'config' / 'detector.json'),
+                'python': paths.YOLO_PY,
                 **config.get('yolo', {}),
             }
             self.config['yolo'] = yolo

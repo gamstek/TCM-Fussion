@@ -66,7 +66,7 @@ class ImageExemplarAuditTests(unittest.TestCase):
             normalize_audit({'target_score': 0.86}, feature_id='')
 
     def test_generic_bank_has_14_targets_and_fiber_entry(self):
-        path = Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/feature_exemplar_bank.json'
+        path = Path(paths.PROJECT_ROOT) / 'config/feature_exemplar_bank.json'
         bank = json.loads(path.read_text(encoding='utf-8'))
         self.assertEqual(len(bank['targets']), 14)
         self.assertIn('fiber', bank['targets'])

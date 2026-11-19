@@ -46,7 +46,7 @@ FOLD_TEXT = TEXT + "FOLD_RANKINGS_JSON=" + json.dumps([
      {"rank": 2, "label": "白芍", "probability": .1}]
 ] * 4 + [[{"rank": 1, "label": "白芍", "probability": .6},
            {"rank": 2, "label": "甘草", "probability": .4}]])
-BASE = Path(paths.PROJECT_ROOT)/"TCM_Fusion"
+BASE = Path(paths.PROJECT_ROOT)
 
 
 class IntegrationTests(unittest.TestCase):

@@ -139,10 +139,10 @@ def run_multi_view(source_dir, *, output_root=None, manifest=None,
             'MULTI_VIEW_A_PYTHON_MISSING',
             '必须用 --a-python 或 TCM_A_PYTHON 指定 A 解释器；不默认使用 Agent venv')
     template_path = project_path(config_template) if config_template else (
-        Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/multi_view.json')
+        Path(paths.PROJECT_ROOT) / 'config/multi_view.json')
     template = read_json(template_path)
     root = project_path(output_root) if output_root else (
-        Path(paths.PROJECT_ROOT) / 'TCM_Fusion/运行结果')
+        Path(paths.RUN_RESULTS))
     source = project_path(source_dir)
     if root == source or root.is_relative_to(source):
         raise IntegrationError('MULTI_VIEW_SCOPE', '输出根不能位于输入图像目录内')

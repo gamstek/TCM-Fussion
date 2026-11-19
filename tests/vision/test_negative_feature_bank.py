@@ -20,7 +20,7 @@ import paths
 class NegativeFeatureBankTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.path = Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/negative_feature_bank.json'
+        cls.path = Path(paths.PROJECT_ROOT) / 'config/negative_feature_bank.json'
         cls.bank = json.loads(cls.path.read_text(encoding='utf-8'))
 
     def test_schema_and_target_conditioned_targets(self):

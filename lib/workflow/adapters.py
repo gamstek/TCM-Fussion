@@ -19,7 +19,6 @@ B 始终走原 run_pipeline 或只读已完成 run，交付校验复用 contract
 from __future__ import annotations
 
 import json
-import os
 import re
 import subprocess
 import time
@@ -44,7 +43,7 @@ def run_process(argv, *, timeout=None):
     try:
         cp = subprocess.run([str(x) for x in argv], cwd=paths.PROJECT_ROOT,
                             capture_output=True, text=True, encoding="utf-8",
-                            errors="replace", env=dict(os.environ, PYTHONIOENCODING="utf-8"),
+                            errors="replace", env=dict(paths.python_environment(), PYTHONIOENCODING="utf-8"),
                             timeout=timeout, shell=False)
     except subprocess.TimeoutExpired as exc:
         raise IntegrationError("PROCESS_TIMEOUT", "A推理超时；未自动重试") from exc
@@ -132,7 +131,7 @@ def predict_a(config, cache_dir):
             numbered[int(m.group(1))] = p
     if not numbered or sorted(numbered) != list(range(1, len(numbered)+1)):
         raise IntegrationError("A_CHECKPOINT_MISSING", "须提供从fold1开始连续编号的完整checkpoint集合")
-    script = Path(paths.PROJECT_ROOT) / "MICROSCOPE-main" / "predictv3_resnet50.py"
+    script = Path(paths.A_PREDICT)
     py = interpreter(config.get("python"))
     timeout = config.get("timeout_seconds", 0)
     if not finite_number(timeout):

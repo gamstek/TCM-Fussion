@@ -281,9 +281,9 @@ def doctor(config):
             check("MCP SDK", importlib.util.find_spec("mcp") is not None, "mcp 1.x stdio")
         for root in cfg["agent"]["image_roots"]:
             check("Agent样品原图", project_path(root).exists(), root)
-    check("A原脚本", (Path(paths.PROJECT_ROOT)/"MICROSCOPE-main/predictv3_resnet50.py").is_file(), "只通过子进程执行")
+    check("A原脚本", Path(paths.A_PREDICT).is_file(), "只通过子进程执行")
     if a.get("mode", "cli") == "cli":
-        checkpoint = project_path(a.get("checkpoint_dir", "MICROSCOPE-main/runs/v3_resnet50_full"))
+        checkpoint = project_path(a.get("checkpoint_dir", paths.A_CHECKPOINT_DIR))
         image = project_path(a.get("image") or (a.get("images") or ["MICROSCOPE-main/显微镜像/甘草/example.jpg"])[0])
         check("A五折参考落点", all((checkpoint/f"fold{i}_best.pt").is_file() for i in range(1, 6)), checkpoint)
         check("A原图", image.is_file(), image)

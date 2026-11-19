@@ -83,7 +83,7 @@ def main(argv=None):
     release.add_argument('--candidate', required=True)
     release.add_argument('--report', required=True)
     args = parser.parse_args(argv)
-    package = Path(paths.PROJECT_ROOT) / 'TCM_Fusion'
+    package = Path(paths.PROJECT_ROOT)
     try:
         if args.command == 'schedule-compare':
             from TCM_Fusion.lib.offline.paired_schedule import compare

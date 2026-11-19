@@ -1,0 +1,402 @@
+{
+  "stage1": {
+    "weights": "results/detection/yolo_runs/v1_yolov10s_1024_rescue/weights/best.pt",
+    "imgsz": 1024,
+    "infer_conf": 0.01,
+    "nms_iou": 0.45,
+    "margin_ratio": 0.3
+  },
+  "stage2": {
+    "path": "results/detection/cls_runs/abl_320_lb_e40_ls01_mix01_s20261030/best.pt",
+    "arch": "resnet18",
+    "imgsz": 320,
+    "classes": [
+      "00_cluster_crystal",
+      "01_single_crystal",
+      "02_needle_crystal",
+      "03_vessel",
+      "04_stone_cell",
+      "05_starch_grain",
+      "06_non_glandular_hair",
+      "07_secretory_tissue",
+      "08_stoma",
+      "09_epidermis_cell",
+      "10_hypha",
+      "11_fiber",
+      "12_pollen_grain",
+      "13_other"
+    ]
+  },
+  "match_iou_thr": 0.5,
+  "conf_sweep": [
+    {
+      "conf": 0.25,
+      "iou_thr": 0.5,
+      "n_images": 60,
+      "n_gt": 239,
+      "n_pred": 153,
+      "n_pred_per_image": 2.55,
+      "loc_tp": 115,
+      "recall_loc": 0.4812,
+      "precision_loc": 0.7516,
+      "cls_tp": 103,
+      "cls_acc_on_matched": 0.8957,
+      "recall_e2e": 0.431,
+      "precision_e2e": 0.6732,
+      "per_class": {
+        "草酸钙簇晶": {
+          "n_gt": 12,
+          "loc_tp": 11,
+          "cls_tp": 11,
+          "loc_recall": 0.9167,
+          "cls_recall": 0.9167,
+          "cls_acc_on_matched": 1.0
+        },
+        "草酸钙针晶": {
+          "n_gt": 9,
+          "loc_tp": 3,
+          "cls_tp": 3,
+          "loc_recall": 0.3333,
+          "cls_recall": 0.3333,
+          "cls_acc_on_matched": 1.0
+        },
+        "石细胞": {
+          "n_gt": 30,
+          "loc_tp": 15,
+          "cls_tp": 14,
+          "loc_recall": 0.5,
+          "cls_recall": 0.4667,
+          "cls_acc_on_matched": 0.9333
+        },
+        "草酸钙方晶": {
+          "n_gt": 5,
+          "loc_tp": 4,
+          "cls_tp": 0,
+          "loc_recall": 0.8,
+          "cls_recall": 0.0,
+          "cls_acc_on_matched": 0.0
+        },
+        "淀粉粒": {
+          "n_gt": 161,
+          "loc_tp": 69,
+          "cls_tp": 67,
+          "loc_recall": 0.4286,
+          "cls_recall": 0.4161,
+          "cls_acc_on_matched": 0.971
+        },
+        "分泌组织": {
+          "n_gt": 6,
+          "loc_tp": 1,
+          "cls_tp": 1,
+          "loc_recall": 0.1667,
+          "cls_recall": 0.1667,
+          "cls_acc_on_matched": 1.0
+        },
+        "导管": {
+          "n_gt": 13,
+          "loc_tp": 10,
+          "cls_tp": 5,
+          "loc_recall": 0.7692,
+          "cls_recall": 0.3846,
+          "cls_acc_on_matched": 0.5
+        },
+        "菌丝": {
+          "n_gt": 3,
+          "loc_tp": 2,
+          "cls_tp": 2,
+          "loc_recall": 0.6667,
+          "cls_recall": 0.6667,
+          "cls_acc_on_matched": 1.0
+        }
+      },
+      "confusions": {
+        "草酸钙方晶→其他": 3,
+        "导管→纤维": 2,
+        "淀粉粒→草酸钙方晶": 1,
+        "导管→其他": 1,
+        "导管→石细胞": 1,
+        "草酸钙方晶→菌丝": 1,
+        "淀粉粒→其他": 1,
+        "导管→表皮细胞": 1,
+        "石细胞→其他": 1
+      }
+    },
+    {
+      "conf": 0.1,
+      "iou_thr": 0.5,
+      "n_images": 60,
+      "n_gt": 239,
+      "n_pred": 186,
+      "n_pred_per_image": 3.1,
+      "loc_tp": 127,
+      "recall_loc": 0.5314,
+      "precision_loc": 0.6828,
+      "cls_tp": 115,
+      "cls_acc_on_matched": 0.9055,
+      "recall_e2e": 0.4812,
+      "precision_e2e": 0.6183,
+      "per_class": {
+        "草酸钙簇晶": {
+          "n_gt": 12,
+          "loc_tp": 12,
+          "cls_tp": 12,
+          "loc_recall": 1.0,
+          "cls_recall": 1.0,
+          "cls_acc_on_matched": 1.0
+        },
+        "草酸钙针晶": {
+          "n_gt": 9,
+          "loc_tp": 3,
+          "cls_tp": 3,
+          "loc_recall": 0.3333,
+          "cls_recall": 0.3333,
+          "cls_acc_on_matched": 1.0
+        },
+        "石细胞": {
+          "n_gt": 30,
+          "loc_tp": 17,
+          "cls_tp": 15,
+          "loc_recall": 0.5667,
+          "cls_recall": 0.5,
+          "cls_acc_on_matched": 0.8824
+        },
+        "草酸钙方晶": {
+          "n_gt": 5,
+          "loc_tp": 4,
+          "cls_tp": 0,
+          "loc_recall": 0.8,
+          "cls_recall": 0.0,
+          "cls_acc_on_matched": 0.0
+        },
+        "淀粉粒": {
+          "n_gt": 161,
+          "loc_tp": 77,
+          "cls_tp": 75,
+          "loc_recall": 0.4783,
+          "cls_recall": 0.4658,
+          "cls_acc_on_matched": 0.974
+        },
+        "分泌组织": {
+          "n_gt": 6,
+          "loc_tp": 1,
+          "cls_tp": 1,
+          "loc_recall": 0.1667,
+          "cls_recall": 0.1667,
+          "cls_acc_on_matched": 1.0
+        },
+        "导管": {
+          "n_gt": 13,
+          "loc_tp": 11,
+          "cls_tp": 7,
+          "loc_recall": 0.8462,
+          "cls_recall": 0.5385,
+          "cls_acc_on_matched": 0.6364
+        },
+        "菌丝": {
+          "n_gt": 3,
+          "loc_tp": 2,
+          "cls_tp": 2,
+          "loc_recall": 0.6667,
+          "cls_recall": 0.6667,
+          "cls_acc_on_matched": 1.0
+        }
+      },
+      "confusions": {
+        "草酸钙方晶→其他": 3,
+        "导管→纤维": 2,
+        "淀粉粒→草酸钙方晶": 1,
+        "导管→其他": 1,
+        "导管→石细胞": 1,
+        "草酸钙方晶→菌丝": 1,
+        "石细胞→纤维": 1,
+        "淀粉粒→其他": 1,
+        "石细胞→其他": 1
+      }
+    },
+    {
+      "conf": 0.05,
+      "iou_thr": 0.5,
+      "n_images": 60,
+      "n_gt": 239,
+      "n_pred": 222,
+      "n_pred_per_image": 3.7,
+      "loc_tp": 138,
+      "recall_loc": 0.5774,
+      "precision_loc": 0.6216,
+      "cls_tp": 125,
+      "cls_acc_on_matched": 0.9058,
+      "recall_e2e": 0.523,
+      "precision_e2e": 0.5631,
+      "per_class": {
+        "草酸钙簇晶": {
+          "n_gt": 12,
+          "loc_tp": 12,
+          "cls_tp": 12,
+          "loc_recall": 1.0,
+          "cls_recall": 1.0,
+          "cls_acc_on_matched": 1.0
+        },
+        "草酸钙针晶": {
+          "n_gt": 9,
+          "loc_tp": 3,
+          "cls_tp": 3,
+          "loc_recall": 0.3333,
+          "cls_recall": 0.3333,
+          "cls_acc_on_matched": 1.0
+        },
+        "石细胞": {
+          "n_gt": 30,
+          "loc_tp": 18,
+          "cls_tp": 16,
+          "loc_recall": 0.6,
+          "cls_recall": 0.5333,
+          "cls_acc_on_matched": 0.8889
+        },
+        "草酸钙方晶": {
+          "n_gt": 5,
+          "loc_tp": 4,
+          "cls_tp": 0,
+          "loc_recall": 0.8,
+          "cls_recall": 0.0,
+          "cls_acc_on_matched": 0.0
+        },
+        "淀粉粒": {
+          "n_gt": 161,
+          "loc_tp": 87,
+          "cls_tp": 84,
+          "loc_recall": 0.5404,
+          "cls_recall": 0.5217,
+          "cls_acc_on_matched": 0.9655
+        },
+        "分泌组织": {
+          "n_gt": 6,
+          "loc_tp": 1,
+          "cls_tp": 1,
+          "loc_recall": 0.1667,
+          "cls_recall": 0.1667,
+          "cls_acc_on_matched": 1.0
+        },
+        "导管": {
+          "n_gt": 13,
+          "loc_tp": 11,
+          "cls_tp": 7,
+          "loc_recall": 0.8462,
+          "cls_recall": 0.5385,
+          "cls_acc_on_matched": 0.6364
+        },
+        "菌丝": {
+          "n_gt": 3,
+          "loc_tp": 2,
+          "cls_tp": 2,
+          "loc_recall": 0.6667,
+          "cls_recall": 0.6667,
+          "cls_acc_on_matched": 1.0
+        }
+      },
+      "confusions": {
+        "草酸钙方晶→其他": 3,
+        "淀粉粒→草酸钙方晶": 2,
+        "导管→纤维": 2,
+        "导管→其他": 1,
+        "导管→石细胞": 1,
+        "草酸钙方晶→菌丝": 1,
+        "石细胞→纤维": 1,
+        "淀粉粒→其他": 1,
+        "石细胞→其他": 1
+      }
+    },
+    {
+      "conf": 0.01,
+      "iou_thr": 0.5,
+      "n_images": 60,
+      "n_gt": 239,
+      "n_pred": 323,
+      "n_pred_per_image": 5.38,
+      "loc_tp": 150,
+      "recall_loc": 0.6276,
+      "precision_loc": 0.4644,
+      "cls_tp": 135,
+      "cls_acc_on_matched": 0.9,
+      "recall_e2e": 0.5649,
+      "precision_e2e": 0.418,
+      "per_class": {
+        "草酸钙簇晶": {
+          "n_gt": 12,
+          "loc_tp": 12,
+          "cls_tp": 12,
+          "loc_recall": 1.0,
+          "cls_recall": 1.0,
+          "cls_acc_on_matched": 1.0
+        },
+        "草酸钙针晶": {
+          "n_gt": 9,
+          "loc_tp": 3,
+          "cls_tp": 3,
+          "loc_recall": 0.3333,
+          "cls_recall": 0.3333,
+          "cls_acc_on_matched": 1.0
+        },
+        "石细胞": {
+          "n_gt": 30,
+          "loc_tp": 18,
+          "cls_tp": 16,
+          "loc_recall": 0.6,
+          "cls_recall": 0.5333,
+          "cls_acc_on_matched": 0.8889
+        },
+        "草酸钙方晶": {
+          "n_gt": 5,
+          "loc_tp": 4,
+          "cls_tp": 0,
+          "loc_recall": 0.8,
+          "cls_recall": 0.0,
+          "cls_acc_on_matched": 0.0
+        },
+        "淀粉粒": {
+          "n_gt": 161,
+          "loc_tp": 96,
+          "cls_tp": 92,
+          "loc_recall": 0.5963,
+          "cls_recall": 0.5714,
+          "cls_acc_on_matched": 0.9583
+        },
+        "分泌组织": {
+          "n_gt": 6,
+          "loc_tp": 3,
+          "cls_tp": 2,
+          "loc_recall": 0.5,
+          "cls_recall": 0.3333,
+          "cls_acc_on_matched": 0.6667
+        },
+        "导管": {
+          "n_gt": 13,
+          "loc_tp": 11,
+          "cls_tp": 7,
+          "loc_recall": 0.8462,
+          "cls_recall": 0.5385,
+          "cls_acc_on_matched": 0.6364
+        },
+        "菌丝": {
+          "n_gt": 3,
+          "loc_tp": 3,
+          "cls_tp": 3,
+          "loc_recall": 1.0,
+          "cls_recall": 1.0,
+          "cls_acc_on_matched": 1.0
+        }
+      },
+      "confusions": {
+        "草酸钙方晶→其他": 3,
+        "淀粉粒→草酸钙方晶": 3,
+        "导管→纤维": 2,
+        "分泌组织→草酸钙针晶": 1,
+        "导管→其他": 1,
+        "导管→石细胞": 1,
+        "草酸钙方晶→菌丝": 1,
+        "石细胞→纤维": 1,
+        "淀粉粒→其他": 1,
+        "石细胞→其他": 1
+      }
+    }
+  ]
+}

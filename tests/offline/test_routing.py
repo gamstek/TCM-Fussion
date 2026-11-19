@@ -29,7 +29,7 @@ from TCM_Fusion.lib.tools.agent_tools import LocalToolbox, FixtureBackend
 from TCM_Fusion.lib.agent.react_graph import run_react, ScriptedPlanner
 from TCM_Fusion.lib.mcp.mcp_bridge import connect_stdio
 
-BASE = Path(paths.PROJECT_ROOT)/'TCM_Fusion'
+BASE = Path(paths.PROJECT_ROOT)
 
 
 class RoutingTests(unittest.TestCase):

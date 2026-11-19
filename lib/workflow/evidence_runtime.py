@@ -31,7 +31,7 @@ from TCM_Fusion.lib.runtime.storage import (
 class Skills:
     """技能是可加载的领域策略卡；工具权限来自代码白名单。"""
     def __init__(self):
-        self.root = Path(paths.PROJECT_ROOT)/"TCM_Fusion"/"skills"
+        self.root = Path(paths.PROJECT_ROOT)/"skills"
         self.registry = read_json(self.root/"registry.json")
 
     def list(self):

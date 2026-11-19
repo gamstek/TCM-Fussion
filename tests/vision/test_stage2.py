@@ -51,7 +51,7 @@ class Stage2Tests(unittest.TestCase):
                 {'class':'01_other','feature_id':'other','prob':.01}]}]}
 
     def test_template_preserves_herb_folds_and_uses_requested_stage2_root(self):
-        cfg=read_json(Path(paths.PROJECT_ROOT)/'TCM_Fusion/config/multi_view.json')
+        cfg=read_json(Path(paths.PROJECT_ROOT)/'config/multi_view.json')
         self.assertEqual(cfg['a']['checkpoint_dir'],'MICROSCOPE-main/v3_resnet50_full')
         self.assertEqual(cfg['agent']['candidate_policy']['top_k'],3)
         self.assertTrue(cfg['agent']['workflow']['cnn_weights'].startswith('分类器设计权重与CNN权重/'))

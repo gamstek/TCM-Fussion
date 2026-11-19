@@ -37,7 +37,7 @@ def _run_worker(request, seconds, timeout_code, *, diagnostics=None):
         p=Path(temp);write_json(p/'input.json',request)
         command=[sys.executable,'-X','utf8','-m','TCM_Fusion.cli.api_worker','--input',str(p/'input.json'),'--output',str(p/'output.json')]
         # Worker uses files for IPC and must not inherit the MCP protocol pipe.
-        child=subprocess.Popen(command,cwd=paths.PROJECT_ROOT,stdin=subprocess.DEVNULL,
+        child=subprocess.Popen(command,cwd=paths.PROJECT_ROOT,env=paths.python_environment(),stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,
             start_new_session=os.name!='nt',creationflags=(subprocess.CREATE_NEW_PROCESS_GROUP|subprocess.CREATE_NO_WINDOW) if os.name=='nt' else 0)
         try:

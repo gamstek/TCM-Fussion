@@ -165,7 +165,7 @@ class PresenceLocalizationTests(unittest.TestCase):
                          'ORIENTATION_MAPPING_UNCONFIRMED')
 
     def runtime_and_backend(self):
-        fixture = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/tests/fixtures/react_case.json')
+        fixture = read_json(Path(paths.PROJECT_ROOT) / 'tests/fixtures/react_case.json')
         runtime = EvidenceRuntime([], [self.image], sample_id='presence-test',
                                   a=fixture['a'], simulation=True)
         write_json(self.root / 'vlm_config.json', {'vlm': {'base_url': 'https://invalid.example',
@@ -317,7 +317,7 @@ class PresenceLocalizationTests(unittest.TestCase):
     def test_graph_preserves_box_diagnostic_and_only_original_observation_changes_rules(self):
         from TCM_Fusion.lib.agent.react_graph import run_react, ScriptedPlanner
         runtime, backend, _ = self.runtime_and_backend()
-        fixture = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/tests/fixtures/react_case.json')
+        fixture = read_json(Path(paths.PROJECT_ROOT) / 'tests/fixtures/react_case.json')
         records = copy.deepcopy(fixture['records'])
         records[0]['image_stem'] = self.image.stem
         runtime = EvidenceRuntime(records, [self.image], sample_id='graph-hint',
@@ -346,7 +346,7 @@ class PresenceLocalizationTests(unittest.TestCase):
     def test_real_mcp_transport_preserves_diagnostic_and_legacy_result(self):
         from TCM_Fusion.lib.mcp.mcp_bridge import connect_stdio
         from TCM_Fusion.lib.agent.react_graph import run_react, ScriptedPlanner
-        fixture = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/tests/fixtures/react_case.json')
+        fixture = read_json(Path(paths.PROJECT_ROOT) / 'tests/fixtures/react_case.json')
         fixture['records'][0]['image_stem'] = self.image.stem
         fixture['images'] = [str(self.image)]
         fixture['replies']['hypha']['localization_proposal'] = self.result['localization_proposal']

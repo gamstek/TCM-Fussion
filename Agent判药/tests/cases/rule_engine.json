@@ -1,0 +1,247 @@
+{
+  "_comment": "规则引擎用例数据。records.items[] 由 runner 展开为测量记录：values 每个元素一条，字段对齐 rule_engine.pool_evidence。checks.kind 为断言语义（runner 分发）。",
+  "cases": [
+    {
+      "name": "大黄走查（confirmed）",
+      "records": [
+        {"feature": "cluster_crystal", "values": [120, 132, 115, 128, 126, 118, 130, 138],
+         "conf": 0.92, "shape": {"defect_count": 6, "solidity": 0.78, "mean_defect_depth_ratio": 0.11}},
+        {"feature": "starch_grain", "values": [18, 22, 15, 30, 12, 25],
+         "conf": 0.88, "shape": {"roundness": 0.8, "dt_peak_count": 4}},
+        {"feature": "vessel", "values": [120, 95], "conf": 0.85,
+         "shape": {"aspect_ratio": 4.5, "tortuosity": 1.6}}
+      ],
+      "checks": [
+        {"name": "大黄: confirmed", "kind": "verdict_eq", "val": "confirmed"},
+        {"name": "大黄: 结论为大黄", "kind": "conclusion_id", "val": "大黄"},
+        {"name": "大黄: 置信度≥0.75", "kind": "conclusion_conf_ge", "val": 0.75}
+      ]
+    },
+    {
+      "name": "小簇晶单特征（白芍区间内）→ D8b 条件放行",
+      "records": [
+        {"feature": "cluster_crystal", "values": [12, 15, 20, 18, 25], "conf": 0.9,
+         "shape": {"defect_count": 4, "solidity": 0.8}}
+      ],
+      "checks": [
+        {"name": "小簇晶: 单类证据但判得死（conf 1.00、分差 0.25）→ D8b 放行 confirmed",
+         "kind": "verdict_eq", "val": "confirmed"},
+        {"name": "小簇晶: 结论为白芍（11~35 区间全中）", "kind": "conclusion_id", "val": "白芍"},
+        {"name": "小簇晶: 放行前提之一是置信度已达 confirmed 带", "kind": "conclusion_conf_ge", "val": 0.75},
+        {"name": "小簇晶: 证据类数单薄，仍强制人工复核", "kind": "verdict_needs_review", "val": "confirmed"},
+        {"name": "小簇晶: support_feature_count 记录为 1", "kind": "support_feature_count", "val": 1}
+      ]
+    },
+    {
+      "name": "方晶单特征 → G3 组 D8b 条件放行（v1.8：猪苓菌丝转 required 后不再与 G3 并列 1.00）",
+      "records": [
+        {"feature": "single_crystal", "values": [30, 22, 40, 28], "conf": 0.9,
+         "shape": {"rectangularity": 0.7, "aspect_ratio": 2.2}}
+      ],
+      "checks": [
+        {"name": "方晶: G3 组进入 top2", "kind": "ranking_top_ids_contains", "top_n": 2, "val": "G3"},
+        {"name": "方晶: 组级候选 D8b 放行（conf 达 confirmed 带且分差已拉开）→ group_level + 人工复核",
+         "kind": "verdict_needs_review", "val": "group_level"}
+      ]
+    },
+    {
+      "name": "矿物特征（C 通道）→ D8 门槛 + 多备选保留",
+      "records": [
+        {"feature": "mineral_feature", "values": [90, 60], "conf": 0.95}
+      ],
+      "checks": [
+        {"name": "矿物: 不硬凑 confirmed", "kind": "verdict_in", "vals": ["probable", "insufficient_evidence"]},
+        {"name": "矿物: 四个矿物药均入排名（多备选）", "kind": "ranking_len_ge", "val": 4},
+        {"name": "矿物: 单特征证据 → D8 降级证据不足，但多备选与复核标记保留",
+         "kind": "insufficient_multi", "alternatives_ge": 3, "needs_review": true}
+      ]
+    },
+    {
+      "name": "空证据 → 诚实弃权",
+      "records": [],
+      "checks": [
+        {"name": "空证据: insufficient_evidence", "kind": "verdict_eq", "val": "insufficient_evidence"},
+        {"name": "空证据: 无结论", "kind": "conclusion_is_null"}
+      ]
+    },
+    {
+      "name": "未标定 → UNCAL 降级",
+      "records": [
+        {"feature": "cluster_crystal", "values": [85, 62, 90], "conf": 0.9, "calib": "failed"}
+      ],
+      "checks": [
+        {"name": "未标定: 簇晶状态为 UNCAL",
+         "kind": "candidate_check_state", "id": "辣蓼", "feature": "cluster_crystal", "state": "UNCAL"},
+        {"name": "未标定: 不硬凑 confirmed", "kind": "verdict_ne", "val": "confirmed"}
+      ]
+    },
+    {
+      "name": "射干单判据（长；直径并入 morph，不再被宽数据误罚）",
+      "records": [
+        {"feature": "needle_crystal", "values": [120, 90, 200, 150], "conf": 0.9, "shape": {"aspect_ratio": 8}},
+        {"feature": "needle_crystal", "values": [120, 90, 200, 150], "conf": 0.9,
+         "shape": {"aspect_ratio": 8}, "dim": "mean_width_um"}
+      ],
+      "checks": [
+        {"name": "射干: 判据仅 1 条（长/柱晶 49~240；直径信息在 morph 内）",
+         "kind": "entry_checks_len", "id": "射干", "len": 1},
+        {"name": "射干: 卡片含 mean_width 也不再被“宽≤49”判 OUT_OF_RANGE",
+         "kind": "candidate_check_state", "id": "射干",
+         "feature": "needle_crystal", "state": "IN_RANGE"},
+        {"name": "射干: 同特征多量纲只计 1 类独立证据（D8 口径）",
+         "kind": "support_feature_count", "val": 1}
+      ]
+    },
+    {
+      "name": "两类证据但 required 未全检出 → 大黄被分母稀释（v1.8 严格 required 语义锁定）",
+      "_comment": "v1.8 把大黄导管/淀粉/升华物按正文来源恢复 required 后，conf=required 达成度：仅簇晶+淀粉双证据时 conf 被未检出的 required 稀释到 probable 带以下，顶部 G1（簇晶无量化 0.6）也够不到 confirmed → 诚实弃权。本用例锁定该语义。",
+      "records": [
+        {"feature": "cluster_crystal", "values": [120, 132, 128, 126, 138], "conf": 0.9,
+         "shape": {"defect_count": 6, "solidity": 0.78, "mean_defect_depth_ratio": 0.11}},
+        {"feature": "starch_grain", "values": [18, 22, 15, 30, 12, 25], "conf": 0.9,
+         "shape": {"roundness": 0.8, "dt_peak_count": 4}}
+      ],
+      "checks": [
+        {"name": "双特征: 大黄仍入排名（簇晶+淀粉均 IN_RANGE）", "kind": "ranking_ids_contains", "val": "大黄"},
+        {"name": "双特征: 大黄 conf 被未检出 required 稀释至 0.6 以下", "kind": "candidate_conf_le", "id": "大黄", "val": 0.6},
+        {"name": "双特征: 无候选达 confirmed 带 → 诚实弃权", "kind": "verdict_eq", "val": "insufficient_evidence"},
+        {"name": "双特征: 无结论", "kind": "conclusion_is_null"}
+      ]
+    },
+
+    {
+      "name": "混淆×1 大簇晶+淀粉（近缘 大黄/虎杖，宽区间重叠）",
+      "_comment": "回归基线：宽区间通用判据(马齿苋 cluster 7~108)曾致马齿苋假阳性 confirmed；现由候选级'宽区间主导'cap 修复，马齿苋置信度≤0.60。本用例锁修复行为。",
+      "records": [
+        {"feature": "cluster_crystal", "values": [50, 55, 60, 58, 52], "conf": 0.9,
+         "shape": {"defect_count": 5, "solidity": 0.8}},
+        {"feature": "starch_grain", "values": [15, 18, 22, 20], "conf": 0.85,
+         "shape": {"roundness": 0.8, "dt_peak_count": 3}}
+      ],
+      "checks": [
+        {"name": "大簇晶重叠: 大黄与虎杖均因交集特征入排名", "kind": "ranking_ids_contains", "val": "大黄"},
+        {"name": "大簇晶重叠: 虎杖同样命中", "kind": "ranking_ids_contains", "val": "虎杖"},
+        {"name": "大簇晶重叠: 大黄获阳性支持conf≥0.5", "kind": "candidate_conf_ge", "id": "大黄", "val": 0.5},
+        {"name": "大簇晶重叠: 双特征证据通过D8门槛", "kind": "support_feature_count", "val": 2},
+        {"name": "大簇晶重叠: 马齿苋被宽区间cap压制 conf≤0.60",
+         "kind": "candidate_conf_le", "id": "马齿苋", "val": 0.6},
+        {"name": "大簇晶重叠: 不得将马齿苋判为confirmed",
+         "kind": "not_confirmed_as", "id": "马齿苋"}
+      ]
+    },
+
+    {
+      "name": "混淆×2 中簇晶+淀粉（近缘 白芍/辣蓼/马齿苋）——白芍 required 区间全中胜出",
+      "records": [
+        {"feature": "cluster_crystal", "values": [16, 18, 20, 17, 19], "conf": 0.9,
+         "shape": {"defect_count": 4, "solidity": 0.8}},
+        {"feature": "starch_grain", "values": [8, 10, 12], "conf": 0.85,
+         "shape": {"roundness": 0.8}}
+      ],
+      "checks": [
+        {"name": "中簇晶: 白芍进入候选（11~35区间）", "kind": "ranking_ids_contains", "val": "白芍"},
+        {"name": "中簇晶: 辣蓼进入候选（5~35区间）", "kind": "ranking_ids_contains", "val": "辣蓼"},
+        {"name": "中簇晶: 结论为白芍（大黄簇晶 20~160 判 OUT_OF_RANGE 自然落榜）",
+         "kind": "conclusion_id", "val": "白芍"}
+      ]
+    },
+
+    {
+      "name": "混淆×3 针晶+淀粉（近缘 半夏G2/知母）——回required淀粉粒助G2占优、双候选需复核",
+      "records": [
+        {"feature": "needle_crystal", "values": [80, 90, 95, 85], "conf": 0.9, "shape": {"aspect_ratio": 8}},
+        {"feature": "starch_grain", "values": [5, 8, 10, 12], "conf": 0.85, "shape": {"roundness": 0.8}}
+      ],
+      "checks": [
+        {"name": "针晶+淀粉: 结论为G2半夏组", "kind": "conclusion_id", "val": "G2"},
+        {"name": "针晶+淀粉: G2 达 group_level（2 类 required 证据齐、分差 0.4）",
+         "kind": "verdict_eq", "val": "group_level"},
+        {"name": "针晶+淀粉: 淀粉required使证据达2类", "kind": "support_feature_count", "val": 2},
+        {"name": "针晶+淀粉: 知母为紧扣备选", "kind": "ranking_ids_contains", "val": "知母"}
+      ]
+    },
+
+    {
+      "name": "混淆×4 菌丝+方晶（近缘 茯苓/猪苓）——v1.8：猪苓菌丝 required 稀释，G3 单判据满分反超",
+      "records": [
+        {"feature": "hypha", "values": [4, 5, 4, 6], "conf": 0.85, "shape": {"aspect_ratio": 6}},
+        {"feature": "single_crystal", "values": [20, 30, 25], "conf": 0.9,
+         "shape": {"rectangularity": 0.7, "aspect_ratio": 2.2}}
+      ],
+      "checks": [
+        {"name": "菌丝+方晶: G3 组单类满分登顶 → group_level + 人工复核", "kind": "verdict_needs_review", "val": "group_level"},
+        {"name": "菌丝+方晶: 结论为G3（陈皮/枳壳组）", "kind": "conclusion_id", "val": "G3"},
+        {"name": "菌丝+方晶: 猪苓降为首备选但仍高分", "kind": "candidate_conf_ge", "id": "猪苓", "val": 0.8},
+        {"name": "菌丝+方晶: 双特征证据类数保留", "kind": "ranking_ids_contains", "val": "猪苓"}
+      ]
+    },
+
+    {
+      "name": "混淆×5 针晶宽范（射干/半夏/知母等多候选）→ 单特征D8降级",
+      "records": [
+        {"feature": "needle_crystal", "values": [120, 130, 125, 135], "conf": 0.9, "shape": {"aspect_ratio": 9}}
+      ],
+      "checks": [
+        {"name": "针晶宽范: 单特征 → insufficient_evidence", "kind": "verdict_eq", "val": "insufficient_evidence"},
+        {"name": "针晶宽范: 无结论", "kind": "conclusion_is_null"},
+        {"name": "针晶宽范: 仅1类证据(D8拦截)", "kind": "support_feature_count", "val": 1},
+        {"name": "针晶宽范: 射干保留为首备选且需复核",
+         "kind": "alternatives_keep", "first_conf_ge": 0.5, "needs_review": true}
+      ]
+    },
+
+    {
+      "name": "混淆×6 极多簇晶（虎杖含'极多'丰度）——单特征仍被D8拦截",
+      "records": [
+        {"feature": "cluster_crystal", "values": [55, 60, 70, 45, 50], "conf": 0.9,
+         "shape": {"defect_count": 6, "solidity": 0.8}}
+      ],
+      "checks": [
+        {"name": "极多簇晶: 虎杖丰度占优但单特征仍 insufficient_evidence",
+         "kind": "verdict_needs_review", "val": "insufficient_evidence"},
+        {"name": "极多簇晶: 虎杖为首备选(单宽判据被cap后仍≥0.5)",
+         "kind": "alternatives_keep", "first_conf_ge": 0.5,
+         "needs_review": true}
+      ]
+    },
+
+    {
+      "name": "场景证据·平分排序（三层模型第2/3层）——排列成行助推G1，仅排序不改裁决",
+      "_comment": "回归虎杖样品案例：虎杖/马齿苋/G1 三方 conf 0.60 平分（共享 cluster_crystal 单判据）。场景证据（3 视野各 3 实例共线→rows；每视野 3 个→丰度'众多'）下：G1 morph 含'排列成行' fit+2、马齿苋 fit+1、虎杖 fit 0（丰度'极多'高于观测一档不计分）。断言铁律：conf/support_count/verdict/needs_review 全部不变，仅排序与 notes 变化。",
+      "records": [
+        {"feature": "cluster_crystal", "values": [52, 55, 58], "conf": 0.9, "stem": "A",
+         "shape": {"defect_count": 5, "solidity": 0.8}},
+        {"feature": "cluster_crystal", "values": [52, 55, 58], "conf": 0.9, "stem": "B",
+         "shape": {"defect_count": 5, "solidity": 0.8}},
+        {"feature": "cluster_crystal", "values": [52, 55, 58], "conf": 0.9, "stem": "C",
+         "shape": {"defect_count": 5, "solidity": 0.8}}
+      ],
+      "scene": {
+        "per_fov_counts": {"A": 3, "B": 3, "C": 3},
+        "n_total": 9,
+        "abundance_obs": "众多",
+        "size_stats": {"min": 52.0, "max": 58.0, "median": 55.0},
+        "arrangement": [
+          {"fov": "A", "n": 3, "verdict": "rows", "rms_ratio": 0.02},
+          {"fov": "B", "n": 3, "verdict": "rows", "rms_ratio": 0.03},
+          {"fov": "C", "n": 3, "verdict": "rows", "rms_ratio": 0.02}
+        ],
+        "sources": {"arrangement": "geometry", "abundance": "geometry"}
+      },
+      "checks": [
+        {"name": "场景排序: G1（morph 含'排列成行' + 丰度相符）升至 rank0",
+         "kind": "rank_id_at", "index": 0, "val": "G1"},
+        {"name": "场景排序: G1 scene_fit=+2", "kind": "scene_fit_eq", "id": "G1", "val": 2},
+        {"name": "场景排序: 马齿苋 scene_fit=+1", "kind": "scene_fit_eq", "id": "马齿苋", "val": 1},
+        {"name": "场景排序: 虎杖 scene_fit=0", "kind": "scene_fit_eq", "id": "虎杖", "val": 0},
+        {"name": "铁律: 裁决语义不变——仍 insufficient_evidence",
+         "kind": "verdict_eq", "val": "insufficient_evidence"},
+        {"name": "铁律: 仍需人工复核", "kind": "verdict_needs_review", "val": "insufficient_evidence"},
+        {"name": "铁律: D8 证据类数不变（仍 1 类）", "kind": "support_feature_count", "val": 1},
+        {"name": "铁律: 虎杖 conf 仍被 cap 在 0.60", "kind": "candidate_conf_le", "id": "虎杖", "val": 0.6},
+        {"name": "铁律: 马齿苋 conf 仍 0.60", "kind": "candidate_conf_le", "id": "马齿苋", "val": 0.6},
+        {"name": "notes: 场景排序说明已追加", "kind": "notes_contains", "val": "场景证据排序"}
+      ]
+    }
+  ]
+}

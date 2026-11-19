@@ -1,6 +1,16 @@
 config/*.local.json
 __pycache__/
 *.pyc
+/.venv/
+/目标检测/config/vlm_config.json
+*.pt
+*.pth
+*.safetensors
+*.onnx
+/分类器设计权重与CNN权重/*.log
+/流水线数据/
+/results/
+/manifest.csv
 
 yolo-results/*
 !yolo-results/README.md

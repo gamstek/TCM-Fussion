@@ -1,0 +1,8 @@
+﻿instance_id,inst_mask,px_per_um,herb,object_label
+1,demo01_circle__cluster_crystal__inst1.png,10.0,大黄,cluster_crystal
+1,demo02_ellipse__starch_grain__inst1.png,10.0,大黄,starch_grain
+1,demo03_star__cluster_crystal__inst1.png,2.0,大黄,cluster_crystal
+1,demo04_needle__needle_crystal__inst1.png,10.0,半夏,needle_crystal
+1,demo05_fiber__fiber__inst1.png,2.0,板蓝根,fiber
+1,demo06_vessel__vessel__inst1.png,10.0,大黄,vessel
+1,demo07_compound__starch_grain__inst1.png,2.0,大黄,starch_grain

@@ -1,0 +1,576 @@
+{
+  "meta": {
+    "name": "中药显微鉴别特征本体 v0.1",
+    "sources": [
+      "中药显微鉴别通用特征全集.xlsx（基于《中国药典》2020年版，按《中药成方制剂显微鉴别图典》九章分类体系）",
+      "一中药显微鉴别标准示例大黄粉末显微特征.docx（大黄判据拆解示例）",
+      "85味中药显微特征_修正版.docx（药典原文式特征描述，可作标注术语表）"
+    ],
+    "notes": "feature_id 采用 拼音安全英文键，供标注工具/训练代码引用；zh_name 与 85味docx 中的药典措辞保持一致。priority: P0=核心必做, P1=进阶, P2=可选扩展。",
+    "igm_desc_note": "igm_desc 为**图像生成模型（IGM）分割提示词专用**的形态措辞：与 description 同样描述形态，但只保留可在图像上看见的外观（形状/外缘/纹理/色泽/透明度/排列），剥除三类对生成模型是噪声的内容——①理化显色反应（间苯三酚-盐酸、α-萘酚、苏丹Ⅲ、水合氯醛）；②药材专名括注（如“大黄者”“（大黄）”）；③鉴别方法论（“排他性判据”“重要鉴别点”“关注…”）。μm 数值一并略去：生成模型不具尺度感，相对大小由输入图像本身给出。consumed by 标注体系/segmentation/igm_segment.py 的 --feature（优先取本字段，缺失则回退 description）。本字段**自带「中文名：」前缀**，读取方直接整段使用、勿再加名称避免重复。",
+    "tier_mapping_note": "档位有两套语义，勿混用：本文件 priority_tiers 为标注/实现优先级（P0=核心必做/P1=进阶/P2=可选扩展）；Agent判药/data/herb_criteria.json 的 feature_vocab 为证据通道档位（P0=通道A 实例级检测+测量 w=1.0、P1=通道B 图像级/VLM判读 w=0.5、C=通道C 整图VLM判读 w=0.3）。运行时权威是 KB 的 feature_vocab，本表不参与推理、仅用于标注侧对账。已知跨表差异：inulin/silica_body/hypha 在本文件为 P2、在 KB 为 P1；animal_feature/mineral_feature/calcium_carbonate 在本文件为 P2、在 KB 为 C。档位划分依据与升级纪律见 Agent判药/Agent判药环节设计方案.md §3.6。",
+    "updated": "2026-09-20 词表收口：features[] 由 20 条增至 30 条（回补 non_glandular_hair/glandular_hair/palisade_cell/stoma 及 6 个 C 级内含物/纹理词）；priority_tiers 补齐 sand_crystal/sublimate_crystal 档位、移除悬空引用 aleurone；新增 tier_mapping_note 声明与 KB 的档位映射。2026-09-22 为 30 个特征各补 igm_desc（IGM 分割提示词专用措辞），供 igm_segment.py 按特征类型注入。"
+  },
+  "priority_tiers": {
+    "P0": [
+      "cluster_crystal",
+      "single_crystal",
+      "needle_crystal",
+      "vessel",
+      "stone_cell",
+      "starch_grain"
+    ],
+    "P1": [
+      "fiber",
+      "crystal_fiber",
+      "secretory_tissue",
+      "cork_cell",
+      "epidermis_cell",
+      "pollen_grain",
+      "non_glandular_hair",
+      "glandular_hair",
+      "palisade_cell",
+      "stoma"
+    ],
+    "P2": [
+      "inulin",
+      "silica_body",
+      "hypha",
+      "animal_feature",
+      "mineral_feature",
+      "calcium_carbonate",
+      "sand_crystal",
+      "sublimate_crystal",
+      "brown_content",
+      "endosperm_cell",
+      "fungal_mass",
+      "gelatinized_starch",
+      "indigo_crystal",
+      "parenchyma_cell"
+    ]
+  },
+  "features": [
+    {
+      "feature_id": "cluster_crystal",
+      "qa_shape": "multipart",
+      "zh_name": "草酸钙簇晶",
+      "category": "植物细胞后含物/草酸钙结晶",
+      "description": "由许多菱状晶集合而成，呈近圆形、不规则团块状、星状或簇状；棱角或短钝或尖锐",
+      "igm_desc": "草酸钙簇晶：由许多或少量菱状小晶聚集成的团块，外形呈近圆形、不规则团块状、星状或簇状，外缘由多个尖角或短钝棱角组成，明场下半透明",
+      "measurement": "直径 μm（明场形态测量；药典辅助判据为偏光双折射，当前数据集无同视野配对偏振图像，不实现）",
+      "example_herbs": [
+        "大黄",
+        "何首乌",
+        "人参",
+        "三七",
+        "川芎",
+        "山楂",
+        "牡丹皮",
+        "白芍",
+        "虎杖"
+      ],
+      "key_discriminative": "大黄簇晶直径60~140μm（个别至190μm）、棱角短钝；白芍簇晶11~35μm成行排列",
+      "dataset_folders": [
+        "大黄草酸钙簇晶"
+      ]
+    },
+    {
+      "feature_id": "single_crystal",
+      "qa_shape": "compact",
+      "zh_name": "草酸钙方晶",
+      "category": "植物细胞后含物/草酸钙结晶",
+      "description": "斜方形、菱形、长方形，立方体或长方形，可成群或分散",
+      "igm_desc": "草酸钙方晶：可成群或分散的多面体结晶，外形为斜方形、菱形、长方形或双锥形，棱边平直清晰，半透明",
+      "measurement": "直径/长 μm",
+      "example_herbs": [
+        "麻黄",
+        "甘草",
+        "苦参",
+        "枳壳",
+        "栀子",
+        "厚朴",
+        "黄柏",
+        "陈皮",
+        "猪苓(双锥八面体)"
+      ],
+      "dataset_folders": [
+        "猪苓方晶"
+      ]
+    },
+    {
+      "feature_id": "needle_crystal",
+      "qa_shape": "multipart",
+      "zh_name": "草酸钙针晶",
+      "category": "植物细胞后含物/草酸钙结晶",
+      "description": "两端尖锐的针状结晶，细长，常成束存在于黏液细胞中或散在",
+      "igm_desc": "草酸钙针晶：细长的针状结晶，两端尖锐、两缘平直；常多根成束聚集在一起，也可散在",
+      "measurement": "长 μm（50~153μm，半夏20~144μm）",
+      "example_herbs": [
+        "半夏",
+        "姜半夏",
+        "法半夏",
+        "麦冬",
+        "苍术",
+        "白术",
+        "山药",
+        "天麻",
+        "龙胆",
+        "常山"
+      ],
+      "dataset_folders": [
+        "常山草酸钙针晶",
+        "麦冬针晶",
+        "龙胆针晶"
+      ]
+    },
+    {
+      "feature_id": "sand_crystal",
+      "qa_shape": "multipart",
+      "zh_name": "草酸钙砂晶",
+      "category": "植物细胞后含物/草酸钙结晶",
+      "description": "极细小的颗粒状结晶，常充满细胞",
+      "igm_desc": "草酸钙砂晶：极细小的颗粒状结晶，密集成群充满细胞腔，呈细砂样密集分布",
+      "example_herbs": [
+        "牛膝",
+        "麻黄",
+        "细辛",
+        "枸杞子",
+        "钩藤",
+        "秦皮"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "vessel",
+      "qa_shape": "elongated",
+      "zh_name": "导管",
+      "category": "植物细胞壁/壁增厚形态",
+      "description": "网纹、螺纹、环纹、具缘纹孔导管；大黄者非木化（间苯三酚-盐酸不显红）",
+      "igm_desc": "导管：长管状结构，管壁上具明显加厚纹理（网纹、螺纹、环纹或具缘纹孔），管腔贯通，常破碎成段",
+      "measurement": "直径 μm；木化反应；纹理类型（细粒度分类）",
+      "example_herbs": [
+        "大黄",
+        "常山"
+      ],
+      "dataset_folders": [
+        "大黄导管",
+        "常山导管"
+      ]
+    },
+    {
+      "feature_id": "stone_cell",
+      "qa_shape": "compact",
+      "zh_name": "石细胞",
+      "category": "植物的细胞/厚壁细胞",
+      "description": "壁显著增厚、木化，胞腔小，常有层纹和孔沟；大黄中不得检出（排他性判据）",
+      "igm_desc": "石细胞：细胞壁显著增厚、中央胞腔小的厚壁细胞，外形类方形、类圆形、多角形、分枝状或波状弯曲，壁上可见层纹与孔沟",
+      "measurement": "直径/长径 μm；壁厚；形状（类方形/分枝状/波状弯曲）",
+      "example_herbs": [
+        "黄连",
+        "肉桂",
+        "党参",
+        "桂枝",
+        "厚朴(分枝状)",
+        "麦冬",
+        "黄柏",
+        "板蓝根"
+      ],
+      "key_discriminative": "在大黄鉴别中为排他性特征：检出大量石细胞→提示伪品",
+      "dataset_folders": [
+        "党参石细胞",
+        "板蓝根石细胞",
+        "麦冬石细胞",
+        "黄柏石细胞"
+      ]
+    },
+    {
+      "feature_id": "starch_grain",
+      "qa_shape": "compact",
+      "zh_name": "淀粉粒",
+      "category": "植物细胞后含物",
+      "description": "单粒（类球形/多角形，脐点点状/裂缝状/人字状/星状，层纹明显或隐约）、复粒（2~8分粒）、半复粒",
+      "igm_desc": "淀粉粒：类球形或多角形的颗粒，表面可见脐点（点状、裂缝状、人字状或星状）及隐约层纹；亦见由数个分粒聚合成多瓣状的复粒",
+      "measurement": "直径 μm（大黄3~35μm）；脐点类型；复粒分粒数",
+      "example_herbs": [
+        "大黄(脐点星状)",
+        "半夏",
+        "山药",
+        "麦芽",
+        "常山",
+        "浙贝母"
+      ],
+      "dataset_folders": [
+        "大黄淀粉粒",
+        "常山淀粉粒"
+      ]
+    },
+    {
+      "feature_id": "fiber",
+      "qa_shape": "elongated",
+      "zh_name": "纤维",
+      "category": "植物的细胞/厚壁细胞",
+      "description": "长梭形，壁厚，两端渐尖，常成束或散离；韧皮纤维/木纤维",
+      "igm_desc": "纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离",
+      "measurement": "直径 μm；壁厚；木化与否",
+      "example_herbs": [
+        "板蓝根",
+        "木香",
+        "常山",
+        "黄芩(梭形)",
+        "诃子"
+      ],
+      "dataset_folders": [
+        "板蓝根木纤维",
+        "木香木纤维",
+        "常山木纤维"
+      ]
+    },
+    {
+      "feature_id": "crystal_fiber",
+      "qa_shape": "elongated",
+      "zh_name": "晶鞘纤维（晶纤维）",
+      "category": "植物的细胞/厚壁细胞",
+      "description": "纤维束外方包围草酸钙方晶",
+      "igm_desc": "晶纤维：纤维束的外侧成行附着许多细小多面体状的草酸钙方晶，纤维与结晶相伴形成整体",
+      "example_herbs": [
+        "甘草",
+        "黄柏",
+        "川楝子"
+      ],
+      "dataset_folders": [
+        "黄柏晶纤维"
+      ]
+    },
+    {
+      "feature_id": "secretory_tissue",
+      "qa_shape": "compact",
+      "zh_name": "分泌组织（油室/油管/油细胞/树脂道/乳汁管）",
+      "category": "植物的内分泌组织",
+      "description": "油室类圆形腔隙含挥发油；油管长管状含黄色分泌物；乳汁管有节联结",
+      "igm_desc": "分泌组织：类圆形腔隙或长管状结构，腔内含淡黄色、黄棕色或金黄色的分泌物、油滴或颗粒状物",
+      "measurement": "直径 μm；分泌物颜色",
+      "example_herbs": [
+        "柴胡",
+        "防风",
+        "当归",
+        "白术",
+        "党参(联结乳管)",
+        "桔梗"
+      ],
+      "dataset_folders": [
+        "党参联结乳管"
+      ]
+    },
+    {
+      "feature_id": "epidermis_cell",
+      "qa_shape": "compact",
+      "zh_name": "表皮细胞（含种皮、外果皮）",
+      "category": "植物的细胞/特殊细胞 + 表面特征",
+      "description": "表面观形状、垂周壁弯曲程度各异；种皮细胞常有色泽",
+      "igm_desc": "表皮细胞：表面观呈多角形或类长方形的细胞，排列紧密成片，壁平直、波状弯曲或连珠状增厚；种皮来源者多呈红棕色或黄棕色",
+      "example_herbs": [
+        "荆芥",
+        "淡竹叶",
+        "荜茇(长多角形红棕)",
+        "使君子"
+      ],
+      "dataset_folders": [
+        "荆芥外果皮细胞",
+        "使君子种皮表皮细胞",
+        "荜芨种皮细胞"
+      ]
+    },
+    {
+      "feature_id": "cork_cell",
+      "qa_shape": "compact",
+      "zh_name": "木栓细胞",
+      "category": "植物的细胞/特殊细胞",
+      "description": "表面观类长方形或多角形，排列整齐紧密；木栓化壁遇苏丹Ⅲ显橙红",
+      "igm_desc": "木栓细胞：表面观类长方形或多角形，排列整齐紧密，呈砖砌状成片",
+      "example_herbs": [
+        "根类及根茎类药材多见"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "pollen_grain",
+      "qa_shape": "compact",
+      "zh_name": "花粉粒",
+      "category": "花粉与孢子",
+      "description": "形状、大小、外壁雕纹（刺状/网状）、萌发孔数",
+      "igm_desc": "花粉粒：类圆形、椭圆形、三角形或橄榄形的颗粒，外壁具细密短刺、颗粒状或网孔状雕纹，表面可见萌发孔或孔沟",
+      "measurement": "直径 μm（金银花、红花约至60μm；菊花32~37μm）",
+      "example_herbs": [
+        "金银花",
+        "红花",
+        "菊花",
+        "蒲黄"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "inulin",
+      "qa_shape": "compact",
+      "zh_name": "菊糖",
+      "category": "植物细胞后含物",
+      "description": "球形或不规则团块，具放射状纹理；α-萘酚+硫酸显紫红色",
+      "igm_desc": "菊糖：球形或不规则的团块，表面具放射状纹理，明场下半透明",
+      "example_herbs": [
+        "木香",
+        "桔梗",
+        "苍术",
+        "党参"
+      ],
+      "dataset_folders": [
+        "木香菊糖"
+      ]
+    },
+    {
+      "feature_id": "silica_body",
+      "qa_shape": "compact",
+      "zh_name": "硅质块",
+      "category": "其他后含物",
+      "description": "硅质沉积物，圆簇状或不规则块状，直径约8μm（大腹皮）",
+      "igm_desc": "硅质块：圆簇状或不规则的小块状固体，边缘圆钝，折光明显",
+      "example_herbs": [
+        "大腹皮",
+        "砂仁",
+        "麦芽"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "hypha",
+      "qa_shape": "elongated",
+      "zh_name": "菌丝",
+      "category": "藻菌类药材",
+      "description": "无色或淡棕色，细长有分枝有横壁，直径3~8μm（少数至16μm）",
+      "igm_desc": "菌丝：无色或淡棕色的细长丝状体，有分枝和横壁，常交错缠绕成团",
+      "example_herbs": [
+        "茯苓",
+        "猪苓",
+        "灵芝"
+      ],
+      "dataset_folders": [
+        "猪苓菌丝"
+      ]
+    },
+    {
+      "feature_id": "calcium_carbonate",
+      "qa_shape": "compact",
+      "zh_name": "钟乳体（碳酸钙结晶）",
+      "category": "其他后含物",
+      "description": "常呈分枝状或球形，存在于叶表皮晶细胞中",
+      "igm_desc": "钟乳体：呈分枝状、螺状或球形的块体，大端可见脐样点痕，存在于叶表皮晶细胞中",
+      "example_herbs": [
+        "穿心莲"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "sublimate_crystal",
+      "qa_shape": "compact",
+      "zh_name": "微升华结晶（特殊制片）",
+      "category": "特殊制片观察",
+      "description": "大黄升华物：可见菱状针晶或羽状结晶（物理化学鉴别项，非组织特征）",
+      "igm_desc": "微升华结晶：菱状针晶或羽状结晶，形态纤细，呈羽毛状或放射状排列",
+      "example_herbs": [
+        "大黄"
+      ],
+      "dataset_folders": [
+        "大黄升华物"
+      ]
+    },
+    {
+      "feature_id": "animal_feature",
+      "qa_shape": "compact",
+      "zh_name": "动物类特征（横纹肌/骨碎片/刚毛/鳞片等）",
+      "category": "动物类药材",
+      "description": "刚毛竹节状节间长16~43μm；骨碎片表面颗粒性",
+      "igm_desc": "动物类特征碎片：体壁碎片（表面密布乳头状突起或刚毛基痕）、刚毛（竹节状、有节间）、骨碎片（表面呈颗粒性）、珍珠层碎块（片状、表面有条纹）",
+      "example_herbs": [
+        "蝉蜕",
+        "水牛角",
+        "牡蛎"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "mineral_feature",
+      "qa_shape": "compact",
+      "zh_name": "矿物类特征",
+      "category": "矿物类药材",
+      "description": "不规则块状/针状/柱状颗粒，关注颜色、透明度、光泽、解理",
+      "igm_desc": "矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹",
+      "example_herbs": [
+        "滑石",
+        "石膏",
+        "雄黄",
+        "朱砂",
+        "玄明粉",
+        "青黛(植物但呈粉末团块)"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "non_glandular_hair",
+      "qa_shape": "elongated",
+      "zh_name": "非腺毛",
+      "category": "表面特征/毛茸类",
+      "description": "由表皮细胞分化而成的毛状附属物，无腺头；单细胞或多细胞，平直或弯曲，壁光滑或具疣状突起，有的壁极厚、胞腔呈细缝状；两臂不等长的“T”形毛为其特殊形态",
+      "igm_desc": "非腺毛：由细胞构成的毛状附属物，无膨大腺头；细长、平直或弯曲，顶端尖，有的壁厚、胞腔呈细缝状，有的壁具疣状突起；两臂不等长的T形毛为其特殊形态",
+      "measurement": "长 μm；细胞数；壁厚/疣状突起（纹理类需高倍/灰度）",
+      "example_herbs": [
+        "艾叶",
+        "茵陈",
+        "白头翁",
+        "淫羊藿",
+        "益母草",
+        "广藿香",
+        "薄荷",
+        "金银花"
+      ],
+      "key_discriminative": "茵陈“T”字形非腺毛长600~1700μm、两臂不等长、中部略折成“V”字形；白头翁非腺毛单细胞直径13~33μm、壁大多木化",
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "glandular_hair",
+      "qa_shape": "elongated",
+      "zh_name": "腺毛/腺鳞",
+      "category": "表面特征/毛茸类",
+      "description": "具腺头的分泌性毛茸；腺鳞头部由多个细胞组成，顶面观呈鞋底形、类圆形或倒圆锥形，具单细胞或多细胞短柄",
+      "igm_desc": "腺毛/腺鳞：具膨大腺头的毛茸，腺头由数个至数十个细胞组成，顶面观呈鞋底形、类圆形或倒圆锥形，下方连单细胞或多细胞短柄",
+      "measurement": "头部直径 μm；头细胞数；柄细胞数",
+      "example_herbs": [
+        "薄荷",
+        "金银花",
+        "艾叶",
+        "穿心莲"
+      ],
+      "key_discriminative": "薄荷腺鳞头部8细胞、直径约至90μm、柄单细胞；金银花腺毛头部4~33细胞排成2~4层、直径30~64~108μm",
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "palisade_cell",
+      "qa_shape": "compact",
+      "zh_name": "栅状细胞（种皮栅状组织）",
+      "category": "植物的细胞/特殊细胞",
+      "description": "种皮表皮层的栅状厚壁细胞，成片；断面观呈长柱状排列，外列细胞较内列短，常具光辉带；表面观呈多角形或长多角形",
+      "igm_desc": "栅状细胞：种皮表层的长柱状厚壁细胞，成片紧密排列，外列细胞较内列短，可见一条折光较强的光辉带；表面观呈多角形或长多角形",
+      "measurement": "直径/宽 μm；列数；光辉带位置（形态类）",
+      "example_herbs": [
+        "莱菔子",
+        "牵牛子",
+        "菟丝子"
+      ],
+      "key_discriminative": "莱菔子栅状细胞表面观直径约至15μm；菟丝子断面观2列、光辉带位于内侧细胞的上部",
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "stoma",
+      "qa_shape": "compact",
+      "zh_name": "气孔（含保卫细胞形态）",
+      "category": "表面特征/气孔",
+      "description": "由两个保卫细胞围成的通气结构；保卫细胞形态与气孔类型（直轴式/不等式/不定式/环式/哑铃形）为重要鉴别点",
+      "igm_desc": "气孔：由两个保卫细胞围成的通气结构，两保卫细胞相对呈肾形、半月形或哑铃形，中间为孔缝，周围有副卫细胞环绕",
+      "measurement": "气孔直径 μm（保卫细胞长径）；气孔类型（形态类）",
+      "example_herbs": [
+        "麻黄",
+        "淡竹叶",
+        "薄荷",
+        "枳壳",
+        "陈皮",
+        "穿心莲",
+        "淫羊藿"
+      ],
+      "key_discriminative": "麻黄保卫细胞侧面观呈哑铃状；枳壳/陈皮气孔环式16~34μm；薄荷下表皮气孔多为直轴式",
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "brown_content",
+      "qa_shape": "compact",
+      "zh_name": "棕色物/色素内含物",
+      "category": "植物细胞后含物",
+      "description": "细胞腔内含黄棕色、红棕色或紫红色块状物/颗粒状色素；常作为区分同属近缘品种的辅助判据",
+      "igm_desc": "棕色物：细胞腔内含黄棕色、红棕色或紫红色的块状或颗粒状色素物质",
+      "measurement": "无量化尺寸判据（颜色形态类）",
+      "example_herbs": [
+        "辣蓼",
+        "地黄",
+        "五味子",
+        "诃子",
+        "陈皮"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "endosperm_cell",
+      "qa_shape": "compact",
+      "zh_name": "内胚乳细胞",
+      "category": "植物的细胞/特殊细胞",
+      "description": "内胚乳薄壁细胞，白色，多角形，壁厚，纹孔大",
+      "igm_desc": "内胚乳细胞：白色多角形的细胞，壁较厚，壁上可见较大的纹孔，成片排列",
+      "measurement": "无量化尺寸判据（形态类）",
+      "example_herbs": [
+        "槟榔"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "fungal_mass",
+      "qa_shape": "multipart",
+      "zh_name": "真菌团块（多糖团块）",
+      "category": "藻菌类药材",
+      "description": "菌核类药材的多糖团块，不规则分枝状，无色；遇水合氯醛液溶化",
+      "igm_desc": "真菌团块：不规则分枝状的团块，无色，边缘参差不整",
+      "measurement": "无量化尺寸判据（形态 + 理化显色类）",
+      "example_herbs": [
+        "茯苓"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "gelatinized_starch",
+      "qa_shape": "compact",
+      "zh_name": "糊化淀粉粒",
+      "category": "植物细胞后含物",
+      "description": "经炮制/加工后糊化粘连成团的淀粉粒，多已失去单粒形态与脐点",
+      "igm_desc": "糊化淀粉粒：糊化粘连成团的淀粉粒，多已失去单粒形态与脐点，边界模糊、呈半透明胶质状",
+      "measurement": "无量化尺寸判据（形态类）",
+      "example_herbs": [
+        "白芍",
+        "郁金"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "indigo_crystal",
+      "qa_shape": "compact",
+      "zh_name": "靛蓝结晶（蓝色色素颗粒/块片）",
+      "category": "其他后含物",
+      "description": "蓝色颗粒状或片状结晶，存在于叶肉组织中，常聚集成堆",
+      "igm_desc": "靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中",
+      "measurement": "无量化尺寸判据（颜色形态类）",
+      "example_herbs": [
+        "大青叶",
+        "青黛"
+      ],
+      "dataset_folders": []
+    },
+    {
+      "feature_id": "parenchyma_cell",
+      "qa_shape": "compact",
+      "zh_name": "薄壁细胞（纹理/内含物类判据）",
+      "category": "植物的细胞/特殊细胞",
+      "description": "薄壁细胞表面纹理（斜向交错纹理、纹孔群等）与内含物；细胞形态与纹理为定性鉴别点",
+      "igm_desc": "薄壁细胞：薄壁细胞或细胞碎片，表面可见斜向交错的细纹理、纹孔或纹孔群，细胞多皱缩",
+      "measurement": "无量化尺寸判据（纹理类需高倍/灰度）",
+      "example_herbs": [
+        "当归",
+        "泽泻"
+      ],
+      "dataset_folders": []
+    }
+  ],
+  "herb_level_folders_note": "药材级文件夹（无特征后缀，如 厚朴/黄芩/柴胡/当归 等）仅含图像级药材标签，其粉末中应出现的特征以 85味中药显微特征_修正版.docx 各品种描述为准，用于图像级多标签标注。"
+}

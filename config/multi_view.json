@@ -73,7 +73,7 @@
       "image_exemplar_audit_min_det_score": 0.8,
       "image_exemplar_audit_max_crops": 6,
       "image_exemplar_audit_skip_classified": true,
-      "image_exemplar_bank": "TCM_Fusion/config/feature_exemplar_bank.json",
+      "image_exemplar_bank": "config/feature_exemplar_bank.json",
       "image_exemplar_positive": 4,
       "image_exemplar_negative": 4,
       "image_exemplar_seconds": 60,

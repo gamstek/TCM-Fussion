@@ -42,6 +42,8 @@ class IntegrationError(RuntimeError):
 
 def project_path(value):
     p = Path(value).expanduser()
+    if not p.is_absolute() and p.parts and p.parts[0].casefold() == "tcm_fusion":
+        p = Path(*p.parts[1:])
     return (p if p.is_absolute() else Path(paths.PROJECT_ROOT) / p).resolve()
 
 

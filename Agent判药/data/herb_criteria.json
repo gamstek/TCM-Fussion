@@ -1,0 +1,2176 @@
+{
+  "meta": {
+    "name": "85味中药判据知识库",
+    "version": "1.9",
+    "generator": "人工审核版（依据《85味中药显微特征_合并版.md》逐条结构化：原始正文→required、合并版'（额外补充：…）'→supporting；量化范围与 几何测量/geomlib/profiles.py::REFERENCE_RANGES 对账）",
+    "channel_rule": "tier P0 → 通道A(实例级检测+测量, w=1.0)；P1 → 通道B(图像级/VLM判读, w=0.5)；C → 通道C(整图VLM判读, w=0.3)",
+    "vocab_note": "feature_vocab 与 feature_taxonomy.json 词表**已对齐**（2026-09-20 词表收口：双方各 30 个特征、无缺项；taxonomy 侧补齐 non_glandular_hair/glandular_hair/palisade_cell/stoma 及 6 个 C 级词，并移除悬空项 aleurone）。共用 id 语义与本体保持一致。注意档位语义不同：本文件 P0/P1/C 为**证据通道**（w=1.0/0.5/0.3），taxonomy 的 P0/P1/P2 为**标注优先级**（划分依据与映射见 Agent判药/Agent判药环节设计方案.md §3.6）。",
+    "quant_dim_note": "dim 取值对齐 profiles.py：feret_max=药典'直径/长'；mean_width=药典'径(宽度)'。extreme=药典'个别可达/有的至'值。",
+    "criterion_keys": "judge 级键：feature=特征id；role=required|supporting；quant={dim,min,max,extreme}；morph=药典形态描述；vlm=可交VLM复核的问题；abundance=药典丰度措辞。herb 级键：group_id / no_criteria / non_official_basis / notes。",
+    "abundance_note": "abundance 枚举与引擎 M_ABUNDANCE 对齐：甚多|极多|较多|众多=1.0；多见=0.95；可见|偶见|少见=0.9；未录=1.0（不惩罚）。",
+    "role_rule_note": "role 由文档来源分段决定（v1.8，依《85味中药显微特征_合并版.md》用户决议）：原始正文特征一律 required（撤销 v1.3 的'弱判别力降 supporting'例外）；合并版'（额外补充：…）'括号内特征一律 supporting；非官方来源（地方标准/教材/成方口径）特征存在性不得 required、区间置 null。补充内容与正文同特征时不另立判据（引擎按 feature_id 取证据卡，重复条目会双重计分），改记入 notes。组判据 required 取成员交集（见 groups.*.reason）。",
+    "role_exceptions": [
+      {
+        "scope": "group",
+        "why": "组判据 required 取成员交集，成员独有特征置 supporting，避免缺失罚把该成员结构性降级",
+        "items": [
+          "G2/starch_grain",
+          "G2/vessel",
+          "G4/stone_cell",
+          "G4/inulin",
+          "G4/fiber"
+        ]
+      },
+      {
+        "scope": "quant",
+        "why": "区间退出硬判定（区间置 null，数值仅入 morph）",
+        "items": [
+          "连翘/fiber(教材口径)",
+          "麦冬/needle_crystal(卡片无量纲)",
+          "白头翁/non_glandular_hair(卡片无量纲)",
+          "淫羊藿/non_glandular_hair(教材口径)",
+          "G1/cluster_crystal(无药典范围)"
+        ]
+      },
+      {
+        "scope": "non_official",
+        "why": "非药典来源（地方标准/中华本草/教材/成方口径）的『特征存在性』不得 required，只能 supporting；若存在性来自药典正文、仅 μm 区间非官方，则保留 required 但区间置 null（归入 scope=quant）",
+        "items": [
+          "青黛/indigo_crystal(教材)",
+          "辣蓼/cluster_crystal(广东地方标准)",
+          "辣蓼/brown_content",
+          "淫羊藿/non_glandular_hair(教材)"
+        ]
+      }
+    ],
+    "non_official_note": "non_official_basis 目前是候选级旗标（引擎据此把 conf 封顶到 NONOFF_MAX_CONF）；audit A8 依此旗标校验『不得有 required 判据』。若日后出现『同一候选内既有药典正文判据、又有非官方判据』的混合情形，需改为判据级 basis 字段，不能沿用候选级旗标。"
+  },
+  "feature_vocab": {
+    "P0": {
+      "cluster_crystal": "草酸钙簇晶",
+      "single_crystal": "草酸钙方晶",
+      "needle_crystal": "草酸钙针晶/柱晶",
+      "vessel": "导管",
+      "stone_cell": "石细胞",
+      "starch_grain": "淀粉粒"
+    },
+    "P1": {
+      "fiber": "纤维（含木纤维/果皮纤维）",
+      "crystal_fiber": "晶鞘纤维（晶纤维）",
+      "secretory_tissue": "分泌组织（油室/油管/油细胞/乳汁管/分泌细胞/腺鳞）",
+      "epidermis_cell": "表皮细胞（含种皮/外果皮/内胚乳表层等皮层细胞）",
+      "cork_cell": "木栓细胞",
+      "pollen_grain": "花粉粒",
+      "non_glandular_hair": "非腺毛",
+      "glandular_hair": "腺毛/腺鳞",
+      "hypha": "菌丝",
+      "silica_body": "硅质块",
+      "inulin": "菊糖",
+      "palisade_cell": "栅状细胞（种皮栅状组织）",
+      "stoma": "气孔（含保卫细胞形态）"
+    },
+    "C": {
+      "sand_crystal": "草酸钙砂晶",
+      "calcium_carbonate": "钟乳体（碳酸钙结晶）",
+      "sublimate_crystal": "微升华结晶（特殊制片）",
+      "animal_feature": "动物类特征（体壁/角/珍珠层等）",
+      "mineral_feature": "矿物类特征（块片/结晶/光泽）",
+      "indigo_crystal": "靛蓝结晶（蓝色色素颗粒/块片）",
+      "brown_content": "棕色物/色素内含物",
+      "parenchyma_cell": "薄壁细胞（纹理/内含物类判据）",
+      "endosperm_cell": "内胚乳细胞",
+      "fungal_mass": "真菌团块（多糖团块）",
+      "gelatinized_starch": "糊化淀粉粒"
+    }
+  },
+  "groups": {
+    "G1": {
+      "members": [
+        "赤芍",
+        "牡丹皮"
+      ],
+      "reason": "药典原文注明赤芍与牡丹皮显微特征一样：薄壁细胞含草酸钙簇晶，组内不可分。簇晶无药典量化范围（牡丹皮文档所载9～45μm 系教材口径，按 v1.3 置 null）；组判据 required 取成员共有的正文特征，其余举证性特征一律 supporting。",
+      "criteria": [
+        {
+          "feature": "cluster_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "草酸钙簇晶存在于薄壁细胞中，有时数个排列成行",
+          "abundance": "众多"
+        },
+        {
+          "feature": "starch_grain",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 2,
+            "max": 16,
+            "extreme": null
+          },
+          "morph": "淀粉粒多，单粒类圆形、椭圆形（赤芍2～13μm；牡丹皮3～16μm，取并集）",
+          "abundance": "较多"
+        },
+        {
+          "feature": "vessel",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": 25,
+            "max": 78,
+            "extreme": null
+          },
+          "morph": "具缘纹孔导管（赤芍条目，直径25～78μm）",
+          "abundance": null
+        },
+        {
+          "feature": "cork_cell",
+          "role": "supporting",
+          "quant": null,
+          "morph": "木栓细胞淡红色（赤芍条目）",
+          "abundance": null
+        },
+        {
+          "feature": "fiber",
+          "role": "supporting",
+          "quant": null,
+          "morph": "木纤维成束（赤芍条目，药典未给μm数值）",
+          "abundance": null
+        }
+      ]
+    },
+    "G2": {
+      "members": [
+        "半夏",
+        "法半夏",
+        "姜半夏"
+      ],
+      "reason": "药典原文注明三者显微特征一样：草酸钙针晶束存在于椭圆形黏液细胞中或随处散在；量程取并集20~144μm（法半夏下界32μm差异小于测量误差）。required 取组内交集（针晶）；淀粉粒/螺纹导管仅半夏条目（补充段）有，置 supporting。",
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 20,
+            "max": 144,
+            "extreme": null
+          },
+          "morph": "针晶成束存在于椭圆形黏液细胞中，或随处散在",
+          "abundance": null
+        },
+        {
+          "feature": "starch_grain",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 2,
+            "max": 20,
+            "extreme": null
+          },
+          "morph": "淀粉粒甚多，单粒脐点裂缝/人字/星状，复粒2～6分粒（半夏补充）",
+          "abundance": "甚多"
+        },
+        {
+          "feature": "vessel",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": 10,
+            "max": 24,
+            "extreme": null
+          },
+          "morph": "螺纹导管（半夏补充）",
+          "abundance": null
+        }
+      ]
+    },
+    "G3": {
+      "members": [
+        "枳壳",
+        "陈皮"
+      ],
+      "reason": "药典原文注明二者显微特征一样：草酸钙方晶成片存在于薄壁组织中；量化取并集3~53μm（枳壳正文直径3~30μm ∪ 陈皮长5~53μm，长径取 feret_max）。",
+      "criteria": [
+        {
+          "feature": "single_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 3,
+            "max": 53,
+            "extreme": null
+          },
+          "morph": "方晶成片存在于薄壁组织中，多面体形、菱形或双锥形",
+          "abundance": null
+        },
+        {
+          "feature": "stoma",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 16,
+            "max": 34,
+            "extreme": null
+          },
+          "morph": "果皮表皮细胞气孔环式（枳壳补充）",
+          "abundance": null
+        }
+      ]
+    },
+    "G4": {
+      "members": [
+        "白术",
+        "苍术"
+      ],
+      "reason": "药典原文注明二者显微特征一样：草酸钙针晶细小存在于薄壁细胞中；量程取并集5~32μm。required 取组内交集（针晶）；石细胞/菊糖系白术条目（补充段）特征、苍术未见，置 supporting。",
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 5,
+            "max": 32,
+            "extreme": null
+          },
+          "morph": "针晶细小，存在于薄壁细胞中，不规则充塞",
+          "abundance": null
+        },
+        {
+          "feature": "fiber",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": null,
+            "max": 40,
+            "extreme": null
+          },
+          "morph": "纤维黄色成束长梭形，直径约至40μm（白术补充）",
+          "abundance": null
+        },
+        {
+          "feature": "stone_cell",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 37,
+            "max": 64,
+            "extreme": null
+          },
+          "morph": "石细胞（白术补充）",
+          "abundance": null
+        },
+        {
+          "feature": "inulin",
+          "role": "supporting",
+          "quant": null,
+          "morph": "薄壁细胞含菊糖，见放射状纹理（白术补充）",
+          "abundance": null
+        }
+      ]
+    }
+  },
+  "herbs": [
+    {
+      "herb": "艾叶",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "non_glandular_hair",
+          "role": "required",
+          "quant": null,
+          "morph": "T形非腺毛，顶端细胞长而弯曲，两臂不等长，柄2～4细胞",
+          "vlm": "是否可见T字形（两臂不等长）非腺毛",
+          "abundance": null
+        },
+        {
+          "feature": "cluster_crystal",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 3,
+            "max": 7,
+            "extreme": null
+          },
+          "morph": "草酸钙簇晶，存于叶肉细胞",
+          "abundance": null
+        },
+        {
+          "feature": "glandular_hair",
+          "role": "supporting",
+          "quant": null,
+          "morph": "腺毛顶面观鞋底形，4或6细胞，无柄",
+          "abundance": null
+        }
+      ],
+      "notes": "药典补充另载单列性非腺毛3～5细胞（与非腺毛同特征，不单列判据）"
+    },
+    {
+      "herb": "白芍",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "cluster_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 11,
+            "max": 35,
+            "extreme": null
+          },
+          "morph": "簇晶存在于薄壁细胞中，常排列成行，或一个细胞含数个簇晶",
+          "abundance": null
+        },
+        {
+          "feature": "starch_grain",
+          "role": "supporting",
+          "quant": null,
+          "morph": "含淀粉粒；药典原文为'糊化淀粉粒团块甚多'，糊化形态需灰度/偏振信息确认",
+          "abundance": "甚多"
+        },
+        {
+          "feature": "vessel",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": 20,
+            "max": 65,
+            "extreme": null
+          },
+          "morph": "具缘纹孔及网纹导管",
+          "abundance": null
+        },
+        {
+          "feature": "fiber",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": 15,
+            "max": 40,
+            "extreme": null
+          },
+          "morph": "纤维长梭形，壁厚微木化，具大圆形纹孔",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "白术",
+      "group_id": "G4",
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 10,
+            "max": 32,
+            "extreme": null
+          },
+          "morph": "针晶细小，存在于薄壁细胞中，少数针晶直径至4μm",
+          "abundance": null
+        }
+      ],
+      "notes": "组G4成员，组内与苍术不可分"
+    },
+    {
+      "herb": "板蓝根",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 14,
+            "max": 25,
+            "extreme": null
+          },
+          "morph": "木纤维多成束，淡黄色，多碎断，微木化，纹孔及孔沟较明显",
+          "abundance": "较多"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "半夏",
+      "group_id": "G2",
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 20,
+            "max": 144,
+            "extreme": null
+          },
+          "morph": "针晶束存在于椭圆形黏液细胞中，或随处散在",
+          "abundance": null
+        }
+      ],
+      "notes": "组G2成员"
+    },
+    {
+      "herb": "薄荷",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "glandular_hair",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 90,
+            "extreme": null
+          },
+          "morph": "腺鳞头部8细胞，直径约至90μm，柄单细胞",
+          "abundance": null
+        },
+        {
+          "feature": "non_glandular_hair",
+          "role": "supporting",
+          "quant": null,
+          "morph": "非腺毛1～8细胞，常弯曲，壁厚微具疣状突起",
+          "abundance": null
+        },
+        {
+          "feature": "stoma",
+          "role": "supporting",
+          "quant": null,
+          "morph": "下表皮气孔多见，直轴式",
+          "abundance": "多见"
+        }
+      ],
+      "notes": "药典补充另载小腺毛头柄均单细胞（与腺毛同特征，不单列判据）"
+    },
+    {
+      "herb": "荜茇",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "epidermis_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "种皮细胞红棕色，表面观呈长多角形",
+          "vlm": "种皮细胞是否红棕色、长多角形",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "槟榔",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "endosperm_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "内胚乳细胞白色，多角形，壁厚，纹孔大",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "苍术",
+      "group_id": "G4",
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 5,
+            "max": 30,
+            "extreme": null
+          },
+          "morph": "针晶细小，不规则地充塞于薄壁细胞中",
+          "abundance": null
+        }
+      ],
+      "notes": "组G4成员，组内与白术不可分"
+    },
+    {
+      "herb": "柴胡",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "secretory_tissue",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 8,
+            "max": 25,
+            "extreme": null
+          },
+          "morph": "油管含淡黄色或黄棕色条状分泌物（管径8～25μm）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "蝉蜕",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "animal_feature",
+          "role": "required",
+          "quant": null,
+          "morph": "体壁碎片黄色，密布乳头状突起，刚毛基痕可见（有的仅具乳头状突起或仅具刚毛基痕）",
+          "vlm": "体壁碎片是否密布乳头状突起",
+          "abundance": "可见"
+        }
+      ],
+      "notes": "通道C整图判读，结论上限'倾向'，建议人工复核"
+    },
+    {
+      "herb": "陈皮",
+      "group_id": "G3",
+      "criteria": [
+        {
+          "feature": "single_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 5,
+            "max": 53,
+            "extreme": null
+          },
+          "morph": "方晶成片存在于中果皮薄壁细胞中，多面体形、菱形或双锥形，有的含平行双晶或3～5个方晶",
+          "abundance": null
+        }
+      ],
+      "notes": "组G3成员，组内与枳壳不可分"
+    },
+    {
+      "herb": "赤芍",
+      "group_id": "G1",
+      "criteria": [
+        {
+          "feature": "cluster_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "薄壁细胞含草酸钙簇晶，并含淀粉粒",
+          "abundance": null
+        }
+      ],
+      "notes": "组G1成员"
+    },
+    {
+      "herb": "川楝子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "crystal_fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 9,
+            "max": 36,
+            "extreme": null
+          },
+          "morph": "果皮纤维成束，末端钝圆，壁极厚，周围薄壁细胞含草酸钙方晶形成晶纤维",
+          "abundance": null
+        },
+        {
+          "feature": "stone_cell",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 14,
+            "max": 54,
+            "extreme": 150
+          },
+          "morph": "果皮石细胞类圆/长条/长多角形，或种皮含晶细胞13～27μm含方晶约5μm",
+          "abundance": null
+        },
+        {
+          "feature": "cluster_crystal",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 5,
+            "max": 27,
+            "extreme": null
+          },
+          "morph": "草酸钙簇晶",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "穿心莲",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "calcium_carbonate",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 36,
+            "extreme": null
+          },
+          "morph": "叶表皮组织中含钟乳体螺旋状晶细胞，直径至36μm、长至180μm，大端有脐样点痕",
+          "abundance": null
+        },
+        {
+          "feature": "non_glandular_hair",
+          "role": "supporting",
+          "quant": null,
+          "morph": "非腺毛1～4细胞，长约至160μm",
+          "abundance": null
+        },
+        {
+          "feature": "glandular_hair",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 40,
+            "extreme": null
+          },
+          "morph": "腺鳞4、6(8)细胞，直径至40μm",
+          "abundance": null
+        },
+        {
+          "feature": "stoma",
+          "role": "supporting",
+          "quant": null,
+          "morph": "气孔直轴式",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "大腹皮",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 8,
+            "max": 15,
+            "extreme": null
+          },
+          "morph": "中果皮纤维成束，细长，微木化，纹孔明显",
+          "abundance": null
+        },
+        {
+          "feature": "silica_body",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 4,
+            "max": 12,
+            "extreme": null
+          },
+          "morph": "周围细胞含圆簇状硅质块，直径约8μm",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "大黄",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "cluster_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 20,
+            "max": 160,
+            "extreme": 190
+          },
+          "morph": "草酸钙簇晶，多角形星状集合体，棱角短钝",
+          "vlm": "簇晶棱角是否短钝（非尖锐）",
+          "abundance": null
+        },
+        {
+          "feature": "vessel",
+          "role": "required",
+          "quant": null,
+          "morph": "具缘纹孔、网纹、螺纹及环纹导管，非木化",
+          "vlm": "导管纹理类型（网纹/螺纹/环纹/具缘纹孔）",
+          "abundance": null
+        },
+        {
+          "feature": "starch_grain",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 3,
+            "max": 45,
+            "extreme": null
+          },
+          "morph": "单粒类球形或多角形，脐点星状；复粒由2～8分粒组成",
+          "vlm": "淀粉粒脐点是否星状",
+          "abundance": "甚多"
+        },
+        {
+          "feature": "sublimate_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "升华物可见菱状针晶或羽状结晶（特殊制片项）",
+          "abundance": "可见"
+        }
+      ],
+      "notes": "偏光双折射判据保留为人工复核知识，不参与自动裁决；v1.8 正文特征恢复 required"
+    },
+    {
+      "herb": "大青叶",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "indigo_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "靛蓝结晶蓝色，存在于叶肉组织和表皮细胞中，细小颗粒状或片状，常聚集成堆",
+          "vlm": "是否可见蓝色细小颗粒/片状结晶聚集成堆",
+          "abundance": null
+        },
+        {
+          "feature": "epidermis_cell",
+          "role": "supporting",
+          "quant": null,
+          "morph": "下表皮细胞垂周壁稍弯曲略呈连珠状增厚（补充）",
+          "abundance": null
+        },
+        {
+          "feature": "stoma",
+          "role": "supporting",
+          "quant": null,
+          "morph": "气孔不等式，副卫细胞3～4个",
+          "abundance": null
+        }
+      ],
+      "notes": "药典补充另载亦含橙皮苷样结晶（无词表对应，仅记录不设判据）"
+    },
+    {
+      "herb": "淡竹叶",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "epidermis_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "表皮细胞狭长，垂周壁深波状弯曲",
+          "abundance": null
+        },
+        {
+          "feature": "stoma",
+          "role": "required",
+          "quant": null,
+          "morph": "有气孔，保卫细胞哑铃状",
+          "vlm": "保卫细胞是否哑铃状",
+          "abundance": null
+        },
+        {
+          "feature": "non_glandular_hair",
+          "role": "supporting",
+          "quant": null,
+          "morph": "非腺毛三种：单细胞长毛/短圆锥/双细胞短小毛茸（补充）",
+          "abundance": null
+        },
+        {
+          "feature": "silica_body",
+          "role": "supporting",
+          "quant": null,
+          "morph": "上表皮长细胞与哑铃形硅质细胞、类方形栓质细胞交互排列",
+          "abundance": null
+        }
+      ],
+      "notes": "药典补充：气孔副卫细胞近圆三角形（与气孔同特征，不单列判据）"
+    },
+    {
+      "herb": "党参",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "石细胞较多，单个散在或数个成群，多角形/类方形/长方形，偶有短纤维状，纹孔稀疏，有的与木栓细胞相嵌",
+          "abundance": "较多"
+        },
+        {
+          "feature": "secretory_tissue",
+          "role": "required",
+          "quant": null,
+          "morph": "乳汁管为有节联结乳汁管，管中及周围细胞充满油滴状物及细颗粒",
+          "abundance": null
+        },
+        {
+          "feature": "inulin",
+          "role": "supporting",
+          "quant": null,
+          "morph": "薄壁细胞含菊糖（补充）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "地黄",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "parenchyma_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "薄壁组织灰棕色至黑棕色，细胞多皱缩，内含棕色核状物",
+          "vlm": "薄壁组织是否灰棕色至黑棕色、含棕色核状物",
+          "abundance": null
+        },
+        {
+          "feature": "secretory_tissue",
+          "role": "supporting",
+          "quant": null,
+          "morph": "分泌细胞含橙黄色/橙红色油滴状物（补充）",
+          "abundance": null
+        },
+        {
+          "feature": "vessel",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": null,
+            "max": 92,
+            "extreme": null
+          },
+          "morph": "具缘纹孔及网纹导管，约至92μm（补充）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "法半夏",
+      "group_id": "G2",
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 32,
+            "max": 144,
+            "extreme": null
+          },
+          "morph": "针晶成束，存在于黏液细胞中或散在",
+          "abundance": null
+        }
+      ],
+      "notes": "组G2成员"
+    },
+    {
+      "herb": "防风",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "secretory_tissue",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 17,
+            "max": 60,
+            "extreme": null
+          },
+          "morph": "油管含金黄色分泌物（管径17～60μm）",
+          "abundance": null
+        },
+        {
+          "feature": "vessel",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": 14,
+            "max": 85,
+            "extreme": null
+          },
+          "morph": "网纹导管（补充）",
+          "abundance": null
+        },
+        {
+          "feature": "stone_cell",
+          "role": "supporting",
+          "quant": null,
+          "morph": "石细胞少见，黄绿色（补充）",
+          "abundance": "少见"
+        },
+        {
+          "feature": "fiber",
+          "role": "supporting",
+          "quant": null,
+          "morph": "叶基维管束常伴纤维束（药典未给μm数值）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "茯苓",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "hypha",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 3,
+            "max": 8,
+            "extreme": 16
+          },
+          "morph": "菌丝无色或淡棕色，细长有分枝（单味正文直径3～8μm，少数至16μm；成方显微口径为4～6μm）",
+          "abundance": null
+        },
+        {
+          "feature": "fungal_mass",
+          "role": "required",
+          "quant": null,
+          "morph": "不规则分枝状团块无色，遇水合氯醛液溶化",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "甘草",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "crystal_fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 8,
+            "max": 14,
+            "extreme": null
+          },
+          "morph": "纤维束周围薄壁细胞含草酸钙方晶，形成晶纤维",
+          "vlm": "纤维束外方是否附着草酸钙方晶",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "广藿香",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "non_glandular_hair",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 590,
+            "extreme": null
+          },
+          "morph": "非腺毛1～6细胞，平直或先端弯曲，壁具疣状突起，有的胞腔含黄棕色物",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "桂枝",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 30,
+            "max": 64,
+            "extreme": null
+          },
+          "morph": "石细胞类方形或类圆形，壁厚，有的一面菲薄",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "诃子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": null,
+          "morph": "纤维淡黄色，成束，纵横交错排列或与石细胞、木化厚壁细胞相连结",
+          "abundance": null
+        },
+        {
+          "feature": "stone_cell",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 14,
+            "max": 40,
+            "extreme": null
+          },
+          "morph": "与纤维相连的石细胞/木化厚壁细胞，长至130μm",
+          "abundance": null
+        },
+        {
+          "feature": "cluster_crystal",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 5,
+            "max": 40,
+            "extreme": null
+          },
+          "morph": "草酸钙簇晶（补充）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "红花",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "pollen_grain",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 60,
+            "extreme": null
+          },
+          "morph": "花粉粒类圆形、椭圆形或橄榄形，具3个萌发孔，外壁有齿状突起",
+          "vlm": "花粉粒外壁是否有齿状突起、3个萌发孔",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "厚朴",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 11,
+            "max": 65,
+            "extreme": null
+          },
+          "morph": "石细胞分枝状，壁厚，层纹明显",
+          "vlm": "石细胞是否分枝状",
+          "abundance": null
+        },
+        {
+          "feature": "fiber",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": 15,
+            "max": 32,
+            "extreme": null
+          },
+          "morph": "纤维甚多，壁甚厚，有的波浪形或一边锯齿状",
+          "abundance": null
+        },
+        {
+          "feature": "secretory_tissue",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": 50,
+            "max": 85,
+            "extreme": null
+          },
+          "morph": "油细胞含黄棕色油状物（直径50～85μm）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "虎杖",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "cluster_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 30,
+            "max": 100,
+            "extreme": null
+          },
+          "morph": "草酸钙簇晶极多，较大",
+          "abundance": "极多"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "滑石",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "mineral_feature",
+          "role": "required",
+          "quant": null,
+          "morph": "不规则块片无色，有层层剥落痕迹",
+          "vlm": "是否可见无色块片状颗粒、层层剥落痕迹",
+          "abundance": null
+        }
+      ],
+      "notes": "通道C整图判读，建议人工复核"
+    },
+    {
+      "herb": "黄柏",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "crystal_fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 16,
+            "max": 38,
+            "extreme": null
+          },
+          "morph": "纤维鲜黄色，直径16～38μm，常成束，周围细胞含草酸钙方晶形成晶纤维",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "黄连",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": null,
+          "morph": "纤维束鲜黄色，壁稍厚，纹孔明显",
+          "vlm": "纤维束是否鲜黄色",
+          "abundance": null
+        },
+        {
+          "feature": "stone_cell",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 25,
+            "max": 64,
+            "extreme": null
+          },
+          "morph": "石细胞类方形、类圆形或类长方形，长至102μm",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "黄芩",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 9,
+            "max": 33,
+            "extreme": null
+          },
+          "morph": "纤维淡黄色，梭形，壁厚，孔沟细，长60～250μm",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "姜半夏",
+      "group_id": "G2",
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 20,
+            "max": 144,
+            "extreme": null
+          },
+          "morph": "针晶束存在于椭圆形黏液细胞中，或随处散在",
+          "abundance": null
+        }
+      ],
+      "notes": "组G2成员"
+    },
+    {
+      "herb": "金银花",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "pollen_grain",
+          "role": "required",
+          "quant": null,
+          "morph": "花粉粒类圆形或三角形，表面具细密短刺及细颗粒状雕纹，具3孔沟",
+          "abundance": null
+        },
+        {
+          "feature": "glandular_hair",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 108,
+            "extreme": null
+          },
+          "morph": "腺毛头部倒圆锥形/类圆/略扁圆，4～33细胞排2～4层，直径至108μm，柄长可达700μm（补充）",
+          "abundance": null
+        },
+        {
+          "feature": "non_glandular_hair",
+          "role": "supporting",
+          "quant": null,
+          "morph": "厚壁非腺毛单细胞，长可达900μm；薄壁非腺毛单细胞甚长（补充）",
+          "abundance": null
+        },
+        {
+          "feature": "cluster_crystal",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 6,
+            "max": 45,
+            "extreme": null
+          },
+          "morph": "草酸钙簇晶（补充）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "荆芥",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "epidermis_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "外果皮细胞表面观多角形，壁黏液化，胞腔含棕色物",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "桔梗",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "secretory_tissue",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 14,
+            "max": 25,
+            "extreme": null
+          },
+          "morph": "联结乳管直径14～25μm，含淡黄色颗粒状物",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "菊花",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "pollen_grain",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 32,
+            "max": 37,
+            "extreme": null
+          },
+          "morph": "花粉粒类球形，表面有网孔纹及短刺，具3孔沟",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "苦参",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "crystal_fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 11,
+            "max": 27,
+            "extreme": null
+          },
+          "morph": "纤维束周围细胞含草酸钙方晶形成晶纤维，含晶细胞壁不均匀增厚",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "苦杏仁",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 25,
+            "max": 150,
+            "extreme": null
+          },
+          "morph": "种皮石细胞橙黄色，贝壳形，壁较厚，较宽一边纹孔明显",
+          "vlm": "种皮石细胞是否橙黄色贝壳形",
+          "abundance": null
+        },
+        {
+          "feature": "epidermis_cell",
+          "role": "supporting",
+          "quant": null,
+          "morph": "种皮外表皮细胞浅橙黄色至棕黄色，类圆形或多边形，壁常皱缩（补充）",
+          "abundance": null
+        }
+      ],
+      "notes": "颜色口径：修正版记种皮石细胞为黄棕色至棕色"
+    },
+    {
+      "herb": "辣蓼",
+      "group_id": null,
+      "non_official_basis": true,
+      "criteria": [
+        {
+          "feature": "cluster_crystal",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 5,
+            "max": 35,
+            "extreme": null
+          },
+          "morph": "草酸钙簇晶众多、散在或排列成行",
+          "abundance": "众多"
+        },
+        {
+          "feature": "brown_content",
+          "role": "supporting",
+          "quant": null,
+          "morph": "上表皮细胞部分含黄棕色或紫红色块状物；厚角细胞不含黄棕色物",
+          "abundance": null
+        }
+      ],
+      "notes": "《药典》未收载本级；簇晶 5~35μm 为广东地方标准/中华本草口径。故不以 required 参与药典口径的判定（non_official_basis），仅作备选列出。"
+    },
+    {
+      "herb": "莱菔子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "palisade_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 15,
+            "extreme": null
+          },
+          "morph": "种皮栅状细胞成片，表面观多角形或长多角形，常与大型下皮细胞重叠",
+          "abundance": "可见"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "连翘",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": null,
+          "morph": "内果皮纤维上下层纵横交错，纤维短梭形（药典未给本特征μm数值；教材口径直径24～32μm 仅作参考，不作量化判据）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "龙胆",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "薄壁细胞含细小草酸钙针晶",
+          "abundance": null
+        },
+        {
+          "feature": "epidermis_cell",
+          "role": "supporting",
+          "quant": null,
+          "morph": "外皮层细胞类纺锤形分隔成扁方形小细胞；内皮层细胞类长方形，纵隔壁连珠状增厚",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "麻黄",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stoma",
+          "role": "required",
+          "quant": null,
+          "morph": "气孔特异，保卫细胞侧面观呈哑铃状",
+          "vlm": "保卫细胞是否哑铃状",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "马齿苋",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "cluster_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 7,
+            "max": 108,
+            "extreme": null
+          },
+          "morph": "薄壁细胞中含草酸钙簇晶",
+          "abundance": "众多"
+        },
+        {
+          "feature": "starch_grain",
+          "role": "supporting",
+          "quant": null,
+          "morph": "有时可见淀粉粒和细小棱状结晶",
+          "abundance": "可见"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "麦冬",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "散有含草酸钙针晶束的黏液细胞（药典原文'有的针晶直径至10μm'；本特征主判量纲为 feret_max/长，卡片不提供直径量纲，故直径仅入形态描述、不作量化判据）",
+          "abundance": null
+        },
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "石细胞内壁及侧壁增厚，纹孔细密",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "麦芽",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "epidermis_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "外表皮长细胞与2个短细胞（栓化细胞、硅质细胞）交互排列，长细胞壁厚深波状弯曲",
+          "abundance": null
+        },
+        {
+          "feature": "silica_body",
+          "role": "supporting",
+          "quant": null,
+          "morph": "短细胞类圆形（硅质细胞）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "牡丹皮",
+      "group_id": "G1",
+      "criteria": [
+        {
+          "feature": "cluster_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "草酸钙簇晶存在于无色薄壁细胞中，有时数个排列成行",
+          "abundance": null
+        }
+      ],
+      "notes": "组G1成员"
+    },
+    {
+      "herb": "牡蛎",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "mineral_feature",
+          "role": "required",
+          "quant": null,
+          "morph": "珍珠层不规则碎块，较大碎块条状或片状，表面隐约可见细小条纹",
+          "vlm": "碎块表面是否隐约可见细小条纹",
+          "abundance": "可见"
+        }
+      ],
+      "notes": "通道C整图判读，建议人工复核。药典补充：棱柱层断面观棱柱状、断端平截，长29～130μm、宽10～36μm，表面观类多角形/方形/三角形（同特征，不单列判据）"
+    },
+    {
+      "herb": "木香",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "inulin",
+          "role": "required",
+          "quant": null,
+          "morph": "菊糖多见，表面现放射状纹理",
+          "vlm": "团块表面是否有放射状纹理",
+          "abundance": "多见"
+        },
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 16,
+            "max": 24,
+            "extreme": null
+          },
+          "morph": "木纤维多成束，长梭形，纹孔口横裂缝状、十字状或人字状",
+          "abundance": "较多"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "牵牛子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "palisade_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "种皮栅状组织碎片和光辉带有时可见",
+          "abundance": "可见"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "秦皮",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "sand_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "青黛",
+      "group_id": null,
+      "non_official_basis": true,
+      "criteria": [
+        {
+          "feature": "indigo_crystal",
+          "role": "supporting",
+          "quant": null,
+          "morph": "不规则块片或颗粒蓝色",
+          "vlm": "是否可见蓝色块片/颗粒",
+          "abundance": null
+        }
+      ],
+      "notes": "通道C整图判读，建议人工复核；《药典》鉴别以理化为主，蓝色颗粒/块片为教材口径 → non_official_basis，且特征存在性来自非官方，按 v1.7 降为 supporting（required 集为空 → 置信度 0），仅作备选出列，不得作为结论"
+    },
+    {
+      "herb": "肉桂",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 32,
+            "max": 88,
+            "extreme": null
+          },
+          "morph": "石细胞类方形或类圆形，壁厚，有的一面菲薄",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "桑白皮",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 13,
+            "max": 26,
+            "extreme": null
+          },
+          "morph": "纤维甚多，多碎断，壁厚，非木化至微木化",
+          "abundance": "甚多"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "山楂",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 19,
+            "max": 125,
+            "extreme": null
+          },
+          "morph": "石细胞单个散在或成群，类多角形/长圆形/不规则形，孔沟及层纹明显，有的胞腔含深棕色物",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "射干",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 49,
+            "max": 240,
+            "extreme": 315
+          },
+          "morph": "草酸钙柱晶较多，棱柱形，多已破碎，完整者长49～240（315）μm、直径约至49μm",
+          "vlm": "结晶是否棱柱形",
+          "abundance": "较多"
+        }
+      ],
+      "notes": "原第二条 needle_crystal（mean_width ≤49）已删：针晶/柱晶主判量纲是 feret_max，卡片中不含 mean_width，该条恒判 UNCAL(q=0.5) → 同一证据被计两次且恒定稀释；直径信息并入 morph。"
+    },
+    {
+      "herb": "石膏",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "mineral_feature",
+          "role": "required",
+          "quant": null,
+          "morph": "不规则片状结晶无色，有平直纹理",
+          "vlm": "是否可见无色片状结晶、平直纹理",
+          "abundance": null
+        }
+      ],
+      "notes": "通道C整图判读，建议人工复核"
+    },
+    {
+      "herb": "使君子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "epidermis_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 14,
+            "max": 43,
+            "extreme": null
+          },
+          "morph": "种皮网纹细胞较多，椭圆形或不规则形，壁稍厚，具密集网状纹孔",
+          "vlm": "种皮细胞是否具密集网状纹孔",
+          "abundance": null
+        },
+        {
+          "feature": "fiber",
+          "role": "supporting",
+          "quant": null,
+          "morph": "果皮木化细胞、纤维成束（补充）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "水牛角",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "animal_feature",
+          "role": "required",
+          "quant": null,
+          "morph": "不规则碎片多呈柴片状，稍有光泽，具有规则纵长裂缝",
+          "abundance": null
+        }
+      ],
+      "notes": "通道C整图判读，建议人工复核。药典补充：纵断面观细长梭形纹理+纵长裂缝+细灰棕色色素颗粒；横断面观梭形纹理平行排列、弧状弯曲似波峰、众多黄棕色色素颗粒（同特征，不单列判据）"
+    },
+    {
+      "herb": "葶苈子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "epidermis_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 15,
+            "max": 42,
+            "extreme": null
+          },
+          "morph": "种皮内表皮细胞黄色，表面观长方多角形，壁厚5～8μm",
+          "abundance": null
+        }
+      ],
+      "notes": "药典补充（南葶苈子）：种皮外表皮黏液细胞含纤维素柱，长8～18μm，北葶苈子24～34μm（不单列判据）"
+    },
+    {
+      "herb": "菟丝子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "palisade_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "种皮栅状细胞成片，断面观2列，具光辉带，位于内侧细胞上部",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "王不留行",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "epidermis_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 50,
+            "max": 120,
+            "extreme": null
+          },
+          "morph": "种皮表皮细胞红棕色或黄棕色，垂周壁增厚，星角状或深波状弯曲",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "乌梅",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "epidermis_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "果皮表皮细胞淡黄棕色，表面观类多角形，壁稍厚，非腺毛或毛茸脱落痕迹多见",
+          "abundance": "多见"
+        },
+        {
+          "feature": "non_glandular_hair",
+          "role": "supporting",
+          "quant": null,
+          "morph": "非腺毛或毛茸脱落后的痕迹多见",
+          "abundance": "多见"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "五味子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 18,
+            "max": 83,
+            "extreme": null
+          },
+          "morph": "种皮表皮石细胞多角形/长多角形，孔沟极细密，胞腔含深棕色物；内层石细胞纹孔较大（两类合并记录）",
+          "abundance": null
+        }
+      ],
+      "notes": "范围18~83μm为表皮层18~50与内层至83的合并，与 profiles.REFERENCE_RANGES 一致"
+    },
+    {
+      "herb": "香附",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "secretory_tissue",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 35,
+            "max": 72,
+            "extreme": null
+          },
+          "morph": "分泌细胞类圆形，内含淡黄棕色至红棕色分泌物，周围5～8个细胞放射状环列",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "雄黄",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "mineral_feature",
+          "role": "required",
+          "quant": null,
+          "morph": "不规则碎块金黄色或橙黄色，有光泽",
+          "vlm": "碎块是否金黄色/橙黄色有光泽",
+          "abundance": null
+        }
+      ],
+      "notes": "通道C整图判读，建议人工复核"
+    },
+    {
+      "herb": "玄参",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 94,
+            "extreme": null
+          },
+          "morph": "石细胞黄棕色或无色，类长方形、类圆形或形状不规则",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "玄明粉",
+      "group_id": null,
+      "no_criteria": true,
+      "criteria": [],
+      "notes": "药典原文未给出显微判据（原文仅'default'），不参与自动裁决，报告中显式跳过"
+    },
+    {
+      "herb": "益母草",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "non_glandular_hair",
+          "role": "required",
+          "quant": null,
+          "morph": "非腺毛1～4细胞",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "茵陈",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "non_glandular_hair",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 600,
+            "max": 1700,
+            "extreme": null
+          },
+          "morph": "非腺毛T字形，中部略折成V字形，两臂不等长，壁极厚，胞腔细缝状，柄1～2细胞",
+          "vlm": "非腺毛是否T字形两臂不等长",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "白头翁",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "non_glandular_hair",
+          "role": "required",
+          "quant": null,
+          "morph": "非腺毛单细胞，基部稍膨大，壁大多木化，有的可见螺状或双螺状纹理（药典原文'直径13～33μm'；非腺毛主判量纲为 feret_max/长，卡片不提供直径量纲，故直径仅入形态描述、不作量化判据）",
+          "abundance": "可见"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "淫羊藿",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "non_glandular_hair",
+          "role": "supporting",
+          "quant": null,
+          "morph": "非腺毛3～10细胞、长200～1000μm（教材口径，药典正文未给非腺毛数值，故不作量化判据）、多碎断，顶端细胞长，有的含棕色或黄棕色物",
+          "abundance": null
+        },
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "叶表皮细胞垂周壁深波状弯曲，沿叶脉异细胞纵向排列、内含1～多个草酸钙柱晶（补充）",
+          "abundance": null
+        },
+        {
+          "feature": "stoma",
+          "role": "supporting",
+          "quant": null,
+          "morph": "下表皮气孔不定式（补充）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "鱼腥草",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "secretory_tissue",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 28,
+            "max": 104,
+            "extreme": null
+          },
+          "morph": "油细胞类圆形或椭圆形，内含黄色油滴",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "郁金",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "gelatinized_starch",
+          "role": "required",
+          "quant": null,
+          "morph": "薄壁细胞中可见糊化淀粉粒",
+          "abundance": "可见"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "泽泻",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "parenchyma_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "薄壁细胞类圆形，具多数椭圆形纹孔，集成纹孔群",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "知母",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "needle_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 26,
+            "max": 110,
+            "extreme": null
+          },
+          "morph": "草酸钙针晶成束或散在",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "栀子",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "stone_cell",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 60,
+            "max": 112,
+            "extreme": null
+          },
+          "morph": "种皮石细胞黄色或淡棕色，多破碎，长多角形/长方形/不规则，壁厚，有大的圆形纹孔，胞腔棕红色，长至230μm",
+          "abundance": null
+        },
+        {
+          "feature": "fiber",
+          "role": "supporting",
+          "quant": {
+            "dim": "mean_width",
+            "min": null,
+            "max": 10,
+            "extreme": null
+          },
+          "morph": "内果皮纤维细长梭形，直径约10μm、长约至110μm（补充）",
+          "abundance": null
+        },
+        {
+          "feature": "cluster_crystal",
+          "role": "supporting",
+          "quant": {
+            "dim": "feret_max",
+            "min": 19,
+            "max": 34,
+            "extreme": null
+          },
+          "morph": "草酸钙簇晶（补充）",
+          "abundance": null
+        }
+      ],
+      "notes": "药典补充：内果皮石细胞直径14～34μm、长约至75μm（与种皮石细胞同特征，不单列判据）"
+    },
+    {
+      "herb": "枳壳",
+      "group_id": "G3",
+      "criteria": [
+        {
+          "feature": "single_crystal",
+          "role": "required",
+          "quant": null,
+          "morph": "草酸钙方晶成片存在于薄壁组织中",
+          "abundance": null
+        }
+      ],
+      "notes": "组G3成员，组内与陈皮不可分"
+    },
+    {
+      "herb": "猪苓",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "single_crystal",
+          "role": "required",
+          "quant": {
+            "dim": "feret_max",
+            "min": 3,
+            "max": 60,
+            "extreme": 68
+          },
+          "morph": "草酸钙方晶多呈正方八面体形、双锥八面体形或不规则多面体，有时数个结晶集合",
+          "abundance": "众多"
+        },
+        {
+          "feature": "hypha",
+          "role": "required",
+          "quant": null,
+          "morph": "菌丝间有众多草酸钙方晶（菌丝细长有分枝）",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "当归",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "parenchyma_cell",
+          "role": "required",
+          "quant": null,
+          "morph": "韧皮薄壁细胞纺锤形，壁略厚，表面有极微细的斜向交错纹理，有时可见菲薄的横隔",
+          "abundance": "可见"
+        }
+      ],
+      "notes": null
+    },
+    {
+      "herb": "黄芪",
+      "group_id": null,
+      "criteria": [
+        {
+          "feature": "fiber",
+          "role": "required",
+          "quant": {
+            "dim": "mean_width",
+            "min": 8,
+            "max": 30,
+            "extreme": null
+          },
+          "morph": "纤维成束或散离，壁厚，表面有纵裂纹，初生壁常与次生壁分离，两端断裂成须状或较平截",
+          "abundance": null
+        }
+      ],
+      "notes": null
+    }
+  ]
+}

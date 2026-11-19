@@ -1,0 +1,32 @@
+<View>
+  <Header value="中药显微 特征框选（真值层紧框规范：紧贴外接 ±2%，禁止切断实体，宁可稍松不可切断）"/>
+  <Header value="成片类规则：表皮细胞=整片只框一个外轮廓（最多5片）；菌丝缠结成团只框团外轮廓；成簇小目标（气孔/非腺毛）挑清晰者框5~20个" style="color:#0369a1"/>
+  <Image name="image" value="$image" zoom="true" zoomControl="true" rotateControl="false"/>  <RectangleLabels name="feature" toName="image">
+    <Label value="草酸钙簇晶" background="#e6194b"/>
+    <Label value="草酸钙方晶" background="#3cb44b"/>
+    <Label value="草酸钙针晶" background="#ffe119"/>
+    <Label value="导管" background="#4363d8"/>
+    <Label value="石细胞" background="#f58231"/>
+    <Label value="淀粉粒" background="#911eb4"/>
+    <Label value="非腺毛" background="#42d4f4"/>
+    <Label value="分泌组织" background="#469990"/>
+    <Label value="气孔" background="#f032e6"/>
+    <Label value="表皮细胞" background="#bfef45"/>
+    <Label value="菌丝" background="#9A6324"/>
+    <Label value="纤维" background="#000075"/>
+    <Label value="疑似待定" background="#9a9a9a"/>
+    <Label value="花粉粒" background="#808000"/>
+    <Label value="其他" background="#4b0082"/>
+  </RectangleLabels>
+  <Header value="选中框后填写该目标的判据核验（快捷键 8/9/0/q/w）"/>
+  <Header value="$criteria_hint" style="color:#b45309; font-weight:bold"/>
+  <Choices name="judge" toName="image" perItem="true" showInline="true">
+    <Choice value="尺寸在判据内"/>
+    <Choice value="接近判据下限-存疑"/>
+    <Choice value="接近判据上限-存疑"/>
+    <Choice value="超判据-需仲裁"/>
+    <Choice value="不适用"/>
+  </Choices>
+  <TextArea name="note" toName="image" placeholder="备注：形态/复核意见（可选）" maxRows="2"/>
+  <Style>lsf-main { font-family: 'Microsoft YaHei', sans-serif; }</Style>
+</View>

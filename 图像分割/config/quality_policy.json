@@ -1,0 +1,11 @@
+{
+  "version": "purpose-v1-trial",
+  "calibrated": false,
+  "min_pixels": 50,
+  "low_fraction": 0.0001,
+  "high_fraction": 0.95,
+  "component_overlap": 0.5,
+  "outside_fraction": 0.15,
+  "large_postprocess_fraction": 0.15,
+  "local_width_on_truncation_validated": false
+}

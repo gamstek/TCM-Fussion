@@ -1,0 +1,230 @@
+{
+  "version": "calibration_agnostic",
+  "params": {
+    "imgsz": 1024,
+    "conf_min": 0.001,
+    "iou_nms": 0.45,
+    "max_det": 300,
+    "agnostic_nms": true,
+    "tile": 0,
+    "ece_bins": 15,
+    "budgets_per_image": [
+      1.0,
+      1.5,
+      2.0,
+      3.0,
+      5.0,
+      10.0
+    ]
+  },
+  "n_val": 805,
+  "n_val_gt": 1758,
+  "n_gold": 60,
+  "n_gold_gt": 239,
+  "models": {
+    "v10s_multi": {
+      "weights": "results/detection/yolo_runs/v1_yolov10s_1024/weights/best.pt",
+      "temperature": 1.287,
+      "val_n_pred": 13336,
+      "val_tp": 1397,
+      "val_ece_raw": 0.0163,
+      "val_ece_calibrated": 0.01,
+      "val_brier_raw": 0.0403,
+      "val_brier_calibrated": 0.0403,
+      "val_ap50_raw": 0.6305,
+      "val_ap50_95_raw": 0.4703,
+      "val_ap50_calibrated": 0.6305,
+      "val_ap50_95_calibrated": 0.4703,
+      "gold_ap50": 0.3791,
+      "gold_ap50_95": 0.2615,
+      "budget_rows": [
+        {
+          "budget_per_image": 1.0,
+          "val_threshold_raw": 0.7373,
+          "val_pred_per_image": 1.0,
+          "gold": {
+            "threshold": 0.7373,
+            "n_pred": 59,
+            "pred_per_image": 0.98,
+            "recall_loc": 0.2092,
+            "precision_loc": 0.8475,
+            "fp_per_image": 0.15
+          },
+          "val_threshold_calibrated": 0.69037
+        },
+        {
+          "budget_per_image": 1.5,
+          "val_threshold_raw": 0.3854,
+          "val_pred_per_image": 1.5,
+          "gold": {
+            "threshold": 0.3854,
+            "n_pred": 99,
+            "pred_per_image": 1.65,
+            "recall_loc": 0.3096,
+            "precision_loc": 0.7475,
+            "fp_per_image": 0.417
+          },
+          "val_threshold_calibrated": 0.41033
+        },
+        {
+          "budget_per_image": 2.0,
+          "val_threshold_raw": 0.16496,
+          "val_pred_per_image": 2.0,
+          "gold": {
+            "threshold": 0.16496,
+            "n_pred": 130,
+            "pred_per_image": 2.17,
+            "recall_loc": 0.3682,
+            "precision_loc": 0.6769,
+            "fp_per_image": 0.7
+          },
+          "val_threshold_calibrated": 0.22095
+        },
+        {
+          "budget_per_image": 3.0,
+          "val_threshold_raw": 0.04695,
+          "val_pred_per_image": 3.0,
+          "gold": {
+            "threshold": 0.04695,
+            "n_pred": 188,
+            "pred_per_image": 3.13,
+            "recall_loc": 0.4017,
+            "precision_loc": 0.5106,
+            "fp_per_image": 1.533
+          },
+          "val_threshold_calibrated": 0.08793
+        },
+        {
+          "budget_per_image": 5.0,
+          "val_threshold_raw": 0.01189,
+          "val_pred_per_image": 5.0,
+          "gold": {
+            "threshold": 0.01189,
+            "n_pred": 304,
+            "pred_per_image": 5.07,
+            "recall_loc": 0.4477,
+            "precision_loc": 0.352,
+            "fp_per_image": 3.283
+          },
+          "val_threshold_calibrated": 0.03124
+        },
+        {
+          "budget_per_image": 10.0,
+          "val_threshold_raw": 0.00259,
+          "val_pred_per_image": 10.0,
+          "gold": {
+            "threshold": 0.00259,
+            "n_pred": 569,
+            "pred_per_image": 9.48,
+            "recall_loc": 0.5063,
+            "precision_loc": 0.2127,
+            "fp_per_image": 7.467
+          },
+          "val_threshold_calibrated": 0.00969
+        }
+      ]
+    },
+    "v10s_single": {
+      "weights": "results/detection/yolo_runs/v1_yolov10s_1024_single/weights/best.pt",
+      "temperature": 1.2506,
+      "val_n_pred": 19116,
+      "val_tp": 1489,
+      "val_ece_raw": 0.0137,
+      "val_ece_calibrated": 0.0067,
+      "val_brier_raw": 0.032,
+      "val_brier_calibrated": 0.032,
+      "val_ap50_raw": 0.6501,
+      "val_ap50_95_raw": 0.493,
+      "val_ap50_calibrated": 0.6501,
+      "val_ap50_95_calibrated": 0.493,
+      "gold_ap50": 0.3232,
+      "gold_ap50_95": 0.225,
+      "budget_rows": [
+        {
+          "budget_per_image": 1.0,
+          "val_threshold_raw": 0.73011,
+          "val_pred_per_image": 1.0,
+          "gold": {
+            "threshold": 0.73011,
+            "n_pred": 44,
+            "pred_per_image": 0.73,
+            "recall_loc": 0.1548,
+            "precision_loc": 0.8409,
+            "fp_per_image": 0.117
+          },
+          "val_threshold_calibrated": 0.68907
+        },
+        {
+          "budget_per_image": 1.5,
+          "val_threshold_raw": 0.38876,
+          "val_pred_per_image": 1.5,
+          "gold": {
+            "threshold": 0.38876,
+            "n_pred": 79,
+            "pred_per_image": 1.32,
+            "recall_loc": 0.2176,
+            "precision_loc": 0.6582,
+            "fp_per_image": 0.45
+          },
+          "val_threshold_calibrated": 0.41051
+        },
+        {
+          "budget_per_image": 2.0,
+          "val_threshold_raw": 0.16906,
+          "val_pred_per_image": 2.0,
+          "gold": {
+            "threshold": 0.16906,
+            "n_pred": 109,
+            "pred_per_image": 1.82,
+            "recall_loc": 0.2803,
+            "precision_loc": 0.6147,
+            "fp_per_image": 0.7
+          },
+          "val_threshold_calibrated": 0.2187
+        },
+        {
+          "budget_per_image": 3.0,
+          "val_threshold_raw": 0.05795,
+          "val_pred_per_image": 3.0,
+          "gold": {
+            "threshold": 0.05795,
+            "n_pred": 173,
+            "pred_per_image": 2.88,
+            "recall_loc": 0.3389,
+            "precision_loc": 0.4682,
+            "fp_per_image": 1.533
+          },
+          "val_threshold_calibrated": 0.09711
+        },
+        {
+          "budget_per_image": 5.0,
+          "val_threshold_raw": 0.01806,
+          "val_pred_per_image": 5.0,
+          "gold": {
+            "threshold": 0.01806,
+            "n_pred": 288,
+            "pred_per_image": 4.8,
+            "recall_loc": 0.3975,
+            "precision_loc": 0.3299,
+            "fp_per_image": 3.217
+          },
+          "val_threshold_calibrated": 0.03935
+        },
+        {
+          "budget_per_image": 10.0,
+          "val_threshold_raw": 0.0045,
+          "val_pred_per_image": 10.0,
+          "gold": {
+            "threshold": 0.0045,
+            "n_pred": 583,
+            "pred_per_image": 9.72,
+            "recall_loc": 0.4895,
+            "precision_loc": 0.2007,
+            "fp_per_image": 7.767
+          },
+          "val_threshold_calibrated": 0.01315
+        }
+      ]
+    }
+  }
+}

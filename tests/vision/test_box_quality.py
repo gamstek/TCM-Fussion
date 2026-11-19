@@ -139,7 +139,7 @@ class LowDetailWorkflowTests(unittest.TestCase):
         for value in (True, False):
             with self.subTest(value=value), self.assertRaises(IntegrationError):
                 validate_arguments(WORKFLOW_SCHEMA, {key: value})
-        template = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/multi_view.json')
+        template = read_json(Path(paths.PROJECT_ROOT) / 'config/multi_view.json')
         self.assertNotIn(key, template['agent']['workflow'])
 
     def test_blank_remains_blocked_even_after_identity_confirmation(self):

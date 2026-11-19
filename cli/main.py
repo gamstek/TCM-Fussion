@@ -54,11 +54,12 @@ def main(argv=None):
                 # 用例构造闭环运行时/图回调；结束后回收循环引用，避免整套累计占用。
                 # 不改断言、时限或生产运行的GC/线程配置。
                 gc.collect()
-        package = Path(paths.PROJECT_ROOT) / "TCM_Fusion"
+        package = Path(paths.PROJECT_ROOT)
         suite = unittest.defaultTestLoader.discover(str(package / "tests"), top_level_dir=paths.PROJECT_ROOT)
         passed = unittest.TextTestRunner(verbosity=2, resultclass=RegressionResult).run(suite).wasSuccessful()
         for name in ("test_rule_engine.py", "test_adjudicator.py", "test_scene.py"):
-            cp = subprocess.run([sys.executable, "-X", "utf8", str(Path(paths.JUDGE_DIR) / "tests" / name)], cwd=paths.PROJECT_ROOT)
+            cp = subprocess.run([sys.executable, "-X", "utf8", str(Path(paths.JUDGE_DIR) / "tests" / name)],
+                                cwd=paths.PROJECT_ROOT, env=paths.python_environment())
             passed = cp.returncode == 0 and passed
         return 0 if passed else 1
     try:

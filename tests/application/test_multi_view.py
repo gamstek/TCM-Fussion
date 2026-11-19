@@ -41,7 +41,7 @@ class MultiViewTests(unittest.TestCase):
             self.proof['views'].append({'view': p.name, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()})
         self.save()
         self.options = {'output_root': self.root / 'outputs', 'a_python': paths.VENV_PY}
-        self.template = read_json(Path(paths.PROJECT_ROOT) / 'TCM_Fusion/config/multi_view.json')
+        self.template = read_json(Path(paths.PROJECT_ROOT) / 'config/multi_view.json')
 
     def save(self):
         write_json(self.source / 'input_proof.json', self.proof)
@@ -210,7 +210,7 @@ class MultiViewTests(unittest.TestCase):
                 self.assertEqual('semantic_execution' in workflow, semantic is not None)
 
     def test_reference_policy_field_parity_and_explicit_defaults(self):
-        ref_path = Path(paths.PROJECT_ROOT) / 'TCM_Fusion/运行结果/case_9cc59640/config.json'
+        ref_path = Path(paths.PROJECT_ROOT) / '运行结果/case_9cc59640/config.json'
         if not ref_path.is_file():
             self.skipTest('historical reference case is not present in this workspace')
         ref = read_json(ref_path)

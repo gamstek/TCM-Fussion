@@ -1,0 +1,145 @@
+{
+  "comment": "两阶段标注管线配置。vlm.api_key 可留空，优先读环境变量 VLM_API_KEY；base_url 需为 OpenAI 兼容 /chat/completions 接口。本文件为模板，请复制为 vlm_config.json 并填入密钥（或使用环境变量）。",
+  "vlm": {
+    "base_url": "https://open.bigmodel.cn/api/paas/v4",
+    "model": "glm-5.3-flash",
+    "api_key": "",
+    "api_key_env": "VLM_API_KEY",
+    "temperature": 0.1,
+    "max_tokens": 32768,
+    "comment_reasoning_effort": "思考强度 reasoning_effort：本键不写就一个字都不发、走模型默认。**仅 GLM-5.2 及以上支持**——用 GLM-4.6V 时不要设（会被拒，须删掉本键）。GLM-5.3/5.3-FLASH 支持 low/high/max 且默认 max（深度推理，单图数分钟，且 reasoning token 与答案共享 max_tokens 会把 JSON 挤断）。本仓库取 **low**：2026-09-30 三味 10 图 A/B（同一 v7.12 提示词）下，low 相比不发参数的 glm-4.6v 目标类召回更高、目标类误出更少、单图耗时约为其一半；三条 A/B 臂均 0 解析失败 / 0 截断。",
+    "reasoning_effort": "low",
+    "max_side": 1536,
+    "max_workers": 4,
+    "max_retries": 3,
+    "timeout_s": 180
+  },
+  "igm": {
+    "comment": "IGM（图像生成大模型）分割：OpenAI 兼容 POST {base_url}/images/generations，供 segmentation/igm_segment.py 使用。base_url / model 必填；api_key 留空则回退 vlm.api_key（同厂商同账号可复用），推荐改用环境变量 IGM_API_KEY。size 需满足各模型下限（实测：doubao-seedream-5-0-lite 要求 ≥3686400 像素=1920x1920，pro/flash 可 1024x1024），下限不符会报 400 InvalidParameter；方舟各模型需先在控制台开通，且『安全体验模式』额度用尽会报 429 SetLimitExceeded。",
+    "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+    "model": "doubao-seedream-5-0-flash-260915",
+    "api_key": "",
+    "api_key_env": "IGM_API_KEY",
+    "size_mode": "auto",
+    "size": "1024x1024",
+    "min_pixels": 1048576,
+    "max_side": 4096,
+    "size_quantum": 64,
+    "image_field": "image",
+    "response_format": "",
+    "max_retries": 3,
+    "timeout_s": 300
+  },
+  "pilot": {
+    "comment": "P0 试点抽样：feature_label 为 manifest.csv 中的中文特征名；count=-1 表示全取",
+    "seed": 42,
+    "classes": [
+      {
+        "feature_label": "草酸钙簇晶",
+        "feature_id": "cluster_crystal",
+        "ext": "jpg",
+        "count": 80
+      },
+      {
+        "feature_label": "石细胞",
+        "feature_id": "stone_cell",
+        "ext": "jpg",
+        "count": -1
+      },
+      {
+        "feature_label": "导管",
+        "feature_id": "vessel",
+        "ext": "jpg",
+        "count": -1
+      }
+    ]
+  },
+  "labelstudio": {
+    "url": "http://localhost:8080",
+    "comment_token": "token 优先读环境变量 LS_TOKEN，也可直接填（支持 legacy Token 或 JWT refresh token）",
+    "token": "",
+    "project_title": "中药显微P0试点-簇晶石细胞导管",
+    "selfcheck_title": "中药显微P0试点-自检(盲标)",
+    "selfcheck_ratio": 0.1
+  },
+  "yolo": {
+    "comment": "类别顺序即 YOLO class id，引用 feature_taxonomy.json 的 feature_id；pending 不进训练",
+    "classes": [
+      {
+        "id": 0,
+        "feature_id": "cluster_crystal",
+        "zh": "草酸钙簇晶"
+      },
+      {
+        "id": 1,
+        "feature_id": "single_crystal",
+        "zh": "草酸钙方晶"
+      },
+      {
+        "id": 2,
+        "feature_id": "needle_crystal",
+        "zh": "草酸钙针晶"
+      },
+      {
+        "id": 3,
+        "feature_id": "vessel",
+        "zh": "导管"
+      },
+      {
+        "id": 4,
+        "feature_id": "stone_cell",
+        "zh": "石细胞"
+      },
+      {
+        "id": 5,
+        "feature_id": "starch_grain",
+        "zh": "淀粉粒"
+      },
+      {
+        "id": 6,
+        "feature_id": "pending",
+        "zh": "疑似待定"
+      },
+      {
+        "id": 7,
+        "feature_id": "non_glandular_hair",
+        "zh": "非腺毛"
+      },
+      {
+        "id": 8,
+        "feature_id": "secretory_tissue",
+        "zh": "分泌组织"
+      },
+      {
+        "id": 9,
+        "feature_id": "stoma",
+        "zh": "气孔"
+      },
+      {
+        "id": 10,
+        "feature_id": "epidermis_cell",
+        "zh": "表皮细胞"
+      },
+      {
+        "id": 11,
+        "feature_id": "hypha",
+        "zh": "菌丝"
+      },
+      {
+        "id": 12,
+        "feature_id": "fiber",
+        "zh": "纤维"
+      },
+      {
+        "id": 13,
+        "feature_id": "pollen_grain",
+        "zh": "花粉粒"
+      },
+      {
+        "id": 14,
+        "feature_id": "other",
+        "zh": "其他"
+      }
+    ]
+  }
+}
