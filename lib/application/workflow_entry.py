@@ -276,7 +276,8 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
         return labels
 
     comparison='\n'.join(
-        f"| {row['display']} | {row['rule_confidence']} | {row['fused_score']} | "
+        f"| {row['display']} | {row['rule_score']} | {row['score_components'].get('required_base', 0)} | "
+        f"{row['score_components'].get('supporting_bonus', 0)} | {row['fused_score']} | "
         f"{len(row['supported_criteria'])} | {len(row['required_gaps'])} |"
         for row in assessment['candidate_comparison'])
     (directory/'report.md').write_text('# 自主B工具与A融合\n\n'
@@ -304,8 +305,9 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
           f"- 判定充分性影子结果：{assessment['decision_readiness_shadow']}（不提升生产确认资格）\n"
         '- 上述未解决引用不等于全部候选缺口清零；完整required/supporting状态见candidate_audit。\n'
         '- 全部证据及采信边界：final_evidence.json；结论与依据：final_assessment.json。\n\n'
-        '| 候选 | B规则分 | 融合排序分（非正确率） | 支持判据数 | 必需判据缺口数 |\n'
-        '|---|---|---|---|---|\n'+comparison+'\n',encoding='utf-8')
+        'B 规则分由 required 基础分和 supporting 加分组成。必需判据全部核验后，独立佐证按质量计入。\n\n'
+        '| 候选 | B规则分 | required 基础分 | supporting 加分 | 融合排序分（非正确率） | 支持判据数 | 必需判据缺口数 |\n'
+        '|---|---|---|---|---|---|---|\n'+comparison+'\n',encoding='utf-8')
     guard.check('before_job_complete')
     job.update(status='completed',stage='done',needs_review=fusion['needs_review'],route='workflow_agent',
                elapsed_seconds=value['elapsed_seconds'],output=str(directory/'output.json'),

@@ -4,7 +4,7 @@ D3紧凑视图保留全部逐折候选和知识库ID，详细显示窗口不是�
 
 先查已有证据、尺度与视野，再决定是否需要新观察。只读结果不是新证据；缺失不等于不存在，服务失败也不等于阴性。
 
-可调用注册的 `read_evidence`、`list_features`、`query_criteria`、`read_scale`、`list_fovs`、`criteria_diff`、`list_artifacts`、`read_artifact_status`；最终裁决仍由原规则产生。
+可调用注册的 `read_evidence`、`list_features`、`query_criteria`、`read_scale`、`list_fovs`、`criteria_diff`、`list_artifacts`、`read_artifact_status`。正式 B 分由判据计算。全部 required 均已核验时，独立 supporting 按质量加分。同类重复观察仍按一类计。
 
 `read_quality` 可读取受信评估的原因码与存在性/形态/长度/宽度/面积资格。没有评估时为未知，不把旧工件自动升级。原始记录和诊断测量与规则实际采用的证据要区分，不能把文件哈希变化称为新证据或正确性收益。
 

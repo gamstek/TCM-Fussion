@@ -143,7 +143,7 @@ def candidate_reply(packet, cid):
     for fact in packet['facts']:
         data=fact['data']
         if ((fact['kind']=='criterion' and data.get('candidate_id')==cid and
-             data.get('role')=='required' and data.get('state') not in {'IN_RANGE','EXTREME','NO_REF'}) or
+             data.get('role')=='required' and not reference_allowed(fact, cid)) or
             (fact['kind']=='classification' and not data.get('identity_verified')) or
             (fact['kind']=='operation' and data.get('status')=='failed') or
             (fact['kind']=='observation' and not data.get('accepted'))):
@@ -220,7 +220,7 @@ def compact_packet(packet, limit=120000):
         model['formal_verdict']={k:copy.deepcopy(v) for k,v in verdict.items()
                                  if k not in {'ranking'}}
         model['formal_verdict']['ranking']=[{k:row.get(k) for k in
-            ('id','display','kind','verdict','confidence','fused_score','support_count','needs_review')}
+            ('id','display','kind','verdict','rule_score','fused_score','support_count','needs_review')}
             for row in verdict.get('ranking') or []]
     model['facts']=[_compact_fact(f) for f in packet.get('facts') or []]
     text=json.dumps(model,ensure_ascii=False)
@@ -381,16 +381,18 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
             checks_by_candidate.setdefault(f['data']['candidate_id'], []).append(f)
     for identifier in compared:
         candidate=next((c for c in packet['candidates'] if c['id']==identifier),{})
-        fused=next((r.get('fused_score') for r in formal.get('ranking',[]) if r['id']==identifier),None)
+        formal_row=next((r for r in formal.get('ranking',[]) if r['id']==identifier),{})
+        rule_score=formal_row.get('rule_score',candidate.get('rule_confidence'))
         checks=checks_by_candidate.get(identifier, [])
         supported=[f for f in checks if reference_allowed(f, identifier)]
         comparison.append({'candidate_id':identifier,'display':candidate.get('display',identifier),
-            'rule_confidence':candidate.get('rule_confidence'),'fused_score':fused,
+            'rule_score':rule_score,'rule_confidence':rule_score,'fused_score':formal_row.get('fused_score'),
+            'score_components':formal_row.get('score_components',{}),
             'support_count':candidate.get('support_count'),
             'verified_feature_count':len({f['data']['feature_id'] for f in supported}),
             'supported_criteria':[f['id'] for f in supported],
             'required_gaps':[f['id'] for f in checks if f['data'].get('role')=='required' and
-                             f['data'].get('state') not in {'IN_RANGE','EXTREME','NO_REF'}]})
+                             not reference_allowed(f, identifier)]})
     selected=next((c for c in comparison if c['candidate_id']==cid),{})
     threshold=runtime.workflow.config.get('min_support_features')
     threshold=MIN_SUPPORT_FEATURES if threshold is None else threshold
@@ -414,7 +416,7 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
                      '判据状态：'+(details or '无可采信支持')+'。')
         explanation_source='deterministic_numeric_guard'
         narrative_warnings.append('MODEL_NUMERIC_CLAIM_UNVERIFIED')
-    score_summary=(f"{selected.get('display',cid)}：B规则排序分={selected.get('rule_confidence')}；"
+    score_summary=(f"{selected.get('display',cid)}：B规则排序分={selected.get('rule_score')}；"
                    f"融合排序分={selected.get('fused_score')}；已验证独立特征类数="
                    f"{selected.get('verified_feature_count')}；B规则计分特征类数="
                    f"{selected.get('support_count')}；B规则最低计分类数={threshold}。"
@@ -446,7 +448,8 @@ def finalize(runtime, verdict, result, directory, *, responder=None):
         'candidate_comparison':comparison,'rule_notes':formal.get('notes',[]),
         'provisional':provisional,
         'review_required':not authorized,'review_reasons':review_reasons,'confidence_basis':{
-            'rule_confidence':row.get('rule_confidence'),'calibrated_probability':None,
+            'rule_score':selected.get('rule_score'),'rule_confidence':selected.get('rule_score'),
+            'score_components':selected.get('score_components',{}),'calibrated_probability':None,
             'fused_score':selected.get('fused_score'),'support_count':selected.get('support_count'),
             'verified_feature_count':selected.get('verified_feature_count'),
             'min_support_features':threshold,'level_meaning':'delivery_authorization_not_probability',

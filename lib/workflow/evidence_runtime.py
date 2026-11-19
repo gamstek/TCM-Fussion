@@ -1,4 +1,4 @@
-"""构造 Agent 领域运行时：原测量→规则卡池→动作/观察→原 decide，只读原图、不修改原 B 工件。
+"""构造 Agent 领域运行时：从当前测量和合格观察建立规则卡池，生成融合专用 B 裁决，只读原图与输入工件。
 加载 skills/registry.json 与 SKILL.md 的领域策略卡；工具权限来自代码白名单。由「lib/mcp/mcp_bridge.py」、「lib/offline/prompt_optimization.py」、「lib/offline/reflection.py」调用，结果按调用方的任务阶段消费。
 
 主要定义：
@@ -18,7 +18,8 @@ from pathlib import Path
 
 import paths
 import scene_attributes
-from rule_engine import EvidenceCard, KnowledgeBase, decide, pool_evidence
+from rule_engine import EvidenceCard, KnowledgeBase, pool_evidence
+from TCM_Fusion.lib.decision.rule_scoring import decide
 
 from TCM_Fusion.lib.tools.tool_registry import ToolRegistry
 from TCM_Fusion.lib.decision.candidate_policy import candidates as a_candidates, criteria_diff, validate_candidates

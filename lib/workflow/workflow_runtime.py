@@ -220,7 +220,9 @@ class WorkflowRuntime(EvidenceRuntime):
         except Exception:
             a_ids=[]
         candidate={'id':top.get('id'),'display':top.get('display'),
-                   'score':top.get('score'),'confidence':top.get('confidence'),
+                   'score':top.get('rule_score',top.get('confidence')),
+                   'rule_score':top.get('rule_score',top.get('confidence')),'fused_score':top.get('fused_score'),
+                   'confidence':top.get('confidence'),
                    'support_count':top.get('support_count'),'checks':top.get('checks') or []}
         llm=self._decision_client()
         if llm is None:

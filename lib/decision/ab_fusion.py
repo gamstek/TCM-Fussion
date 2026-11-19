@@ -73,18 +73,18 @@ def apply_ab_fusion(verdict, a, kb, aliases=None, a_weight=0.5, b_weight=0.5):
         identifier = row.get('id')
         a_prob = probs.get(identifier, 0.0)
         try:
-            b_conf = max(0.0, min(1.0, float(row.get('confidence') or 0)))
+            b_conf = max(0.0, min(1.0, float(row.get('rule_score', row.get('confidence')) or 0)))
         except (TypeError, ValueError):
             b_conf = 0.0
         fused = aw * a_prob + bw * b_conf
         row['a_probability'] = round(a_prob, 6)
         row['b_confidence'] = round(b_conf, 6)
         row['fused_score'] = round(fused, 6)
-        row['b_score'] = row.get('score')
+        row.setdefault('raw_score', row.get('b_score', row.get('score')))
+        row['b_score'] = row['rule_score'] = row['b_confidence']
         row['score'] = round(fused, 6)
         # Keep rule confidence distinct from this uncalibrated ranking score.
-    ranking.sort(key=lambda row: ((row.get('fused_score') or 0), (row.get('a_probability') or 0),
-                                  (row.get('support_count') or 0)), reverse=True)
+    ranking.sort(key=lambda row: (row['fused_score'], row['a_probability']), reverse=True)
     verdict['ranking'] = ranking
     verdict['alternatives'] = ranking[1:5]
     if ranking and ranking[0].get('id') != original_top:

@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 from TCM_Fusion.lib.decision.candidate_policy import candidates as a_candidates
+from TCM_Fusion.lib.evidence.evidence_projection import supports_criterion
 
 GENERIC_FEATURES = {'epidermis_cell', 'secretory_tissue'}
 
@@ -24,8 +25,7 @@ def _strict_non_a(row):
     supporting = [c for c in checks if c.get('role') == 'supporting']
     if not required:
         return False
-    if any(not c.get('present') or c.get('state') not in {'IN_RANGE','EXTREME','NO_REF'}
-           for c in required + supporting):
+    if not all(supports_criterion(c) for c in required + supporting):
         return False
     return any(c.get('feature_id') not in GENERIC_FEATURES for c in required)
 
@@ -57,7 +57,7 @@ def apply_candidate_scope(verdict, a, kb, aliases=None, policy=None, scope='a_to
         if identifier in present:
             continue
         kept.append({'id': identifier, 'display': identifier, 'kind': 'herb', 'score': 0.0,
-                     'confidence': 0.0, 'support_count': 0, 'checks': [],
+                     'confidence': 0.0, 'rule_score': 0.0, 'raw_score': 0.0, 'support_count': 0, 'checks': [],
                      'scope_placeholder': True})
     verdict['ranking'] = kept
     verdict['alternatives'] = kept[1:5]

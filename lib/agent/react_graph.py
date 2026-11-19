@@ -502,10 +502,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         top_complete = False
         if ranking:
             top = ranking[0]
-            gap = top["confidence"]-(ranking[1]["confidence"] if len(ranking)>1 else 0)
-            top_complete = (top["confidence"] >= BAND_PROBABLE and gap >= MARGIN_DELTA
-                            and all(c["state"] != "NOT_DETECTED" for c in top["checks"] if c["role"] == "required")
-                            and not conflict)
+            gap = decision['margin']
+            top_complete = (top['rule_score'] >= BAND_PROBABLE and gap >= MARGIN_DELTA
+                            and top['score_components']['required_complete']
+                            and not decision.get('needs_review') and not conflict)
         workflow = getattr(runtime, "workflow", None)
         pending_repair = (workflow is not None and workflow.unresolved()
                           and any(a.get('tool') == 'segment_instance' for a in actions))

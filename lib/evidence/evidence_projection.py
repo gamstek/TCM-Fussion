@@ -114,7 +114,8 @@ def build(runtime, scored, observations, *, verdict=None):
     for row in decision.get('ranking', []):
         cid = row['id']; checks_by_candidate[cid] = row.get('checks', [])
         catalog.append({'id': cid, 'display': row.get('display', cid),
-                        'rule_confidence': row.get('confidence'),
+                        'rule_score': row.get('rule_score', row.get('confidence')),
+                        'rule_confidence': row.get('rule_score', row.get('confidence')),
                         'support_count': row.get('support_count'), 'check_refs': []})
         if cid not in considered:
             continue

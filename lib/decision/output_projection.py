@@ -308,9 +308,9 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
     feature_scans = []
     for operation in operations.values():
         if operation.get('tool') == 'feature_scan':
-            status, summary = scan_coverage(operation)
+            scan_status, summary = scan_coverage(operation)
             feature_scans.append({'target_id': operation.get('target_id'), 'image_id': operation.get('image_id'),
-                                  'feature_id': operation.get('feature_id'), **summary, 'status': status})
+                                  'feature_id': operation.get('feature_id'), **summary, 'status': scan_status})
     missing = []
     if top:
         for check in top.get("checks") or []:
@@ -318,7 +318,7 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
                 continue
             if not check.get("present"):
                 missing.append({"feature_id": check.get("feature_id"), "state": "NOT_DETECTED"})
-            elif check.get("state") not in {"IN_RANGE", "EXTREME", "NO_REF"}:
+            elif not supports_criterion(check):
                 missing.append({"feature_id": check.get("feature_id"), "state": check.get("state")})
     provisional['selection'] = selection
     provisional['selected_candidate'] = top.get('id') if top else None
@@ -330,6 +330,7 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
             alternative_rows.append(row)
     return {
         "schema": "diagnosis-output/v1",
+        "rule_score_version": verdict.get("score_version"),
         "sample_id": sample_id,
         "status": status,
         "top_candidate": None if top is None else {
@@ -339,7 +340,9 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
             "verified_feature_count": (assessment.get('confidence_basis') or {}).get('verified_feature_count'),
             "a_probability": top.get("a_probability"),
             "b_confidence": top.get("b_confidence"),
-            "rule_score": top.get("b_score", top.get("score")),
+            "rule_score": top.get("rule_score", top.get("confidence")),
+            "raw_score": top.get("raw_score", top.get("b_score")),
+            "score_components": top.get("score_components", {}),
             "fused_score": top.get("fused_score"),
             "selection": selection,
             "formal_score": top.get("score"),
@@ -350,7 +353,9 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
         "candidate_admission": verdict.get("candidate_admission"),
         "provisional": provisional,
         "alternatives": [{"id": r.get("id"), "display": r.get("display"),
-                          "score": r.get("score"), "confidence": r.get("confidence")}
+                          "score": r.get("score"), "confidence": r.get("confidence"),
+                          "rule_score": r.get("rule_score", r.get("confidence")),
+                          "fused_score": r.get("fused_score")}
                          for r in alternative_rows[:4]],
         "ambiguous_with": [r.get("id") for r in ambiguous],
         "tie_break": tie_break,

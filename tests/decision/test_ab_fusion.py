@@ -18,6 +18,19 @@ import paths
 from rule_engine import KnowledgeBase
 
 from TCM_Fusion.lib.decision.ab_fusion import apply_ab_fusion
+from TCM_Fusion.lib.decision.rule_scoring import score_candidate, rank_and_decide
+
+
+def check(fid, role, contribution, state='NO_REF', bounds=None, weight=1, scene=1):
+    return dict(feature_id=fid, role=role, score_contribution=contribution, weight=weight,
+                state=state, present=state != 'NOT_DETECTED', quant_bounds=bounds,
+                scene_factor=scene, penalty=.5 if state == 'OUT_OF_RANGE' else 0)
+
+
+def scored(*checks, name='甲', **options):
+    return score_candidate(dict(id=name, display=name, kind='herb', checks=checks,
+        score=sum(c['score_contribution'] for c in checks), wrong_present=[], absent_required=[]),
+        **options)
 
 
 def _a_dragon():
@@ -30,6 +43,69 @@ def _a_dragon():
 
 
 class ABFusionTest(unittest.TestCase):
+    def test_verified_support_is_bounded_and_independent(self):
+        req = check('needle', 'required', .6)
+        sup = check('skin', 'supporting', .255, weight=.5)
+        base = scored(req)
+        extra = scored(req, sup)
+        self.assertEqual(base['rule_score'], .48)
+        self.assertEqual(extra['rule_score'], .504382)
+        self.assertEqual(extra['score_components']['supporting_bonus'], .024382)
+        self.assertEqual(scored(req, sup, sup, check('needle','supporting',1))['rule_score'],
+                         extra['rule_score'])
+        self.assertGreater(scored(req,sup,check('fiber','supporting',.3))['rule_score'],extra['rule_score'])
+        self.assertEqual(scored(sup)['rule_score'],0)
+        uncal = check('uncal','supporting',.5,'UNCAL')
+        self.assertEqual(scored(req,uncal)['rule_score'],base['rule_score'])
+
+    def test_required_gate_rejects_quantitative_gaps_and_partial_confirmation(self):
+        req = check('strong','required',1,'IN_RANGE')
+        for state in ('NOT_DETECTED','UNCAL','NO_REF','OUT_OF_RANGE'):
+            missing = check('weak','required',.15 if state in ('UNCAL','NO_REF') else 0,
+                            state,bounds={'min':1,'max':3},weight=.3)
+            support = check('aux','supporting',1)
+            with self.subTest(state=state):
+                self.assertEqual(scored(missing,support)['rule_score'],0)
+                row=scored(req,missing,support)
+                self.assertEqual(row['score_components']['supporting_bonus'],0)
+                self.assertFalse(row['score_components']['required_complete'])
+                self.assertIsNone(rank_and_decide([row],1)['conclusion'])
+
+    def test_caps_ignore_support_and_cannot_be_bypassed_by_scene(self):
+        wide = check('wide','required',1,'IN_RANGE',{'min':10,'max':90},scene=1.1)
+        row = scored(wide,check('support1','supporting',1),check('support2','supporting',1))
+        self.assertTrue(row['cap_dom_wide'])
+        self.assertEqual(row['score_components']['required_attainment'],.6)
+        self.assertLess(row['rule_score'],.6)
+        self.assertEqual(scored({**wide,'scene_factor':.6})['score_components']['required_attainment'],.36)
+        self.assertEqual(scored(wide,non_official=True)['score_components']['required_attainment'],.49)
+
+    def test_score_bands_margin_and_d8_are_separate(self):
+        req = check('main','required',1)
+        a=scored(req,check('aux','supporting',.1))
+        b=scored(req,name='乙')
+        decision=rank_and_decide([b,a])
+        self.assertEqual(decision['ranking'][0]['id'],'甲')
+        self.assertEqual(decision['verdict'],'probable')
+        self.assertTrue(decision['needs_review'])
+        self.assertLess(decision['margin'],.1)
+        for score, gap, expected in ((.499999,.1,'insufficient_evidence'),(.5,.1,'probable'),
+                                     (.749999,.1,'probable'),(.75,.099999,'probable'),(.75,.1,'confirmed')):
+            top={**a,'rule_score':score,'confidence':score}
+            rival={**b,'rule_score':round(score-gap,6)}
+            self.assertEqual(rank_and_decide([top,rival])['verdict'],expected)
+        self.assertTrue(rank_and_decide([b])['needs_review'])
+
+    def test_fusion_uses_the_canonical_score_even_on_repeat(self):
+        row=scored(check('needle','required',.6),check('skin','supporting',.255),name='龙胆')
+        decision=rank_and_decide([row])
+        for _ in range(2):
+            apply_ab_fusion(decision,_a_dragon(),{})
+            top=decision['ranking'][0]
+            self.assertEqual(top['fused_score'],.747191)
+            self.assertEqual(top['rule_score'],.504382)
+            self.assertEqual(top['raw_score'],.855)
+
     def test_reranking_cannot_keep_stale_confirmed_conclusion(self):
         kb=KnowledgeBase(Path(paths.JUDGE_DIR)/'data/herb_criteria.json')
         v={'verdict':'confirmed','needs_review':False,'conclusion':{'id':'党参'},

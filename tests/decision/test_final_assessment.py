@@ -98,7 +98,8 @@ class FinalAssessmentTests(unittest.TestCase):
             row['fused_score']=.872168 if row['id']=='秦皮' else .240057
         scored=self.runtime.score(self.result['observations'])
         top=next(r for r in scored['decision']['ranking'] if r['id']=='秦皮')
-        top.update(confidence=1.0,support_count=1)
+        top.update(rule_score=.8,confidence=.8,support_count=1)
+        next(r for r in verdict['ranking'] if r['id']=='秦皮').update(rule_score=.8,confidence=.8)
         return verdict,scored
 
     def test_service_termination_and_d8b_review_have_separate_causes(self):
@@ -114,7 +115,8 @@ class FinalAssessmentTests(unittest.TestCase):
         self.assertEqual(value['status'],'tentative');self.assertTrue(value['review_required'])
         self.assertIn('INSUFFICIENT_FEATURE_TYPES',value['review_reasons'])
         self.assertNotIn('UPSTREAM_REMOTE_DISCONNECTED',value['review_reasons'])
-        self.assertEqual(value['confidence_basis']['rule_confidence'],1.0)
+        self.assertEqual(value['confidence_basis']['rule_score'],.8)
+        self.assertEqual(value['confidence_basis']['rule_confidence'],.8)
         self.assertEqual(value['confidence_basis']['support_count'],1)
         self.assertEqual(value['confidence_basis']['fused_score'],.872168)
         self.assertEqual(verdict,original)

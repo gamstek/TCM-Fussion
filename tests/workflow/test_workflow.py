@@ -981,6 +981,21 @@ class WorkflowTests(WorkflowFixture, unittest.TestCase):
             config['agent']['workflow'].update(quality_policy='diagnostic_review',enabled_tools=['measure_instances'])
         directory=run_pipeline(config,base=self.root/'runs')
         value=read_json(directory/'fusion.json');self.assertEqual(value['route'],'workflow_agent')
+        verdict=read_json(directory/'agent_verdict.json')
+        assessment=read_json(directory/'final_assessment.json')
+        output=read_json(directory/'output.json')
+        report=(directory/'report.md').read_text(encoding='utf-8')
+        self.assertEqual(verdict['score_version'],output['rule_score_version'])
+        self.assertIn('supporting 加分',report)
+        by_id={r['id']:r for r in verdict['ranking']}
+        for row in assessment['candidate_comparison']:
+            evidence=by_id[row['candidate_id']]
+            self.assertEqual(evidence['rule_score'],row['rule_score'])
+            self.assertEqual(evidence['fused_score'],row['fused_score'])
+            self.assertIn(f"| {row['display']} | {row['rule_score']} |",report)
+        if output['top_candidate']:
+            delivered=by_id[output['top_candidate']['id']]
+            self.assertEqual(delivered['rule_score'],output['top_candidate']['rule_score'])
         self.assertTrue(any(o['tool']=='measure_instances' and o['accepted'] for o in value['agent']['operations'].values()),
                         {'stop':value['agent'].get('stop_reason'), 'operations':[
                             {k:o.get(k) for k in ('tool','status','error_code')} for o in value['agent']['operations'].values()]})

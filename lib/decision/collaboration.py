@@ -51,7 +51,7 @@ def fuse(a, b, kb, aliases=None):
         relation = "conflict"
     return {"agreement": relation, "a_label": a_name, "a_mapped_label": mapped,
             "a_probability": a.get("ranking", [{}])[0].get("probability") if a.get("ranking") else None,
-            "b_verdict": original, "source": "original_b_rules",
+            "b_verdict": original, "source": b.get("score_version", "original_b_rules"),
             "needs_review": bool(b.get("needs_review")) or relation in {"conflict", "b_insufficient"},
             "a_is_independent_evidence": False, "verdict_modified": False}
 

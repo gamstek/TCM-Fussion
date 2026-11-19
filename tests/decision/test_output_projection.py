@@ -67,7 +67,9 @@ class OutputProjectionTest(unittest.TestCase):
             self.assertEqual(scan['successful_tiles'], [tile_a])
             self.assertEqual(scan['failed_tiles'], [tile_b])
             self.assertEqual(scan['unsearched_tiles'], [tile_c])
-            self.assertEqual(output['top_candidate']['rule_score'], -0.24)
+            self.assertEqual(output['top_candidate']['raw_score'], -0.24)
+            self.assertEqual(output['top_candidate']['rule_score'], verdict['ranking'][0]['confidence'])
+            self.assertNotEqual(output['status'], 'partial')
             self.assertEqual(output['top_candidate']['fused_score'], 0.3)
 
     def test_confirmed_maps_to_confirmed(self):
