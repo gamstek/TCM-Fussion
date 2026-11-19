@@ -1,267 +1,228 @@
-# TCM_Fusion｜真实五折CNN＋VLM Agent融合链路
+# TCM_Fusion 中药材显微图像鉴别
 
-开发者从[源码导航](lib/README.md)、[回归导航](tests/README.md)和[组件重组方案](融合链路文档/21_TCM_Fusion组件重组方案.md)进入。
+TCM_Fusion 接收**同一待鉴别样品的一张或多张显微图**。交付结果回答三个问题：最倾向哪种药材，哪些显微证据支持这个判断，还有什么需要复核。每条关键证据可以追回原始视野、实例及本次采用的工件版本。
 
-**正式默认方案为 C＋D4。** ReAct 每轮根据候选判据的缺口决定下一步。已有可核验的裁图时，它可以指定单个实例的目标，例如核验身份或测量宽度。执行器等前一步产生合格工件，再为同一实例选择可执行的后继；身份、比例尺或质量不满足要求时，把问题交回 ReAct。有多个独立视野时，Agent 还可以选择 2～4 个视野同时初检，或同时对不同视野的裁图做身份分类。单步调查和请求复核始终可选。两个开关和并发上限见 [正式运行模板](config/multi_view.json)。
+**正式默认方案为 C＋D4，由 ReAct 主导调查。** 药材分类器提供候选先验（A），显微判据给出证据分（B）。在两者之间，ReAct 决定该查哪条候选差异；选定实例目标后，本地计划编译器把目标展开为依赖图（C）；不同视野有独立工作时，ReAct 还可以授权并发（D4）。调查顺序随证据改变，证据资格由程序核验。[正式运行模板](config/multi_view.json)
 
-FAIR-INVESTIGATION-001（2026-11-18）：540项（539通过/1历史参考缺失跳过）、B59/21/125通过；新单图425.578秒，主/竞争均调查并产出17.274558μm，交付一致暂定白芍仍复核。统一鉴别问题卡，主解释与竞争支持分列；无crop时簇晶可关联真实YOLO入口。受限说明字段本地归一、结构错误至多纠正一次，交付跟随唯一研判候选。充分性策略仅shadow，原保守确认不放松；不强制调查顺序。见[18](融合链路文档/18_主解释与竞争解释公平取证.md)。
+[架构与数据流](#架构与数据流) · [ReAct 的设计取舍](#react-的设计取舍) · [计划编译与语义 DAG](#计划编译与语义-dag) · [候选调查与证据控制](#候选调查与证据控制) · [并发与回交](#调查执行) · [计分与交付](#计分与交付) · [部署](#部署准备) · [运行](#运行一次鉴别) · [查看结果](#查看结果)
 
-CANDIDATE-AUDIT-001（2026-11-17）：最终回归521项（520通过、1历史case缺失跳过）及原B59/21/125通过；候选审查优先于时延/token。五折并集及未映射、暂停候选的required/supporting逐项保留；独立补查不再被别的crop未分类阻塞。审查不完整时可review，交付不得升级为完整鉴别。旧245.828秒只属历史运行，不能证明同覆盖提效。见[17 候选审查完整性与效率边界](融合链路文档/17_候选审查完整性与效率边界.md)。
+## 架构与数据流
 
-PLANNER-CHOICES-001（2026-11-17）：ReAct现将单动作、实例目标、独立观察组作为同级主选择，按本轮A/G/Q编号明确授权；保存实际送模菜单和模型选择模式，不强制并行或固定调查顺序。最新503项（502通过、1历史case缺失跳过）及原B59/21/125通过。详见[16 主选择协议与规划次数分析](融合链路文档/16_主选择协议与规划次数分析.md)。以下EFF/D3计数为历史口径。
+以“这一束细长结构能否支持龙胆”为例。A 可以提名龙胆，视觉工具可以找到细长目标。要引用这个目标，仍要回答它究竟是针晶还是纤维、判据要求形态还是尺寸，以及这条观察对竞争候选是否同样成立。系统围绕这些问题反复调查，直到证据足以交付、需要人工复核或达到运行限制。
 
-EFF-001（2026-11-17）：按语义问题而非工具名跟踪Reflection，分开记录证据/处理能力/诊断及退出；去重判据上下文，补齐分段计时。模型可显式选两路独立presence问题并行；可选假设字段错误不废弃合法动作。最新回归485项（484通过、1历史case缺失跳过），原B59/21/125通过。详见[15 调查效率与反思收益优化](融合链路文档/15_调查效率与反思收益优化.md)；语义执行仍默认关闭，通用D4/D5未完成。
-
-D3-LIVE-FIX-001（2026-11-17）：修复自动测量上下文与伪超时、收尾候选/引用不一致，补充反思拒绝与自动子阶段反馈；真实单图已产出合格尺寸，仍暂定白芍需复核。见[测试总结（归档）](运行结果/测试运行总报告.md#archive-case-12)。离线selftest与真实服务测试分别报告，不能混称零API验证。
-
-D3-001（2026-11-17）：默认仍单步ReAct；紧凑上下文保留五折并集并记录字段字节数，Reflection在正常规划中提交补丁并回查效果。实验semantic_execution=false，显式开启且模型选择实例语义目标才逐节点晚绑定执行；不接受具体工具序列。交付见[14](融合链路文档/14_D3交付与验收.md)，D4/D5待实施。
-
-2026-11-13｜PRESENCE-001：存在性补查增加同请求可选定位、原图映射、紧框/上下文裁图及影子质量状态，进入后续 Agent 上下文。没有核验集时不把新框直接升为身份或尺寸证据；旧 P1/C 观察保持兼容。详见 [接口契约：presence 可选定位扩展](融合链路文档/03_接口契约.md#presence-可选定位扩展presence-001) 与 [修改记录](修改记录.md)。
-
-PRESENCE-002 系统核验：修复关闭/取消/源图异常后的终态与迟到采信、Windows 父 worker 延迟终止；后续失败路径修复后统一 383 项（1 skip）。真实 MCP/框架测试使用受控视觉响应，不代表外部模型识别准确率已验证；新框仍未自动进入正式实例核验。
-
-现役入口：
-
-短计划（`supporting_probes_batch`）、`supporting_plans_enabled`、`supporting_plan_max_probes`、`parallel_supporting_observations` 已移除；supporting 只保留逐动作预算。2026-11-17最新完整回归503项（502通过、1历史case缺失跳过），原B59/21/125断言通过。当前调查自主性、停止直接转复核及有界防空转以[13 调查建议与硬约束分离](融合链路文档/13_调查建议与硬约束分离.md)为准；不代表真实视觉API、准确率或总token收益已验证。详见[修改记录](修改记录.md)。
-
-```text
-cli.main
-→ pipeline
-→ workflow_entry
-→ workflow_runtime / workflow_session
-→ LangGraph ReAct
-→ MCP / 本地工具
-→ YOLO、GLM、分割、标定、测量及原规则
-→ A/B 融合与 final_assessment
+```mermaid
+flowchart TD
+    I["同一样品的视野与输入清单"] --> A["A · 五折 ResNet50 提名药材"]
+    A --> R["ReAct · 比较候选，选择下一步"]
+    K["药材知识库 · 必需判据与辅助判据"] --> R
+    I --> W["工具与 worker · 原图观察、定位、身份核验、分割、测量"]
+    R -->|"选中一个实例目标"| C["Plan Compiler · 编译局部语义 DAG"]
+    C -->|"依赖满足，绑定当前合法动作"| T["MCP 工具箱与工作流会话"]
+    C -->|"目标完成或节点受阻"| R
+    R -->|"单步或独立原图观察"| T
+    R -->|"选择跨视野初检或分类"| D["D4 · 预约资源、分支并发、逐支提交"]
+    D --> T
+    T --> W
+    W --> E["按视野和实例登记观察、工件与用途资格"]
+    E --> B["B · 逐候选核验判据、计分"]
+    K --> B
+    B -->|"判据缺口和新证据"| R
+    R -->|"结束调查，固定证据版本"| F["收尾 · 候选范围、A＋B 融合与最终研判"]
+    A --> F
+    B --> F
+    F --> O["交付 · 首选候选、支持与反证、缺口、复核状态"]
 ```
 
-A 每张图独立五折推理，每折各自 Top-3；不取平均榜替代逐折输入。药材种类由 Plan A 给出；YOLO 给的是显微特征类别和框，不是药材结论。
+| 谁负责 | 它能决定什么 |
+| --- | --- |
+| 应用入口与 A | 核验图像清单和摘要，为一个样品建立独立运行。每个视野各取五折模型的逐折 Top-3，再合并候选；只在某一折出现的候选也有机会被查证。盲测参考标签留在事后核对环节。[应用层](lib/application/README.md) · [候选生成](lib/decision/candidate_policy.py) |
+| Agent | 读取当前判据缺口、可用实例和预算，选择观察、测量、换路线或请求复核，并留下简短理由。候选的提出、暂停和恢复是调查状态，显微证据由工具取得。[规划与反馈](lib/agent/README.md) |
+| MCP、工作流与 worker | MCP 将工具调用绑定到本次样品。每个工具在注册表声明所需技能、参数、权限和前置条件。工作流核对目标、依赖、额度和截止时间，worker 执行获准的视觉或测量任务。并发分支分别准备工件，由协调者逐支发布。[MCP](lib/mcp/README.md) · [工具注册表](lib/tools/tool_registry.py) · [工作流](lib/workflow/README.md) |
+| 证据、判据与交付 | 证据层记录对象、来源、版本和用途。决策层按药材知识库核验判据，给出 B 分；应用层在收尾时组合 A、B 并生成报告。最终解释引用冻结证据，引用无效或文本研判失败时由程序生成可追溯的交付。[药材判据库](../Agent判药/data/herb_criteria.json) · [证据层](lib/evidence/README.md) · [最终研判](lib/decision/final_assessment.py) |
 
-### stage2 模型接入（STAGE2-001，2026-11-16）
+## ReAct 的设计取舍
 
-- 用户确认药材 A 仍使用 `MICROSCOPE-main/v3_resnet50_full`，本次只更新 crop 显微特征分类接口。
-- `config/multi_view.json` 的 `cnn_weights/cnn_meta` 指向项目根 `分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/`。采用原配置对应的单个 ResNet18、320 letterbox、14 类，不从测试集挑选其他消融模型或擅自启用三模型集成。
-- 真实入口：`classify_crops_batch/classify_target → WorkflowBackend → cli.cnn_classifier_worker → lib.stage2_classifier → 目标检测.lib.cls_net`。输入为绑定原图的 crop；输出为逐 crop 的特征 Top-3、概率、熵和模型指纹。外层药材五折 Top-K 不经此模块。
-- 训练预处理为 `cls_net.build_transforms`：letterbox 灰度 128、BILINEAR、等比缩放含小图放大。移除融合 worker 中灰度 114/BICUBIC/thumbnail 的重复实现。checkpoint 和 sidecar 的架构、类别顺序、尺寸、输入模式与归一化必须一致。
-- 默认概率 ≥0.75、归一化熵 ≤0.8 且非 `other` 时沿用高置信身份路径；这不是已校准正确率。低置信/other 的批量结果保留 Top-K 并标记 `pending_review`，由 Agent 决定后续动作。模型加载失败单列 `failures`，不当作低置信或阴性。
-- 同任务 CNN 缓存绑定权重、meta、预处理/适配代码、解释器和 crop 内容；旧无指纹缓存不采信。新任务仍使用自己的新目录。模型/元信息纳入任务身份，运行中变化拒绝混用。
-- 本次已验证真实本地 CNN 与训练 API 对拍，不等于重跑检测、GLM、分割、测量和最终药材识别；详见 [修改记录](修改记录.md) 的 STAGE2-001。
+显微调查有两种不同的不确定性。看图前，没人知道下一张图会出现哪种结构，也就难以预定整例调查顺序。但在某个实例上，一旦选定“测量宽度”，身份、掩码、标定和测量之间的依赖是已知的。项目把前一种选择留给 ReAct，把后一种依赖交给程序处理。优化的是反复询问模型、重复看图和等待无关分支的开销，同时保留竞争候选改变调查方向的机会。
 
-## 一条命令跑任意数量多图
+| 方案借鉴的思想 | 本项目如何采用 |
+| --- | --- |
+| **LLMCompiler · 分开规划、调度与执行** | 模型选调查目标。主机编译单实例依赖图，等前一步产生真实工件才绑定下一动作。可预见的局部工作能连续推进，遇到需要改变调查含义的问题就交回模型。[语义执行器](lib/agent/semantic_execution.py) |
+| **ReWOO · 让推理引用已经取得的证据** | 同一物理观察在规划上下文里保留一份事实，各候选分别引用并解释。模型每轮看到紧凑的当前状态、判据缺口和合法菜单，需要细节时读取完整账本。这样可以少发重复描述，也能在视觉结果偏离预期时立即调整路线。[候选区分问题](lib/decision/comparison_problems.py) · [规划上下文](lib/agent/planning_context.py) |
+| **Reflexion · 用执行反馈修订策略** | 本地控制器把失败或停滞绑定到具体问题。模型在下一次正常规划中可以采纳、维持、推迟或拒绝建议；采纳时说明要改变的条件和预期收益。后续用工件、合格证据和缺口变化核对实际效果。反思只作用于本次调查策略。[反思实施说明](融合链路文档/20_判据分值解释与反思策略增量方案.md) |
+| **BATS · 把预算和未完成状态带入决策** | 推荐取证路线时计入后续分类、分割、测量可能消耗的资源。派发前检查及预约额度，为最终研判留时间。便宜的原图观察能回答存在性，却不能替代一个定量判据所需的测量。预算不足时，已完成工作和仍不可核验的缺口一起交付。[调查成本估计](lib/decision/candidate_audit.py) · [资源账本](lib/runtime/resource_budget.py) |
 
-从项目根运行。先做本地预检：
+正式入口运行一个 ReAct 调查循环。计划编译、证据投影、预算校验和反馈评估由本地程序完成，模型在下一次必要规划中同时选择行动和回应反思。[方法来源与采用边界](../docs/方国昊/最终优化计划_v1.1_评估修订稿.md) · [实施与配对验收](融合链路文档/10_ReAct主导的证据优化与语义DAG实施部署方案.md)
+
+## 计划编译与语义 DAG
+
+**以“测量视野一中某个已定位实例的宽度”为例。** ReAct 从当轮菜单选择实例目标，同时说明它要回答的判据问题。当前目标有四类：核验身份、测长度、测宽度、测面积。程序可据此检查模型究竟授权了哪一个实例、哪一种结果。[目标选择协议](lib/agent/planning_choices.py)
+
+1. **编译目标。** Plan Compiler 把“测宽度”展开成局部有向无环图（DAG）：**核验身份 → 取得掩码 → 核验宽度用途及标定 → 取得宽度 → 重算判据**。节点记录依赖、所需事实和何时失效。“核验身份”单独成图时只含第一个节点，执行器不会自行把目标扩大到测量。[目标编译](lib/agent/semantic_execution.py)
+2. **运行时绑定。** 实例账本用原图及其坐标识别目标。轮到某节点时，主机重新读取有效工件与合法工具。已有合格身份或已有所需宽度可直接满足相应节点；需要分割时才派发分割，成功后才引用实际生成的掩码。换一个裁图文件名不会凭空多出一个实例，高度重叠但身份有歧义的框也不会被自动合并。[实例账本](lib/evidence/instance_ledger.py) · [工具契约](lib/tools/tool_registry.py)
+3. **按结果回交。** 宽度取得后重算判据，ReAct 再决定该比较哪种药材。如果分类发现它是另一类结构、轮廓需复核、标定失效或绑定输入已变，执行器记录受阻原因，停止未执行的后继。模型可以换实例、换视野或提交复核。单个实例目标完成只解决本次局部问题。[执行与回交](lib/agent/react_graph.py)
+
+当前落地的是**单实例串行语义 DAG，加上 D4 有限跨视野并发**。另一个视野可能先产生结果，怎样交回模型取决于该结果的调查价值。整例的候选、未来裁图和工具顺序在调查中逐步确定。10 号方案总体图中的通用事件总线，以及任意子图收齐指定数量的结果就触发后继（quorum），仍属扩展设计。[DAG 的设计边界](融合链路文档/09_DAG与旧短计划边界.md) · [D4 运行时](lib/agent/physical_execution.py)
+
+## 候选调查与证据控制
+
+### 用反例辨认容易看错的结构
+
+以针晶为例，如果只告诉模型“寻找细长、尖锐的结构”，一束纤维也可能符合描述。项目为容易混淆的特征配了**有具体形态理由的反例**。查针晶时，提示同时保留“可散在，也可成束密集”的正例，并提醒观察细长结构有没有连续的细胞壁和胞腔，或有没有导管的环纹、网纹。这样，模型有理由重新检查疑似纤维的框，也有理由保留紧邻成束的真针晶。反例随当前调查目标切换：查纤维时，同样的细胞壁和胞腔就成为辨认纤维的线索。[特征描述配置](config/multi_view.json) · [反例选择依据](config/negative_feature_bank.json)
+
+反例的选择来自检测错误分析。针对针晶，纤维等易混组织是重点对照，簇晶、方晶和花粉粒只作辅助对照。淀粉粒在这次分析中更突出的问题是漏检和标注粒度，把它列为主要负例反而偏离了要解决的问题。对需要目检的裁图，Agent 还可调用**图像示例审计**，把待查目标、同类正例和易混反例放在同一张图上，让模型比较可见形态并说明理由。这条意见供复核使用。要形成针对某种药材的反证，还需落实到该候选的正式判据，例如身份和标定均合格的实例，其实测尺寸落在该候选参考范围之外。[示例审计](lib/vision/image_exemplar_audit.py) · [证据采信规则](lib/evidence/evidence_projection.py)
+
+### 让竞争候选参与决定下一步查什么
+
+每轮先让所有活动候选与已有证据对照，再决定下一次观察是否值得付出成本。推荐动作优先考虑能区分候选的判据、从当前实例能否走到合格结果、还需多少调用，以及一次调查能服务哪些候选。某个候选的必需项尚未满足时，系统暂不为它单独推荐只补辅助项的动作；其缺口继续对 Agent 可见，同一动作若能解决另一候选的必需项，仍可选用。推荐顺序给 Agent 取舍，工具资格和预算由主机执行。[候选审查与推荐](lib/decision/candidate_audit.py) · [规划菜单](lib/agent/planning_choices.py)
+
+例如，两个候选都要求观察导管，同一视野只需回答一次“这里能否看见导管”。看图模型收到的是特征描述，候选药材名留在规划层，减少预期答案对观察的引导。找到导管后，Agent 再比较两者对形态或直径的要求。如果同一条观察对两者都成立，它可以被双方引用，却仍解释不了为什么其中一个应排在前面。这时，**查一项能区分两者的判据**，通常比再找一个相似的导管更有价值。[候选比较设计](lib/decision/comparison_problems.py)
+
+### 把证据能说明的范围保留下来
+
+项目按样品综合多视野，按视野和实例限定每条观察能回答的问题。YOLO 初检或定向补扫可以产生裁图；裁图 CNN 支持批量初判，低置信或待定实例可再由 Agent 选择单体复核。原图中合格的定性观察可以支持相应存在性判据，疑似框可以引导定位。要回答“这个实例的直径是否符合判据”，则要有匹配的身份、适合该用途的分割轮廓、同一视野的可信比例尺和实际测量值。上游工件被替换后，依赖旧版本的尺寸失效。[视觉工具](lib/vision/README.md) · [实例账本](lib/evidence/instance_ledger.py) · [证据版本](lib/evidence/evidence_store.py)
+
+因此，“未查”“本视野未见”“调用失败”和“有合格反证”分别记录。例如，视野一未见纤维，视野二仍可继续寻找。某个已确认实例的合格尺寸落在候选的参考范围外，才构成针对该候选这条尺寸判据的反证。收尾时的特征审计读取当前有效的初检、补扫、批量分类等工件，供人工目检；审计意见本身没有给 B 加分的权限。[证据采信](lib/evidence/evidence_projection.py) · [特征审计](lib/vision/feature_audit.py)
+
+规划和收尾共用同一份**证据资格投影**。它为每个候选标出可引用的支持、合格反证、仅供调查的线索和未解项。一个视野新增无关工件，不会改变已有事实的引用 ID。待核验分类可以进入暂定分析，正式 B 分只读取符合相应用途的证据。这使规划器提出的理由和最终报告可用同一出处核对。[证据资格投影](lib/evidence/evidence_projection.py) · [暂定证据](lib/evidence/provisional_evidence.py)
+
+### 用下一步取得的证据评价反思
+
+一次工具执行成功，可能只是多了一个裁图，也可能真正解决了一条判据。系统分别记录动作是否成功、是否解锁后继，以及证据或裁决发生了什么变化。例如，连续处理边界不清的目标仍得不到可用尺寸，Agent 可以选择换视野。下一轮用实际产生的合格测量和判据变化检查这条建议是否奏效。持续没有进展时，可以带着未解问题请求复核。这使复核者能从同一条轨迹追到“建议了什么、实际做了什么、得到了什么”。[任务内反思](lib/agent/reflection_controller.py) · [动作反馈](lib/agent/action_feedback.py)
+
+这里有两项细粒度控制。首先，按实例、输入和方法识别**同一次尝试**，无变化的重复请求受到限制，换视野、改变方法或取得有效修复输入后可以重新调查。其次，复核是合法出口。如果模型想结束而证据尚不足以确认，系统可直接交付复核；收到停止建议后连续两次继续且仍无进展，也会保留现有证据并收尾。操作终止原因和药材能否确认分别进入报告。[调查控制](lib/agent/investigation_control.py) · [停止与复核](融合链路文档/13_调查建议与硬约束分离.md)
+
+## 调查执行
+
+ReAct 保留每次调查方向的选择权。**C 处理同一实例内的前后依赖，D4 处理不同视野间的独立工作。** 项目把两者放在同一个规划菜单里，单图和多图共用这套入口。[调查主循环](lib/agent/react_graph.py) · [正式参数](config/multi_view.json)
+
+| Agent 的选择 | 如何执行，何时交回规划 |
+| --- | --- |
+| 单步调查 | 只选一次原图观察、初检、补扫或实例操作。若第二个视野只是第一个失败后的备选，等第一步出结果后再决定是否动用它。 |
+| C · 同一实例的语义目标 | 一次授权完成选定目标。每个实际工具仍独立检查资格和额度，目标完成或受阻时回交规划。[计划编译与语义 DAG](#计划编译与语义-dag) |
+| D4 · 跨视野物理并发 | Agent 可显式选择 2～4 个不同视野，用同一种工具做初检，或各取一张裁图做单实例分类。选择时逐路考虑“即使其余分支都得到理想结果，这一路是否仍值得做”。主机检查独立性、依赖、额度和剩余步数，并逐支提交有效结果。[并发调度](lib/workflow/physical_schedule.py) |
+| 成组原图观察 | 两个可独立回答的原图问题也可以一起发出。这类观察等两份结果汇合后再进入下一轮规划。[规划选择](lib/agent/planning_choices.py) · [观察执行](lib/agent/react_graph.py) |
+
+**D4 的第一个分支完成时，会立即唤醒规划吗？** 结果要先被主机接纳，并且解锁新的实例操作、解决判据、新增合格反证或改变规则判定。此时若还有分支在运行、还有规划步数，就能提前交回（`physical_partial`）。例如，视野一先检出可分类裁图时，Agent 可以选择对它做单实例分类，视野二继续初检。其他有依赖的动作等本组汇合后重新核对。普通完成回执可以一起处理，收齐时记录 `physical_join`。[分支结果收集](lib/agent/react_graph.py) · [并发执行器](lib/agent/physical_execution.py)
+
+**怎样避免快慢分支相互污染？** 派发时固定每支实际读取的工件、允许写入的视野范围与预算预约。worker 在私有目录准备结果，由一个协调者核对依赖后发布。重复回执只生效一次，任务关闭后迟到的结果不会改写最终证据；远端是否已经计费无法确定时，资源账本记为未知。[并发提交与对账](lib/workflow/physical_schedule.py)
+
+龙胆五图实跑提供了一个取舍实例。Agent 自主选择四视野并发初检，随后核验实例和竞争判据。它取得龙胆的针晶与表皮细胞支持，还得到一条针对桔梗的尺寸反证：分泌组织宽度为 5.12 μm，低于桔梗 14–25 μm 的参考范围。同图单开 C 和 C＋D4 各成功运行一次，分别用了 34 和 44 次规划、1,280.14 和 1,768.71 秒。这组记录能说明额外调查换回了什么，也说明默认开放并发并不保证每例更快。[龙胆五图配对实测](运行结果/测试运行总报告.md#archive-case-35)
+
+## 计分与交付
+
+| 阶段 | 判定依据 |
+| --- | --- |
+| B 规则分 | 先核验每个候选的必需判据（required），再计独立辅助判据（supporting）。按 **80∶20** 分配基础分与佐证加分，全部必需项合格才开放加分。部分达成只能取得对应基础分，完全没有合格必需证据时 B 为零。同一辅助特征在多个视野出现只取最高合格贡献，已用于必需项的特征也只计一次。[正式评分](lib/decision/rule_scoring.py) |
+| 融合排序 | 默认 `融合分 = 0.5 × A 先验 + 0.5 × B 规则分`。A 先验在所有视野、所有折上取平均，一折榜单未提名该候选时该折计零。B 排名、融合计算和最终报告共用 `rule_score`。`raw_score` 仅保留供审计，融合分用于比较候选；报告不将它解释为正确率。[融合计算](lib/decision/ab_fusion.py) |
+| 正式交付 | 核对必需项、独立特征数、领先分差和证据出处。默认要求两类独立特征，单类强证据即使条件放行也要复核。若融合改换首位，原首位的正式结论不能转给新候选。A 名单外的候选须满足全部必需和辅助项，且至少一项必需特征具有特异性，才可进入当前的开放式候选范围。证据只到药材组时，交付保留组级结论。[候选范围](lib/decision/candidate_scope.py) · [最终研判](lib/decision/final_assessment.py) |
+
+**为什么“支持判据数为 2”不等于加 0.2？** 支持数衡量有几类独立特征获得合格支持，包含必需项。用于加分的只有其中独立的辅助项。设 `R` 为扣除反证并应用上限后的必需项达成度，`E` 为各独立辅助特征的合格贡献之和。基础分为 `0.8 × R`。全部必需项满足时，再加 `0.2 × R × E / (1 + E)`。这样，在必需证据相同的两个候选之间，额外的独立佐证能拉开分差，重复观察同一特征不会不断抬高得分。[计分实现](lib/decision/rule_scoring.py)
+
+以**龙胆五图的冻结证据**为例，针晶满足龙胆的必需项，`R = 0.60`；表皮细胞提供一类独立佐证，`E = 0.255`。两类支持使龙胆得到 `0.480000 + 0.024382 = 0.504382`，知母和射干各得 `0.480000`。龙胆在 B 分上领先，但领先幅度低于明确区分所需的 0.10，仍需复核。这是同一批证据按现行规则的离线复算，可解释计分变化；最新调查策略的耗时和 token 收益仍待实测。[龙胆逐项计分](运行结果/评估__B规则__30用例__20261119-095522__佐证计分/README.md) · [五图实跑摘要](运行结果/测试运行总报告.md#archive-case-35)
+
+## 部署准备
+
+以下命令从总项目根目录执行，也就是同时包含 `paths.py`、`MICROSCOPE-main/` 和 `TCM_Fusion/` 的目录。先在 Windows PowerShell 中准备三类解释器和本地模型资产。
+
+| 运行环境 | 所需组件与配置 |
+| --- | --- |
+| Agent 主环境 `.venv\Scripts\python.exe` | 当前工作区使用 Python 3.12。安装 [Agent 依赖锁文件](requirements-agent.lock.txt)，用于 CLI、LangGraph 和 MCP。 |
+| Plan A 解释器 | 使用能够运行 `MICROSCOPE-main/predictv3_resnet50.py` 的环境。依赖见 [Plan A requirements](../MICROSCOPE-main/requirements.txt)。通过 `--a-python` 或 `TCM_A_PYTHON` 提供解释器，模板从 `MICROSCOPE-main/v3_resnet50_full/` 加载 `fold1_best.pt` 至 `fold5_best.pt`。 |
+| 视觉与测量 worker | 模板用 `.venv\vision\Scripts\python.exe` 执行视觉和几何阶段，需具备 NumPy、OpenCV、Pillow、RapidOCR 等依赖。YOLO 及裁图 CNN 默认用 `.venv\yolo\Scripts\python.exe`，需具备 Ultralytics 和相匹配的 PyTorch、TorchVision。 |
+
+视觉模型资产由 [多视图配置](config/multi_view.json) 和 [检测配置](config/detector.json) 绑定。首次部署要准备 `TCM_Fusion/yolo-results/detection/yolo_runs/` 下的类别映射 `data_local.yaml` 和 `v1_yolov10s_1024/weights/best.pt`，以及模板 `cnn_weights`、`cnn_meta` 指定的 ResNet18 权重与配套元数据。
+
+首次部署或移动项目后，在已创建的 Agent 虚拟环境中安装依赖并登记项目导入路径。独立 worker 环境也需要能导入项目模块，可将根环境生成的 `tcm_project.pth` 放到对应环境的 `Lib/site-packages/`。
 
 ```powershell
-.venv\Scripts\python.exe -X utf8 -m TCM_Fusion.cli.main multi-view `
-  --source-dir <含input_proof.json的目录> `
-  --a-python D:/Anaconda/python.exe `
-  --dry-run --json
+$python = '.\.venv\Scripts\python.exe'
+& $python -m pip install -r .\TCM_Fusion\requirements-agent.lock.txt
+& $python -X utf8 .\paths.py --install
+& $python -X utf8 .\paths.py --check
 ```
 
-真实运行：
+真实运行需从 [模型服务配置模板](../目标检测/config/vlm_config.json.example) 建立本地 `目标检测/config/vlm_config.json`，以 UTF-8 无 BOM 保存。填写各段的 `base_url` 与 `model`。VLM 用于文本规划和图像观察，服务须支持项目所用的聊天补全接口。IGM 用于分割，服务须支持图像生成接口。按各段的 `api_key_env` 为启动进程提供凭据，模板使用 `VLM_API_KEY` 和 `IGM_API_KEY`。标准入口会为本次任务启动本地 stdio MCP 子进程。
+
+## 运行一次鉴别
+
+### 1. 准备输入清单
+
+把同一样品的待测图片放在一个目录内。至少选择一张，按预期顺序列出每张图的文件名和 SHA256。路径须在输入目录内，路径和图像内容各自唯一。盲测时使用中性目录及文件名，参考答案保留在独立的结果核对记录中。
+
+在新的输入目录中，可用以下命令生成单图清单。多图只需在 `$views` 中按顺序追加文件名。
 
 ```powershell
-.venv\Scripts\python.exe -X utf8 -m TCM_Fusion.cli.main multi-view `
-  --source-dir <含input_proof.json的目录> `
-  --a-python D:/Anaconda/python.exe `
-  --subject S01 --purpose 链路验收 `
-  --json
+$source = 'D:\tcm-input\S01'
+$views = @('view01.jpg')
+$manifest = @{
+    views = @(
+        foreach ($view in $views) {
+            $image = Join-Path $source $view
+            @{ view = $view; sha256 = (Get-FileHash -LiteralPath $image -Algorithm SHA256).Hash.ToLowerInvariant() }
+        }
+    )
+}
+[System.IO.File]::WriteAllText(
+    (Join-Path $source 'input_proof.json'),
+    ($manifest | ConvertTo-Json -Depth 4)
+)
 ```
 
-`--subject` 和 `--purpose` 写入 [标准运行目录名](运行结果/README.md)。盲测使用中性代号。旧脚本可继续用 `--name` 指定完整目录名。`five-view` 仍是多图入口的兼容别名。
+入口默认读取输入目录中的 `input_proof.json`。已有独立清单时，在预检和实跑命令上都传入 `--manifest` 指定其位置。
 
-接口行为：
+### 2. 预检并实跑
 
-- 图片数由 `input_proof.json` 或 `--manifest` 决定，至少 1 张；
-- 每张图必须有 SHA256，路径必须在 source-dir 内，路径和内容都不能重复；
-- 新 case、空 A 缓存、中性 `view_01...` 文件名；
-- 必须显式提供 `--a-python` 或 `TCM_A_PYTHON`，不自动使用 Agent venv；
-- 参考标签和人工框不进入规划配置；
-- dry-run 只准备、复制、生成配置和 doctor，不调用模型。
-
-详细输入格式见 [多图测试运行方案](多图测试运行方案.md)。
-
-## 当前执行设计
-
-当前默认是 fast 路径：
-
-```text
-detect_fov_initial（YOLO）
-→ classify_crops_batch / classify_target（CNN 分类 YOLO crop）
-→ required feature 覆盖检查
-   ├─ 有：calibrate_fov → segment_instance → measure_instances
-   └─ 无：一次 fast fallback（2 feature / 6 locate / full 4 tile）
-→ 原规则 / A-B 融合
-```
-
-关键行为：
-
-- **YOLO 初检**：全视野特征检测；输出组织/特征框，不是药材类别。
-- **locate_feature**：GLM 在指定 ROI 找指定特征候选框；fast 只用于 missing required feature 的 fallback；同一 image/feature 已有 done locate 时不再换 ROI 立即重试；ROI 已被同 feature 有效 crop 覆盖时不再生成 locate。
-- **目标条件提示**：`feature_profiles` 按 `feature_id` 提供该特征的正例/负例描述，附加到 locate 和 classify 提示；taxonomy 为 14 类提供默认 profile，配置只做覆盖；不再使用针晶专用 hint 字段。
-- **locate 允许为空**：`locate_feature` 提示词明确“没有目标必须返回 objects=[]”，禁止用背景纹理/色差/模糊边缘凑框；空结果不裁 crop，不伪造证据。
-- **`hybrid_scan` fallback（fast）**：仅对 missing required feature 创建一次；2 个 feature、总 locate cap 6，每个 feature 最多 4 tile；full 策略 4 tile 全并发，任一有 crop 合并，全空即弃。legacy 兼容路径下仍可显式使用扫描工具。
-- **fast（标准路径，无 false 开关）**：每图先走 YOLO detect，所有 YOLO crop 进入 CNN batch；在每图 crop 未全部分类前，不创建 propose/screen/普通 hybrid 目标；若该样本的整组视野仍缺某个 A 候选 required feature，才创建一次至多 `fast_fallback_max_features` 的 GLM hybrid 兜底。YOLO 框全部保留，CNN 高置信直接采用，低置信仍由 classify_target 回退 GLM；批量动作只登记 pending，不自动 GLM。`fast_yolo_stage2` 字段只为兼容历史配置保留，只允许 `true`，不再作为开关。
-- **GLM fallback tile policy**：`feature_scan_tile_policy=full` 时一次把 4 个 tile 全部并发提交，任一找到 crop 就合并继续；全部为空则立即返回空、不重试。`prescreen` 则先扫 pilot，pilot 空即停。`fast_fallback_max_locate_calls` 限制一次 hybrid 兜底的总 locate 次数。
-- `feature_scan` / `hybrid_scan` 是兜底扫描工具；标准路径只在 missing required feature 时按 `fast_recovery_selection` 创建，`hybrid_scan` 仅旧配置 `legacy_bundle` 使用。
-- **feature_profiles**：以 `feature_taxonomy.json` 为全集生成默认 profile；针晶的负例只属于针晶 profile，不会污染其他特征。
-- **negative_feature_bank.json**：按 P0 test 错误归因构建的 target-conditioned 负例特征库；淀粉粒因漏检高且类别混淆为 0，不作为针晶硬负例。
-- **feature_audit**：调查结束后按当前有效证据快照汇总 YOLO、通用补扫及已提交的单体和批量分类，生成 `feature_audit/feature_audit.json` 和 mask 目检图。报告记录证据版本和读取异常。
-- **image_exemplar_audit**：读取 `feature_exemplar_bank.json`（14 类 target profile，每类正/负示例），把目标 crop 与正/负示例拼成 contact sheet，由 VLM 输出 `target_score`（针晶兼容 `needle_score`）/ `negative_margin`；当前只审计 `det_score>=0.8` 且未分类的 crop，最多 6 个；只写 `image_audit` 工件，不阻断高分 mask/measure；worker 的 PIL/numpy 输入 bug 已修复，修复后未在线复验。
-- **classify_crops_batch / classify_target**：批量动作逐实例提交；底层仍用 14 类 ResNet18 对全部待分类 crop 做一次 batch 推理；`top1_prob>=cnn_threshold` 且熵低且不是 `other` 时直接写 `source=cnn`，否则进入 pending_review；单实例 classify_target 路径可回退 GLM；required crop 的 GLM 结果仍会做 YOLO crop 复核。
-- **CNN 特征分类器**：权重与 meta 在 `分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/`，使用 `.venv/yolo`（有 torch/torchvision）；只做 14 类特征归类，不判药材、不替代 locate、不生成 mask。分类器没有 `unreadable` 类；批量低置信/`other` 保留 `pending_review`，由 Agent 决定后续 GLM 复核。
-- **identity_pending**：存在未分类的低分 `identity_required` crop 时，规划器必须先 classify 最高 `det_score` crop，不能继续 locate，也不能直接暂停或 review；classify 失败/不可判会留下操作记录，不会无限重试。
-- **identity gate**：`identity_required` crop 必须先通过 classify/身份确认，高分 `det_score` 不能绕过身份门进入 IGM/测量。
-- **locate_expand / min size**：GLM tight box 先扩 1.5 倍；观察 ROI 至少 `locate_min_roi_side=256`，tight box 至少 `locate_min_box_side=90`（围绕中心扩展，不直接丢弃小目标），减少 50–70px 小框和过度放大模糊。
-- **box_quality**：每个 crop 记录 `box_source`、`box_quality`、`box_quality_flags`、`box_quality_metrics`；`blank`阻断分割；`low_detail`保留质量提示，同类别身份确认后可由模型选择分割，mask/标定/量纲资格另查，不因`det_score`高低绕过身份；同一特征的 GLM 框若与 YOLO 框 IoU>=0.5，保留 YOLO、跳过重复 GLM crop；`blank/low_detail` 可触发一次基于 `loose_box` 的 `locate:roi:boxq:*` 重定位；ROI 已有同 feature 有效 crop 或已有 done locate 时不再生成。纹理阈值尚未由独立显微核验集校准，不作为不可分割的证明。
-- **样本级特征覆盖**：`coverage` 同时统计 `useful` / `missing_useful` 和 `required_features` / `required_all` / `missing_required`；fast 模式把同一样本各视野的有效分类取并集。任一视野检出某类特征，该类即覆盖，其他视野无需重复补扫。逐图覆盖仍用于审计，正式判药继续按原证据规则执行。高分 crop 也提供非阻断 classify，不再长期停留在 `high_score_unclassified`。
-- **agent_driven_coverage**：自主路径由 planner 在受信合法菜单中选择；`coverage`/`required_features`/`missing_required` 是调查信息，不强制路线。规划失败或预算不足直接收尾复核，不默认选择第一个工具。
-- **检测/标定解耦**：`detect_fov_initial` 先完成 YOLO；自动 scalebar 失败只置 `px_per_um=None`，保留检测框和 crop，后续可 `calibrate_fov`，不再把整个 detect 操作回滚为失败。
-- **暂定排序**：`output.json` 增加 `provisional`，只读已产出的 classification，按 `VERIFIED_MATCH/1.0`、`DETECTED_PENDING/0.5`、`PARTIAL_MATCH/0.25`、`CONFLICT/0` 生成候选排序；`formal_verdict`、`support_count` 和正式证据类数不变。0.5/0.25 不进入正式确认。
-- **每图 classify 上限**：fast 模式普通 YOLO crop 默认每图最多 `fast_classify_max_per_view=3` 次；identity_required 仍优先，不被该上限挡住。
-- **segment_instance / measure_instances**：仍受真实 crop、身份、标定、IGM质量和用途资格约束。模型选定分割对象后，条件满足可自动测量同一对象；自主路径不因其他实例已有量程内测量就隐藏此实例，但同输入同方法去重保留。
-
-当前模板：
-
-```text
-max_parallel = 2              # 仅独立观察并发，不是 locate 并发
-fast_fallback_max_features = 2
-fast_fallback_max_locate_calls = 6
-fast_classify_max_per_view = 3
-classify_batch_enabled = true
-context_compact = true
-context_recent_observations = 6
-context_recent_operations = 8
-context_max_actions = 20
-auto_measure_after_segment = true
-suppress_repeated_measurement = true
-supporting_probe_total = 6
-supporting_probe_per_candidate = 2
-tool_timeout_seconds = 180
-feature_scan_tile_policy = "full"
-locate_attempts_per_view = 2
-locate_attempt_reserve = 2
-initialization_reserve = 1
-glm_identity_threshold = 0.8
-locate_expand = 1.5
-locate_min_box_side = 90
-locate_min_roi_side = 256
-box_quality_enabled = true
-box_quality_retry = true
-agent_driven_coverage = true
-identity_min_confidence = medium
-feature_scan_features = []
-feature_scan_max_tiles = 4
-feature_scan_concurrency = 2
-feature_audit = true
-feature_audit_features = 模板显式列 14 类；空列表或省略时按快照中的有效裁图审计
-image_exemplar_audit = true
-image_exemplar_audit_min_det_score = 0.8
-image_exemplar_audit_max_crops = 6
-image_exemplar_audit_skip_classified = true
-image_exemplar_bank = "TCM_Fusion/config/feature_exemplar_bank.json"
-image_exemplar_positive = 4
-image_exemplar_negative = 4
-image_exemplar_seconds = 60
-cnn_weights = "分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/best.pt"
-cnn_meta = "分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/model_meta.json"
-cnn_threshold = 0.75
-cnn_entropy_threshold = 0.8
-cnn_batch_size = 16
-candidate_scope = open_strict
-a_weight / b_weight = 0.6 / 0.4
-min_support_features = 2
-```
-
-动态预算：
-
-```text
-max_initializations = N + initialization_reserve
-max_locate_attempts = max(4, locate_attempts_per_view * N + locate_attempt_reserve)
-```
-
-固定安全上限：`max_planning=60`、`max_observations=40`、`max_api_calls=200`、`max_resource_units=400`。
-
-## 当前边界
-
-- `classify_target` 保留为单 crop 路径，`classify_crops_batch` 提供逐实例批量 CNN 动作，二者共享底层 CNN 缓存；批量动作不自动 GLM/segment。
-- YOLO 仍是逐图执行，默认 `device=cpu`；尚未实现批量 YOLO/GPU 自动切换。
-- `locate_feature` 仍是逐 ROI 动作；已增加同 feature/ROI 已有框或 done locate 的过滤，没有 locate 并发。
-- fast fallback 使用 `full` 4 tile 全并发；当前 2 feature / 6 locate；全空即弃，不重试，不是零漏检保证。
-- 自动标定失败不会丢 YOLO 框，但该视野仍需显式 `calibrate_fov` 才可能有 μm。
-- 图片数不受 5 张限制，但总规划、总观察、总 API 和资源上限仍是固定安全阈值。
-- 分类通过不等于针晶通过；`纤维`、`花粉粒`、`图像不可判` 都不会自动变成针晶。
-- 没有合格 identity、mask 或标定时，可能没有 μm；这是约束，不是程序异常。
-
-## 保留的组件
-
-| 位置 | 职责 |
-|---|---|
-| `cli/main.py` | run、doctor、selftest、multi-view；five-view 为兼容别名 |
-| `lib/application/multi_view.py`、`config/multi_view.json` | 任意数量原图接口及规范模板 |
-| [代码组件](lib/README.md) | 应用编排、ReAct、MCP、视觉、证据、工作流及离线接口 |
-| `cli/*_worker`、[预算启动钩子](lib/runtime/worker_bootstrap/README.md) | 隔离解释器、API、YOLO、分类和 B 阶段执行 |
-| `lib/decision/final_assessment.py`、`output_projection` | 调查停止后综合判断；证据不足不强制确认 |
-| `skills`、`requirements-agent*.txt` | 注册技能与锁定依赖 |
-| `yolo-results` | 当前 best.pt、class_map 及训练/评测来源指标 |
-| [回归目录](tests/README.md) | 主链契约与离线功能测试，统一由 selftest 递归发现 |
-
-## 在线与离线分开
+填入本机可用的 Plan A 解释器路径。使用相同参数先做预检，再创建一次独立的真实运行。预检会校验图片、准备任务配置并写出本地就绪报告。真实运行会按所选动作调用视觉服务，可能产生 API 费用。
 
 ```powershell
-.venv\Scripts\python.exe -X utf8 -m TCM_Fusion.cli.main selftest
-.venv\Scripts\python.exe -X utf8 -m TCM_Fusion.cli.offline --help
+$python = '.\.venv\Scripts\python.exe'
+$aPython = 'D:\Anaconda\python.exe'
+$runArgs = @(
+    '-X', 'utf8', '-m', 'TCM_Fusion.cli.main', 'multi-view'
+    '--source-dir', $source, '--a-python', $aPython
+    '--subject', 'S01', '--purpose', '显微鉴别', '--json'
+)
+
+& $python @runArgs --dry-run
+if ($LASTEXITCODE -ne 0) { throw '预检失败，请查看 doctor.json 或终端错误' }
+
+& $python @runArgs
 ```
 
-离线入口保留 LangMem 提示优化/验证/发布、任务经验发布、数据划分、真值隔离评估、质量回放、校准门和工作流回放。离线功能不参与当前多图在线推理，但不能删除；在线仍可显式加载通过验证的 `prompt_release`，默认模板不加载未知提示。
+每次调用独立创建 case 目录并生成中性图像副本。默认输出到 `TCM_Fusion/运行结果/`，用 `--output-root` 可另指定落点。目录名含运行类型、对象、图数、开始时间、目的及去重短 ID。预检的 JSON `directory` 指向 case 根，真实运行的 `directory` 指向正式工件目录 `runs/fusion_<id>/`。[运行目录命名与索引](运行结果/README.md)
 
-旧 demo、无 workflow 的 active 运行器和 retired 入口不再提供命令；历史录制只作为 `tests/fixtures/recorded_pipeline.json` 的契约样本。
+## 查看结果
 
-## 输出与审计
+| 要确认的问题 | 从哪里看 |
+| --- | --- |
+| 输入是否准备好，任务是否完成 | case 根的 `input_proof.json`、`doctor.json`、`interface_status.json`。完成后用 `run_location.json` 定位正式工件。 |
+| 最终判了什么，是否需要复核 | `output.json` 中的 `status`、`top_candidate`、`review_required`，以及供人工阅读的 `report.md`。 |
+| 结论依据与缺口是什么 | `final_assessment.json` 记录候选比较、复核原因和终止原因。用 `final_evidence.json` 追到对应证据和资格。 |
+| 同一个候选的 B 分和融合分是怎样得到的 | 在 `agent_verdict.json` 的 `ranking` 找到候选 ID，对照 `score_components` 中的必需基础分与独立佐证加分，再看 `rule_score`、`a_probability` 和 `fused_score`。 |
+| 为什么选了这个动作，另一条路线当时可选吗 | `agent_trace.json` 中的 `planner_offer` 留下实际提供的菜单，`thought` 留下所选动作及简短理由。结合后续动作反馈看它是否解决了原问题。 |
+| 实例目标执行到哪一步，并发有无提前交回 | 选过语义目标时，`workflow/semantic_plan.json` 记录最近目标的节点状态和结束原因。按时间查看 `agent_trace.json` 的执行事件，`physical_partial` 表示部分结果触发规划，`physical_join` 表示该组收齐。 |
+| 哪个计算阶段失败，耗时花在何处 | `workflow/operations.json` 查看阶段终态，`workflow/action_timeline.json` 查看时间线，`workflow/ops/` 查独立 worker 工件。网络请求已预留但关闭任务时还没有回执，资源账本 `workflow/resources.json` 会以 `unknown` 收尾。 |
+| 候选为何被暂停，换路线有没有效果 | 有假设更新时看 `workflow/investigation.json`。在 `workflow/reflection_controller.json` 中分别核对反思建议、实际采纳的策略及后续动作效果。 |
+| 哪一版裁图或掩码参与了裁决 | 用 `final_evidence.json` 的 `evidence_version` 定位 `workflow/evidence/versions/<版本>.json`，按工件 ID、父依赖和摘要回查对应文件。 |
+| 如何目检裁图和 mask | `feature_audit/feature_audit.json` 按有效证据版本登记裁图、分类和 mask。正式采信以最终证据和研判工件为准。 |
 
-主要工件：
+### 实例：为什么白芍排第一，Agent 仍请求复核
 
-```text
-job.json
-a_prediction.json
-agent_trace.json
-workflow/operations.json
-workflow/action_timeline.json
-workflow/ops/
-feature_audit/feature_audit.json
-image_audit/*/audit.json
-agent_verdict.json
-fusion.json
-output.json
-final_evidence.json
-final_assessment.json
-report.md
+2026-11-18 14:04:22 的白芍单图开启了实例语义执行。归档摘要记录了 1 次初检、3 次身份分类、3 次分割和 2 次测量。白芍的 1 项必需判据获得支持，3 项辅助判据中有 1 项仅在本视野未见、2 项未查。Agent 请求复核，最终交付“暂定白芍”。即便有两次测量，独立证据广度仍只有一类。该次运行保留逐案摘要；核对新任务的逐步调用与版本可使用上表中的工件。[白芍单图运行摘要](运行结果/测试运行总报告.md#archive-case-23)
+
+## 源码与文档
+
+| 想追踪的内容 | 入口 |
+| --- | --- |
+| 从 CLI 到任务收尾 | [主入口](cli/main.py) · [应用层](lib/application/README.md) |
+| Agent 怎么选动作，工具怎样受控执行 | [Agent](lib/agent/README.md) · [MCP](lib/mcp/README.md) · [工具](lib/tools/README.md) · [工作流](lib/workflow/README.md) |
+| 工件如何入账，证据怎么进入裁决 | [证据](lib/evidence/README.md) · [决策](lib/decision/README.md) |
+| 从样品准备到运行定位 | [单图手册](单图测试操作手册.md) · [多视图方案](多图测试运行方案.md) |
+| 配置、回归与其余组件 | [配置导航](config/README.md) · [测试导航](tests/README.md) · [源码导航](lib/README.md) · [设计文档索引](融合链路文档/00_INDEX.md) |
+
+本地回归与录制工件回放分别从以下入口进入。
+
+```powershell
+& $python -X utf8 -m TCM_Fusion.cli.main selftest
+& $python -X utf8 -m TCM_Fusion.cli.offline workflow-replay --help
 ```
-
-`output.json` 始终交付 top 候选、备选、强观察、检出框和缺失证据；`review_required` 如实保留。`fusion.json` 的 `fused_score` 是排序分，不是校准正确率；正式确认仍由原规则授权。
-
-历史 `case_9cc59640` 只作参考，不能宣称验证了其后的代码。新测试应使用新 case、空 A 缓存和中性的输入副本。
-
-项目文件级地图见 [项目文件地图](../项目文件地图.md)；新手先看 [融合链路：新手快速入门](融合链路文档/00_新手快速入门.md)；其余详见 [当前实现状态](当前实现状态.md)、[修改记录](修改记录.md)、[融合链路文档索引](融合链路文档/00_INDEX.md)、[多图接口](多图测试运行方案.md)、[单图测试](单图测试操作手册.md)、[针晶个体与组织干扰改进指导](融合链路文档/08_针晶个体与组织干扰_改进指导.md)、[DAG 与旧短计划边界](融合链路文档/09_DAG与旧短计划边界.md)、[实施部署方案 v1.3](融合链路文档/10_ReAct主导的证据优化与语义DAG实施部署方案.md)。
-
-
-### 通用逐类补扫（CODE-121）
-
-新模板显式配置 `fast_recovery_selection=per_feature`、`fast_recovery_roles=[required,supporting]`。
-YOLO 初检及当前视野 crop 分类后，活动候选的受支持微粒以单类 `feature_scan:<image_id>:<feature_id>` 动作提供给 Agent。
-候选判据去重共享，`workflow.recovery_options` 给出 candidate_id/role 来源；不再按候选插入顺序截掉菜单尾部，也不重复跑 YOLO。
-模型可选择现有实例核验或补扫，不要求遍历所有选项。每视野最多执行 `fast_fallback_max_features` 类，预留 tile 数之和不超过 `fast_fallback_max_locate_calls`；pending/失败也占用，未执行选项不占用。
-跨视野已有分类时不重复补同类；这只避免重复检出，不表示候选 required 已 VERIFIED。后续核验仍用现有身份、标定及质量门。
-请求、完成文件与所有 crop 的 feature_id 必须一致，缺省/不受支持 ID 报错，不能隐式变成针晶。
-字段缺省或显式 `legacy_bundle` 保留旧任务的 required 合并扫描；历史配置与工件不修改。
-本补丁未修改模型权重、判据或正式评分；新策略的真实定位/分类收益仍须独立在线对照。
-
-
-### 提前核验第一步（CODE-124）
-
-新模板 early_verification=true。初检后不因coverage缺口过滤合法分割/测量；verification_opportunities给出活动候选相关定量核验建议，模型仍决定顺序。planning_menu记录实际送模菜单，区别于原始propose offered。旧配置字段缺省或false保留旧策略；本批没有自动连续执行分割/测量。详见《提前核验第一步说明.md》。
-
-EFF-001真实复测：同图新任务402.375秒、14次规划/7次观察，第二个mask合格并测量16.619808μm，交付暂定白芍；4次补丁有3次新观察/反证，不能称自进化。本例模型未选语义目标/双路观察；对旧408.594秒仅少1.52%，未证明明显提速。完整路径及工件见[本次测试总结（归档）](运行结果/测试运行总报告.md#archive-case-13)。
-
-
-PLANNER-CHOICES-001最终真实复测：[七轮完整路径（归档）](运行结果/测试运行总报告.md#archive-case-15)。模型自主选3组观察并行及1个量纲目标；规划14→7、观察仍7、耗时402.375→245.828秒，规划＋收尾token346885→182248。交付仍暂定白芍，1类支持<最低2；单样本/生成路线变化，非因果泛化验收。首轮编号错误和修复记录完整保留。
