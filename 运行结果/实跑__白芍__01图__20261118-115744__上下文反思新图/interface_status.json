@@ -1,8 +1,0 @@
-{
-  "schema": "multi-view-interface/v1",
-  "dry_run": false,
-  "base": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_context_reflection_newimage_20261118_115744",
-  "stage": "done",
-  "status": "completed",
-  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\case_context_reflection_newimage_20261118_115744\\runs\\fusion_f838046137c5418598d4cd7d099a37c3"
-}

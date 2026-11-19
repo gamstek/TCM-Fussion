@@ -1,8 +1,0 @@
-{
-  "schema": "multi-view-interface/v1",
-  "dry_run": false,
-  "base": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4",
-  "stage": "done",
-  "status": "completed",
-  "directory": "D:\\TCM-Microscopic-Image-Recognition-main\\TCM_Fusion\\运行结果\\龙胆_agentdrive_20261109_1645_screen4\\runs\\fusion_e5e336f2e81444d0a25bc80cf6e5ad0b"
-}

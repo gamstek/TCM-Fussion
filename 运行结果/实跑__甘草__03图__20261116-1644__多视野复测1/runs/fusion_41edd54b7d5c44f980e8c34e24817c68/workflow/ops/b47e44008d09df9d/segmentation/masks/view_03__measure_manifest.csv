@@ -1,2 +1,0 @@
-﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity
-1,view_03__fiber__inst01.png,fiber_view_03_roic19725a4d127_01,D:\TCM-Microscopic-Image-Recognition-main\TCM_Fusion\运行结果\甘草_三图1_20261116_1644\view_03.tif,fiber,纤维,,"[34, 34, 1786, 706]",11.65,review,0.531191,instance

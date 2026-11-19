@@ -1,4 +1,0 @@
-WARNING user config directory 'C:\Users\10947\AppData\Roaming\Ultralytics' is not writable, using 'C:\Users\10947\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{bab98213-2f85-4ebb-a827-6a26df9e2e79}\Temp\Ultralytics'. Set YOLO_CONFIG_DIR to override.
-Creating new Ultralytics Settings v0.0.8 file  
-View Ultralytics Settings with 'yolo settings' or at 'C:\Users\10947\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{bab98213-2f85-4ebb-a827-6a26df9e2e79}\Temp\Ultralytics\settings.json'
-Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings
