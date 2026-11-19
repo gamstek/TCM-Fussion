@@ -1,53 +1,27 @@
-# 工作流修复
+# workflow_repair · 取得合格实例工件
 
-先查询原图、crop、mask、尺度和失败状态。修复阻塞依赖是建议，调查顺序和对象由模型选择；只选当前合法目标。检测归检测侧，尺寸只来自真实 mask 和可信标定。无尺度时不采信尺寸，仍可选择不依赖尺度的合法工具；预算耗尽按当前状态收尾；不把 A 猜测或人工真值送入视觉提示。
+围绕一个调查问题，选择能发现实例、解除前置阻塞或取得合格测量的动作。工具产物由工作流核验并登记到当前样品。
 
-## 当前工具依赖（不是全任务的强制顺序）
+## 适用条件
 
-```text
-detect_fov_initial
-→ classify_crops_batch / classify_target
-→ segment_instance
-→ measure_instances
-→ 缺 required 时 feature_scan / hybrid_scan 兜底
-→ locate_feature（box_quality 重定位）
-```
+已有观察还不足以回答候选判据，但当轮菜单中存在能推进调查的原图、区域、裁图或掩码。先确认缺的是位置、身份、比例尺还是具体量纲。某个实例受阻时，其他视野或竞争候选仍可调查。
 
-- `feature_scan` 按 `feature_id` 分块扫描；`hybrid_scan` 仅旧配置 `legacy_bundle` 使用。
-- 同一 `(image, ROI)` 已有 locate 后，不再为其他 feature 重复 locate。
-- `classify_target` 是单 crop；`classify_crops_batch` 已接入。YOLO batch/GPU、locate 批量并发尚未实现。原图存在性观察可独立选择，不必等待所有视野完成初检。
+## 行动选择
 
-## 身份门
+| 当前缺口 | 可选入口与前置条件 |
+| --- | --- |
+| 还没有目标，或需在另一处寻找 | `detect_fov_initial` 对选定视野做 YOLO 初检，`detect_region` 对已有区域重检。`feature_scan` 按特征分块补扫，`locate_feature` 在指定区域内定位。`hybrid_scan` 仅在任务配置生成相应目标且菜单提供时可选。同一物理区域的既有结果应先核对。 |
+| 已有裁图，身份不明 | `classify_crops_batch` 对当前批次逐个返回 CNN 结果。低置信或其他类留作待复核，批量动作不会逐张自动发起 GLM。`classify_target` 用于单实例复核。`image_exemplar_audit` 将目标与正例、易混反例对照，其意见供审计。 |
+| 已有目标，需要可信尺寸 | 标定缺失时可用 `calibrate_fov`。对准入的实例，`segment_instance` 获取掩码，`measure_instances` 使用合格掩码和同视野可信标定取得实际数值。检查所需的是长度、宽度还是面积。 |
 
-存在未分类低分 `identity_required` crop 时：
+只需一步时选择当轮动作。若菜单提供 C 的实例目标，可选择“核验身份”或某个具体量纲，由执行器逐步绑定当前有效工件。核验身份只授权身份任务。D4 允许从不同视野选择同类初检或单实例分类。只有每一路本身都值得做时，才组成并发组。每一路分别记录结果，保留失败分支的原因。
 
-```text
-identity_pending
-→ 该crop通过身份前不得segment/measure
-→ 其他合法调查、暂停或review仍可选
-```
+## 结果与边界
 
-classify 失败或不可判会记录，不会无限重试；`identity_required` crop 未通过分类时任何 `det_score` 都不绕过身份门。
+- 对标有 `identity_required` 的目标，检测高分不能替代同类别身份通过。`blank` 阻断分割，`low_detail` 是画面细节不足的提示。已获分割准入仍需核对实际掩码和用途质量。
+- 记录实际完成、失败和未查的分块或批次项目。定位无结果只回答这次查找。上游身份、掩码或标定改变后，重新核对下游测量的绑定和有效版本。
+- 同实例、同输入、同方法的重复操作受运行时去重。身份改判、掩码需复核、所需量纲缺失或预算不足时，将原因交回 ReAct。任务内反思可建议换实例、方法或视野，证据资格仍由程序核验。
 
-## 质量与边界
+## 示例
 
-D3的task_reflection包含待回应补丁和上次后验。可在同一次ReAct回复中接受/修改reflection_patch，说明要改变输入、方法、视野或问题；不得把反思改成证据。后验无效时考虑review，仍由你决定调查取舍。只有semantic_options出现才可附实例semantic_goal；运行时晚绑定每个节点，遇身份/质量/预算问题会立即交回你，不能输出具体工具序列或未来crop/seg ID。
-
-`low_detail`是灰度/边缘变化偏低的建议，不能据此断言目标不可分割。同类别身份确认后允许选择该对象的segment；仍须满足标定、预算与工具前置。分类摘要的segmentation_admission只说明裁图/身份准入，不授予量纲资格。blank仍阻断；不提供仅因low_detail禁止分割的旧开关。选择分割不等于mask或测量已合格。
-
-`purpose_v1` 用 `read_quality` 区分完整性、诊断、用途资格。中心点未命中不是自动判错；身份未知、触边、极性及粘连疑点不能忽略。review mask 不自动提供阳性存在性或尺寸，资格由程序生成。反思仅调整动作策略，不改工件、尺度、判据、权限或资格。
-
-启用定向补救时，依据实际证据缺口决定是否分块扫描。GLM 提出的框必须经过单独身份核验，才允许分割；GLM 定位无结果表示未知，不是阴性。
-
-
-EFF-001：按semantic_goal_contract明确授权范围；verify_identity只核验身份，需要长度/宽度/面积时可自主选择对应measure目标。语义节点内部按工具真实依赖运行，任一失败返回ReAct，不把目标扩成未来工具清单。
-
-反思看同一question_id的分轴进展：新crop是能力，unreadable是输入诊断，合格测量才可能成为证据；扫描到分类不是换问题。重复激活已有候选可能是no-op；review退出与新增证据分别记录，不以文字或补丁数量证明自进化。
-
-PLANNER-CHOICES-001：真实规划使用同一主选择decision：action选A编号；instance_goal选execution_options.goals中的G编号；observe_questions选questions中的1–2个Q编号。G已关联入口、实例、目标与可能节省的规划上界，不用手抄工件ID或工具链；身份目标不能授权分割。该上界不代表减少API或保证成功，既有自动测量可能已省一次规划。
-
-Q组只授权当前可见合法的presence/scene观察；若第二问题是否值得做依赖首项结果，保留单步。程序复核权限/预算/依赖，父循环顺序确认，失败不抹掉伙伴。它不生成未来target，不要求逐项查完；执行独立不等于统计独立来源。旧action_id、semantic_goal、parallel_question_id保留兼容，不能与新主选择混填。
-
-CANDIDATE-AUDIT-001：candidate_audit保留五折候选并集及逐项required/supporting，暂停不删除证据，不得将unchecked、工具不可达或kb_unmapped说成排除。自主模式不再因别的crop未分类阻止独立特征补扫；同对象的分割/测量仍须身份/QA/标定。模型自行选择共享检查、目标或复核，不要求为了打卡穷举全部工具。
-
-FAIR-INVESTIGATION-001：用问题卡选择当前入口，不手抄未来crop/工具序列。先查竞争候选或先做YOLO均合法；模型应解释哪条路线能推进主解释或解决候选差异。primary_required_progress、candidate_support_changes和qualified_counter_changes分开；支持新增、顺序变化及局部未见均不能自动证明候选已区分。Reflection只改调查策略，不能把这些诊断改成证据或裁决。
+批量初判返回一张待复核裁图，候选差异恰好取决于该结构的宽度。若菜单提供，可选这个实例的宽度目标。若单体复核改判为另一类，就记录改判并回到规划。若身份通过但掩码需复核，保留身份结果和掩码问题，宽度继续记缺。
