@@ -15,10 +15,10 @@ import unittest
 from pathlib import Path
 
 import paths
-from rule_engine import KnowledgeBase
+from rule_engine import EvidenceCard, KnowledgeBase, evaluate_candidate
 
 from TCM_Fusion.lib.decision.ab_fusion import apply_ab_fusion
-from TCM_Fusion.lib.decision.rule_scoring import score_candidate, rank_and_decide
+from TCM_Fusion.lib.decision.rule_scoring import decide, score_candidate, rank_and_decide
 
 
 def check(fid, role, contribution, state='NO_REF', bounds=None, weight=1, scene=1):
@@ -70,6 +70,24 @@ class ABFusionTest(unittest.TestCase):
                 self.assertEqual(row['score_components']['supporting_bonus'],0)
                 self.assertFalse(row['score_components']['required_complete'])
                 self.assertIsNone(rank_and_decide([row],1)['conclusion'])
+
+    def test_missing_evidence_penalty_shadow_keeps_required_gap(self):
+        kb = KnowledgeBase(Path(paths.JUDGE_DIR) / 'data/herb_criteria.json')
+        fiber = EvidenceCard('fiber')
+        fiber.instance_refs = [('view', 1)]
+        fiber.confs = [.9]
+        fiber.dims = {'mean_width': {'values': [11.5], 'uncal_only': False}}
+        fiber.shape = {'aspect_ratio': 6}
+        cards = {'fiber': fiber}
+        candidate = next(c for c in kb.candidates() if c['id'] == '大腹皮')
+        actual = next(r for r in decide(kb, cards)['ranking'] if r['id'] == candidate['id'])
+        raw = evaluate_candidate(candidate, cards, kb)
+        shadow = score_candidate({**raw, 'absent_required': []})
+        self.assertEqual(actual['absent_required'][0]['basis'], 'missing_admitted_evidence')
+        self.assertEqual(actual['score_components']['missing_required_penalty'], .06)
+        self.assertEqual(actual['rule_score'], .352)
+        self.assertEqual(shadow['rule_score'], .4)
+        self.assertIsNone(rank_and_decide([shadow], 1)['conclusion'])
 
     def test_caps_ignore_support_and_cannot_be_bypassed_by_scene(self):
         wide = check('wide','required',1,'IN_RANGE',{'min':10,'max':90},scene=1.1)

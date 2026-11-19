@@ -157,12 +157,16 @@ class FairInvestigationTests(fixtures.FairInvestigationFixture, unittest.TestCas
         self.assertEqual(prior['fold_observations'],5)
 
     def test_competing_positive_does_not_erase_main_gap_or_claim_exclusion(self):
-        r=self.prepare();obs=[self.observation(r,'gelatinized_starch')]
-        view=r.decision_view({'observations':obs,'attempted':[]});focus=view['investigation_focus']
-        self.assertIn('cluster_crystal',focus['lead_required_gaps']['白芍'])
-        self.assertIn('gelatinized_starch',focus['competing_support']['郁金'])
-        cards=compact(view['comparison'])['questions']
-        self.assertEqual(cards[0]['feature_id'],'cluster_crystal')
+        runtime = self.prepare()
+        runtime.a['fold_rankings'][4] = [{'label': '猪苓', 'probability': 1}]
+        for tool in ('detect_fov_initial', 'segment_instance', 'measure_instances'):
+            action = next(a for a in runtime.workflow.propose() if a['tool'] == tool)
+            self.assertEqual(runtime.workflow.execute(action)['status'], 'done')
+        view = runtime.decision_view({'observations': [], 'attempted': []})
+        focus = view['investigation_focus']
+        self.assertIn('cluster_crystal', focus['lead_required_gaps']['白芍'])
+        self.assertIn('single_crystal', focus['competing_support']['猪苓'])
+        self.assertEqual(compact(view['comparison'])['questions'][0]['feature_id'], 'cluster_crystal')
 
     def test_model_may_choose_competitor_before_yolo_and_then_return_to_yolo(self):
         r=self.prepare();calls=[]
@@ -220,18 +224,23 @@ class FairInvestigationTests(fixtures.FairInvestigationFixture, unittest.TestCas
         self.assertEqual(out['status'],'undetermined');self.assertTrue(out['review_required'])
 
     def test_competitor_support_is_not_reported_as_main_counter_or_discrimination(self):
-        r=self.prepare();before=snapshot(r.score([]),primary_ids=['白芍'])
-        after=snapshot(r.score([self.observation(r,'gelatinized_starch')]))
-        f=evaluate(before,after,{'tool':'presence_check','args':{'feature_id':'gelatinized_starch'}},
-                   accepted=True,result={'present':True,'conf':.9})
-        self.assertIn('郁金',f['candidate_support_changes'])
+        baseline = {'cards': {}, 'decision': {'ranking': [{'id': '白芍'}, {'id': '猪苓'}]}}
+        check = {'feature_id': 'single_crystal', 'role': 'required', 'present': True,
+                 'state': 'IN_RANGE', 'quant_bounds': {'dim': 'feret_max', 'min': 3, 'max': 60},
+                 'score_contribution': 1}
+        measured = {**baseline, 'decision': {'ranking': [{'id': '白芍'}, {'id': '猪苓', 'checks': [check]}]}}
+        f = evaluate(snapshot(baseline, primary_ids=['白芍']), snapshot(measured),
+                     {'tool': 'measure_instances'}, accepted=True)
+        self.assertIn('猪苓',f['candidate_support_changes'])
         self.assertEqual(f['qualified_counter_changes'],[])
         self.assertFalse(f['primary_required_progress']);self.assertEqual(f['discrimination_progress'],'not_established')
 
     def test_true_quantitative_counter_is_separate_from_positive_support(self):
-        before={'features':{},'checks':{'a:f':'NOT_DETECTED'},'ranking':['a'],
+        before={'features':{},'criterion_counters':[],'ranking':['a'],
                 'primary_ids':['a'],'required':{'a':['f']}}
-        after={**before,'checks':{'a:f':'OUT_OF_RANGE'}}
-        f=evaluate(before,after,{'tool':'measure_instances'},accepted=True)
+        check = {'feature_id': 'f', 'role': 'required', 'present': True, 'state': 'OUT_OF_RANGE',
+                 'quant_bounds': {'dim': 'feret_max', 'min': 1, 'max': 20}}
+        after = snapshot({'cards': {}, 'decision': {'ranking': [{'id': 'a', 'checks': [check]}]}})
+        f = evaluate(before, after, {'tool': 'measure_instances'}, accepted=True)
         self.assertEqual(f['qualified_counter_changes'],['a:f']);self.assertTrue(f['primary_required_progress'])
         self.assertEqual(f['discrimination_progress'],'qualified_counter_added')

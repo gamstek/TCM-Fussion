@@ -131,16 +131,22 @@ class QualityTests(unittest.TestCase):
         self.assertEqual(set(stages),{'binary','filled','resized','pre_box','legacy_final'})
 
     def test_negative_observation_is_useful_but_not_positive_evidence(self):
-        s={'features':{},'checks':{},'ranking':[],'verdict':'insufficient_evidence'}
-        action={'tool':'presence_check','args':{'feature_id':'fiber'}}
-        v=evaluate(s,s,action,accepted=True,result={'present':False,'conf':.9})
-        self.assertTrue(v['useful']);self.assertEqual(v['new_features'],[])
+        before = {'features': {}, 'ranking': []}
+        after = {**before, 'observed_absence': [('fov', 'fiber')]}
+        action = {'tool': 'presence_check', 'args': {'image_id': 'fov', 'feature_id': 'fiber'}}
+        result = {'present': False, 'conf': .9}
+        value = evaluate(before, after, action, accepted=True, result=result)
+        self.assertTrue(value['useful'])
+        self.assertEqual(value['new_local_absence'], ['fiber'])
+        self.assertEqual(value['new_features'], [])
+        self.assertEqual(value['qualified_counter_changes'], [])
+        self.assertFalse(evaluate(before, before, action, accepted=True, result=result)['useful'])
 
     def test_repeated_same_fov_absence_is_not_new_gain(self):
         state={'features':{},'checks':{},'ranking':[],'observed_absence':[('fov','fiber')]}
         value=evaluate(state,state,{'tool':'presence_check','args':{'feature_id':'fiber','image_id':'fov'}},
             accepted=True,result={'present':False,'conf':.9})
-        self.assertFalse(value['useful']);self.assertEqual(value['new_counterevidence'],[])
+        self.assertFalse(value['useful']);self.assertEqual(value['new_local_absence'],[])
 
     def test_real_process_hard_deadline_kills_hanging_worker(self):
         import subprocess

@@ -20,17 +20,48 @@ evidence_paths关联直接/发现入口；prior_summary及investigation_focus保
 - 调用方 「lib/agent/planning_choices.py」、「lib/agent/react_graph.py」、「lib/agent/reflection_controller.py」、「lib/decision/candidate_audit.py」、「lib/workflow/evidence_runtime.py」、「lib/workflow/workflow_runtime.py」。
 - 直接依赖 「lib/runtime/storage.py」、「lib/vision/feature_profiles.py」。
 """
-from TCM_Fusion.lib.runtime.storage import digest, read_json
+from itertools import combinations
+from math import inf
+
+from TCM_Fusion.lib.evidence.evidence_projection import (
+    MORPHOLOGY_UNVERIFIED, counters_criterion, supports_criterion,
+)
+from TCM_Fusion.lib.runtime.storage import digest, finite_number, read_json
+
+
+def _bounds(reference):
+    if not isinstance(reference, dict) or not reference.get('dim'):
+        return None
+    low, high, extreme = (reference.get(k) for k in ('min', 'max', 'extreme'))
+    if (low is None and high is None
+            or any(value is not None and not finite_number(value) for value in (low, high, extreme))):
+        return None
+    if low is not None and high is not None and low > high:
+        return None
+    if high is None:
+        high = inf
+    elif extreme is not None:
+        high = max(high, extreme)
+    return reference['dim'], -inf if low is None else low, high
+
+
+def _pair_relation(first, second):
+    left, right = _bounds(first), _bounds(second)
+    if left is None or right is None or left[0] != right[0]:
+        return 'not_comparable'
+    return 'overlap' if max(left[1], right[1]) <= min(left[2], right[2]) else 'disjoint'
+
+
+def _summarize_relations(relations):
+    relations = set(relations)
+    if not relations or 'not_comparable' in relations:
+        return 'not_comparable'
+    return relations.pop() if len(relations) == 1 else 'mixed'
 
 
 def range_relation(references):
-    """未知参考/不同量纲不能被解释为区间互斥；不改变原B数值规则。"""
-    if len(references) < 2 or any(not isinstance(q, dict) for q in references):
-        return 'not_comparable'
-    if len({q.get('dim') for q in references}) != 1 or any(
-            not isinstance(q.get(k), (int, float)) for q in references for k in ('min', 'max')):
-        return 'not_comparable'
-    return 'overlap' if max(q['min'] for q in references) <= min(q['max'] for q in references) else 'disjoint'
+    """汇总逐对关系，单侧参考和个别可达上界沿用 B 的量纲规则。"""
+    return _summarize_relations(_pair_relation(*pair) for pair in combinations(references, 2))
 
 
 def canonical_presence_hint(runtime, feature_id):
@@ -170,7 +201,7 @@ def build(runtime, scored, eligibility, actions):
     paths = evidence_paths(runtime, actions,
         {c['feature'] for cid in active if cid in kb for c in kb[cid]['criteria']})
     candidates = {r['id']: r for r in scored['decision'].get('ranking', [])}
-    groups = {}; boundaries = []; physical_facts = {}
+    groups = {}; boundaries = []; physical_facts = {}; references = {}
     for cid in active:
         candidate = kb.get(cid)
         if not candidate or not candidate.get('criteria'):
@@ -184,6 +215,7 @@ def build(runtime, scored, eligibility, actions):
                                'repeat_will_help': False, 'legal_action_ids': []})
         for criterion in candidate['criteria']:
             fid = criterion['feature']; quant = criterion.get('quant') or {}
+            references.setdefault(fid, {})[cid] = criterion.get('quant')
             signature = {'feature_id': fid, 'purpose': 'measure' if quant else 'observe',
                          'dimension': quant.get('dim'), 'morphology_question': criterion.get('morph') or ''}
             qid = 'question:' + digest(signature)[:24]
@@ -197,11 +229,14 @@ def build(runtime, scored, eligibility, actions):
                             'stats': check.get('stats')}
                 fact_ref = 'physical:' + digest(physical)[:24]
                 physical_facts[fact_ref] = physical
+            state = check.get('state', 'unknown')
             question['consumers'].append({'candidate_id': cid, 'role': criterion.get('role'),
-                'quant': criterion.get('quant'), 'state': check.get('state', 'unknown'),
+                'quant': criterion.get('quant'), 'state': state,
                 'fact_ref': fact_ref, 'q_state': check.get('q_state'),
                 'reference_state': 'available' if quant else 'not_provided',
-                'capability_gap': 'knowledge_reference' if check.get('state') == 'NO_REF' else None,
+                'criterion_assessed': supports_criterion(check) or counters_criterion(check),
+                'capability_gap': ('criterion_morphology' if state == MORPHOLOGY_UNVERIFIED else
+                                   'knowledge_reference' if state == 'NO_REF' else None),
                 'remeasure_can_supply_reference': False,
                 'is_exclusion': False})
             for row in eligibility['projections']:
@@ -215,6 +250,7 @@ def build(runtime, scored, eligibility, actions):
         return (not book.get('closed') and
                 book.get('used',{}).get(pool,0)<runtime.workflow.limits.get(pool,0) and
                 book.get('used',{}).get('total',0)<runtime.workflow.limits.get('total',0))
+    pair_cache = {}
     for question in groups.values():
         relevant = [a for a in related.get(question['feature_id'], [])
                     if a['tool'] != 'presence_check' or
@@ -226,11 +262,7 @@ def build(runtime, scored, eligibility, actions):
         question['required_by'] = [c['candidate_id'] for c in question['consumers'] if c['role']=='required']
         question['supporting_by'] = [c['candidate_id'] for c in question['consumers'] if c['role']!='required']
         question['evidence_refs'] = sorted(set(question['evidence_refs']))
-        states = {c['state'] for c in question['consumers']}
-        accepted_states = {'IN_RANGE', 'EXTREME', 'OUT_OF_RANGE'}
-        if question['purpose'] == 'observe':
-            accepted_states.add('NO_REF')
-        answered = bool(states) and states <= accepted_states
+        answered = all(c['criterion_assessed'] for c in question['consumers'])
         if answered:
             capability = 'satisfied_by_current_rule_checks'
         elif book.get('closed') or relevant and not any(affordable(a) for a in relevant):
@@ -254,14 +286,22 @@ def build(runtime, scored, eligibility, actions):
                                 else ['当前视野有效观察','候选形态判据单独解释'],
             evidence_limits='特征阳性仅支持相应判据；不自动排除其他药材；后继不存在则回交ReAct',
             may_select_or_review=True, is_evidence=False)
-        # 同特征不同形态问题仍分别保留；参考比较跨消费者，缺参考不伪造反证。
-        references = [c.get('quant') for cid in active if cid in kb for c in kb[cid]['criteria']
-            if c['feature'] == question['feature_id'] and (not c.get('quant') or
-                not question['dimension'] or c['quant'].get('dim') == question['dimension'])]
-        question['range_relation'] = range_relation(references)
-        question['overlapping_ranges'] = question['range_relation'] == 'overlap'
-        question['interpretation_note'] = ('overlap cannot by itself distinguish candidates'
-            if question['overlapping_ranges'] else 'unobserved or failed is not candidate absence')
+        if question['dimension']:
+            fid = question['feature_id']
+            if fid not in pair_cache:
+                pair_cache[fid] = [
+                    {'candidate_ids': [left, right], 'relation': _pair_relation(a, b)}
+                    for (left, a), (right, b) in combinations(references[fid].items(), 2)
+                ]
+            consumers = set(question['current_states'])
+            pairs = [pair for pair in pair_cache[fid] if consumers.intersection(pair['candidate_ids'])]
+        else:
+            pairs = []
+        question['range_pairs'] = pairs
+        question['range_relation'] = _summarize_relations(pair['relation'] for pair in pairs)
+        question['overlapping_ranges'] = any(pair['relation'] == 'overlap' for pair in pairs)
+        question['interpretation_note'] = ('仅比较区间。实测落入一方的独有范围，才能用这一量纲区分该候选对。'
+            if pairs else '证据以当前视野和实际核验用途为准。')
     # 通用存在性是一个物理查询；各候选的形态/量纲要求仍保留为独立解释问题。
     shared_queries = []
     for fid, feature_actions in related.items():
@@ -288,7 +328,8 @@ def build(runtime, scored, eligibility, actions):
             'inactive_candidates': interest.get('inactive_ids', []),
             'questions': list(groups.values()), 'shared_queries': shared_queries, 'boundaries': boundaries,
             'physical_facts': physical_facts,
-            'score_semantics': {'rule_score': 'b-rule/2，required基础分与独立佐证加分',
+            'score_semantics': {'rule_score': 'required基础分与独立佐证加分',
+                MORPHOLOGY_UNVERIFIED: '已观察到该类结构，具体判据形态待核验',
                 'required_confidence': '候选必需判据达成度，用于计算基础分与佐证加分上限',
                 'NO_REF': '缺KB参考，不等于未测量或超范围；重测不能生成参考；不排除消费者',
                 'supporting': '候选全部required核验通过后，独立supporting才可加分；已有观察可供其他候选核对'},
@@ -303,11 +344,13 @@ def compact(view, limit=8):
                        and c['role']=='required' for c in q['consumers']),
                        q['capability'] not in {'supported','reachable_via_prerequisite'},
                        len({c['candidate_id'] for c in q['consumers']}) < 2, q['problem_id']))
+    relation_order = {'disjoint': 0, 'overlap': 1, 'not_comparable': 2}
     return {'active_candidates': view['active_candidates'], 'a_topk_union': view['a_topk_union'],
             'shared_queries': view['shared_queries'][:limit], 'shared_queries_total': len(view['shared_queries']),
             'questions': [{**{k: q[k] for k in ('problem_id','feature_id','purpose','dimension',
                 'capability','overlapping_ranges','range_relation','interpretation_note','costs','legal_action_ids',
                 'entry_paths','current_states','required_by','supporting_by','future_requirements','evidence_limits')},
+                'range_pairs': sorted(q.get('range_pairs', []), key=lambda p: relation_order[p['relation']])[:4],
                 'consumers':q['consumers'][:8], 'consumers_total':len(q['consumers'])}
                 for q in questions[:limit]], 'boundaries': view['boundaries'],
             'physical_facts': {key: fact for key, fact in view.get('physical_facts', {}).items()

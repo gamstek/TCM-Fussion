@@ -38,17 +38,22 @@ def reference_allowed(row, candidate_id, relation='support'):
             and candidate_id in row.get('counters_candidate_ids', []))
 
 
-def presence_state(observation, kb):
+def presence_state(observation, kb, images=None):
     """分类局部观察，缺结果、失败和低置信均为未知。"""
     action = observation.get('action') or {}
     result = observation.get('result') or {}
-    fid = (action.get('args') or {}).get('feature_id')
+    args = action.get('args') or {}
+    fid = args.get('feature_id')
     if (observation.get('accepted') and action.get('tool') == 'presence_check'
             and result.get('ok') is True and type(result.get('present')) is bool
+            and (images is None or args.get('image_id') in images)
             and kb.tier(fid) in {'P1', 'C'}
             and finite_number(result.get('conf'), minimum=.5, maximum=1)):
         return 'present' if result['present'] else 'absent'
     return 'unknown'
+
+
+MORPHOLOGY_UNVERIFIED = 'MORPHOLOGY_UNVERIFIED'
 
 
 def supports_criterion(check):
@@ -57,6 +62,11 @@ def supports_criterion(check):
     return bool(check.get('present') and (check.get('score_contribution') or 0) > 0
                 and (state in {'IN_RANGE', 'EXTREME'} or
                      state == 'NO_REF' and not check.get('quant_bounds')))
+
+
+def counters_criterion(check):
+    """合格物理量纲超出参考范围时才生成判据反证。"""
+    return bool(check.get('present') and check.get('quant_bounds') and check.get('state') == 'OUT_OF_RANGE')
 
 
 def considered_candidates(runtime, decision, verdict=None):
@@ -122,10 +132,11 @@ def build(runtime, scored, observations, *, verdict=None):
         support = []; counter = []; diagnostic = []; invalid = []; gaps = []
         for check in row.get('checks', []):
             state = check.get('state'); quantitative = bool(check.get('quant_bounds'))
-            countered = bool(check.get('present') and quantitative and state == 'OUT_OF_RANGE')
+            countered = counters_criterion(check)
             positive = supports_criterion(check)
             data = {'candidate_id': cid, **copy.deepcopy(check),
-                    'claim_scope': 'quantitative_criterion' if quantitative else 'presence_or_morphology',
+                    'claim_scope': ('quantitative_criterion' if quantitative else
+                        check.get('observation_scope', 'qualitative_rule')),
                     'dimension_eligible': bool(quantitative and state in {'IN_RANGE', 'EXTREME', 'OUT_OF_RANGE'})}
             entry = fact('criterion', data, [cid] if positive else [],
                          [cid] if countered else [],
@@ -152,10 +163,11 @@ def build(runtime, scored, observations, *, verdict=None):
         args = action.get('args') or {}; fid = args.get('feature_id')
         related = [cid for cid, checks in checks_by_candidate.items()
                    if any(c.get('feature_id') == fid for c in checks)]
-        observed_state = presence_state(obs, runtime.kb)
+        observed_state = presence_state(obs, runtime.kb, runtime.images)
         entry = fact('observation', {'accepted': bool(obs.get('accepted')),
             'action': {k: action.get(k) for k in ('tool', 'args', 'action_id')}, 'result': result,
             'observation_state': observed_state, 'dimension_eligible': False,
+            'claim_scope': 'feature_presence' if action.get('tool') == 'presence_check' else 'scene_context',
             'related_candidate_ids': sorted(related),
             'scope': 'bound field of view only; failure is unknown, absence does not exclude a sample'},
             related if observed_state == 'present' else [],

@@ -143,11 +143,17 @@ class CandidateAuditTests(unittest.TestCase):
         self.assertEqual(len(short['candidates']),len(a['candidates']))
 
     def test_pausing_candidate_does_not_erase_admitted_positive_support(self):
-        r=self.prepare();obs=[self.observation(r,'gelatinized_starch',True)]
-        r.update_hypotheses([{'candidate_id':'郁金','status':'paused','reason':'explicit defer, not exclusion'}],r.score(obs)['evidence_digest'])
-        row=next(c for c in self.audit(r,obs)['candidates']if c['candidate_id']=='郁金')
-        self.assertEqual(row['hypothesis_status'],'paused')
-        self.assertTrue(row['required'][0]['satisfies_criterion']);self.assertFalse(row['paused_is_excluded'])
+        runtime = self.prepare()
+        runtime.a['fold_rankings'][0] = [{'label': '猪苓', 'probability': 1}]
+        for tool in ('detect_fov_initial', 'segment_instance', 'measure_instances'):
+            action = next(a for a in runtime.workflow.propose() if a['tool'] == tool)
+            self.assertEqual(runtime.workflow.execute(action)['status'], 'done')
+        runtime.update_hypotheses([{'candidate_id': '猪苓', 'status': 'paused', 'reason': 'explicit defer'}],
+                                  runtime.score([])['evidence_digest'])
+        row = next(c for c in self.audit(runtime)['candidates'] if c['candidate_id'] == '猪苓')
+        self.assertEqual(row['hypothesis_status'], 'paused')
+        self.assertTrue(row['required'][0]['satisfies_criterion'])
+        self.assertFalse(row['paused_is_excluded'])
 
     def test_top_required_complete_does_not_hide_remaining_cohort_gaps(self):
         r=self.prepare();seen=[]

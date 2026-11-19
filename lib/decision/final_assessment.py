@@ -195,7 +195,7 @@ def _compact_fact(fact):
               'use_qualification':data.get('use_qualification')}
     elif kind=='observation':
         action=data.get('action') or {};result=data.get('result') or {}
-        data={'accepted':data.get('accepted'),'scope':data.get('scope'),
+        data={'accepted':data.get('accepted'),'scope':data.get('scope'),'claim_scope':data.get('claim_scope'),
               'observation_state':data.get('observation_state'),
               'action':{'tool':action.get('tool'),'args':{k:action.get('args',{}).get(k)
                         for k in ('image_id','feature_id')}},
@@ -274,6 +274,7 @@ def request_model(runtime, packet):
          '未知包括不可判、失败和未查；不能用它们否定特征或药材。'
          '优先从candidate索引的eligible_support_refs/eligible_counter_refs选择已有ID。'
          '解释中引用事实ID。A仅是先验，不得将融合分数写成已校准正确率。'
+         'feature_presence仅说明该视野的结构存在性。具体形态和尺寸以已采信判据为准。'
          'explanation只分析证据、冲突和缺口，不复述任何分数、概率或数值；数值由程序按候选ID输出。'
          'termination是执行停止原因，与正式规则的needs_review和证据广度分开说明。'},
         {'role':'user','content':text}]}

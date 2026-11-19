@@ -90,41 +90,49 @@ class EvidenceRuntime:
         )
 
     def _score_rules(self, observations, threshold):
+        from TCM_Fusion.lib.evidence.evidence_projection import presence_state
+
         cards = pool_evidence(self.records)
+        instance_features = {fid for fid, card in cards.items() if card.present}
         scene = scene_attributes.build_scene(self.records)
         answers = []
         injected = set()
+        presence_questions = {}
+        observation_states = []
         for observation in observations:
-            if not observation.get("accepted"):
-                continue
-            action, result = observation["action"], observation["result"]
-            if action["tool"] == "scene_check":
+            action = observation["action"]
+            if action["tool"] == "scene_check" and observation.get("accepted"):
                 for stem in self.images[action["args"]["image_id"]]["stems"]:
-                    answers.append({"fov": stem, **result})
-            elif action["tool"] == "presence_check" and result["present"] and result["conf"] >= 0.5:
+                    answers.append({"fov": stem, **observation["result"]})
+            if action["tool"] == "presence_check":
                 fid = action["args"]["feature_id"]
-                key = (fid, action["args"]["image_id"])
+                image = action["args"]["image_id"]
+                state = presence_state(observation, self.kb, self.images)
+                observation_states.append({'image_id': image, 'feature_id': fid,
+                    'state': state, 'scope': 'observed_fov_only'})
+                if state != 'present':
+                    continue
+                if fid not in instance_features:
+                    hint = str(action['args'].get('morph_hint') or '').strip()
+                    presence_questions.setdefault(fid, set()).add(hint)
+                key = (fid, image)
                 if key in injected:
                     continue
                 injected.add(key)
                 card = cards.setdefault(fid, EvidenceCard(fid))
                 card.uncal_refs.append(("agent:"+key[1], 0))
-                card.confs.append(result["conf"])
+                card.confs.append(observation["result"]["conf"])
                 card.conf_assumed = True  # 不创建dims/px_per_um/尺寸
         if answers:
             scene = scene_attributes.merge_vlm_scene(scene, answers)
-        decision = decide(self.kb, cards, scene=scene, min_support_features=threshold)
-        observation_states=[]
-        from TCM_Fusion.lib.evidence.evidence_projection import presence_state
-        for observation in observations:
-            action=observation['action']
-            if action['tool']=='presence_check':
-                observation_states.append({'image_id':action['args']['image_id'],'feature_id':action['args']['feature_id'],
-                    'state':presence_state(observation, self.kb),
-                    'scope':'observed_fov_only'})
+        decision = decide(self.kb, cards, scene=scene, min_support_features=threshold,
+                          presence_questions=presence_questions)
+        fingerprint = {"scene": scene, "cards": {k: vars(v) for k, v in cards.items()}}
+        if presence_questions:
+            fingerprint['presence_questions'] = {fid: sorted(hints) for fid, hints in presence_questions.items()}
         return {"cards": cards, "scene": scene, "decision": decision,
                 'observation_states':observation_states,
-                "evidence_digest": digest({"scene": scene, "cards": {k: vars(v) for k,v in cards.items()}})}
+                "evidence_digest": digest(fingerprint)}
 
     def action(self, tool, args, skill, *, mandatory=False, priority=()):
         body = {"tool": tool, "args": args, "skill": skill,

@@ -67,7 +67,7 @@ class ReflectionStrategyTests(unittest.TestCase):
         r=self.detected();c=ReflectionController(r);decision=r.score([])['decision']
         for i in range(4):
             feedback={'accepted':True,'new_features':['gelatinized_starch'] if i%2 else [],
-                      'new_counterevidence':['stoma'] if not i%2 else [],'useful':True}
+                      'new_local_absence':['stoma'] if not i%2 else [],'useful':True}
             c.record(r.action('read_scale',{},'evidence_inspection'),progress=True,feedback=feedback,
                      evidence_version='v'+str(i),candidate_state=decision)
         self.assertIsNone(c.propose({'no_gain':0}))
@@ -195,6 +195,13 @@ class ReflectionStrategyTests(unittest.TestCase):
         self.assertEqual(range_relation([a,dict(a,min=20,max=40)]),'overlap')
         self.assertEqual(range_relation([a,dict(a,min=40,max=50)]),'disjoint')
         self.assertEqual(range_relation([a,dict(a,dim='mean_width')]),'not_comparable')
+
+    def test_range_relation_uses_inclusive_bounds_and_accepted_extremes(self):
+        a = {'dim': 'feret_max', 'min': 11, 'max': 35}
+        self.assertEqual(range_relation([a, {**a, 'min': None, 'max': 11}]), 'overlap')
+        self.assertEqual(range_relation([a, {**a, 'min': None, 'max': 10}]), 'disjoint')
+        self.assertEqual(range_relation([a, {**a, 'min': None, 'max': 10, 'extreme': 13}]), 'overlap')
+        self.assertEqual(range_relation([a, {**a, 'min': 36, 'max': 10}]), 'not_comparable')
 
     def test_shared_measurement_has_one_fact_and_distinct_candidate_reference_states(self):
         r=self.detected()

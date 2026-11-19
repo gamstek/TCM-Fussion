@@ -2,7 +2,7 @@
 共享同一计算，原始贡献只供核对。证据、知识库和旧运行记录均只读。
 
 主要定义：score_candidate 计算 required 达成度与独立佐证加分，rank_and_decide
-执行分差、必需判据和证据广度门槛，decide 从当前证据卡构造候选。
+执行分差、必需判据和证据广度门槛。decide 从当前证据卡构造候选，并核验视野观察的问题范围。
 
 关联：workflow.evidence_runtime 调用 decide，react_graph 消费相同裁决门槛；
 逐条证据来自 rule_engine，采信资格与 evidence_projection 共用。
@@ -12,10 +12,10 @@ from rule_engine import (
     MARGIN_DELTA, MIN_SUPPORT_FEATURES, NONOFF_MAX_CONF, WIDE_SPAN_THRESHOLD,
     evaluate_candidate, scene_fit,
 )
-from TCM_Fusion.lib.evidence.evidence_projection import supports_criterion
+from TCM_Fusion.lib.evidence.evidence_projection import MORPHOLOGY_UNVERIFIED, supports_criterion
 
 
-SCORE_VERSION = 'b-rule/2'
+SCORE_VERSION = 'b-rule/3'
 SUPPORT_WEIGHT = 0.20
 
 
@@ -35,8 +35,8 @@ def score_candidate(row, *, non_official=False, support_weight=SUPPORT_WEIGHT):
         if c['role'] == 'supporting' and fid not in required_ids:
             supporting[fid] = max(supporting.get(fid, 0), c['score_contribution'])
     positive = sum(c['score_contribution'] for c in matched)
-    penalties = (sum(c['penalty'] for c in required)
-                 + sum(c['penalty'] for c in row['absent_required'])
+    missing_penalty = sum(c['penalty'] for c in row['absent_required'])
+    penalties = (sum(c['penalty'] for c in required) + missing_penalty
                  + sum(c['penalty'] for c in row['wrong_present']))
     denominator = sum(c['weight'] for c in required)
     attainment = max(0, min(1, (positive - penalties) / denominator)) if denominator else 0
@@ -59,7 +59,8 @@ def score_candidate(row, *, non_official=False, support_weight=SUPPORT_WEIGHT):
     return {
         'id': row['id'], 'display': row['display'], 'kind': row['kind'],
         'checks': [{k: v for k, v in c.items() if k != 'counts_toward_conf'} for c in checks],
-        'wrong_present': row['wrong_present'], 'absent_required': row['absent_required'],
+        'wrong_present': row['wrong_present'],
+        'absent_required': [{**item, 'basis': 'missing_admitted_evidence'} for item in row['absent_required']],
         'rule_score': score, 'score': score, 'confidence': score,
         'raw_score': row.get('raw_score', row.get('b_score', row['score'])),
         'support_count': len({c['feature_id'] for c in verified}),
@@ -68,6 +69,7 @@ def score_candidate(row, *, non_official=False, support_weight=SUPPORT_WEIGHT):
             'version': SCORE_VERSION, 'support_weight': support_weight,
             'required_total': len(required), 'required_matched': len(matched),
             'required_complete': complete, 'required_attainment': round(attainment, 6),
+            'missing_required_penalty': round(missing_penalty, 6),
             'required_base': round(base, 6), 'supporting_contributions': supporting,
             'supporting_strength': round(strength, 6), 'supporting_bonus': round(bonus, 6),
         },
@@ -111,10 +113,23 @@ def rank_and_decide(rows, min_support_features=None):
     return out
 
 
-def decide(kb, cards, *, scene=None, min_support_features=None):
+def decide(kb, cards, *, scene=None, min_support_features=None, presence_questions=None):
+    """原物理证据交给 B 核验，只有视野观察的特征另按实际提问范围核验。"""
+    presence_questions = presence_questions or {}
     rows = []
     for candidate in kb.candidates():
         evaluated = evaluate_candidate(candidate, cards, kb, scene)
+        for check in evaluated['checks']:
+            fid = check['feature_id']
+            if fid not in presence_questions:
+                continue
+            morphology = (check.get('morph_text') or '').strip()
+            if morphology and morphology in presence_questions[fid]:
+                check['observation_scope'] = 'criterion_morphology'
+            else:
+                check['observation_scope'] = 'feature_presence'
+                if morphology and check['state'] == 'NO_REF' and not check['quant_bounds']:
+                    check.update(state=MORPHOLOGY_UNVERIFIED, raw_rule_state='NO_REF', score_contribution=0)
         row = score_candidate(evaluated, non_official=bool(candidate.get('non_official_basis')))
         if scene:
             features = {c['feature_id'] for c in row['checks']

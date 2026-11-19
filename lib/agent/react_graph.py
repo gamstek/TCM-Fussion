@@ -146,7 +146,8 @@ class LLMPlanner:
                         "不得为换候选名重复整图搜索；有新scope/新问题才可重开。"
                         "read_results是历史查询，stale=true时不得当成当前状态。"
                         "标定以当前evidence.workflow.calibration为准，卡片UNCAL不等于当前没有标定。"
-                         "NO_REF是KB未给参考，不是没测量，重测不能补出参考；range_relation未知不等于互斥。"
+                         "NO_REF表示知识库缺少量程。MORPHOLOGY_UNVERIFIED表示结构可见、具体形态待核验。"
+                         "range_pairs仅描述对应候选对的量程关系。超界反证须引用合格测量。"
                          "*_note_ref查context_notes；requirements_ref查requirements_by_purpose，引用仍有效。"
                          "调查收益不是把所有unchecked打卡；选择能改变当前比较或解除真实阻塞的检查，也可停止。"
                         "换ROI本身不等于增益，连续无增益应考虑其他假设、视野或停止。"
@@ -313,7 +314,8 @@ def compact_feedback(events, limit=4):
         feedback=event.get('feedback') if isinstance(event,dict) else None
         if not feedback:continue
         key=(feedback.get('problem_id'),feedback.get('failure_code'),
-             tuple(feedback.get('new_features') or []),tuple(feedback.get('new_counterevidence') or []))
+             tuple(feedback.get('new_features') or []),
+             tuple(feedback.get('new_local_absence', feedback.get('new_counterevidence', [])) or []))
         if key in seen:continue
         seen.add(key);rows.append(feedback)
         if len(rows)>=limit:break

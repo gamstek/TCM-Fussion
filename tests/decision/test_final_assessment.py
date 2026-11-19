@@ -40,8 +40,11 @@ class FinalAssessmentTests(unittest.TestCase):
         self.runtime=WorkflowRuntime([self.image],root=self.root/'workflow',sample_id='s',a=a,
             simulation=True,backend=StageFixture(),workflow_config={'agent_policy':'adaptive_v2'})
         image=next(iter(self.runtime.images))
+        # 冻结的旧定向观察已按秦皮判据提问。通用阳性待核验由决策视图用例覆盖。
+        candidate = next(c for c in self.runtime.kb.candidates() if c['id'] == '秦皮')
+        criterion = next(c for c in candidate['criteria'] if c['feature'] == 'sand_crystal')
         self.observation={'accepted':True,'action':{'tool':'presence_check','action_id':'fixture',
-            'args':{'image_id':image,'feature_id':'sand_crystal','morph_hint':''}},
+            'args':{'image_id':image,'feature_id':'sand_crystal','morph_hint':criterion['morph']}},
             'result':{'ok':True,'present':True,'conf':.75}}
         self.result={'observations':[self.observation],'stop_reason':'override_exhausted',
                      'steps':2,'events':[],'needs_review':True}

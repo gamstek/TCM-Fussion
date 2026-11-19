@@ -189,7 +189,7 @@ def inspect_run(run):
                         'useful': feedback.get('useful'), 'outcome': _action_outcome(run, tool, event, observation),
                         'error_code': event.get('error_code') or feedback.get('failure_code'),
                         'new_features': feedback.get('new_features', []),
-                        'new_local_absence': feedback.get('new_counterevidence', []),
+                        'new_local_absence': feedback.get('new_local_absence', feedback.get('new_counterevidence', [])),
                         'qualified_counters': feedback.get('qualified_counter_changes', [])})
     thoughts = [e for e in events if e['phase'] == 'thought']
     actions_by_id = {a['action_id']: a for a in actions if a['action_id']}

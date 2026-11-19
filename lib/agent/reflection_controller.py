@@ -90,7 +90,7 @@ class ReflectionController:
             # 并行子动作不继承join全局收益；仅从该子动作受信反馈恢复自己的进展。
             accepted = bool(feedback.get('accepted'))
             axes = {'evidence': bool(accepted and any(feedback.get(k) for k in (
-                        'new_features', 'new_counterevidence', 'resolved_criteria',
+                        'new_features', 'new_local_absence', 'resolved_criteria',
                         'candidate_support_changes', 'qualified_counter_changes'))),
                     'capability': bool(accepted and feedback.get('capability_progress')),
                     'diagnostic': not accepted}

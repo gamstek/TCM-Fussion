@@ -59,15 +59,16 @@ def build(runtime, scored, observations, *, eligibility=None, actions=None):
             states=observed.get(fid,[])
             supported=cid in fact.get('supports_candidate_ids',[])
             counter=cid in fact.get('counters_candidate_ids',[])
-            # 当前视野阴性算已观察，但不代表全样本不存在或可跳过其他判据。
-            full_local_absence=bool(provided) and all(
+            seen_positive=bool(check.get('present')) or 'present' in states
+            # 合格工件或阳性观察仍在时保留待核验状态。
+            full_local_absence=not seen_positive and bool(provided) and all(
                 observed_views.get(fid,{}).get(image) and
                 all(s=='absent' for s in observed_views[fid][image]) for image in provided)
-            partial_local_absence='absent'in states and 'present'not in states
+            partial_local_absence='absent' in states and not seen_positive
             assessed=supported or counter or full_local_absence
             state=('supported' if supported else 'quantitative_counter' if counter else
                    'local_absent' if full_local_absence else 'local_absent_partial' if partial_local_absence else
-                   'present_pending' if 'present'in states else
+                   'present_pending' if seen_positive else
                    'failed_or_unknown' if 'failed'in attempted.get(fid,[]) or 'unknown'in states else
                    'investigated_unresolved' if attempted.get(fid) else 'unchecked')
             item={'feature_id':fid,'state':state,'rule_state':check.get('state','NOT_DETECTED'),

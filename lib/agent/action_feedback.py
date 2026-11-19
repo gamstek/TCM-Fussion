@@ -9,6 +9,10 @@
 关联：
 - 调用方 「lib/agent/react_graph.py」、「tests/integration/test_adaptive_quality.py」、「tests/integration/test_fair_investigation.py」、「tests/offline/test_evaluation.py」。
 """
+from TCM_Fusion.lib.evidence.evidence_projection import counters_criterion, supports_criterion
+from TCM_Fusion.lib.runtime.storage import finite_number
+
+
 def objective(action):
     tool=action.get('tool','');args=action.get('args',{})
     return {'problem_id':args.get('feature_id') or args.get('target_id') or tool,
@@ -24,41 +28,43 @@ def objective(action):
 
 
 def snapshot(scored, *, primary_ids=()):
-    d=scored['decision'];checks={}
-    for r in d.get('ranking',[]):
-        for c in r.get('checks',[]):
-            checks[str(r.get('id'))+':'+str(c.get('feature_id'))]=c.get('state')
+    d = scored['decision']
+    ranking = d.get('ranking', [])
     return {'features':{k:{'present':v.present,'n':v.n_instances} for k,v in scored['cards'].items()},
             'observed_absence':[(r['image_id'],r['feature_id']) for r in scored.get('observation_states',[]) if r['state']=='absent'],
-            'checks':checks,'ranking':[r.get('id') for r in d.get('ranking',[])],
+            'ranking':[r.get('id') for r in ranking],
             'verdict':d.get('verdict'), 'primary_ids':list(primary_ids),
             'criterion_support':{r['id']:[c['feature_id'] for c in r.get('checks',[]) if
-                c.get('present') and (c.get('score_contribution')or 0)>0 and
-                c.get('state') in {'IN_RANGE','EXTREME','NO_REF'}] for r in d.get('ranking',[])},
+                supports_criterion(c)] for r in ranking},
+            'criterion_counters':[f"{r['id']}:{c['feature_id']}" for r in ranking
+                                  for c in r.get('checks', []) if counters_criterion(c)],
             'required':{r['id']:[c['feature_id'] for c in r.get('checks',[]) if c.get('role')=='required']
-                        for r in d.get('ranking',[])}}
+                        for r in ranking}}
 
 
 def evaluate(before,after,action,*,accepted,capability_changed=False,result=None,elapsed_ms=0):
     result=result or {};a=before['features'];b=after['features']
     new=[k for k,v in b.items() if v['present'] and (not a.get(k,{}).get('present') or v['n']>a[k]['n'])]
-    resolved=[k for k,v in after['checks'].items() if before['checks'].get(k) in {'NOT_DETECTED','UNCAL'} and v not in {'NOT_DETECTED','UNCAL'}]
-    negative=bool(accepted and action.get('tool')=='presence_check' and result.get('present') is False and result.get('conf',0)>=0.5)
-    if (action.get('args',{}).get('image_id'),action.get('args',{}).get('feature_id')) in before.get('observed_absence',[]):negative=False
-    # 有效负观察是Observation进展。
-    useful=bool(accepted and (new or resolved or negative or capability_changed))
+    args = action.get('args', {})
+    observed_key = (args.get('image_id'), args.get('feature_id'))
+    negative = bool(accepted and action.get('tool') == 'presence_check' and result.get('present') is False
+                    and finite_number(result.get('conf'), minimum=.5, maximum=1)
+                    and observed_key in after.get('observed_absence', [])
+                    and observed_key not in before.get('observed_absence', []))
     support_changes={cid:sorted(set(fids)-set(before.get('criterion_support',{}).get(cid,[])))
                      for cid,fids in after.get('criterion_support',{}).items()}
     support_changes={cid:fids for cid,fids in support_changes.items() if fids}
-    counters=[k for k,v in after['checks'].items() if v=='OUT_OF_RANGE' and before['checks'].get(k)!=v]
+    counters = sorted(set(after.get('criterion_counters', [])) - set(before.get('criterion_counters', [])))
     if not accepted:
         support_changes={};counters=[]
+    resolved = [f'{cid}:{fid}' for cid, fids in support_changes.items() for fid in fids] + counters
+    useful = bool(accepted and (new or resolved or negative or capability_changed))
     primary_progress=any(cid in before.get('primary_ids',[]) and
         bool(set(fids)&set(before.get('required',{}).get(cid,[]))) for cid,fids in support_changes.items())
     primary_progress=primary_progress or any(cid+':'+fid in counters for cid in before.get('primary_ids',[])
                                            for fid in before.get('required',{}).get(cid,[]))
     feedback = {**objective(action),'accepted':bool(accepted),'new_features':new,
-            'new_counterevidence':[action.get('args',{}).get('feature_id')] if negative else [],
+            'new_local_absence':[args['feature_id']] if negative else [],
             'resolved_criteria':resolved,'candidate_order_changed':before['ranking']!=after['ranking'],
             'capability_progress':bool(capability_changed),'useful':useful,
             'candidate_support_changes':support_changes,'qualified_counter_changes':counters,

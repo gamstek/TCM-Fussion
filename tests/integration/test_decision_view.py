@@ -16,12 +16,13 @@ import unittest
 from unittest.mock import patch
 
 from TCM_Fusion.lib.tools.agent_tools import FixtureBackend, LocalToolbox
-from TCM_Fusion.lib.decision.comparison_problems import build as comparison, presence_key
+from TCM_Fusion.lib.decision.comparison_problems import build as comparison, compact, presence_key
 from TCM_Fusion.lib.evidence.evidence_projection import build, reference_allowed
 from TCM_Fusion.lib.decision.final_assessment import build_packet, validate_reply
 from TCM_Fusion.lib.evidence.instance_ledger import project
 from TCM_Fusion.lib.runtime.probe_budget import describe as describe_probe
 from TCM_Fusion.lib.agent.react_graph import run_react, compact_action_menu
+from TCM_Fusion.lib.agent.action_feedback import evaluate, snapshot
 from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json, write_json
 from TCM_Fusion.tests.support import workflow_fixtures as fixtures
 
@@ -54,6 +55,37 @@ class DecisionViewTests(unittest.TestCase):
         self.assertIn('candidate_morphology',query['does_not_verify'])
         self.assertFalse(any(g.get('is_exclusion') for q in view['comparison']['questions'] for g in q['consumers']))
 
+    def test_generic_fiber_is_visible_without_verifying_a_bundled_fiber_criterion(self):
+        runtime = self.with_candidates()
+        state = {'observations': [], 'attempted': []}
+        before = snapshot(runtime.score([]))
+        action = next(a for a in runtime.legal_actions(state) if a['tool'] == 'presence_check'
+                      and a['args']['feature_id'] == 'fiber')
+        backend = FixtureBackend({'fiber': {'ok': True, 'present': True, 'conf': .9}})
+        toolbox = LocalToolbox(runtime, ledger_path=self.root / 'fiber_observation.json', backend=backend)
+        observations = [asyncio.run(toolbox.observe(action))]
+        scored = runtime.score(observations)
+        early = runtime.decision_view({**state, 'observations': observations})
+        g1_fiber = next(fact for fact in early['eligibility']['facts'] if fact['kind'] == 'criterion'
+                        and fact['data']['candidate_id'] == 'G1' and fact['data']['feature_id'] == 'fiber')
+        self.assertEqual(g1_fiber['data']['state'], 'MORPHOLOGY_UNVERIFIED')
+        self.assertTrue(g1_fiber['data']['present'])
+        self.assertEqual(g1_fiber['data']['score_contribution'], 0)
+        self.assertFalse(reference_allowed(g1_fiber, 'G1'))
+        packet = build_packet(runtime, scored['decision'], {'observations': observations})
+        self.assertIn(g1_fiber, packet['facts'])
+        observation = next(fact for fact in packet['facts'] if fact['kind'] == 'observation')
+        self.assertEqual(observation['data']['claim_scope'], 'feature_presence')
+        self.assertTrue(reference_allowed(observation, 'G1'))
+        feedback = evaluate(before, snapshot(scored), action, accepted=True)
+        self.assertIn('fiber', feedback['new_features'])
+        self.assertNotIn('G1:fiber', feedback['resolved_criteria'])
+        questions = early['comparison']['questions']
+        consumer = next(c for q in questions if q['feature_id'] == 'fiber' for c in q['consumers']
+                        if c['candidate_id'] == 'G1')
+        self.assertFalse(consumer['criterion_assessed'])
+        self.assertEqual(consumer['capability_gap'], 'criterion_morphology')
+
     def test_different_morphology_questions_keep_distinct_query_keys(self):
         r=self.with_candidates()
         first=next(a for a in r.legal_actions({'observations':[]}) if a['tool']=='presence_check')
@@ -79,6 +111,23 @@ class DecisionViewTests(unittest.TestCase):
         q=view['questions'][0]
         self.assertTrue(q['overlapping_ranges']);self.assertEqual(len(q['consumers']),2)
         self.assertTrue(all(not c['is_exclusion'] for c in q['consumers']))
+
+    def test_vessel_ranges_compare_real_candidate_pairs(self):
+        runtime = self.with_candidates()
+        interest = {'ids': ['G1', 'G2', '白芍']}
+        with patch.object(runtime, 'candidate_interest', return_value=interest):
+            view = comparison(runtime, {'decision': {'ranking': []}},
+                              {'projections': [], 'evidence_version': 'v'}, [])
+        rows = [q for q in view['questions'] if q['feature_id'] == 'vessel']
+        relations = {tuple(p['candidate_ids']): p['relation'] for q in rows for p in q['range_pairs']}
+        self.assertEqual(relations, {('G1', 'G2'): 'disjoint', ('G1', '白芍'): 'overlap',
+                                     ('G2', '白芍'): 'overlap'})
+        g1 = next(q for q in rows if 'G1' in q['current_states'])
+        self.assertEqual(g1['range_relation'], 'mixed')
+        self.assertTrue(g1['overlapping_ranges'])
+        planner_rows = compact(view, limit=len(view['questions']))['questions']
+        self.assertIn({'candidate_ids': ['G1', 'G2'], 'relation': 'disjoint'},
+                      next(q for q in planner_rows if q['problem_id'] == g1['problem_id'])['range_pairs'])
 
     def test_different_morphology_or_dimension_not_merged(self):
         r=self.with_candidates()
