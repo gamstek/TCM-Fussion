@@ -187,6 +187,14 @@ def investigation_focus(runtime, scored, audit):
             'scope':'状态提示；模型可选任意合法调查或review，不要求先查A首选'}
 
 
+def criterion_question(criterion):
+    """给 D2 投影和问题级授权提供同一份判据问题身份，消费者及视野另行绑定。"""
+    quant = criterion.get('quant') or {}
+    signature = {'feature_id': criterion['feature'], 'purpose': 'measure' if quant else 'observe',
+                 'dimension': quant.get('dim'), 'morphology_question': criterion.get('morph') or ''}
+    return {'problem_id': 'question:' + digest(signature)[:24], **signature}
+
+
 def build(runtime, scored, eligibility, actions):
     """返回问题而非工具序列；预计收益只作定性说明，不另设未校准评分权重。"""
     interest = runtime.candidate_interest()
@@ -216,10 +224,8 @@ def build(runtime, scored, eligibility, actions):
         for criterion in candidate['criteria']:
             fid = criterion['feature']; quant = criterion.get('quant') or {}
             references.setdefault(fid, {})[cid] = criterion.get('quant')
-            signature = {'feature_id': fid, 'purpose': 'measure' if quant else 'observe',
-                         'dimension': quant.get('dim'), 'morphology_question': criterion.get('morph') or ''}
-            qid = 'question:' + digest(signature)[:24]
-            question = groups.setdefault(qid, {'problem_id': qid, **signature,
+            signature = criterion_question(criterion)
+            question = groups.setdefault(signature['problem_id'], {**signature,
                 'consumers': [], 'evidence_refs': [], 'legal_action_ids': []})
             check = next((c for c in candidates.get(cid, {}).get('checks', [])
                           if c.get('feature_id') == fid and c.get('role') == criterion.get('role')), {})

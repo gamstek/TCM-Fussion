@@ -1,4 +1,4 @@
-"""ReAct执行选择视图：单动作、实例目标和独立观察组使用同一主选择接口。
+"""ReAct 执行选择视图。单动作、实例或问题目标和独立观察组使用同一主选择接口。
 
 消费当前可见合法动作/KB/预算；只描述选择，不执行工具或授予证据资格。
 react_graph最终仍逐项校验并晚绑定。model_view仅作短编号映射，供真实LLM和离线请求对拍；
@@ -78,7 +78,8 @@ def add_crop_reuse_hints(rows, actions, targets):
             row['max_scan_tiles'] = scan.get('max_tiles')
 
 
-def attach(runtime, context, *, can_pair, targets=None, measurement_actions=None):
+def attach(runtime, context, *, can_pair, targets=None, measurement_actions=None,
+           previous_problems=(), allow_problem=True):
     """给当前实际可见动作建立目标/问题入口；不把菜单外动作偷偷加进来。"""
     out = dict(context)
     actions = context['actions']
@@ -143,6 +144,16 @@ def attach(runtime, context, *, can_pair, targets=None, measurement_actions=None
     out['execution_options'] = {'goals':goals[:12], 'questions':questions,
         'max_questions':2 if can_pair else 1,
         'choice_note':'仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选'}
+    if allow_problem and runtime.workflow.config.get('semantic_execution') and runtime.workflow.config.get('problem_goal_execution'):
+        from TCM_Fusion.lib.agent.problem_goals import offers
+        problems = offers(runtime, actions, targets, criteria, previous_problems, context.get('remaining_budget'),
+                          measurement_actions=measurement_actions, measurement_groups=context.get('measurement_groups'))
+        if problems:
+            # 与实例目标共享原有十二个语义选项；仍能单步选择原动作及独立观察。
+            problems = problems[:6] if goals else problems[:12]
+            shown = out['execution_options']
+            shown['problem_goals'] = problems
+            shown['goals'] = shown['goals'][:12-len(problems)]
     return out
 
 
@@ -152,6 +163,8 @@ def decision_fields(context):
     fields = {'action': ['kind', 'action_id']}
     if offers.get('goals'):
         fields['instance_goal'] = ['kind', 'goal_id']
+    if offers.get('problem_goals'):
+        fields['problem_goal'] = ['kind', 'goal_id']
     if offers.get('questions') and offers.get('max_questions', 1):
         fields['observe_questions'] = ['kind', 'question_ids']
     if offers.get('physical_groups', offers.get('physical_pairs')):
@@ -173,6 +186,9 @@ def decision_instruction(context):
             '说明希望获得的合格量纲及为何可连续执行。verify_identity只核验身份。'
             '执行器逐项绑定当前工件，各阶段照常消耗对应额度。量纲目标遇身份、质量或标定失败交回ReAct。'
         )
+    if 'problem_goal' in modes:
+        lines.append('问题授权 {"decision":{"kind":"problem_goal","goal_id":"P编号"}}。只调查所列视野及量纲；'
+                     '复用合格测量，或由所列入口取得唯一实例，最多一次定向补扫和一次身份核验，歧义即回交。')
     if 'observe_questions' in modes:
         limit = min(offers.get('max_questions', 1), len(offers['questions']))
         count = '1项' if limit == 1 else f'1至{limit}项不同的观察'
@@ -236,6 +252,17 @@ def model_view(context):
         group['views'] = [[aliases[a] for a in view] for view in group['views']]
     offers['goals'] = [{**g, 'goal_id':f'G{i}', 'entry_action_id':aliases[g['entry_action_id']]}
         for i,g in enumerate(offers.get('goals',[]),1) if g['entry_action_id'] in aliases]
+    if offers.get('problem_goals'):
+        rows = []
+        for i, item in enumerate(offers['problem_goals'], 1):
+            short = f'P{i}'
+            ids[short] = item['choice_id']
+            rows.append({'choice_id': short, 'problem_id': item['problem_id'], 'feature_id': item['feature_id'],
+                         'image_id': item['image_id'], 'dimension': item['dimension'],
+                         'morphology_question': item['morphology_question'],
+                         'entry': aliases[item['entry_action_id']] if item['entry_action_id'] else 'reuse',
+                         'max_tiles': item['max_tiles']})
+        offers['problem_goals'] = rows
     offers['questions'] = [{**q, 'question_id':f'Q{i}', 'canonical_question_id':q['question_id'],
                             'action_id':aliases[q['action_id']]}
         for i,q in enumerate(offers.get('questions',[]),1) if q['action_id'] in aliases]
@@ -296,6 +323,10 @@ def decode(reply, context):
                                           'new_planning_requests': 0}
         decision = {k:v for k,v in decision.items() if k not in notes}
     kind = decision.get('kind')
+    selectors = {'action_id', 'proposal', 'semantic_goal', 'problem_goal_id', 'parallel_question_id',
+                 'parallel_observation_id', 'physical_partner_id', 'physical_partner_ids'}
+    if (kind == 'problem_goal' and selectors.intersection(value)) or 'problem_goal_id' in value:
+        raise IntegrationError('PLANNER_CHOICE_AMBIGUOUS', '问题授权只能作为本轮唯一主选择')
     audit_decision = decision
     offers = context.get('execution_options') or {}
     if kind == 'action' and set(decision) == {'kind','action_id'}:
@@ -311,6 +342,11 @@ def decode(reply, context):
         if not goal:
             raise IntegrationError('PLANNER_GOAL_UNAVAILABLE','本轮没有该语义目标')
         value.update(action_id=goal['entry_action_id'],semantic_goal=goal['goal'])
+    elif kind == 'problem_goal' and set(decision) == {'kind', 'goal_id'}:
+        identifier = decision['goal_id']
+        if not any(item['choice_id'] == identifier for item in offers.get('problem_goals', [])):
+            raise IntegrationError('PLANNER_GOAL_UNAVAILABLE', '本轮没有该视野的问题授权入口')
+        value['problem_goal_id'] = identifier
     elif kind == 'observe_questions' and set(decision) == {'kind','question_ids'}:
         requested = decision['question_ids']
         if (not isinstance(requested,list) or not 1 <= len(requested) <= offers.get('max_questions',1)
@@ -350,9 +386,9 @@ def diagnose(reply, context):
     table=(context.get('execution_options')or{}).get('questions',[])
     aliases={q['question_id'] for q in table}
     canonical={q.get('canonical_question_id',q['question_id']) for q in table}
-    expected = {'action': {'kind','action_id'}, 'instance_goal': {'kind','goal_id'},
+    expected = {'action': {'kind','action_id'}, 'instance_goal': {'kind','goal_id'}, 'problem_goal': {'kind','goal_id'},
                 'observe_questions': {'kind','question_ids'}}.get(choice.get('kind'), {'kind'})
-    return {'kind':choice.get('kind') if choice.get('kind') in {'action','instance_goal','observe_questions'}else 'unknown',
+    return {'kind':choice.get('kind') if choice.get('kind') in {'action','instance_goal','problem_goal','observe_questions'}else 'unknown',
         'extra_field_names':[k for k in choice if isinstance(k,str) and k not in expected
                              and re.fullmatch(r'[a-z_]{1,40}',k)][:8],
         'requested_count':len(requested),'current_short_matches':sum(isinstance(x,str)and x in aliases for x in requested),

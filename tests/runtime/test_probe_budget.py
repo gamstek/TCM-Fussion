@@ -207,6 +207,18 @@ class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(protect_investigation_budget(runtime, actions, opportunities, remaining),
                          (actions, []))
 
+    async def test_protected_legacy_menu_reserves_last_planning_rounds(self):
+        runtime = self.scan_runtime(supporting_probe_total=6, supporting_probe_scan_total=2)
+        self.initialize(runtime)
+        state = {'observations': [], 'attempted': []}
+        actions = runtime.legal_actions(state)
+        view = runtime.decision_view(state | {'actions': actions})
+        remaining = runtime.workflow.limits | {'planning': 2}
+        opportunities = investigation_opportunities(runtime, view['candidate_audit'], view['investigation_focus'],
+                                                    actions, remaining)
+        _, deferred = protect_investigation_budget(runtime, actions, opportunities, remaining)
+        self.assertTrue(any(r['tool'] == 'feature_scan' and r['feature_id'] == 'vessel' for r in deferred))
+
     async def test_parallel_supporting_observations_share_remaining_slots(self):
         for slots in (1, 2):
             with self.subTest(slots=slots):
@@ -249,7 +261,9 @@ class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
         comparison = {}
         scan_features = {'starch_grain', 'vessel'}
         for name, config in [('legacy', {}), ('split', {'supporting_probe_scan_total': 2})]:
-            runtime = self.scan_runtime(name, supporting_probe_total=6, context_compact=True, **config)
+            # 对拍只改变专项分池；沿用现行模板的建议模式。旧版的末次规划预留另有断言。
+            runtime = self.scan_runtime(name, supporting_probe_total=6, context_compact=True,
+                                        protect_investigation_budget=False, **config)
             planner = LLMPlanner.__new__(LLMPlanner)
             planner.client = SimpleNamespace(model='offline-fixture', timeout_s=1)
             planner.config = {}

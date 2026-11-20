@@ -20,9 +20,13 @@ def dimension_use(field):
     return 'width' if 'width' in field else 'area' if 'area' in field else 'length'
 
 
-def project(runtime):
+def project(runtime, *, scope_id=None, measurement_id=None):
+    """默认返回全案用途投影；实例级读取可限定分割来源与测量依赖，使用相同的资格检查。"""
     session=runtime.workflow;snap=session.store.current();rows=[]
     for entry in snap['records']:
+        if ((scope_id is not None and entry['scope'] != scope_id) or
+                (measurement_id is not None and measurement_id not in entry['depends_on'])):
+            continue
         row=copy.deepcopy(entry['data']);row.pop('quality_assessment',None)
         scope=entry['scope'];seg=snap['artifacts'].get(scope,{})
         qa=session.assessment(seg)

@@ -23,6 +23,7 @@
       "execution": "active",
       "agent_policy": "adaptive_v2",
       "semantic_execution": true,
+      "problem_goal_execution": true,
       "physical_parallel": true,
       "python": ".venv/vision/Scripts/python.exe",
       "detector": "yolo",

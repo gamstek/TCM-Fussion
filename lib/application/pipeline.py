@@ -90,6 +90,11 @@ def validate_config(config):
         from TCM_Fusion.lib.application.workflow_entry import WORKFLOW_SCHEMA
         from TCM_Fusion.lib.tools.tool_registry import validate_arguments
         validate_arguments(WORKFLOW_SCHEMA,agent["workflow"])
+        if agent["workflow"].get("problem_goal_execution") and (
+                agent["workflow"].get("semantic_execution") is False
+                or agent["workflow"].get("agent_policy", "adaptive_v2") != "adaptive_v2"
+                or agent.get("planner", "llm") != "llm"):
+            raise IntegrationError("CONFIG_INVALID", "按鉴别问题授权需要 adaptive_v2 模型规划及语义 DAG")
         if agent["workflow"].get("targeted_recovery") and (
                 agent.get("planner", "llm") != "llm"
                 or agent["workflow"].get("agent_policy", "adaptive_v2") != "adaptive_v2"):

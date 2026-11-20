@@ -1250,7 +1250,8 @@ class WorkflowSession:
         finally:release(h)
         # Windows 默认路径长度有限，完整操作键仍保存在账本中。
         record, result = self._run_serial_stage(pending, target, self.root / 'ops' / key[:16])
-        if record['accepted'] and tool == 'segment_instance':
+        defer_measurement = self.config.get('problem_goal_execution') and action.get('defer_measurement') is True
+        if record['accepted'] and tool == 'segment_instance' and not defer_measurement:
             version = self._measure_after_segment(target, result, record['evidence_version'])
             return {**record, 'evidence_version': version}
         return record

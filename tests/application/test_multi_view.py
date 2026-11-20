@@ -167,6 +167,7 @@ class MultiViewTests(unittest.TestCase):
         self.assertEqual(cfg['agent']['transport'], 'mcp')
         workflow = cfg['agent']['workflow']
         self.assertIs(workflow['semantic_execution'], True)
+        self.assertIs(workflow['problem_goal_execution'], True)
         self.assertIs(workflow['physical_parallel'], True)
         self.assertEqual(workflow['max_parallel'], 4)
         self.assertNotIn('routing', cfg)
@@ -176,6 +177,7 @@ class MultiViewTests(unittest.TestCase):
         def run(cfg, *, base):
             self.assertEqual(cfg, read_json(base / 'config.json'))
             self.assertIs(cfg['agent']['workflow']['semantic_execution'], True)
+            self.assertIs(cfg['agent']['workflow']['problem_goal_execution'], True)
             self.assertIs(cfg['agent']['workflow']['physical_parallel'], True)
             self.assertFalse((base / 'a_cache').exists())
             self.assertFalse((base / 'runs').exists())
@@ -217,12 +219,13 @@ class MultiViewTests(unittest.TestCase):
             with self.assertRaises(IntegrationError):
                 F.bind_config(cfg, images, sample_id='test', a_python=paths.VENV_PY)
 
-    def test_new_task_semantic_default_and_independent_overrides(self):
+    def test_legacy_template_semantic_default_and_independent_overrides(self):
         images = [str(self.source / row['view']) for row in self.proof['views']]
         for semantic, physical in ((None, True), (False, True), (True, False), (False, False)):
             with self.subTest(semantic=semantic, physical=physical):
                 template = copy.deepcopy(self.template)
                 workflow = template['agent']['workflow']
+                del workflow['problem_goal_execution']
                 workflow['physical_parallel'] = physical
                 if semantic is None:
                     del workflow['semantic_execution']
@@ -233,6 +236,22 @@ class MultiViewTests(unittest.TestCase):
                 self.assertIs(effective['semantic_execution'], True if semantic is None else semantic)
                 self.assertIs(effective['physical_parallel'], physical)
                 self.assertEqual('semantic_execution' in workflow, semantic is not None)
+
+    def test_problem_goal_can_be_disabled_and_requires_the_semantic_executor(self):
+        images = [str(self.source / row['view']) for row in self.proof['views']]
+        template = copy.deepcopy(self.template)
+        workflow = template['agent']['workflow']
+
+        def bound_workflow():
+            return F.bind_config(template, images, sample_id='test', a_python=paths.VENV_PY)['agent']['workflow']
+
+        workflow['problem_goal_execution'] = False
+        self.assertIs(bound_workflow()['problem_goal_execution'], False)
+        del workflow['problem_goal_execution']
+        self.assertNotIn('problem_goal_execution', bound_workflow())
+        workflow.update(problem_goal_execution=True, semantic_execution=False)
+        with self.assertRaisesRegex(IntegrationError, '语义 DAG'):
+            bound_workflow()
 
     def test_reference_policy_field_parity_and_explicit_defaults(self):
         ref_path = Path(paths.PROJECT_ROOT) / '运行结果/case_9cc59640/config.json'

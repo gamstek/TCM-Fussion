@@ -218,6 +218,10 @@ class QualityTests(unittest.TestCase):
         self.assertTrue(result['accepted'],result)
         records=r.workflow.store.current()['records']
         self.assertIn('igm_review',records[0]['data']['flags'])
+        from TCM_Fusion.lib.evidence.purpose_evidence import project
+        scope = records[0]['scope']
+        self.assertEqual(project(r, scope_id=scope, measurement_id='measurement:' + scope), project(r))
+        self.assertEqual(project(r, scope_id=scope, measurement_id='missing'), [])
         scored=r.score([])
         self.assertTrue(scored['cards']['fiber'].present);self.assertGreater(scored['cards']['fiber'].n_instances,0)
         self.assertEqual(before,{str(p):file_hash(p) for p in source.rglob('*') if p.is_file()})

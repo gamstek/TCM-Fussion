@@ -41,7 +41,7 @@ class AgentState(TypedDict, total=False):
     observations: list
     attempted: list
     actions: list
-    selected: dict
+    selected: dict | None
     parallel_observation: dict | None
     physical_partners: list
     events: list
@@ -197,6 +197,9 @@ class LLMPlanner:
                 exc.choice_diagnostic = diagnose(reply, context)
                 raise
             option = reply.get("action_id")
+            problem = reply.get('problem_goal_id')
+            if isinstance(problem, str):
+                reply['problem_goal_id'] = option_ids.get(problem, problem)
             if isinstance(reply.get('physical_partner_ids'),list):
                 reply['physical_partner_ids'] = [option_ids.get(p,p) if isinstance(p,str) else p
                                                  for p in reply['physical_partner_ids']]
@@ -939,7 +942,22 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                                     for d in row['dimensions'].values())}
                 context = compact_round_context(context, workflow)
                 from TCM_Fusion.lib.agent.planning_choices import attach, decision_fields
-                context = attach(runtime, context, targets=targets, measurement_actions=measurement_actions, can_pair=bool(
+                previous_problems = set()
+                if workflow.config.get('problem_goal_execution'):
+                    for event in state['events']:
+                        receipt = event.get('problem_result')
+                        if receipt:
+                            previous_problems.add((receipt['problem_id'], receipt['image_id'], receipt['evidence_version']))
+                    last_return = next((e for e in reversed(state['events']) if e['phase'] in {'thought', 'semantic_return'}), {})
+                    if last_return.get('problem_result'):
+                        receipt = last_return['problem_result']
+                        if len(receipt['facts']) > 3:
+                            receipt = {**receipt, 'facts': receipt['facts'][:3], 'fact_count': len(receipt['facts']),
+                                       'detail_access': 'read_evidence_detail(kind=instances)'}
+                        context['last_problem_result'] = receipt
+                context = attach(runtime, context, targets=targets, measurement_actions=measurement_actions,
+                    previous_problems=previous_problems,
+                    allow_problem=not (physical_runner and physical_runner.tasks), can_pair=bool(
                     workflow.config.get('max_parallel',2)>=2 and state['steps']+2<=max_steps
                     and current_budget['observation']>=2 and current_budget['network']>=2
                     and current_budget['total']>=4))
@@ -1021,6 +1039,15 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                'elapsed_seconds':round(time.monotonic()-planning_started,6),
                                'scope':'planner call including worker/HTTP/parse; not HTTP-only'})
             chosen, detail = _resolve_planner_action(reply, choices, eligible)
+            problem_offer = None
+            if isinstance(reply, dict) and 'problem_goal_id' in reply:
+                identifier = reply['problem_goal_id']
+                mixed = any(k in reply for k in ('action_id', 'proposal', 'semantic_goal', 'parallel_question_id',
+                                                  'parallel_observation_id', 'physical_partner_id', 'physical_partner_ids'))
+                if not mixed and (reply.get('execution_choice') or {}).get('kind') == 'problem_goal':
+                    problem_offer = next((p for p in context['execution_options'].get('problem_goals', [])
+                                          if p['choice_id'] == identifier), None)
+                chosen = next((a for a in choices if problem_offer and a['action_id'] == problem_offer['entry_action_id']), None)
             if isinstance(reply,dict) and reply.get('partial_choice_rejection'):
                 events.append({'phase':'choice_partially_preserved',**reply['partial_choice_rejection']})
             requested_finish = isinstance(reply, dict) and (
@@ -1048,7 +1075,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     # 送模菜单省略 skill 等受信绑定，所有伙伴与首项一样从当前合法原动作派发。
                     by_id = {a['action_id']:a for a in choices}
                     partners = [by_id[p] for p in rest]
-            if chosen is None:
+            if chosen is None and not (problem_offer and problem_offer['entry_tool'] == 'reuse'):
                 error = "action_unavailable"
             is_stop = chosen is not None and chosen["tool"] in {"finish", "request_review"}
             recommend_stop = state["stop_advisory"]["recommend"] != "continue"
@@ -1090,7 +1117,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                "rejection_detail": detail, "remaining_budget": current_budget})
                 continue
             parallel_id = reply.get("parallel_observation_id")
-            companion = next((a for a in parallel if a["action_id"] == parallel_id
+            companion = next((a for a in parallel if chosen and a["action_id"] == parallel_id
                               and a["args"]["image_id"] == chosen.get("args", {}).get("target_id")), None)
             question_id = reply.get('parallel_question_id')
             if question_id is not None:
@@ -1112,7 +1139,13 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     events.append({'phase':'parallel_question_rejected','reason':pair_blocker,
                                    'selected_action_preserved':True,'new_planning_requests':0})
             semantic_plan = None
-            if reply.get('semantic_goal') is not None and not is_stop:
+            if problem_offer:
+                from TCM_Fusion.lib.agent.semantic_execution import compile_problem
+                semantic_plan = compile_problem(problem_offer)
+                events.append({'phase': 'semantic_goal_accepted', 'plan_id': semantic_plan['plan_id'],
+                               'goal': dict(semantic_plan['goal']), 'authorization': problem_offer,
+                               'decision_source': planner_source})
+            elif reply.get('semantic_goal') is not None and not is_stop:
                 try:
                     if not workflow.config.get('semantic_execution', False) or companion:
                         raise IntegrationError('SEMANTIC_DISABLED', '语义执行未启用或本轮有并行观察')
@@ -1129,6 +1162,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     events.append({'phase': 'semantic_goal_rejected', 'reason': exc.code,
                                    'selected_action_preserved': True})
             try:
+                if chosen is None and reply.get('reflection_response') is not None:
+                    raise IntegrationError('REFLECTION_NO_TRANSITION', '复用已提交测量没有新工具动作')
                 if reply.get('reflection_response') is not None and reply.get('reflection_patch') is not None:
                     raise IntegrationError('REFLECTION_AMBIGUOUS', '只使用一个可选反思格式')
                 response = (controller.respond(reply.get('reflection_response'), chosen, context, goal=semantic_plan)
@@ -1140,6 +1175,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                'selected_action_preserved': True, 'extra_planning_calls': 0})
             if reply.get('reflection_patch') is not None and reply.get('reflection_response') is None:
                 try:
+                    if chosen is None:
+                        raise IntegrationError('REFLECTION_NO_TRANSITION', '复用已提交测量没有新工具动作')
                     patch_value = reply['reflection_patch']
                     from TCM_Fusion.lib.agent.reflection_controller import PATCH_SCHEMA
                     from TCM_Fusion.lib.tools.tool_registry import validate_arguments
@@ -1158,7 +1195,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     diagnosis = controller.reject(reply['reflection_patch'], exc)
                     events.append({'phase': 'reflection_patch_rejected', **diagnosis})
             events.append({"phase": "thought", "decision_source": planner_source,
-                           "action_id": chosen["action_id"], "tool": chosen["tool"], "usage": usage,
+                           "action_id": chosen['action_id'] if chosen else None,
+                           "tool": chosen['tool'] if chosen else None, "usage": usage,
                            "physical_partner_ids": [p['action_id'] for p in partners],
                            "execution_choice": reply.get('execution_choice',{'kind':'action','format':'legacy'}),
                            "choice_normalization": reply.get('choice_normalization'),
@@ -1632,6 +1670,9 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         return state
 
     async def act(state):
+        if (state.get('semantic_plan') or {}).get('authorization'):
+            # 问题授权的第一步也要经过晚绑定，已有物理证据时可以零工具返回。
+            return await semantic_tail(state, state)
         partners = state.get('physical_partners')
         if physical_runner and partners:
             actions = [state['selected'],*partners]
@@ -1681,16 +1722,34 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         if not autonomous or state.get('_parallel_child') or not plan:
             return updated
         from TCM_Fusion.lib.agent.semantic_execution import next_action, finish
+        from TCM_Fusion.lib.agent.problem_goals import scan_affordable
+        scope = plan.get('authorization')
+        failure = None
+        # 问题入口紧接本轮 assess/think；第一步按最新作用域和额度校验，无需再做一次全案评分。
+        needs_assessment = not scope
         while True:
             # 每个执行节点后检查硬截止/预算/新状态；关键失败立即交回ReAct。
-            updated = assess(updated)
+            if needs_assessment:
+                updated = assess(updated)
+            needs_assessment = True
             try:
-                if updated.get('done'):
+                if failure:
+                    action, reason = None, failure
+                elif updated.get('done') and not (scope and updated.get('stop_reason') == 'max_steps'):
                     reason, action = updated.get('stop_reason', 'runtime_stop'), None
                 else:
                     action, reason = next_action(runtime, plan, updated)
                 if action is not None:
-                    if not affordable(action, remaining_budget()):
+                    budget = remaining_budget()
+                    if updated.get('done'):
+                        reason, action = updated['stop_reason'], None
+                    elif scope and not plan['issued'] and action['action_id'] != scope['entry_action_id']:
+                        reason, action = 'entry_changed', None
+                    elif scope and action['tool'] in plan['issued']:
+                        reason, action = 'problem_attempt_spent', None
+                    elif scope and action['tool'] == 'feature_scan' and not scan_affordable(scope['max_tiles'], budget):
+                        reason, action = 'budget_blocked', None
+                    elif not affordable(action, budget):
                         reason, action = 'budget_blocked', None
                     elif workflow.remaining_seconds() <= float(workflow.config.get('final_assessment_seconds', 30)):
                         reason, action = 'deadline_reserve', None
@@ -1698,6 +1757,10 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                         reason, action = 'reflection_guard', None
             except IntegrationError as exc:
                 action, reason = None, exc.code
+            except (OSError, ValueError):
+                if not scope:
+                    raise
+                action, reason = None, 'scope_artifact_unreadable'
             if action is None:
                 finish(plan, reason)
                 controller.close_goal(reason)
@@ -1707,13 +1770,30 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 updated['semantic_plan'] = None
                 updated['events'].append({'phase': 'semantic_return', 'reason': reason, 'plan': plan,
                                           'candidate_branches_cancelled': False})
+                if scope:
+                    receipt = {'problem_id': scope['problem_id'], 'image_id': scope['image_id'],
+                               'reason': reason, 'evidence_version': workflow.store.current()['version'],
+                               'instance_ref': plan['goal'].get('instance_ref'), 'facts': plan.get('facts', [])}
+                    updated['events'][-1]['problem_result'] = receipt
                 write_json(workflow.root/'semantic_plan.json', plan)
                 persist(updated)
                 return updated
             updated['events'].append({'phase': 'semantic_node_bound', 'plan_id': plan['plan_id'],
                 'tool': action['tool'], 'target_id': action['args']['target_id'],
                 'evidence_version': action['args']['evidence_version'], 'new_planning_requests': 0})
+            if scope:
+                plan['issued'][action['tool']] = action['action_id']
+                if action['tool'] == 'segment_instance':
+                    # 仅收窄已选动作，分割提交后由同一 DAG 按目标量纲复查用途、额度及截止。
+                    action = {**action, 'defer_measurement': True}
+            start = len(updated['events'])
             updated = await act_once({**updated, 'selected': action, 'parallel_observation': None})
+            if scope:
+                for event in updated['events'][start:]:
+                    if event['phase'] == 'recompute' and not event.get('accepted'):
+                        failure = event.get('error_code') or 'stage_failed'
+                    if event['phase'] == 'automatic_measurement_feedback' and not event['feedback'].get('accepted'):
+                        failure = event['feedback'].get('failure_code') or 'automatic_measurement_failed'
 
     graph = StateGraph(AgentState)
     graph.add_node("assess", assess)

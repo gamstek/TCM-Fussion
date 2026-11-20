@@ -9,6 +9,7 @@
 | [test_association_policy.py](test_association_policy.py) | 连通域关联策略回归：规则表、主导连通域、粒度守卫与保守回退。 |
 | [test_component_boundaries.py](test_component_boundaries.py) | 检查组件之间的导入方向和在线边界。 |
 | [test_d3.py](test_d3.py) | 在真实 LangGraph 和工作流守卫上验证规划上下文、单任务反思、实例语义目标和部分失败反馈。 |
+| [test_problem_goals.py](test_problem_goals.py) | 用同一批导管工件对拍问题级与实例级入口，验证零工具复用、限定视野、身份和测宽资格、预算及失败回交。 |
 | [test_decision_view.py](test_decision_view.py) | D2 离线回归：共享查询、区分问题、资格引用及歧义关联，随既有 selftest 发现。 |
 | [test_fair_investigation.py](test_fair_investigation.py) | 检验先验领先者、竞争解释和实际合法工具入口在 ReAct 中保持可见。 |
 | [test_integration.py](test_integration.py) | 可控输入与假子进程下的适配边界回归，绝不把模拟结果当真实模型效果。 |

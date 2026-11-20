@@ -1,4 +1,4 @@
-"""D3实验串行语义图：模型选实例目标，程序逐节点晚绑定当前合法工具。
+"""串行语义 DAG。接受 ReAct 的实例目标或单视野问题授权，逐节点绑定当前合法工具。
 
 消费InstanceLedger/CropMeta/现有工具前置；不接收未来crop/seg ID或工具序列。
 由react_graph通过已有MCP/LocalToolbox执行，身份、资格或输入变化即回交ReAct。
@@ -8,6 +8,7 @@
 - bind。精确实例内的等价别名可复用；像素/身份多解时不任取首个目标。
 - options。
 - compile_goal。
+- compile_problem。绑定 ReAct 实际选择的问题和视野，首个节点只解析已提交的实例或可用补扫。
 - next_action。每次执行前重读证据；返回当前动作/局部事实，永不构造未来工具target。
 - finish。
 
@@ -17,8 +18,11 @@
 """
 import contracts
 
-from TCM_Fusion.lib.evidence.instance_ledger import describe, project
-from TCM_Fusion.lib.runtime.storage import digest, file_hash, IntegrationError, read_json, finite_number
+from TCM_Fusion.lib.evidence.instance_ledger import describe
+from TCM_Fusion.lib.evidence.search_ledger import scan_coverage
+from TCM_Fusion.lib.agent.problem_goals import candidates, qualified_facts, single_granularity
+from TCM_Fusion.lib.evidence.purpose_evidence import dimension_use
+from TCM_Fusion.lib.runtime.storage import digest, file_hash, IntegrationError, read_json, finite_number, reusable_reads
 from TCM_Fusion.lib.tools.tool_registry import validate_arguments
 
 
@@ -91,6 +95,17 @@ def _bound_input(bound):
     return digest([bound['source_image_sha256'], bound['geometry'], bound['crop_sha256'], bound['feature_id']])
 
 
+def _nodes(tasks, instance_ref, predecessor=None):
+    result = []
+    for task in tasks:
+        result.append({'node_id': task, 'semantic_task': task, 'instance_ref': instance_ref,
+                       'depends_on': [predecessor] if predecessor else [], 'status': 'pending',
+                       'required_facts': REQUIRED_FACTS[task],
+                       'invalid_if': ['bound_input_changed', 'qualification_revoked', 'task_closed']})
+        predecessor = task
+    return result
+
+
 def compile_goal(runtime, goal, selected):
     validate_arguments(GOAL_SCHEMA, goal)
     if goal['semantic_task'] == 'verify_identity' and selected['tool'] != 'classify_target':
@@ -110,11 +125,75 @@ def compile_goal(runtime, goal, selected):
     return {'schema': 'serial-semantic-plan/d3', 'plan_id': 'plan:'+digest(goal)[:24],
         'goal': goal, 'dimension': dimension, 'bound_input': _bound_input(bound),
         'bound_crop_id': selected_bound['crop_id'],
-        'nodes': [{'node_id': task, 'semantic_task': task, 'instance_ref': goal['instance_ref'],
-                   'depends_on': [] if i == 0 else [tasks[i-1]], 'status': 'pending',
-                   'required_facts': REQUIRED_FACTS[task],
-                   'invalid_if': ['bound_input_changed', 'qualification_revoked', 'task_closed']}
-                  for i, task in enumerate(tasks)], 'status': 'running'}
+        'nodes': _nodes(tasks, goal['instance_ref']), 'status': 'running'}
+
+
+def compile_problem(offer):
+    """只接受主机从本轮菜单反解出的授权；首个节点暂时没有实例。"""
+    dimension = dimension_use(offer['dimension'])
+    return {'schema': 'serial-semantic-plan/problem-v1', 'plan_id': offer['choice_id'],
+            'authorization': dict(offer), 'goal': {'problem_id': offer['problem_id'],
+                'semantic_task': 'measure_' + dimension}, 'dimension': dimension, 'status': 'running',
+            'issued': {}, 'nodes': [{'node_id': 'resolve_instance', 'semantic_task': 'resolve_instance',
+                'depends_on': [], 'status': 'pending', 'required_facts': ['authorized_view_and_feature']}]}
+
+
+def _resolve_problem(runtime, plan, state, snap):
+    scope = plan['authorization']
+    image, fid = scope['image_id'], scope['feature_id']
+    groups, conflicts = candidates(snap, image)
+    instances = groups.get(fid, {})
+    if 'feature_scan' in plan['issued']:
+        marker = snap['artifacts'].get('scanned:' + image + ':' + fid, {})
+        operations = read_json(runtime.workflow.operations)['entries'].values()
+        scan = next((r for r in operations if r.get('action_id') == plan['issued']['feature_scan']
+                     and r.get('tool') == 'feature_scan' and r.get('target_id') == scope['entry_target']), None)
+        if not marker.get('valid') or not scan:
+            return None, 'scan_receipt_missing'
+        status, coverage = scan_coverage(scan)
+        plan['scan_receipt'] = {'artifact_id': marker['id'], 'sha256': marker['sha256'], 'coverage': status}
+        if status != 'shareable':
+            return None, {'partial': 'scan_partial', 'failed': 'scan_failed'}.get(status, 'scan_coverage_unknown')
+        if not instances:
+            return None, 'scan_empty' if coverage.get('crop_count') == 0 else 'no_reviewable_instance'
+    facts = []
+    for iid, versions in instances.items():
+        if iid not in conflicts:
+            for crop, bound in versions:
+                facts.extend(qualified_facts(runtime, snap, crop, bound, scope['dimension']))
+    if facts:
+        runtime.workflow.store.verified_records()
+        plan['facts'] = facts
+        plan['nodes'][0]['status'] = 'succeeded'
+        refs = {fact['instance_ref'] for fact in facts}
+        if len(refs) == 1:
+            plan['goal']['instance_ref'] = next(iter(refs))
+        return None, 'local_goal_satisfied'
+    if scope['entry_tool'] == 'reuse':
+        return None, 'qualified_fact_unavailable'
+    if not instances:
+        if scope['entry_tool'] != 'feature_scan':
+            return None, 'missing_legal_prerequisite'
+        target = runtime.workflow.targets().get(scope['entry_target'], {})
+        if target.get('image_id') != image or target.get('feature_id') != fid:
+            return None, 'missing_legal_prerequisite'
+        if target['max_tiles'] > scope['max_tiles']:
+            return None, 'scan_scope_changed'
+        action = next((a for a in runtime.legal_actions(state) if a['tool'] == 'feature_scan'
+                       and a['action_id'] == scope['entry_action_id']), None)
+        return (action, 'action_ready') if action else (None, 'missing_legal_prerequisite')
+    if len(instances) != 1 or conflicts.intersection(instances):
+        return None, 'ambiguous_instances'
+    iid = next(iter(instances))
+    crop, bound = bind(runtime, iid)
+    if (bound['source_image_sha256'] != scope['source_sha256'] or crop['image_id'] != image
+            or bound['feature_id'] != fid or bound['granularity'] != 'instance'):
+        return None, 'bound_input_changed'
+    plan['goal']['instance_ref'] = iid
+    plan.update(bound_input=_bound_input(bound), bound_crop_id=crop['id'])
+    plan['nodes'][0].update(status='succeeded', instance_ref=iid)
+    plan['nodes'].extend(_nodes(TASKS, iid, 'resolve_instance'))
+    return None, 'instance_bound'
 
 
 def _note_identity_block(plan, snapshot, crop_id, expected_feature):
@@ -143,6 +222,7 @@ def _note_identity_block(plan, snapshot, crop_id, expected_feature):
     }
 
 
+@reusable_reads()
 def next_action(runtime, plan, state):
     """每次执行前重读证据；返回当前动作/局部事实，永不构造未来工具target。"""
     workflow = runtime.workflow
@@ -150,6 +230,28 @@ def next_action(runtime, plan, state):
         return None, 'task_closed'
     if workflow.cancel_event.is_set():
         return None, 'task_cancelled'
+    scope = plan.get('authorization')
+    if scope:
+        snap = workflow.store.current()
+        if not plan['issued'] and snap['version'] != scope['version']:
+            return None, 'evidence_changed_before_dispatch'
+        if not set(scope['consumers']).intersection(runtime.candidate_interest()['ids']):
+            return None, 'problem_inactive'
+        image = snap['artifacts'].get(scope['image_id'], {})
+        scale = snap['artifacts'].get('scale:' + scope['image_id'], {})
+        try:
+            if (not image.get('valid') or image.get('sha256') != scope['source_sha256']
+                    or file_hash(image['path']) != scope['source_sha256']):
+                return None, 'source_changed'
+            if (not scale.get('valid') or scale['sha256'] != scope['scale_sha256']
+                    or file_hash(scale['path']) != scope['scale_sha256']):
+                return None, 'calibration_changed'
+        except OSError:
+            return None, 'scope_artifact_unreadable'
+        if 'instance_ref' not in plan['goal']:
+            action, reason = _resolve_problem(runtime, plan, state, snap)
+            if reason != 'instance_bound':
+                return action, reason
     try:
         crop, bound = bind(runtime, plan['goal']['instance_ref'])
     except IntegrationError as exc:
@@ -169,8 +271,12 @@ def next_action(runtime, plan, state):
     snap = workflow.store.current(); arts = snap['artifacts']
     identity = arts.get('classification:'+crop['id'], {})
     meta = contracts.CropMeta.from_json(crop['path'])
+    if scope and (meta.granularity != 'instance' or meta.px_per_um != scale.get('px_per_um')):
+        return None, 'dimension_not_qualified'
     identity_ok = bool(identity.get('valid') and identity.get('identity_verified')
                        and identity.get('feature_id') == meta.feature_id)
+    if scope and identity_ok and not single_granularity(identity):
+        return None, 'granularity_not_qualified'
     seg = arts.get('seg:'+crop['id'], {})
     measure = arts.get('measurement:seg:'+crop['id'], {})
     def qualified():
@@ -183,7 +289,11 @@ def next_action(runtime, plan, state):
             return bool(qa and qa['integrity'] and qa['uses'][plan['dimension']]['allowed'])
         return True
     def requested_value_available():
-        from TCM_Fusion.lib.evidence.purpose_evidence import dimension_use
+        if scope:
+            facts = qualified_facts(runtime, snap, crop, bound, scope['dimension'])
+            if facts:
+                plan['facts'] = facts
+            return bool(facts)
         rows = [entry['data'] for entry in snap['records'] if entry['scope'] == seg.get('id')
                 and measure.get('id') in entry['depends_on']]
         for row in rows:
@@ -240,11 +350,13 @@ def next_action(runtime, plan, state):
                 _note_identity_block(plan, snap, crop['id'], meta.feature_id)
             return None, 'missing_legal_prerequisite'
         if tool in {'segment_instance', 'measure_instances'} and plan['dimension']:
-            from TCM_Fusion.lib.agent.measurement_gain import measurement_menu, goal_consumers
+            from TCM_Fusion.lib.agent.measurement_gain import measurement_menu
+            from TCM_Fusion.lib.agent.problem_goals import measurement_useful
             scored = runtime.score(state.get('observations', []))
             choices, groups, bindings = measurement_menu(runtime, [action], scored, workflow.targets())
             group = groups.get(bindings.get(action['action_id']))
-            if not choices or goal_consumers(group, plan['goal']['semantic_task']) == []:
+            consumers = scope['consumers'] if scope else None
+            if not choices or not measurement_useful(group, plan['goal']['semantic_task'], consumers):
                 return None, 'measurement_value_changed'
         return action, 'action_ready'
     plan['status'] = 'completed'
