@@ -18,7 +18,9 @@ import paths
 from rule_engine import EvidenceCard, KnowledgeBase, evaluate_candidate
 
 from TCM_Fusion.lib.decision.ab_fusion import apply_ab_fusion
-from TCM_Fusion.lib.decision.rule_scoring import decide, score_candidate, rank_and_decide
+from TCM_Fusion.lib.decision.rule_scoring import (
+    decide, disjoint_counterevidence, score_candidate, rank_and_decide,
+)
 
 
 def check(fid, role, contribution, state='NO_REF', bounds=None, weight=1, scene=1):
@@ -88,6 +90,61 @@ class ABFusionTest(unittest.TestCase):
         self.assertEqual(actual['rule_score'], .352)
         self.assertEqual(shadow['rule_score'], .4)
         self.assertIsNone(rank_and_decide([shadow], 1)['conclusion'])
+
+    def test_disjoint_vessel_counter_reaches_b_and_fusion(self):
+        kb = KnowledgeBase(Path(paths.JUDGE_DIR) / 'data/herb_criteria.json')
+        cluster = EvidenceCard('cluster_crystal')
+        cluster.instance_refs = [('view', 1)]
+        cluster.confs = [1.0]
+        cluster.dims = {'feret_max': {'values': [16]}}
+        vessel = EvidenceCard('vessel')
+        vessel.instance_refs = [('view', 2)]
+        vessel.confs = [1.0]
+        vessel.dims = {'mean_width': {'values': [20]}}
+        cards = {'cluster_crystal': cluster, 'vessel': vessel}
+        row = next(c for c in kb.candidates() if c['id'] == 'G1')
+        before = score_candidate(evaluate_candidate(row, cards, kb))
+        after = decide(kb, cards)
+        self.assertEqual(after['score_version'], 'b-rule/4')
+        apply_ab_fusion(after, {}, kb)
+        g1 = next(r for r in after['ranking'] if r['id'] == 'G1')
+        parts = g1['score_components']
+        self.assertEqual(before['rule_score'], .408)
+        self.assertEqual(g1['rule_score'], .341333)
+        self.assertAlmostEqual(g1['fused_score'], .1706665, places=6)
+        self.assertEqual(g1['raw_score'], before['raw_score'])
+        self.assertEqual(parts['disjoint_counter_penalty'], .066667)
+        counter, = parts['disjoint_counterevidence']
+        self.assertEqual(counter['median'], 20)
+        self.assertEqual(counter['instance_refs'], ['view#2'])
+        self.assertEqual([peer['candidate_id'] for peer in counter['supporting_candidates']], ['G2'])
+
+        # The gap between the two ranges has no supported disjoint peer.
+        vessel.dims['mean_width']['values'] = [24.5]
+        gap = next(r for r in decide(kb, cards)['ranking'] if r['id'] == 'G1')
+        self.assertEqual(gap['rule_score'], before['rule_score'])
+        self.assertEqual(gap['score_components']['disjoint_counterevidence'], [])
+
+    def test_disjoint_counter_needs_the_same_measured_fact_and_counts_once(self):
+        outside = check('vessel', 'supporting', 0, 'OUT_OF_RANGE',
+                        bounds={'dim': 'mean_width', 'min': 25, 'max': 78})
+        inside = check('vessel', 'supporting', .5, 'IN_RANGE',
+                       bounds={'dim': 'mean_width', 'min': 10, 'max': 24})
+        measured = {'stats': {'median': 20}, 'instance_refs': ['view#1']}
+        loser = {'id': 'G1', 'checks': [{**outside, **measured}]}
+        for replacement in (
+            {'instance_refs': ['other#1']}, {'stats': None}, {'state': 'UNCAL'},
+            {'quant_bounds': {'dim': 'feret_max', 'min': 10, 'max': 24}},
+            {'quant_bounds': {'dim': 'mean_width', 'min': 10, 'max': 25}},
+            {'quant_bounds': None, 'state': 'NO_REF'},
+        ):
+            with self.subTest(replacement=replacement):
+                peer = {'id': 'G2', 'checks': [{**inside, **measured, **replacement}]}
+                self.assertEqual(disjoint_counterevidence([loser, peer]), {})
+        peers = [{'id': ident, 'checks': [{**inside, **measured}]} for ident in ('G2', '另一个候选')]
+        counters, = disjoint_counterevidence([loser, *peers])['G1']
+        self.assertEqual(len(counters['supporting_candidates']), 2)
+        self.assertEqual(counters['strength'], .5)
 
     def test_caps_ignore_support_and_cannot_be_bypassed_by_scene(self):
         wide = check('wide','required',1,'IN_RANGE',{'min':10,'max':90},scene=1.1)

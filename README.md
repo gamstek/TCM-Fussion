@@ -139,7 +139,7 @@ F(c) = (A 权重 × A(c) + B 权重 × B(c)) ÷ (A 权重 + B 权重)
 
 **逐折 Top-3 用来生成调查候选（平均有8~10候选组成员），A 分从完整逐折排名取值。** 例如四图、每图五折时，A 分的分母为 20。候选在某一折的原始记录没有对应条目时，该折对它的贡献为 0。融合首位发生变化时，程序撤销与原首位绑定的结论并交由收尾复核。[候选生成](lib/decision/candidate_policy.py) · [A 预测适配](lib/workflow/adapters.py) · [A＋B 计算](lib/decision/ab_fusion.py)
 
-### B 规则分（b-rule/3）
+### B 规则分（b-rule/4）
 
 每条判据的正贡献来自 `判据权重 × 核验状态系数 × 形态合理度 × 丰度系数 × 来源可靠度`。例如附有量程且实测合格的 `IN_RANGE` 系数为 1.0。`NO_REF` 的状态系数为 0.6，当该判据本身没有量程且证据满足相应用途时，可以作为定性支持。仅凭通用阳性无法核验具体形态时记 `MORPHOLOGY_UNVERIFIED`，该条正贡献为 0。缺少合格量纲或实测超界的判据也不能给正式 B 分提供正支持。[逐项判据核验](Agent判药/scripts/rule_engine.py) · [证据采信](lib/evidence/evidence_projection.py)
 
@@ -150,8 +150,11 @@ R0 = clip((P − D) ÷ W, 0, 1)    W 为 0 时取 0
 R  = min(C, min(R0, C) × S)     无有效必需正贡献时 S 取 1
 基础分 = 0.80 × R
 佐证加分 = 0.20 × R × E ÷ (1 + E)    全部 required 合格才计入，否则为 0
-B(c) = 基础分 + 佐证加分
+分离区间反证扣分 = 0.20 × K ÷ (1 + K)
+B(c) = max(0, 基础分 + 佐证加分 − 分离区间反证扣分)
 ```
+
+同一组有资格的实例测量在同一特征、同一量纲下支持一个候选，并对参考区间与之分离的另一候选判为超界时，计入后一候选的独立反证。每种特征只取一次该候选的原超界罚项，各特征相加为 `K`。例如 G1 的导管 25–78 µm 与 G2 的 10–24 µm 分离，合格实测 20 µm 时，G1 在合成离线对照中由 0.408 降至 0.341333。逐笔依据见 `score_components.disjoint_counterevidence`。[离线对照](运行结果/模拟G1G2导管区间反证_11月19日18时25分06秒/运行摘要.md)
 
 默认 `C=1`。单项合格必需判据的量程跨度至少 60 μm 且占必需正贡献至少 55% 时，上限为 0.60。判据依据为非药典正文时，上限为 0.49。两条都触发时取较低上限。原引擎的 `raw_score` 则保留原始各项贡献之和扣除原引擎罚项，读取当前正式分时以 `rule_score` 为准。[B 正式计分](lib/decision/rule_scoring.py)
 
@@ -226,7 +229,7 @@ if ($LASTEXITCODE -ne 0) { throw '预检失败，请查看 doctor.json 或终端
 | 输入是否准备好，任务是否完成 | case 根的 `input_proof.json`、`doctor.json`、`interface_status.json`。完成后用 `run_location.json` 定位正式工件。 |
 | 最终判了什么，是否需要复核 | `output.json` 中的 `status`、`top_candidate`、`review_required`，以及供人工阅读的 `report.md`。 |
 | 结论依据与缺口是什么 | `final_assessment.json` 记录候选比较、复核原因和终止原因。用 `final_evidence.json` 追到对应证据和资格。 |
-| 同一个候选的 B 分和融合分是怎样得到的 | 在 `agent_verdict.json` 的 `ranking` 找到候选 ID，对照 `score_components` 中的必需基础分与独立佐证加分，再看 `rule_score`、`a_probability` 和 `fused_score`。 |
+| 同一个候选的 B 分和融合分是怎样得到的 | 在 `agent_verdict.json` 的 `ranking` 找到候选 ID，对照 `score_components` 中的必需基础分、佐证加分和分离区间反证扣分，再看 `rule_score`、`a_probability` 和 `fused_score`。 |
 | 为什么选了这个动作，另一条路线当时可选吗 | `agent_trace.json` 中的 `planner_offer` 留下实际提供的菜单，`thought` 留下所选动作及简短理由。结合后续动作反馈看它是否解决了原问题。 |
 | 实例目标执行到哪一步，并发有无提前交回 | 选过语义目标时，`workflow/semantic_plan.json` 记录最近目标的节点状态和结束原因。按时间查看 `agent_trace.json` 的执行事件，`physical_partial` 表示部分结果触发规划，`physical_join` 表示该组收齐。 |
 | 哪个计算阶段失败，耗时花在何处 | `workflow/operations.json` 查看阶段终态，`workflow/action_timeline.json` 查看时间线，`workflow/ops/` 查独立 worker 工件。网络请求已预留但关闭任务时还没有回执，资源账本 `workflow/resources.json` 会以 `unknown` 收尾。 |

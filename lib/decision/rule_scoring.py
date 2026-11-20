@@ -1,25 +1,70 @@
 """从 B 引擎已核验的逐条判据生成融合项目的正式 B 分与裁决。生产和离线复算
 共享同一计算，原始贡献只供核对。证据、知识库和旧运行记录均只读。
 
-主要定义：score_candidate 计算 required 达成度与独立佐证加分，rank_and_decide
-执行分差、必需判据和证据广度门槛。decide 从当前证据卡构造候选，并核验视野观察的问题范围。
+主要定义：score_candidate 计算必需达成度、独立佐证加分与分离区间反证扣分；
+rank_and_decide 执行裁决门槛。decide 从同一证据卡评估全库候选后再比较反证。
 
 关联：workflow.evidence_runtime 调用 decide，react_graph 消费相同裁决门槛；
 逐条证据来自 rule_engine，采信资格与 evidence_projection 共用。
 """
+from collections import defaultdict
+
 from rule_engine import (
     BAND_CONFIRMED, BAND_PROBABLE, DOM_MAX_FACTOR, DOM_SHARE_THRESHOLD,
     MARGIN_DELTA, MIN_SUPPORT_FEATURES, NONOFF_MAX_CONF, WIDE_SPAN_THRESHOLD,
     evaluate_candidate, scene_fit,
 )
-from TCM_Fusion.lib.evidence.evidence_projection import MORPHOLOGY_UNVERIFIED, supports_criterion
+from TCM_Fusion.lib.decision.comparison_problems import range_relation
+from TCM_Fusion.lib.evidence.evidence_projection import (
+    MORPHOLOGY_UNVERIFIED, counters_criterion, supports_criterion,
+)
+from TCM_Fusion.lib.runtime.storage import finite_number
 
 
-SCORE_VERSION = 'b-rule/3'
+SCORE_VERSION = 'b-rule/4'
 SUPPORT_WEIGHT = 0.20
+DISJOINT_COUNTER_WEIGHT = 0.20
 
 
-def score_candidate(row, *, non_official=False, support_weight=SUPPORT_WEIGHT):
+def disjoint_counterevidence(rows):
+    """同一合格测量支持分离区间的一方时，按候选和特征汇总另一方的超界罚项。"""
+    supported = defaultdict(list)
+    counters = []
+    for row in rows:
+        for check in row['checks']:
+            bounds = check.get('quant_bounds') or {}
+            median = (check.get('stats') or {}).get('median')
+            refs = tuple(check.get('instance_refs') or ())
+            if not bounds.get('dim') or not finite_number(median, minimum=0) or median <= 0 or not refs:
+                continue
+            key = (check['feature_id'], bounds['dim'], median, refs)
+            if supports_criterion(check):
+                supported[key].append((row['id'], bounds))
+            elif counters_criterion(check) and check['penalty'] > 0:
+                counters.append((row['id'], key, check))
+
+    by_candidate = defaultdict(dict)
+    for candidate_id, key, check in counters:
+        bounds = check['quant_bounds']
+        peers = sorted([
+            {'candidate_id': peer_id, 'bounds': peer_bounds}
+            for peer_id, peer_bounds in supported[key]
+            if peer_id != candidate_id and range_relation((bounds, peer_bounds)) == 'disjoint'
+        ], key=lambda peer: peer['candidate_id'])
+        if not peers:
+            continue
+        feature, dimension, median, refs = key
+        per_feature = by_candidate[candidate_id]
+        if feature not in per_feature or check['penalty'] > per_feature[feature]['strength']:
+            per_feature[feature] = {
+                'feature_id': feature, 'dimension': dimension, 'median': median,
+                'instance_refs': list(refs), 'role': check['role'], 'bounds': bounds,
+                'supporting_candidates': peers, 'strength': check['penalty'],
+            }
+    return {cid: [features[fid] for fid in sorted(features)] for cid, features in by_candidate.items()}
+
+
+def score_candidate(row, *, non_official=False, support_weight=SUPPORT_WEIGHT, disjoint_counters=()):
     """输入一行完整判据核验明细。离线权重对拍也从这些明细重算，不读旧分作为 R。"""
     if not 0 <= support_weight <= 1:
         raise ValueError('support_weight must be in [0, 1]')
@@ -55,7 +100,9 @@ def score_candidate(row, *, non_official=False, support_weight=SUPPORT_WEIGHT):
     strength = sum(supporting.values())
     base = (1 - support_weight) * attainment
     bonus = support_weight * attainment * strength / (1 + strength) if complete else 0
-    score = round(base + bonus, 6)
+    counter_strength = sum(item['strength'] for item in disjoint_counters)
+    counter_penalty = min(base + bonus, DISJOINT_COUNTER_WEIGHT * counter_strength / (1 + counter_strength))
+    score = round(base + bonus - counter_penalty, 6)
     return {
         'id': row['id'], 'display': row['display'], 'kind': row['kind'],
         'checks': [{k: v for k, v in c.items() if k != 'counts_toward_conf'} for c in checks],
@@ -72,6 +119,9 @@ def score_candidate(row, *, non_official=False, support_weight=SUPPORT_WEIGHT):
             'missing_required_penalty': round(missing_penalty, 6),
             'required_base': round(base, 6), 'supporting_contributions': supporting,
             'supporting_strength': round(strength, 6), 'supporting_bonus': round(bonus, 6),
+            'disjoint_counter_strength': round(counter_strength, 6),
+            'disjoint_counter_penalty': round(counter_penalty, 6),
+            'disjoint_counterevidence': list(disjoint_counters),
         },
     }
 
@@ -116,9 +166,9 @@ def rank_and_decide(rows, min_support_features=None):
 def decide(kb, cards, *, scene=None, min_support_features=None, presence_questions=None):
     """原物理证据交给 B 核验，只有视野观察的特征另按实际提问范围核验。"""
     presence_questions = presence_questions or {}
-    rows = []
-    for candidate in kb.candidates():
-        evaluated = evaluate_candidate(candidate, cards, kb, scene)
+    candidates = kb.candidates()
+    evaluated_rows = [evaluate_candidate(candidate, cards, kb, scene) for candidate in candidates]
+    for evaluated in evaluated_rows:
         for check in evaluated['checks']:
             fid = check['feature_id']
             if fid not in presence_questions:
@@ -130,7 +180,11 @@ def decide(kb, cards, *, scene=None, min_support_features=None, presence_questio
                 check['observation_scope'] = 'feature_presence'
                 if morphology and check['state'] == 'NO_REF' and not check['quant_bounds']:
                     check.update(state=MORPHOLOGY_UNVERIFIED, raw_rule_state='NO_REF', score_contribution=0)
-        row = score_candidate(evaluated, non_official=bool(candidate.get('non_official_basis')))
+    counterevidence = disjoint_counterevidence(evaluated_rows)
+    rows = []
+    for candidate, evaluated in zip(candidates, evaluated_rows):
+        row = score_candidate(evaluated, non_official=bool(candidate.get('non_official_basis')),
+                              disjoint_counters=counterevidence.get(evaluated['id'], ()))
         if scene:
             features = {c['feature_id'] for c in row['checks']
                         if c['role'] == 'required' and supports_criterion(c)}
