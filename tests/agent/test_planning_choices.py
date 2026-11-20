@@ -60,6 +60,33 @@ class PlanningChoicesTests(unittest.TestCase):
         self.assertEqual(view['parallel_observations'][0]['action_id'], 'O1')
         self.assertEqual(lookup, {'A1': 'canonical', 'O1': 'canonical'})
 
+    def test_wire_context_binds_equal_companion_args_and_keeps_published_policy_once(self):
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.client = SimpleNamespace(model='fixture',timeout_s=2)
+        planner.config = {}
+        action = {'tool':'presence_check','action_id':'bound','args':{'feature_id':'f','image_id':'x'}}
+        unique = dict(action,action_id='distinct')
+        context = {'actions':[action], 'parallel_observations':[action,unique],
+                   'stop_advisory':{}, 'planning_instruction':'仅此一份发布策略'}
+        original = copy.deepcopy(context)
+        with patch('TCM_Fusion.lib.runtime.hard_calls.post',return_value={'choices':[{'message':{
+                'content':json.dumps({'action_id':'A1','parallel_observation_id':'O2'})}}]}) as post:
+            reply,_ = planner.choose(context)
+        messages = post.call_args.args[0]['messages']
+        user = json.loads(messages[1]['content'])
+        self.assertEqual(sum(m['content'].count(context['planning_instruction']) for m in messages),1)
+        self.assertIn(context['planning_instruction'],messages[0]['content'])
+        self.assertEqual(messages[1]['content'],json.dumps(user,ensure_ascii=False,separators=(',',':')))
+        companion,distinct = user['parallel_observations']
+        self.assertEqual(companion['args_from_action'],user['actions'][0]['action_id'])
+        self.assertNotIn('args',companion)
+        self.assertEqual(distinct['args'],unique['args'])
+        self.assertEqual(reply['parallel_observation_id'],'distinct')
+        self.assertEqual(planner.last_request_menu['parallel_observations'],user['parallel_observations'])
+        self.assertEqual(planner.last_request_profile['message_text_utf8_bytes'],
+                         {m['role']:len(m['content'].encode('utf-8')) for m in messages})
+        self.assertEqual(original,context)
+
     def test_actual_llm_payload_uses_primary_goal_selector_and_maps_back(self):
         c=self.context(self.detected(),semantic_options=[{'old':'duplicate'}],semantic_goal_contract={})
         p=LLMPlanner.__new__(LLMPlanner);p.client=SimpleNamespace(model='fixture',timeout_s=2);p.config={}
@@ -352,11 +379,15 @@ class PlanningChoicesTests(unittest.TestCase):
         class Planner:
             def choose(inner,c):
                 seen.append(c)
-                if len(seen)>1:
+                if len(seen)==2:
                     self.assertEqual(c['selection_feedback'][-1]['rejected_questions'],1)
+                    return {'action_id':next(a['action_id'] for a in c['actions']
+                                             if a['tool']=='read_evidence_detail')},None
+                if len(seen)==3:
+                    self.assertNotIn('selection_feedback',c)
                     return {'action_id':'review'},None
                 q=c['execution_options']['questions'][0]
                 return {'decision':{'kind':'observe_questions','question_ids':['stale',q['question_id']]}},None
-        t=self.run_agent(r,Planner());self.assertEqual(t['planning_requests'],2)
+        t=self.run_agent(r,Planner());self.assertEqual(t['planning_requests'],3)
         self.assertEqual(t['observation_requests'],1)
         self.assertFalse(any(e['phase']=='rejected_proposal' for e in t['events']))

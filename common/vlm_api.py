@@ -2,7 +2,7 @@
 """
 vlm_api.py — VLM API 传输层（两阶段共享）
 
-检测阶段（detection/cli/vlm_prelabel）与比例尺双引擎（common/scalebar_duo）共用的
+检测、单实例分类和双引擎标定共用的
 OpenAI 兼容 /chat/completions 传输与解析原语：图像编码、请求发送、返回 JSON 容错解析。
 本模块只依赖标准库与 cv2，**不得 import 任何阶段模块**（避免共享层反向依赖阶段目录）。
 

@@ -57,6 +57,89 @@ def deduplicate_notes(value):
         value['context_notes'] = {ref:text for text,ref in aliases.items()}
 
 
+def compact_presence_localization(value):
+    """Keep decision-relevant shadow state; full diagnostics stay in the ledger."""
+    if not isinstance(value, dict):
+        return value
+    compact = {k:v for k,v in value.items() if k not in
+               {'artifacts','transform','spatial_agreement','quality_diagnostic'}}
+    spatial = value.get('spatial_agreement') or []
+    rows = [row for row in spatial if isinstance(row, dict)]
+    if isinstance(spatial, dict):
+        compact['spatial_agreement'] = spatial
+    elif rows:
+        compact['spatial_agreement'] = {
+            'count': len(rows),
+            'possible_duplicate': any(row.get('possible_duplicate') for row in rows),
+            'possible_identity_conflict': any(row.get('possible_identity_conflict') for row in rows),
+            'max_iou': max((row.get('iou') or 0) for row in rows),
+        }
+        conflicts = [{k:row.get(k) for k in ('artifact_id','feature_id','iou')}
+                     for row in rows if row.get('possible_identity_conflict')]
+        if conflicts:
+            compact['spatial_agreement']['identity_conflicts'] = conflicts
+    if value.get('quality_diagnostic'):
+        quality = value['quality_diagnostic']
+        compact['quality_diagnostic'] = {'summary': 'details_in_diagnostic_json',
+            **{k: quality[k] for k in ('status','flags','block_segment') if isinstance(quality, dict) and k in quality}}
+    compact['compacted'] = True
+    return compact
+
+
+def share_localizations(evidence, observations):
+    """单请求内可解引用的定位摘要。只合并相同评估，视野和观察结果仍逐条保留。"""
+    raw = evidence.get('presence_localizations') or []
+    if not raw:
+        return
+    rows = [compact_presence_localization(value) for value in raw]
+    # 只连接来自同一原始记录的定位，避免同图不同观察的有损摘要碰撞。
+    indices = {}
+    for i, row in enumerate(rows):
+        if isinstance(row, dict):
+            key = (row.get('source_action_id'), row.pop('source_localization_sha256', None))
+            if all(key):
+                indices.setdefault(key, []).append(i)
+    for obs in observations:
+        local = obs.get('presence_localization')
+        if not isinstance(local, dict):
+            continue
+        action = obs.get('action') or {}
+        key = (action.get('action_id'), local.get('source_localization_sha256'))
+        matches = indices.get(key, [])
+        if len(matches) != 1 or local.get('source_action_id') != key[0]:
+            continue
+        target = rows[matches[0]]
+        source = target.get('source_image_sha256')
+        args = action.get('args') or {}
+        if (isinstance(source, str) and source == local.get('source_image_sha256')
+                and args.get('image_id') == 'img_' + source
+                and target.get('feature_id') == args.get('feature_id') == local.get('feature_id')):
+            obs['presence_localization'] = {'index_in_presence_localizations': matches[0]}
+
+    common_fields = ('policy_version','mode','localization','quality','identity','state','findings',
+                     'verification_basis','usage_eligibility','observation_scope','legacy_presence_unchanged')
+    groups = {}
+    for i, row in enumerate(rows):
+        if isinstance(row, dict):
+            shared = {key:row[key] for key in common_fields if key in row}
+            if shared:
+                groups.setdefault(digest(shared), (shared, []))[1].append(i)
+    states = {}
+    for shared, indices in groups.values():
+        if len(indices) < 2:
+            continue
+        ref = 'L' + str(len(states) + 1)
+        if (len(indices)-1)*size(shared) <= len(indices)*size({'state_ref':ref}) + size(ref) + 24:
+            continue
+        states[ref] = shared
+        for i in indices:
+            rows[i] = {k:v for k,v in rows[i].items() if k not in shared}
+            rows[i]['state_ref'] = ref
+    evidence['presence_localizations'] = rows
+    if states:
+        evidence['localization_states'] = states
+
+
 def compact(context, previous=None):
     """返回新视图、纯指纹cursor及大小审计；不修改调用方原始对象。"""
     before = profile(context)
@@ -103,7 +186,7 @@ def compact(context, previous=None):
     for candidate in (workflow.get('provisional') or {}).get('ranking', []):
         for state in candidate.pop('criterion_states', []):
             row = {k: v for k, v in state.items() if k in {
-                'feature_id','role','tier','state','formal_state','instance_ids','quant_note','pending'}}
+                'feature_id','role','tier','state','formal_state','instance_ids','quant_note','n_measured','pending'}}
             row['candidate_id'] = candidate['candidate_id']
             canonical[(row['candidate_id'], row['feature_id'])] = row
         candidate.pop('pending_verification', None)  # canonical.state/pending/instance_ids保留。
@@ -179,12 +262,71 @@ def compact(context, previous=None):
         comparison['interpretation_contract'] = (
             'consumers携带各候选角色/判据；物理事实由fact_ref共享。所有入口仅授权当前步骤，'
             '不授阳性或后继资格；NO_REF不能靠重测补参考；局部未见/unknown均不排除标本。')
+    # 视野覆盖只解释已看过哪些视野；逐候选资格由 criterion_states 和 candidate_audit 负责。
+    coverage = workflow.get('coverage')
+    if isinstance(coverage, dict) and workflow.get('candidate_audit'):
+        for key in ('candidate_required','pending_required','missing_required','required_verified_all'):
+            coverage.pop(key, None)
+        coverage['criterion_status_ref'] = 'criterion_states / candidate_audit'
+    previous = previous or {}
+    # 请求是无状态的。常驻保留当前判据、竞争解释和详情入口，仅省略可查回的旧明细。
+    previous_rows = out.get('previous_observations', [])
+    hint_sources = {}
+    for index, row in enumerate(previous_rows):
+        # 只压缩已经执行的观察记录。工具本身的参数、每个视野的反馈原文均保留。
+        args = (row.get('action') or {}).get('args') or {}
+        hint = args.get('morph_hint')
+        if isinstance(hint, str) and len(hint.encode('utf-8')) > 48:
+            if hint in hint_sources:
+                row['action']['args'] = {**{k:v for k,v in args.items() if k != 'morph_hint'},
+                                         'morph_hint_from_observation': hint_sources[hint]}
+            else:
+                hint_sources[hint] = index
+        for key in ('diagnostics','usage','cache_hit','new_requests'):
+            row.pop(key, None)
+    share_localizations(evidence, previous_rows)
+    detail_keys = {}
+    for section, key in [(workflow, 'instance_associations'), (evidence, 'criteria_diff')]:
+        if key not in section:
+            continue
+        detail_keys[key] = digest(section[key])
+        if previous.get('details', {}).get(key) != detail_keys[key]:
+            continue
+        if key == 'instance_associations':
+            section[key] = {k:v for k,v in section[key].items() if k != 'rows'}
+        else:
+            morphology = {}
+            for r in section[key]:
+                for c in r.get('criteria', []):
+                    morphology.setdefault(c['feature'], set()).add(c.get('morph'))
+            required_state = {r['candidate_id']: r.get('required', {})
+                              for r in (workflow.get('candidate_audit') or {}).get('candidates', [])}
+            section[key] = [{'candidate_id':row['candidate_id'],
+                'criteria':[{'feature':c['feature'],'role':c['role'],
+                             **({'quant':c['quant']} if c.get('quant') else {}),
+                             **({'morph':c['morph']} if c.get('morph') and
+                                (c['role']=='supporting' or required_state.get(row['candidate_id'], {}).get(c['feature'])!='supported'
+                                 or len(morphology[c['feature']])>1) else {})} for c in row.get('criteria', [])]}
+                for row in section[key]]
+            evidence['criteria_detail_access'] = 'query_criteria(candidate_id)'
     deduplicate_notes(out)
     evidence_keys = ('decision', 'observation_states', 'cards', 'candidate_interest')
     cursor = {k: digest(evidence.get(k)) for k in evidence_keys}
     cursor['evidence_version'] = workflow.get('evidence_version')
     out['round_delta'] = {'changed': [k for k in cursor if (previous or {}).get(k) != cursor[k]],
                           'baseline_available': bool(previous), 'current_state_is_authoritative': True}
+    out['round_delta']['action_changes'] = out.pop('action_changes', [])
+    cursor['details'] = detail_keys
+    states = {row['candidate_id']: {role: row.get(role, {}) for role in ('required','supporting')}
+              for row in (workflow.get('candidate_audit') or {}).get('candidates', [])}
+    prior_states = previous.get('criteria', {})
+    out['round_delta']['criterion_changes'] = [
+        {'candidate_id': cid, 'role': role, 'feature_id': fid,
+         'before': prior_states.get(cid, {}).get(role, {}).get(fid), 'after': value}
+        for cid, roles in states.items() for role, criteria in roles.items()
+        for fid, value in criteria.items()
+        if previous and value != prior_states.get(cid, {}).get(role, {}).get(fid)]
+    cursor['criteria'] = states
     # 历史大型只读结果只发摘要；完整当前页仍可通过同一详情工具重读。
     for row in out.get('read_results', []):
         value = row.get('result')

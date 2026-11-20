@@ -34,6 +34,10 @@ def snapshot(scored, *, primary_ids=()):
             'observed_absence':[(r['image_id'],r['feature_id']) for r in scored.get('observation_states',[]) if r['state']=='absent'],
             'ranking':[r.get('id') for r in ranking],
             'verdict':d.get('verdict'), 'primary_ids':list(primary_ids),
+            'measurement_refs': {fid: set(map(tuple, getattr(card, 'instance_refs', ())))
+                                 for fid, card in scored['cards'].items()},
+            'criterion_states': {(row['id'], c['feature_id'], c.get('role')): c.get('state')
+                                 for row in ranking for c in row.get('checks', [])},
             'criterion_support':{r['id']:[c['feature_id'] for c in r.get('checks',[]) if
                 supports_criterion(c)] for r in ranking},
             'criterion_counters':[f"{r['id']}:{c['feature_id']}" for r in ranking
@@ -63,7 +67,32 @@ def evaluate(before,after,action,*,accepted,capability_changed=False,result=None
         bool(set(fids)&set(before.get('required',{}).get(cid,[]))) for cid,fids in support_changes.items())
     primary_progress=primary_progress or any(cid+':'+fid in counters for cid in before.get('primary_ids',[])
                                            for fid in before.get('required',{}).get(cid,[]))
+    states_before = before.get('criterion_states', {})
+    states_after = after.get('criterion_states', {})
+    transitions = [{'candidate_id': key[0], 'feature_id': key[1], 'role': key[2],
+                    'before': states_before.get(key), 'after': states_after.get(key)}
+                   for key in dict.fromkeys([*states_before, *states_after])
+                   if states_before.get(key) != states_after.get(key)]
+    samples = {}
+    for fid, refs in after.get('measurement_refs', {}).items():
+        old = before.get('measurement_refs', {}).get(fid, set())
+        if refs != old:
+            new_views = sorted({v for v,_ in refs} - {v for v,_ in old})
+            if old - refs:
+                effect = 'sample_revised'
+            elif not old:
+                effect = 'first_measurement'
+            elif new_views:
+                effect = 'another_view_sampled'
+            elif len(old) == 1:
+                effect = 'within_view_spread_now_observable'
+            else:
+                effect = 'same_view_sample_extended'
+            samples[fid] = {'before': len(old), 'after': len(refs), 'added': len(refs-old),
+                            'removed': len(old-refs), 'new_views': new_views, 'effect': effect}
     feedback = {**objective(action),'accepted':bool(accepted),'new_features':new,
+            'measurement_sample_change': samples, 'criterion_transitions': transitions,
+            'criterion_or_ranking_changed': bool(transitions or before['ranking'] != after['ranking']),
             'new_local_absence':[args['feature_id']] if negative else [],
             'resolved_criteria':resolved,'candidate_order_changed':before['ranking']!=after['ranking'],
             'capability_progress':bool(capability_changed),'useful':useful,
@@ -76,6 +105,29 @@ def evaluate(before,after,action,*,accepted,capability_changed=False,result=None
     if result.get('scan_coverage'):
         feedback['scan_coverage'] = result['scan_coverage']
     return feedback
+
+
+def artifact_additions(before, after):
+    from collections import Counter
+    return dict(Counter(a['kind'] for key, a in after.items() if a.get('valid') and key not in before))
+
+
+def planning_changes(events):
+    """只汇报上一规划之后的已提交动作；自动测量已包含在父分割的前后对拍中。"""
+    changes = []
+    for event in events:
+        if event.get('phase') not in {'recompute','action_observation'}:
+            continue
+        fb = event.get('feedback') or {}
+        added = fb.get('artifacts_added', {})
+        samples = fb.get('measurement_sample_change', {})
+        criteria = fb.get('criterion_transitions', [])
+        ranked = bool(fb.get('candidate_order_changed'))
+        if added or samples or criteria or ranked:
+            changes.append({'tool': event.get('tool') or 'observation', 'artifacts_added': added,
+                            'measurement_samples': samples, 'criterion_changes': criteria,
+                            'ranking_changed': ranked})
+    return changes
 
 
 def reflection_card(events):

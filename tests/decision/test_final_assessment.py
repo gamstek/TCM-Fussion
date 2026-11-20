@@ -202,6 +202,47 @@ class FinalAssessmentTests(unittest.TestCase):
                         {**good,'support_refs':['nonexistent:1']}]:
             with self.assertRaises(IntegrationError):validate_reply(packet,invalid)
 
+    def test_one_eligible_reference_survives_mixed_citations_in_delivery(self):
+        def mixed(packet):
+            good, _ = self.reply(packet)
+            prior = next(x['id'] for x in packet['facts'] if x['kind'] == 'a_prior')
+            rival = next(x['id'] for x in packet['facts']
+                         if x['kind'] == 'criterion' and x['data']['candidate_id'] == '桔梗')
+            return {**good, 'support_refs':[prior, good['support_refs'][0], rival, 'missing-id'],
+                    'unresolved_refs':['missing-gap'],
+                    'explanation':'其他药材的判据和模型先验也确认了本药材。'}, None
+        with patch.object(self, 'reply', wraps=self.reply) as calls:
+            value = finalize(self.runtime, self.verdict, self.result, self.root/'mixed', responder=mixed)
+            calls.assert_called_once()
+        raw = value['model_proposal']
+        audit = value['model_citation_audit']
+        self.assertEqual(value['candidate_id'], '秦皮')
+        self.assertIsNone(value['model_failure'])
+        self.assertEqual(value['method'], 'injected_finalizer')
+        self.assertEqual(value['explanation_source'], 'validated_references')
+        self.assertNotEqual(raw['explanation'], value['explanation'])
+        self.assertEqual([f['id'] for f in value['supporting_evidence']], [raw['support_refs'][1]])
+        self.assertEqual(audit['accepted']['support_refs'], [raw['support_refs'][1]])
+        self.assertEqual([x['reason'] for x in audit['rejected']],
+                         ['prior_only','different_candidate','unknown_reference','unknown_reference'])
+        self.assertEqual(value['unresolved'], [])
+        self.assertTrue(value['review_required'])
+        self.assertEqual(value['new_tool_calls'], 0)
+
+    def test_local_positive_alone_survives_other_unusable_observations(self):
+        packet = build_packet(self.runtime, self.verdict, self.result)
+        good, _ = self.reply(packet)
+        positive = next(x['id'] for x in packet['facts']
+                        if x['kind']=='observation' and '秦皮' in x['supports_candidate_ids'])
+        prior = next(x['id'] for x in packet['facts'] if x['kind']=='a_prior')
+        checked = validate_reply(packet, {**good, 'support_refs':[prior,positive]})
+        self.assertEqual(checked['support_refs'], [positive])
+        audit = {}
+        with self.assertRaisesRegex(IntegrationError, '没有一条合格支持'):
+            validate_reply(packet, {**good, 'support_refs':[prior]}, citation_audit=audit)
+        self.assertEqual(audit['accepted']['support_refs'], [])
+        self.assertEqual(audit['rejected'][0]['reason'], 'prior_only')
+
     def test_failed_observation_cannot_support_positive_judgement(self):
         result={**self.result,'observations':[{'accepted':False,'action':self.observation['action'],
                    'result':{'ok':False,'error_code':'TIMEOUT'}}]}
@@ -231,8 +272,11 @@ class FinalAssessmentTests(unittest.TestCase):
         self.assertEqual(obs['counters_candidate_ids'],[])
         self.assertIn('bound field of view',obs['data']['scope'])
         good,_=self.reply(packet)
-        with self.assertRaises(IntegrationError):
-            validate_reply(packet,{**good,'counter_refs':[obs['id']]})
+        audit = {}
+        checked = validate_reply(packet, {**good, 'counter_refs':[obs['id']]}, citation_audit=audit)
+        self.assertEqual(checked['support_refs'], good['support_refs'])
+        self.assertEqual(checked['counter_refs'], [])
+        self.assertEqual(audit['rejected'][0]['reason'], 'ineligible_counter')
         value=finalize(runtime,self.verdict,result,self.root/'same-feature')
         self.assertEqual(value['local_absence_observations'],[obs])
         self.assertTrue(value['presence_observations'])

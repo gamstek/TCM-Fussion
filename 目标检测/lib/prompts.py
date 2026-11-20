@@ -1,23 +1,12 @@
 # -*- coding: utf-8 -*-
-"""prompts.py — 检测提示词与类别白名单的唯一事实源（2026-09-29 重构 P1-3）。
+"""集中定义显微检测与单实例分类使用的类别、提示词和形态线索。
 
-**为什么单独成文件**：这些内容原先都在编号脚本 `02_vlm_prelabel.py` 里，而编号脚本按语言约束
-**不能**作为包成员被 import（`'02_vlm_prelabel'.isidentifier()` 为 False），于是
-`detect_core` 只能用 `import_module("02_vlm_prelabel")` 绕开——那正是"检测依赖入口脚本"的根源。
-提示词与类别表是**库内容**，不是入口逻辑，故下沉到此具名声明的模块。
+类别从视觉配置的 yolo.classes 加载，检测提示接收可选的显式先验。正式工作流按当前特征选形态线索。
 
-依赖方向：`ls_common` ← 本文件 ← `vlm_prelabel`（入口）/ `detect_core` / `detect_sample` /
-`fullimage_detect_seg` / `ui/*`。本文件**不得** import 任何编号脚本。
-
-内容全部原样搬运（`PROMPT` 文本是 A/B 实测校准过的，改动会改变检出行为）：
-  - 类别白名单 `VALID_LABELS`（由 vlm_config.json → yolo.classes 派生）与 `LABEL_ALIASES`
-  - 目录先验 `FOLDER_FEATURE` / `PRIOR_KEYWORDS` / `prior_from_dir()`
-  - 提示词 `PROMPT_VERSION` / `PROMPT` / `_priors_block()` / `build_prompt()`
+主要定义：VALID_LABELS、PRIOR_KEYWORDS、CLASSIFY_HINTS、build_prompt 和 build_classify_prompt。
+关联：检测原语、原检测入口和融合 workflow_worker 调用本模块。
 """
-import json
-import os
-
-from ls_common import DET_CONFIG, load_config
+from ls_common import load_config
 
 CURRENT_LABELS_FALLBACK = ["草酸钙簇晶", "草酸钙方晶", "草酸钙针晶", "导管", "石细胞", "淀粉粒",
                            "疑似待定", "非腺毛", "分泌组织", "气孔", "表皮细胞", "菌丝", "纤维",
@@ -45,20 +34,6 @@ LABEL_ALIASES = {"簇晶": "草酸钙簇晶", "方晶": "草酸钙方晶", "针�
                  # ① 扩类第 1 类：木纤维/晶纤维 → 新类「纤维」（合成单一类，晶纤维不单列）
                  "木纤维": "纤维", "晶纤维": "纤维"}
 
-# 药材级目录 → 主特征（P1 素材 91% 落在『药材名』目录，manifest.feature_label 为空，需此表兜底）
-FOLDER_FEATURE_PATH = os.path.join(DET_CONFIG, "folder_feature.json")
-
-
-def _load_folder_feature():
-    try:
-        with open(FOLDER_FEATURE_PATH, encoding="utf-8") as f:
-            return json.load(f).get("map", {})
-    except Exception:
-        return {}
-
-
-FOLDER_FEATURE = _load_folder_feature()
-
 # 目录先验关键词 → 特征标签（按序匹配，命中即返回）。长关键词在前，保证 herb 名剥离正确
 # （如 党参联结乳管 → herb=党参；若用短词"乳管"会剥成"党参联结"）。
 PRIOR_KEYWORDS = [
@@ -71,7 +46,7 @@ PRIOR_KEYWORDS = [
     ("油细胞", "分泌组织"), ("分泌", "分泌组织"),
     ("外果皮细胞", "表皮细胞"), ("种皮表皮细胞", "表皮细胞"), ("种皮细胞", "表皮细胞"),
     ("非腺毛", "非腺毛"), ("气孔", "气孔"), ("菌丝", "菌丝"),
-    # —— 2026-09-30 补 4 词：原先只在 build_manifest.FEATURE_SUFFIXES 里（两表独立维护，漂移了）。
+    # —— 保留 4 个原工程目录标签的匹配规则。
     #    缺它们的后果：大黄升华物/常山木纤维/木香木纤维/木香菊糖/板蓝根木纤维/黄柏晶纤维
     #    这 6 个特征目录在此匹配不到 → herb 退化成整个目录名（如 herb=木香木纤维），
     #    一路污染 crop 随行 json 与几何清单。
@@ -82,14 +57,14 @@ PRIOR_KEYWORDS = [
     ("木纤维", "纤维"), ("晶纤维", "纤维"), ("菊糖", "其他"), ("升华物", "其他"),
 ]
 PROMPT_VERSION = "v7.16_other_class"  # v7.16（2026-10-23）：③ 新增第 15 类「其他」——**目录先验门控**的兜底类：
-                                       #   只在 folder_feature.json / PRIOR_KEYWORDS 明确给出 feature=其他 的 15 个目录
+                                       #   只在调用方的显式目录先验给出 feature=其他 时启用
                                        #   （木香菊糖 28 + 未入类 725）产出该类框，为「无类别检测器 + 特征分类器」提供
                                        #   "非目标实体"的正样本；13 类目录的判定条款与「没有合法类别时如实留空」逐字未动
                                        #   → v7.13 存量产物语义等价，本轮不 --force 全量重跑（与 v7.9~v7.15 改全局行为不同）。
                                        # v7.13（2026-10-09）：② 扩类第 2 类「花粉粒」（第 14 类）。
                                        # ⚠ 2026-10-09～10 曾试**第 3 批扩类**（腺毛/腺鳞·硅质块·菊糖，v7.14→v7.15）：
                                        #   同时刻对照臂 A/B **未过**；且查明其"主场"目录并非该特征样本集
-                                       #   （folder_feature.json：大腹皮=纤维、薄荷=非腺毛，两特征"未入类"），
+                                       #   （大腹皮的主特征为纤维，薄荷为非腺毛，两者都在词表之外），
                                        #   唯一特征级公平样本 木香菊糖 仅弱正收益 → **已整体回退**，本文件回到
                                        #   14 类词表；待补齐含腺鳞/硅质块的专用样本集后再启（教训写入 重构方案.md）。
                                        #   动因（盲标 crop 分类实测暴露的**类别缺口**）：`pollen_grain` 在
@@ -164,32 +139,6 @@ PROMPT = """你是中药粉末显微鉴定专家标注员。请在这张明视�
 只输出 JSON，不要输出其他文字：
 {"objects": [{"label": "类别", "bbox_2d": [x1, y1, x2, y2], "confidence": "high或medium", "morphology": "形态描述(20字内)", "note": "复核提示或空串"}]}
 若图中没有任何可辨识特征实体，输出 {"objects": []}。"""
-
-
-def prior_from_dir(image_path):
-    """从图片所在目录名提取（herb, feature）先验；无关键词命中时返回 (None, None)。
-
-    优先级：① folder_feature.json 的『药材级目录→主特征』映射（P1 素材多为此类）；
-            ② PRIOR_KEYWORDS 关键词匹配（特征级目录）。
-    herb 名剥离用命中的**长关键词**本身，避免出现「党参联结」这类残名。
-    """
-    dir_name = os.path.basename(os.path.normpath(os.path.dirname(image_path)))
-
-    fm = FOLDER_FEATURE.get(dir_name)
-    if fm:
-        return dir_name, fm.get("herb") or dir_name, fm["primary"]
-
-    for kw, label in PRIOR_KEYWORDS:
-        if kw in dir_name:
-            # 无论该特征是否在白名单里，**药材名都要剥出来**：命中即说明 kw 是特征词，
-            # 留着它会让 herb 变成整个目录名（如 木香木纤维），污染随行 json 与几何清单。
-            # label 为 None（如 砂晶/木纤维/菊糖/升华物/晶纤维）只表示"不注入特征先验"。
-            herb = dir_name.replace("草酸钙", "").replace(kw, "")
-            if label is None:
-                return dir_name, (herb or None), None
-            herb = herb.replace(label.replace("草酸钙", ""), "")
-            return dir_name, (herb or None), label
-    return dir_name, None, None
 
 
 def _priors_block(priors):

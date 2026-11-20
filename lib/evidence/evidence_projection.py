@@ -38,6 +38,29 @@ def reference_allowed(row, candidate_id, relation='support'):
             and candidate_id in row.get('counters_candidate_ids', []))
 
 
+def bound_localization(observation):
+    """在摘要化之前绑定实际登记动作和原始定位内容。缺少可靠绑定时独立展示。"""
+    raw = observation.get('presence_localization')
+    if not isinstance(raw, dict):
+        return raw
+    row = {k:v for k,v in raw.items() if k not in {'source_action_id','source_localization_sha256'}}
+    action = observation.get('action') or {}
+    args = action.get('args') or {}
+    source = row.get('source_image_sha256')
+    if (isinstance(source, str) and source and args.get('image_id') == 'img_' + source
+            and args.get('feature_id') == row.get('feature_id') and row.get('feature_id')
+            and isinstance(action.get('action_id'), str) and action['action_id']):
+        row['source_localization_sha256'] = digest(raw)
+        row['source_action_id'] = action['action_id']
+    return row
+
+
+def recent_localizations(observations):
+    """目录保留最近八份有定位的原始观察，沿用实际提交顺序。"""
+    recent = [obs for obs in observations if 'presence_localization' in obs][-8:]
+    return [bound_localization(obs) for obs in recent]
+
+
 def presence_state(observation, kb, images=None):
     """分类局部观察，缺结果、失败和低置信均为未知。"""
     action = observation.get('action') or {}
@@ -54,6 +77,10 @@ def presence_state(observation, kb, images=None):
 
 
 MORPHOLOGY_UNVERIFIED = 'MORPHOLOGY_UNVERIFIED'
+COUNTER_GUIDANCE = (
+    '按来源和用途解释反证。合格实测经知识库判为OUT_OF_RANGE时，required该项当前不满足；'
+    'supporting轻微偏离时说明测量变异，明显偏离时说明它削弱哪个候选的哪项佐证。'
+    '说明差距和不确定性，未查或不可判保持未知。不可自行设扣分、否定整味药材或改写B分数。')
 
 
 def supports_criterion(check):

@@ -248,7 +248,7 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
     if provisional.get('ranking') and formal_top:
         prov_top = provisional['ranking'][0]
         prov_id = prov_top.get('candidate_id')
-        has_partial = any(s.get('state') in {'DETECTED_PENDING', 'PARTIAL_MATCH'}
+        has_partial = any(s.get('state') in {'DETECTED_PENDING', 'PARTIAL_MATCH', 'QUALITATIVE_ADMITTED_NO_RANGE'}
                           for s in prov_top.get('criterion_states') or [])
         # 正式未确认时，允许暂定排序成为交付层的 tentative 首选；
         # 正式 verdict/support_count 不变，仍单独保留。
@@ -366,6 +366,7 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
         "missing_required": missing,
         "review_required": needs_review,
         "final_assessment": result.get('final_assessment'),
+        "decision_layers": assessment.get("decision_layers"),
         "candidate_audit": (result.get('final_assessment')or{}).get('candidate_audit'),
         "judgement": None if projection_error else assessment.get('judgement'),
         "fusion_ranking": [{"id":r.get('id'), "score":r.get('score')} for r in verdict.get('ranking',[])],

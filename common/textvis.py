@@ -51,8 +51,3 @@ def draw_texts_cn(img_bgr, items):
         # BGR → PIL RGB
         d.text(org, text, font=_font(size), fill=(color[2], color[1], color[0]))
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
-
-
-def put_text_cn(img_bgr, text, org, color=(0, 0, 255), size=18):
-    """单条文字的便捷封装。"""
-    return draw_texts_cn(img_bgr, [(text, org, color, size)])

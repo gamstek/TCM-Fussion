@@ -1,5 +1,7 @@
 # experiments — IGM 分割实验代码
 
+> 本页保留原工程 IGM 实验说明。所列实验脚本在 `D:\TCM-Microscopic-Image-Recognition-main\图像分割\experiments` 使用。独立版的正式分割入口是 [igm_segment_batch.py](../cli/igm_segment_batch.py)。
+
 本目录是 **实验代码**，不属于生产管线；生产脚本仍是上一级的 `igm_segment.py`（未被本目录改动）。
 
 实验目的：解决低对比小目标上 IGM 生成的 mask **明显偏小**的问题，验证两条改进思路

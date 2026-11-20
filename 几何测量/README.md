@@ -1,5 +1,7 @@
 # 几何测量模块（第 4 步 · Step 4-geometry）
 
+> 独立版的融合 worker 调用 [measure.py](measure.py)，项目根的 `selftest` 覆盖几何 worker 与交付契约。下文的区间核查、合成自测和伪掩码脚本在 `D:\TCM-Microscopic-Image-Recognition-main\几何测量` 使用。
+
 流水线位置：**实例分割的 Mask 进 → 各实例几何特征（形状 + 真实尺寸 μm）出**，
 供第 5 步 Agent 规则推理对照判据（形态 + 量化尺寸）裁决。
 

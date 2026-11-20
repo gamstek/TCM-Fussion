@@ -18,14 +18,18 @@ from pathlib import Path
 
 from TCM_Fusion.lib.runtime.storage import read_json
 
+from TCM_Fusion.lib.evidence.evidence_projection import supports_criterion
+
+QUALITATIVE = 'QUALITATIVE_ADMITTED_NO_RANGE'
 VERIFIED = 'VERIFIED_MATCH'
+ADMITTED = {QUALITATIVE, VERIFIED}
 PENDING = 'DETECTED_PENDING'
 PARTIAL = 'PARTIAL_MATCH'
 CONFLICT = 'CONFLICT'
 NOT_DETECTED = 'NOT_DETECTED'
 UNKNOWN = 'UNKNOWN'
 
-TIER = {VERIFIED: 1.0, PENDING: 0.5, PARTIAL: 0.25, CONFLICT: 0.0,
+TIER = {VERIFIED: 1.0, QUALITATIVE: 0.5, PENDING: 0.5, PARTIAL: 0.25, CONFLICT: 0.0,
         NOT_DETECTED: 0.0, UNKNOWN: 0.0}
 
 
@@ -90,9 +94,11 @@ def _tier_for(check, classes, conflicts):
         state = check.get('state')
         if state in {'IN_RANGE', 'EXTREME'}:
             return VERIFIED, []
+        if state == 'NO_REF' and supports_criterion(check):
+            return QUALITATIVE, list(check.get('instance_refs') or [])
         if state == 'OUT_OF_RANGE':
             return CONFLICT, []
-        # UNCAL / NO_REF / 其他 present 状态：只能说明检出或形态线索，
+        # 未采信的 NO_REF、UNCAL 等只保留检出或形态线索，
         # 不能凭 formal check 直接升级成 VERIFIED。
         if state != 'NOT_DETECTED':
             return PENDING, []
@@ -136,6 +142,7 @@ def build(verdict, result):
                            'instance_ids': sorted(set(instance_ids)),
                            'formal_state': check.get('state'),
                            'quant_note': check.get('quant_note'),
+                           'n_measured': (check.get('stats') or {}).get('n_measured'),
                            'pending': state in {PENDING, PARTIAL}})
         bonus = bonus_num / bonus_den if bonus_den else 0.0
         a_prob = float(candidate.get('a_probability') or 0.0)

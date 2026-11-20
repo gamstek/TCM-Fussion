@@ -12,7 +12,7 @@
 ③ 可归因（stage 1 的定位与 stage 2 的分类能分别评测）。
 
 **可替换实现**：`impl="vlm"` 走 VLM；`impl="model"` 走自训分类器（`cls_net`，ResNet18 /
-320 letterbox，见 `cli/train_cls.py`）。两者签名与返回值形状一致，故接入/替换/回退都不动
+预处理配置随权重与元信息提供）。两者签名与返回值形状一致，故接入/替换/回退都不动
 下游。**注意 `model` 没有拒绝类**：14 个训练类里「其他」是正类而非「都不是」，stage 1 的
 假阳性会被强制归到某个特征类——补拒绝类需要先回流检测 FP crop。
 
@@ -22,9 +22,6 @@
 读法限制（必须先记住）：本模块只做**特征归类**，不判"是不是药典真阳"、不做形态学判据推理——
 判据归 `criteria_table.json`（所有权边界见 AGENTS.md）。
 """
-import os
-from concurrent.futures import ThreadPoolExecutor
-
 import cv2
 import numpy as np
 
@@ -105,7 +102,7 @@ def classify_crop(crop_bgr, cfg_vlm, api_key, ctx="", impl="vlm",
                 "source": "gate", "focus": round(focus, 1), "sent_hw": None,
                 "granularity": GRANULARITY_DEFAULT}
     if impl == "model":
-        # 自训分类网络（`cli/train_cls.py` 的产物）：预处理/类别表全在 `cls_net`，
+        # 自训分类网络：预处理和类别表由 `cls_net` 读取，
         # 与训练同一份实现；本函数只把结果翻译成与 VLM 路径同形的 13 键。
         if not weights:
             raise ValueError("impl='model' 需要 weights（训练产物 best.pt 路径）")
@@ -157,17 +154,3 @@ def classify_crop(crop_bgr, cfg_vlm, api_key, ctx="", impl="vlm",
         "sent_hw": [img.shape[0], img.shape[1]],
         "granularity": gran,
     }
-
-
-def classify_crops(items, cfg_vlm, api_key, workers=8, target_side=CLASSIFY_TARGET_SIDE):
-    """批量分类：`items = [(key, crop_bgr, ctx), ...]` → `{key: result}`（顺序同 items）。
-
-    **并发收在本进程内**（跨进程各自计数会叠加突破账户并发上限，见 `detect_core.detect_consensus`）。
-    `workers` 建议 ≤8：stage 2 的调用很轻（单实体小图），瓶颈在服务端而非本地。
-    """
-    def one(kc):
-        k, crop, ctx = kc
-        return k, classify_crop(crop, cfg_vlm, api_key, ctx=ctx, target_side=target_side)
-
-    with ThreadPoolExecutor(max_workers=max(1, int(workers))) as ex:
-        return dict(ex.map(one, items))

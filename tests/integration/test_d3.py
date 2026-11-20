@@ -250,6 +250,21 @@ class D3Tests(fixtures.D3Fixture, unittest.TestCase):
         trace=self.run_agent(r,Planner());self.assertNotIn('measure_instances',r.workflow.backend.calls)
         self.assertIn('mask_review',[e.get('reason') for e in trace['events'] if e['phase']=='semantic_return'])
 
+    def test_graph_passes_cursor_to_next_normal_plan(self):
+        r = self.detected(context_compact=True)
+        seen = []
+        class Planner:
+            def choose(inner, context):
+                seen.append(context['round_delta'])
+                if len(seen) == 1:
+                    action = next(a for a in context['actions'] if a['tool']=='read_evidence_detail')
+                    return {'action_id': action['action_id']}, None
+                return {'action_id':'review'}, None
+        trace = self.run_agent(r, Planner())
+        self.assertEqual([d['baseline_available'] for d in seen],[False,True])
+        self.assertEqual(seen[1]['criterion_changes'],[])
+        self.assertEqual(trace['planning_requests'],2)
+
     def test_graph_context_profile_records_bytes_not_estimated_tokens(self):
         r=self.detected(context_compact=True);seen=[]
         class Planner:

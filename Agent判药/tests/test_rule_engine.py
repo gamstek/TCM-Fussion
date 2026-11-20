@@ -47,10 +47,6 @@ def expand_record(item):
     return out
 
 
-def _cand(d, idx):
-    return d["ranking"][idx]
-
-
 def kind_check(ch, d):
     k = ch["kind"]
     if k == "verdict_eq":

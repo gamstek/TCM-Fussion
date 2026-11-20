@@ -78,7 +78,7 @@ def add_crop_reuse_hints(rows, actions, targets):
             row['max_scan_tiles'] = scan.get('max_tiles')
 
 
-def attach(runtime, context, *, can_pair, targets=None):
+def attach(runtime, context, *, can_pair, targets=None, measurement_actions=None):
     """给当前实际可见动作建立目标/问题入口；不把菜单外动作偷偷加进来。"""
     out = dict(context)
     actions = context['actions']
@@ -86,6 +86,10 @@ def attach(runtime, context, *, can_pair, targets=None):
     out['action_state'] = action_state(runtime, actions + context.get('parallel_observations', []),
                                        context.get('evidence') or {}, targets)
     add_crop_reuse_hints(out['action_state'], actions, targets)
+    for aid, state in out['action_state'].items():
+        group_key = (measurement_actions or {}).get(aid)
+        if group_key in (context.get('measurement_groups') or {}):
+            state['measurement_group'] = group_key
     active = set(runtime.candidate_interest()['ids'])
     criteria = [dict(c, candidate_id=r['id']) for r in runtime.kb.candidates()
                 if r['id'] in active for c in r['criteria']]
@@ -110,13 +114,25 @@ def attach(runtime, context, *, can_pair, targets=None):
             for entry in row['entry_actions']:
                 tasks = (['verify_identity'] if entry['tool'] == 'classify_target' else [])
                 tasks += ['measure_'+dim for dim in sorted(dims)]
-                for task in tasks:
+                from TCM_Fusion.lib.agent.measurement_gain import goal_consumers
+                group_key = (measurement_actions or {}).get(entry['action_id'])
+                group = context.get('measurement_groups', {}).get(group_key)
+                if group:
+                    tasks += ['measure_' + dimension_use(dim) for dim, status in group['dimensions'].items()
+                              if status['worth_measuring']]
+                for task in dict.fromkeys(tasks):
+                    consumers = goal_consumers(group, task)
+                    if consumers == []:
+                        continue
+                    if consumers is None:
+                        consumers = sorted({c['candidate_id'] for c in basis})
                     goal = {'semantic_task':task, 'instance_ref':row['instance_ref'],
                             'problem_id':'instance-question:'+digest([row['instance_ref'],task])[:20]}
                     goals.append({'goal_id':'goal:'+digest([goal,entry['action_id']])[:24],
                         'entry_action_id':entry['action_id'], 'feature_id':row['feature_id'],
                         'goal':goal,
-                        'criterion_consumers':sorted({c['candidate_id'] for c in basis}),
+                        'criterion_consumers':consumers,
+                        **({'measurement_group': group_key} if group and task != 'verify_identity' else {}),
                         'result':'仅身份，不生成mask/尺寸' if task == 'verify_identity' else
                                  '对应量纲合格数值；身份/QA/标定失败立即回交ReAct',
                         'planning_saved_upper_bound':0 if task == 'verify_identity' else
@@ -196,6 +212,13 @@ def model_view(context):
     aliases = {ids[key]: key for key in (*observations, *actions)}
     out['actions'] = [{**action, 'action_id': key} for key, action in actions.items()]
     out['parallel_observations'] = [{**action, 'action_id': key} for key, action in observations.items()]
+    # 同一注册动作可同时有主动作 A 和伴随观察 O。两种选择均保留，只复用完全相同的参数。
+    primary = {a['action_id']: (key, a) for key, a in actions.items()}
+    for row, original in zip(out['parallel_observations'], observations.values()):
+        match = primary.get(original['action_id'])
+        if match and original == match[1] and original.get('args'):
+            row.pop('args')
+            row['args_from_action'] = match[0]
     out['action_objectives'] = {aliases[k]:v for k,v in out.get('action_objectives',{}).items() if k in aliases}
     if 'action_state' in out:
         out['action_state'] = {aliases[k]: v for k,v in out['action_state'].items() if k in aliases}
@@ -344,6 +367,8 @@ def audit(context):
         'execution_options':context.get('execution_options',{}),
         'parallel_observations':context.get('parallel_observations',[]),
         'action_state':context.get('action_state', {}),
+        'measurement_groups':context.get('measurement_groups', {}),
+        'round_delta':context.get('round_delta', {}),
         'remaining_budget':context.get('remaining_budget'),
         'investigation_opportunities':context.get('investigation_opportunities', []),
         'investigation': {k:((context.get('evidence')or{}).get('workflow')or{}).get(k)

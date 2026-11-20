@@ -190,15 +190,7 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
     from TCM_Fusion.lib.runtime.storage import read_json
     runtime.score(result['observations'])
     if workflow.get('feature_audit', False):
-        try:
-            from TCM_Fusion.lib.vision.feature_audit import build_feature_audit
-            result['feature_audit'] = build_feature_audit(
-                runtime.workflow.store.current(), out_dir=directory / 'feature_audit',
-                feature_ids=workflow.get('feature_audit_features'))
-        except Exception as exc:
-            # 旁路审计失败不得改变原裁决或关闭任务。
-            result['feature_audit']={'schema':'feature-audit/v2','non_blocking':True,
-                                     'error':f'{type(exc).__name__}: {exc}'}
+        result['feature_audit'] = {'schema':'feature-audit/v2','status':'pending','non_blocking':True}
     guard.check('before_fusion')
     if runtime.workflow.purpose_quality():
         from TCM_Fusion.lib.evidence.purpose_evidence import project
@@ -238,7 +230,7 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
     result['needs_review'] = bool(result['needs_review'] or verdict.get('needs_review'))
     verdict['needs_review']=result['needs_review']
     verdict['candidate_admission']=admission
-    from TCM_Fusion.lib.decision.final_assessment import finalize
+    from TCM_Fusion.lib.decision.final_assessment import finalize, layer_report
     assessment=finalize(runtime,verdict,result,directory)
     guard.check('final_assessment_returned')
     result['final_assessment']=assessment
@@ -289,12 +281,14 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
         f"- 执行终止原因：{assessment['termination']['reason']}；类型：{assessment['termination']['category']}\n"
         f"- 交付复核原因：{assessment['review_reasons']}（与执行中断原因分开记录）\n"
         '- 原图及原B目录未覆盖；阶段失败/资源明细见agent_trace.json。\n\n'
+        '## 裁决与两路排序\n\n' + layer_report(assessment['decision_layers']) + '\n\n'
         '## 收尾综合研判\n\n'
         f"{assessment['judgement']}\n\n{assessment['explanation']}\n\n"
         f"{assessment['score_summary']}\n\n"
         f"- 解释来源：{assessment['explanation_source']}；文本警告：{assessment['narrative_warnings']}\n"
         f"- 研判来源：{assessment['method']}；模型失败原因：{assessment['model_failure']}\n"
         f"- 研判引用的合格判据：{[f['id'] for f in assessment['supporting_evidence']]}\n"
+        '- 模型原提案逐条引用及剔除原因见 [收尾引用审计](final_assessment.json) 的 model_citation_audit。\n'
         f"- 局部存在性观察（仅说明该视野）：{observation_labels(assessment['presence_observations'])}\n"
         f"- 局部未见（仅说明该视野）：{observation_labels(assessment['local_absence_observations'])}\n"
         f"- 判据反证：{[f['id'] for f in assessment['counterevidence']]}\n"
@@ -308,6 +302,21 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
         'B 规则分由 required 基础分和 supporting 加分组成。必需判据全部核验后，独立佐证按质量计入。\n\n'
         '| 候选 | B规则分 | required 基础分 | supporting 加分 | 融合排序分（非正确率） | 支持判据数 | 必需判据缺口数 |\n'
         '|---|---|---|---|---|---|---|\n'+comparison+'\n',encoding='utf-8')
+    if workflow.get('feature_audit', False):
+        try:
+            from TCM_Fusion.lib.vision.feature_audit import build_feature_audit
+            result['feature_audit'] = build_feature_audit(
+                runtime.workflow.store.current(), out_dir=directory / 'feature_audit',
+                feature_ids=workflow.get('feature_audit_features'))
+        except Exception as exc:
+            # 旁路审计失败不得改变原裁决或关闭任务。
+            result['feature_audit']={'schema':'feature-audit/v2','non_blocking':True,
+                                     'error':f'{type(exc).__name__}: {exc}'}
+        output['feature_audit'] = result['feature_audit']
+        value['elapsed_seconds'] = time.perf_counter() - start
+        write_json(directory/'output.json', output)
+        write_json(directory/'agent_trace.json', result)
+        write_json(directory/'fusion.json', value)
     guard.check('before_job_complete')
     job.update(status='completed',stage='done',needs_review=fusion['needs_review'],route='workflow_agent',
                elapsed_seconds=value['elapsed_seconds'],output=str(directory/'output.json'),

@@ -1,46 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-scalebar_duo.py — 比例尺双引擎标定（本地形态学 + 本地OCR + VLM 交叉验证）。
+"""对显微图的烧录比例尺做本地 OCR 与视觉旁证交叉验证。
 
-**定位：库 + 维护入口**。生产链路只用它的两个公共 API（`measure_px_per_um` /
-`measure_img_px_per_um`），由检测阶段（`prompts`/`detect_core` 侧）与 UI（`ui/tools.py`、
-`ui/px_read_cli.py`）调用；文件末尾的 `--images` 批量对照入口是**开发/调试用的维护入口**，
-不在生产链路上（2026-09-29 P3 复核：原计划"拆除该入口"，因 `px_read_cli` 只做单图读数、
-不产多图对照 CSV，拆除会丢掉唯一的批量验证能力，故改为保留并在此标注用途）。
+明确的比例尺读数由交付层向下游传递。调用者可传同目录族先验和已获旁证的像素读数。逐图对照入口通过显式 --images 生成 CSV。
 
-引擎分工（每引擎各自给出"完整标定：像素长 + μm 数"，再做交叉验证）：
-  A 引擎（全本地，不调 API）—— 文字优先（2026-09-20 二次实测重构）
-     - RapidOCR **全分辨率**读烧录文字里的 μm 数字 bar_um，文字 bbox 同时作为线段锚点
-     - 在文字邻域窄带内以"近纯黑长游程 + 两端端帽 + 行间一致"定线段像素长 bar_px
-     - 拿不到文字时退回红尺/黑尺形态学路径（选序见 engine_a 文档串）
-  B 引擎（VLM API 一次推理读出两者；模型与思考强度见 detection/config/vlm_config.json）
-     - 读线段 bbox → 换算 bar_px
-     - 读烧录文字 → bar_um
-（2026-09-29 P1-4）原报告里的"旧算法基线 orig"（复用 几何测量/geomlib/calibration.py 的
-detect_scale_bar_px）已移除：它使声明的共享层反向依赖上层模块，且该基线仅为报告对照用。
-**本模块不依赖 几何测量/ 下任何代码**——依赖方向保持 几何测量/geomlib ← 项目根 common/。
-对应地，几何侧自带同名函数与其自测用例（几何测量/selftest_synthetic.py）不受影响。
-
-交叉验证规则（2026-09-20 重做，2026-09-28 补 OK-consensus；详见 cross_validate 判定表）：
-     μm 以 A 的本地 OCR 为权威；A 的 px 过四层判据 + ppm 物理窗后即可信，
-     B 的框只作单边证实（B 惯性过框）。status 分级：
-       OK（双读一致）| OK-consensus（A 可信、B 未证实，但 A 的 bar_px 已被同批精确 OK
-       样本旁证——实测 119 份 OK-medium 里 118 份属此列，靠它免重跑即可用于测量）|
-       OK-medium（A 可信但 B 未证实且 bar_px 无旁证）| OK-low（族先验 px_fam/um，
-       无族先验时 B 框过物理窗兜底 px_B/um）| manual（须人工）| n/a（无有效长）。
-     可信档 = ls_common.TRUSTED_STATUSES（OK / OK-consensus）；其余下游 criteria_hint_for
-     自动追加"μm 仅供参考"提示。
-
-公共 API：`measure_px_per_um(image_path, cfg, px_fam=…, px_ok_set=…)` —— 检测阶段
-（vlm_prelabel / detect_sample）与 UI（ui/tools.py）共用，是全项目 px_per_um 的唯一
-生产方式（离线 scale_table.csv 已停用）。px_ok_set 由 ls_common.confirmed_bar_px() 提供。
-
-输出：results/detection/scalebar_duo/scalebar_duo_report.csv（逐图对照，仅供目检）
-
-用法（venv python）：
-  python scalebar_duo.py --images p1,p2 [--tol 0.10] [--max-side 1536]
-`--images` 必填（逗号分隔）：早先默认取 archive/demo_output/input/ 的 3 张黑尺图，
-归档目录不该被库代码当输入源，已改为显式传参（2026-09-29 P1-4）。
+主要定义：engine_a、engine_b、cross_validate 和 measure_img_px_per_um。
+关联：detect_core.lookup_px_per_um 使用内存图像接口，ls_common 提供标定来源与可信状态。
 """
 import argparse
 import os
@@ -557,13 +521,10 @@ def cross_validate(name, ipath, A, B, tol, px_fam=None, img_w=None, px_ok_set=No
 
 
 def measure_img_px_per_um(img, name, cfg=None, px_fam=None, px_ok_set=None):
-    """双引擎标定（**已读入内存的 BGR 图**）→ 结果 dict，见 `measure_px_per_um`。
-
-    供已持有图像数组的调用方复用，避免 tif 大图二次读盘（vlm_prelabel / detect_sample）。
-    px_fam：同目录族先验（族内 ≥3 张精确 OK 的 bar_px 众数），A 错块/未量到但 um 已读到时
-    以 px_fam/um 出 OK-low；调用方（ls_common.family_bar_px）负责收集，此处只消费。
-    px_ok_set：已旁证的 bar_px 集（ls_common.confirmed_bar_px），B 未证实时出 OK-consensus；
-    不传（None）则行为与旧版一致。
+    """接收已读入内存的 BGR 图像，返回真实比例尺读数、状态和分引擎结果。
+    
+    px_fam 是同目录族像素先验，px_ok_set 是已有精确 OK 读数形成的旁证集合。
+    这两项由调用方提供。可信状态使用 ls_common.TRUSTED_STATUSES 判定。
     """
     cfg = cfg or load_config()
     if img is None:
@@ -597,25 +558,6 @@ def measure_img_px_per_um(img, name, cfg=None, px_fam=None, px_ok_set=None):
             "A": {"bar_px": A["bar_px"], "bar_um": A["bar_um"], "color": A["scale_type"]},
             "B": {"bar_px": B.get("bar_px"), "bar_um": B.get("bar_um"),
                   "color": B.get("color", "")}}
-
-
-def measure_px_per_um(image_path, cfg=None, px_fam=None, px_ok_set=None):
-    """逐图比例尺双引擎标定 —— **公共 API**（检测阶段与 UI 共用）。
-
-    返回 dict：{px_per_um, bar_px_cv, bar_px_vlm, bar_um, source, status, grade, note, A, B}
-    status ∈ OK（双读一致）| OK-consensus（A 可信且有跨图旁证，2026-09-28 补）|
-    OK-medium（A 可信但 B 未证实且无旁证）| OK-low（族先验/B 兜底）| manual | n/a。
-    可信与否请用 ls_common.is_trusted_status()，勿手拼字符串比较。
-
-    2026-09-20 起这是全项目 px_per_um 的生产方式（离线 scale_table.csv 已停用）：
-    检测阶段（vlm_prelabel / detect_sample）把结果写入 prelabel JSON，随标注流转到
-    LS 任务 data 与分割交付清单，几何测量只认交付清单里的这份值。
-    """
-    if not os.path.isfile(str(image_path)):
-        return {"px_per_um": None, "bar_px_cv": 0, "bar_px_vlm": None, "bar_um": None,
-                "source": SOURCE, "status": "n/a", "note": f"文件不存在: {image_path}"}
-    return measure_img_px_per_um(imread_cn(image_path), os.path.basename(str(image_path)), cfg,
-                                 px_fam=px_fam, px_ok_set=px_ok_set)
 
 
 # ---------------- 主流程 ----------------
@@ -655,7 +597,7 @@ def main():
               f"{row['B_color']:>6}{str(row['px_delay_pct'] or ''):>6}{str(row['um_agree']):>6}"
               f"{str(row['px_per_um'] or ''):>7}  {row['status']}")
 
-    # 报告（仅供目检对照；线上 px_per_um 走 measure_px_per_um()，不再落任何离线标定表）
+    # 批量对照报告供维护使用。正式接口通过 measure_img_px_per_um 返回标定。
     report = os.path.join(OUT, "scalebar_duo_report.csv")
     header = ["image", "A_bar_px", "A_um", "A_color", "B_bar_px", "B_um", "B_color",
               "px_delay_pct", "um_agree", "px_per_um", "status", "grade"]
@@ -664,7 +606,7 @@ def main():
         wcsv.writeheader()
         wcsv.writerows(rows)
     print(f"\n报告 → {report}")
-    print("（2026-09-20 起不再回写 scale_table.csv；线上取值请调 measure_px_per_um()）")
+    print("正式标定结果由 measure_img_px_per_um 返回。")
 
 
 if __name__ == "__main__":

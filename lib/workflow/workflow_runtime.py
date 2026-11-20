@@ -12,6 +12,7 @@
 """
 from pathlib import Path
 import contracts
+from TCM_Fusion.lib.evidence.provisional_evidence import ADMITTED, TIER
 import paths
 from TCM_Fusion.lib.workflow.evidence_runtime import EvidenceRuntime
 from TCM_Fusion.lib.workflow.workflow_session import WorkflowSession, TOOLS
@@ -503,10 +504,10 @@ class WorkflowRuntime(EvidenceRuntime):
                 states.append({'feature_id': state.get('feature_id'),
                                'state': state.get('state'),
                                'provisional_weight': state.get('weight') if state.get('state') == 'VERIFIED_MATCH' else
-                                   {'DETECTED_PENDING': 0.5, 'PARTIAL_MATCH': 0.25}.get(state.get('state'), 0.0),
+                                   TIER.get(state.get('state'), 0.0),
                                'instance_ids': state.get('instance_ids') or [],
                                'formal_state': state.get('formal_state')})
-                if state.get('state') != 'VERIFIED_MATCH':
+                if state.get('state') not in ADMITTED:
                     gaps.setdefault(state.get('feature_id'), []).append(row.get('candidate_id'))
             out.append({'candidate_id': row.get('candidate_id'),
                         'display': row.get('display'),
@@ -609,7 +610,7 @@ class WorkflowRuntime(EvidenceRuntime):
                             'instance_ids': state.get('instance_ids') or [],
                             'check_state': check_state,
                             'checks': len(observed),
-                            'present': state.get('state') == 'VERIFIED_MATCH'})
+                            'present': state.get('state') in ADMITTED})
         return out
 
     def decision_view(self, state, *, scored=None):
@@ -643,8 +644,8 @@ class WorkflowRuntime(EvidenceRuntime):
         return result
 
     @reusable_reads()
-    def summary(self,state):
-        scored=self.score(state.get('observations', []))
+    def summary(self,state, *, scored=None):
+        scored=scored or self.score(state.get('observations', []))
         result=super().summary(state, scored=scored)
         provisional=self.provisional_state(scored['decision'])
         required, gaps=self.required_states(provisional)

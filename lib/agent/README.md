@@ -4,10 +4,11 @@
 
 | 文件 | 阅读指引 |
 | --- | --- |
+| [measurement_gain.py](measurement_gain.py) | 从合格实例的量纲、来源及跨候选边界生成可选复测理由，供直接动作和语义目标共用。 |
 | [action_feedback.py](action_feedback.py) | 比较动作目标与动作前后的证据、候选判据和可用能力。 |
 | [investigation_control.py](investigation_control.py) | 调查进展的本地指纹：约束无收益循环，不规定模型应调查哪个候选。 |
 | [planning_choices.py](planning_choices.py) | ReAct执行选择视图：单动作、实例目标和独立观察组使用同一主选择接口。 |
-| [planning_context.py](planning_context.py) | D3送模视图：压缩重复字段并测量实际JSON大小，不改变合法动作或证据资格。 |
+| [planning_context.py](planning_context.py) | 规划请求按证据变化更新；同轮历史提问、影子定位及其用途资格可按来源逐条还原。 |
 | [prompt_defaults.py](prompt_defaults.py) | 提供 ReAct 规划默认指令及固定守卫文本。 |
 | [prompt_release.py](prompt_release.py) | 验证现有提示发布工件。 |
 | [react_graph.py](react_graph.py) | 从工作流状态读取当前合法动作和只读证据，构建 LangGraph 的评估、规划和执行节点。 |

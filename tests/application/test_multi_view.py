@@ -4,7 +4,7 @@
 主要定义：
 - MultiViewTests（源图校验）: SHA 缺失/重复、路径穿越、数量不符在创建 case 前被拒绝。
 - MultiViewTests（数量与解释器）: 图片数量不固定为五张；a_python 缺失时给出明确错误码。
-- MultiViewTests（case 命名）: 按已校验视野数和用途生成目录名，验证旧覆盖参数与新标签的边界。
+- MultiViewTests（case 命名）: 验证北京时间命名、同秒隔离、元数据和旧覆盖参数边界。
 - MultiViewTests（dry-run）: 只复制源图，不建缓存、不跑 pipeline，配置中不出现参考标签。
 - MultiViewTests（真实执行）: 调用现有 pipeline、写 run_location 与 interface_status。
 - MultiViewTests（失败路径）: doctor 失败与 pipeline 异常都持久化终态且不宣称完成。
@@ -19,6 +19,7 @@ import hashlib
 import json
 import tempfile
 import unittest
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -120,8 +121,32 @@ class MultiViewTests(unittest.TestCase):
             base = F.run_multi_view(self.source, **self.options, dry_run=True,
                                     subject='样品S01', purpose='链路验收')
         sample_id = read_json(base / 'config.json')['sample_id']
-        self.assertRegex(base.name, r'^预检__样品S01__03图__\d{8}-\d{6}__链路验收-[a-f0-9]{8}$')
-        self.assertEqual(sample_id, 'case_' + base.name.rsplit('-', 1)[1])
+        self.assertRegex(base.name, r'^模拟样品S01_\d{1,2}月\d{1,2}日\d{2}时\d{2}分\d{2}秒$')
+        self.assertRegex(sample_id, r'^case_[a-f0-9]{8}$')
+        self.assertNotIn(sample_id[5:], base.name)
+        metadata = read_json(base / 'interface_status.json')
+        self.assertEqual((metadata['subject'], metadata['purpose'], metadata['view_count']),
+                         ('样品S01', '链路验收', 3))
+        self.assertEqual(metadata['kind'], '模拟')
+        self.assertTrue(metadata['started_at'].endswith('+08:00'))
+
+    def test_same_second_keeps_separate_cases(self):
+        instant = datetime(2026, 11, 19, 14, 30, 25, tzinfo=F._RUN_TIMEZONE)
+        with patch.object(F, 'datetime') as clock, patch.object(F, 'doctor', return_value={'ready': True}):
+            clock.now.return_value = instant
+            first = F.run_multi_view(self.source, **self.options, dry_run=True, subject='龙胆')
+            second = F.run_multi_view(self.source, **self.options, dry_run=True, subject='龙胆')
+        self.assertEqual(first.name, '模拟龙胆_11月19日14时30分25秒')
+        self.assertEqual(second.name, first.name + '-02')
+        self.assertNotEqual(read_json(first / 'config.json')['sample_id'],
+                            read_json(second / 'config.json')['sample_id'])
+
+    def test_standard_output_root_rejects_exact_override(self):
+        with patch.object(paths, 'RUN_RESULTS', str(self.options['output_root'])):
+            with self.assertRaises(IntegrationError) as error:
+                F.run_multi_view(self.source, **self.options, dry_run=True, case_name='旧目录名')
+        self.assertEqual(error.exception.code, 'MULTI_VIEW_NAME')
+        self.assertFalse(self.options['output_root'].exists())
 
     def test_dry_run_copies_only_sources_fresh_cache_no_labels_or_model(self):
         (self.source / 'a_cache').mkdir()
@@ -131,7 +156,7 @@ class MultiViewTests(unittest.TestCase):
             base = F.run_multi_view(self.source, **self.options, dry_run=True)
         pipeline.assert_not_called()
         network.assert_not_called()
-        self.assertRegex(base.name, r'^预检__未标注__03图__\d{8}-\d{6}__链路测试-[a-f0-9]{8}$')
+        self.assertRegex(base.name, r'^模拟未标注_\d{1,2}月\d{1,2}日\d{2}时\d{2}分\d{2}秒$')
         cfg = read_json(base / 'config.json')
         self.assertNotIn('REFERENCE_ONLY', json.dumps(cfg))
         self.assertNotIn('TRUTH_ONLY', json.dumps(cfg))
@@ -161,7 +186,7 @@ class MultiViewTests(unittest.TestCase):
             result = F.run_multi_view(self.source, **self.options)
         self.assertEqual(call.call_count, 1)
         base = result.parent.parent
-        self.assertTrue(base.name.startswith('实跑__未标注__03图__'))
+        self.assertRegex(base.name, r'^实测未标注_\d{1,2}月\d{1,2}日\d{2}时\d{2}分\d{2}秒$')
         self.assertEqual(read_json(base / 'run_location.json')['directory'], str(result))
         self.assertEqual(read_json(base / 'interface_status.json')['status'], 'completed')
 

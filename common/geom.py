@@ -1,25 +1,10 @@
 # -*- coding: utf-8 -*-
-"""geom.py — 几何 / 掩码原语（纯函数，无 I/O、无 API）。
+"""检测框与分割掩码的共享几何原语。
 
-**为什么存在**（2026-09-29 P4-1a）：同一算法此前在检测/分割两侧各抄了若干份 ——
-带 `iou` 名字的函数全仓有 5 个，且实测**分属两类**（框 IoU / 掩码 IoU），
-`iou_mask` 还有一份在重叠区域为空时会 ZeroDivisionError 变体。原语层重复的直接后果是
-"改一处漏三处"（项目记忆里已有多次此类教训），故上收到 `common/` 这一层。
+接收像素坐标框或掩码，完成框归正、交并比、松框外扩和外轮廓矢量化。
 
-2026-09-29 追加 `to_polygon`：三引擎分割管线（`seg_prelabel_group.py` 等）归档后，
-该函数是唯一被生产链（`segmentation/lib/igm_segment.py`）继续使用的掩码原语，故一并上收。
-
-2026-09-29 P4-9 追加 `loose_box`：它是"松框裁剪"的全流程约定（`docs/分割方案与设计.md` §1.2），
-此前只存在于 `segmentation/build_seg_crops.py`，而 `ui/seg_stage.py` 只能 import 那个 CLI 脚本才拿到它
-（该脚本已于 2026-09-29 归档，其 CLI 属旧管线）。
-
-依赖方向：本模块只依赖 numpy / cv2（均为第三方库），**不得** import 任何业务模块。
-
-命名分区（避免同名不同义）：
-  iou_box     —— **框** IoU，入参 (x1, y1, x2, y2) 序列
-  iou_mask    —— **掩码** IoU，入参前景掩码（布尔 / 0-255 / 0-1 均可）
-  to_polygon  —— **掩码 → 多边形**（外轮廓矢量化，用于目检叠加与交付 JSON）
-  loose_box   —— **紧框 → 松框**（按全流程约定外扩，供裁剪留背景上下文）
+主要定义：clamp_box、iou_box、to_polygon 和 loose_box。
+关联：检测、分割及证据实例关联调用本模块。依赖 NumPy 和 OpenCV。
 """
 import cv2
 import numpy as np
@@ -56,32 +41,8 @@ def iou_box(a, b):
     return inter / union if union > 0 else 0.0
 
 
-def iou_mask(a, b):
-    """两个前景掩码的 IoU（按 `> 0` 取前景，故布尔 / 0-255 / 0-1 三种载体都成立）。
-
-    契约（含一处为调用方便利而保留的语义，见下）：
-      * 重叠为空（并集为 0）→ 返回 **0.0**。历史上有变体在此处 `0.0 / 0.0` 直接崩，
-        调用方原本不可能依赖"崩溃"，故这里统一成 0.0（行为只可能变好）。
-      * **任一入参为 None → 返回 `nan`**，表示"该侧无有效掩码"。这条是给调用方（尤其是
-        已冻结的 `segmentation/experiments/`：框可能不存在）留的便利语义，故显式写在契约里，
-        而不是让每个调用点各写一遍判空。需要区分"空掩码"与"无掩码"的调用方请自行判 None。
-    """
-    if a is None or b is None:
-        return float("nan")
-    fa = np.asarray(a) > 0
-    fb = np.asarray(b) > 0
-    union = np.logical_or(fa, fb).sum()
-    if not union:
-        return 0.0
-    return float(np.logical_and(fa, fb).sum()) / float(union)
-
-
 def to_polygon(mask, max_n=8, min_area=50):
-    """掩码 → 多边形列表（RETR_EXTERNAL 外轮廓，按面积取前 `max_n` 个，面积 < `min_area` 丢弃）。
-
-    实现 2026-09-29 从 `segmentation/seg_prelabel_group.py` 原样上收（三引擎管线归档时，
-    该函数为其后唯一仍被生产链使用的原语）。逐值等价，未改行为。
-    """
+    """取掩码的外轮廓，按面积选前 max_n 项，舍弃面积小于 min_area 的轮廓。"""
     cs, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_KCOS)
     cs = sorted(cs, key=cv2.contourArea, reverse=True)[:max_n]
     polys = []

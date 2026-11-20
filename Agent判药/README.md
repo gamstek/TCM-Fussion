@@ -1,5 +1,7 @@
 # Agent判药 · 目录导读
 
+> 独立版保留原 B 判据、报告、知识库对账和 `selftest` 所调用的三套测试。下文的 `eval_agent.py` 和单图实验在 `D:\TCM-Microscopic-Image-Recognition-main\Agent判药` 使用。融合项目的离线评估入口见 [cli.offline](../cli/offline.py)。
+
 本目录是中药显微鉴别流水线**最后一环（Agent 判药）**的实现目录。
 
 - **设计方案**：`Agent判药环节设计方案.md`（v1.0，本实现的依据）

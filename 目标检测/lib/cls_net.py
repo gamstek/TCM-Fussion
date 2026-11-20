@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
-"""cls_net.py — stage 2 特征分类器的**推理侧**（训练入口与生产推理共用同一份变换）。
+"""加载 Stage2 特征分类权重并复用原训练的预处理口径。
 
-**为什么单独成库**：训练（`cli/train_cls.py`）与推理（`classify_crop(impl="model")`、
-端到端评测 `cli/e2e_eval.py`）必须用**逐像素一致**的预处理，否则训练/推理分布漂移会
-静默掉点。输入口径（center/squash/letterbox）、归一化参数、类别表都只在这里定义一份；
-`train_cls` 只是调用方，不再自己拼变换。
+读取权重中的模型、类别顺序和输入尺寸。可结合元信息选择 center、squash 或 letterbox 变换。
 
-**权重格式**：`train_cls.py` 存下的 checkpoint 含
-`{state_dict, arch, imgsz, classes:[<train_id>_<feature_id>, ...]}`；
-类别中文名从 `dataset/特征分类器_v1/classes.txt` 读（数据集的类别事实源，不另抄一份）。
-
-**不做的事**：不判「是不是药典真阳」、不产出形态学证据——那是判据与判药层的职责。
+主要定义：Letterbox、build_transforms、load_model 和 classify_arrays。
+关联：融合 Stage2 worker 和原检测入口的单实例分类使用这些接口。
 """
 import json
 import os
@@ -185,23 +179,3 @@ def classify_arrays(crops, weights, device="auto", cls_root=None, batch=32):
 def _to_pil(rgb):
     from PIL import Image
     return Image.fromarray(rgb)
-
-
-def describe(weights):
-    """权重自描述（不加载张量）：类别数 / imgsz / arch，供日志与报告用。"""
-    import torch
-    path = weights if os.path.isabs(str(weights)) else os.path.join(
-        paths.PROJECT_ROOT, str(weights))
-    ckpt = torch.load(path, map_location="cpu", weights_only=False)
-    return {"path": path, "arch": ckpt.get("arch"), "imgsz": ckpt.get("imgsz"),
-            "classes": ckpt.get("classes") or []}
-
-
-def write_sidecar(out_dir, weights, cls_root=None):
-    """把推理侧口径落成 JSON（端到端报告可复现：换了权重/口径能一眼看出）。"""
-    meta = describe(weights)
-    meta["names"] = load_class_names(cls_root)
-    os.makedirs(out_dir, exist_ok=True)
-    with open(os.path.join(out_dir, "cls_model.json"), "w", encoding="utf-8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=2)
-    return meta

@@ -82,6 +82,27 @@ class LifecycleTests(WorkflowFixture, unittest.TestCase):
         self.assertEqual(audit, output['feature_audit'])
         self.assertEqual(audit['evidence_version'], runtime.workflow.store.current()['version'])
 
+    def test_core_delivery_is_readable_when_visual_audit_fails(self):
+        config = self.config()
+        config['agent']['workflow']['feature_audit'] = True
+        runtime = self.runtime()
+        seen = {}
+        def interrupt(*args, **kwargs):
+            for name in ('agent_verdict', 'final_evidence', 'final_assessment', 'output', 'fusion'):
+                seen[name] = read_json(self.root / (name + '.json'))
+            seen['report'] = (self.root / 'report.md').read_text(encoding='utf-8')
+            raise OSError('offline audit failure')
+        with patch('TCM_Fusion.lib.application.workflow_entry.from_task', return_value=runtime), \
+             patch('TCM_Fusion.lib.vision.feature_audit.build_feature_audit', side_effect=interrupt):
+            asyncio.run(execute_workflow(config, {}, self.root, routing={}, start=time.perf_counter(),
+                                         job={}, status_path=self.root/'job.json'))
+        self.assertEqual(seen['output']['feature_audit']['status'], 'pending')
+        self.assertIn('B 证据首位', seen['report'])
+        delivered = read_json(self.root / 'output.json')
+        self.assertIn('offline audit failure', delivered['feature_audit']['error'])
+        self.assertEqual(delivered['decision_layers'], seen['output']['decision_layers'])
+        self.assertEqual(read_json(self.root / 'agent_verdict.json'), seen['agent_verdict'])
+
     def test_mcp_workflow_context_uses_task_ledger(self):
         runtime = self.runtime()
         context_path = self.root/'context.json'

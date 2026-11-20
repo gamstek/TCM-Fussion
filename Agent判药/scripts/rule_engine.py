@@ -166,11 +166,6 @@ class EvidenceCard:
         return dict(median=med, p25=p25, p75=p75, min=vals[0], max=vals[-1],
                     n_measured=n, n_uncal=len(self.uncal_refs))
 
-    def stats_dict(self, dim):
-        s = self.dim_stats(dim)
-        return s
-
-
 def pool_evidence(records):
     """measurements 记录列表 → {feature_id: EvidenceCard}。
 

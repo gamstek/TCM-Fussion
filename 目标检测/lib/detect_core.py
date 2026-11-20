@@ -1,26 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-detect_core.py — 检测原语（阶段一共用）：整图/分块 VLM 检测 + 跨块 NMS + 逐图 px_per_um。
+"""提供现行工作流的区域 VLM 检测和双引擎标定，以及原检测入口的整图检测。
 
-2026-09-29 解耦：这些原语原本混在 segmentation/fullimage_detect_seg.py 里，导致检测侧
-（detection/cli/detect_sample.py）不得不反向 import segmentation/。现抽出到 detection/lib/，
-依赖方向回归 common ← detection ← segmentation。
+把图像或指定窗口的视觉回执映射回原图坐标，过滤类别和无效框。整图检测结果为空时保留空结果。
 
-依赖白名单：`ls_common`、`vlm_api`（传输层）、`prompts`（提示词与类别白名单）、`geom`（框 IoU 原语）、`scalebar_duo`。
-**不得 import 编号脚本**（2026-09-29 P1-3 起）——编号脚本按语言约束不能作为包成员被 import，
-原先的 `import_module("02_vlm_prelabel")` 已由 `prompts` 取代。
-**不得 import segmentation/ 下任何模块**——JPEG 编码走共享传输层 `vlm_api.encode_jpeg_b64`
-（2026-09-29 P4-1b：本地副本已删。它当初是为"借 segmentation 的编码器只为传 quality"而自带的，
-P1-3 拆掉那处循环依赖后已无存在理由）。
-
-  tiles_of(w, h, ov)                   2×2 重叠块 + 全图（**生产链不再调用**，见 detect_adaptive）
-  detect_once(...)                     单次 VLM 检测（唯一的"编码→调用→解析→映射"实现）
-  detect_tiles(...)                    按区域列表逐块调用（含 upscale）；**返回已 NMS 合并**
-  detect_adaptive(...)                 整图 1 次检测（**分块兜底已于 2026-09-30 关闭**）
-  detect_consensus(...)                多轮自洽采样 + 按复现程度聚簇（V1：只加票不过滤）
-  iou_box(a, b) / cluster_dets(dets, thr)  框 IoU 与"按类聚簇"（**唯一的贪心 IoU 分组实现**）
-  nms_merge(dets, thr)                 框去重（= 取每个簇的代表；与 cluster_dets 同一实现）
-  lookup_px_per_um(image_path, img)    逐图双引擎 px_per_um 查询（阶段一产物）
+主要定义：detect_once、detect_tiles、detect_adaptive、detect_consensus、cluster_dets、nms_merge 和 lookup_px_per_um。
+关联：融合 workflow_worker、YOLO 适配和原检测入口调用本模块。
 """
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -49,8 +33,8 @@ def _load_feature_id():
 
 FEATURE_ID = _load_feature_id()
 
-# 检测 crop 的松框外扩量（短边比例）：检测链（`cli/detect_sample.py`）与 stage 2 分类器训练集
-# （`lib/cls_dataset.py`，同一 crop 口径）共用这一份。**不能收小**：2026-09-29 实测，收到 geom
+# 检测 crop 的松框外扩量（短边比例）与原工程的 Stage2 训练口径一致。
+# 2026-09-29 实测，收到 geom
 # 默认的 5%/24px 时，2/3 的 crop 被 IGM 极性探针判成 invert（1 个 mask 真把背景当前景）——
 # 探针靠"四角必须是背景"，余量太小四角就落到实体上；另有 1 个结晶顶到画面边缘的框兜不回来。
 # 取短边 30%：对近方框与旧的"每边 ×30%"等量，对长条目标（针晶/导管）也不会沿长轴过度外扩
@@ -67,9 +51,7 @@ def lookup_px_per_um(image_path, img=None, full=False):
     bar_px 已被同批精确 OK 样本旁证，2026-09-28 补）——后者使实测 118 份原本被卡的图
     得以进入测量链，而 OK-medium/OK-low 仍视为不可信。
 
-    `full=True` 时返回引擎的完整 info dict（供需要写进产物 JSON 的调用方，如 vlm_prelabel 的
-    `scale` 字段）；默认只返回可信时的 px_per_um 字符串。
-    **这段编排是唯一一份**（2026-09-29 A2）：此前 vlm_prelabel 里另有一份逐字相同的调用。
+    `full=True` 时返回引擎的完整结果，供检测工件记录来源与状态。默认返回可信的 px_per_um 字符串。
     """
     import scalebar_duo                      # 延迟导入：scalebar_duo 顶层 import ls_common/vlm_api
     from ls_common import TRUSTED_STATUSES, confirmed_bar_px, family_bar_px
@@ -84,28 +66,9 @@ def lookup_px_per_um(image_path, img=None, full=False):
 
 
 # ---------------------------------------------------------------- 阶段一：检测原语
-def tiles_of(w, h, ov=0.1):
-    """2x2 重叠分块（ov 为相对重叠率），返回 (x1,y1,x2,y2) 列表，末尾附全图。
-
-    **生产链已不再调用本函数**（2026-09-30 关闭空检分块兜底，理由见 detect_adaptive）；
-    保留供离线实验/回归显式使用。detect_tiles 的 regions 也改为默认整图，避免"不传 regions
-    就悄悄分块"这种可达性陷阱。
-    """
-    tw, th = int(w * 0.55), int(h * 0.55)
-    xs = [0, w - tw]
-    ys = [0, h - th]
-    ts = [(x, y, min(w, x + tw), min(h, y + th)) for y in ys for x in xs]
-    ts.append((0, 0, w, h))
-    return ts
-
-
 def detect_once(img, cfg_vlm, api_key, prompt, whitelist, *, max_side=None, quality=90,
                 region=None, upscale=False, clamp="full", default_label=None):
     """一次 VLM 检测：编码 → 调用 → 解析 → 过滤 → 映射回**原图坐标**。
-
-    这是"单次检测"的**唯一实现**（2026-09-29 B1）：`detect_tiles` 与 `segmentation` 侧
-    `vlm_prelabel.process_one` 此前各自抄了一份（编码/调用/解析/白名单/退化框/坐标映射/
-    score 公式共约 30 行，`score = 0.92 if high else 0.65` 这类魔数两处各写一遍）。
 
     **两处口径差异一律参数化，不"顺手统一"**（与 P4-1b 的 quality 同一原则）：
       - `quality`：分块侧 92 / 全图侧 90 —— 两边上线口径不同，改默认会静默改载荷字节；
@@ -183,7 +146,7 @@ def detect_once(img, cfg_vlm, api_key, prompt, whitelist, *, max_side=None, qual
         # B20190072(3)）。在 `full` 口径下 min 角只保下界 → 映射后 gx1 会越过画幅右缘并与 gx2
         # 反向（gx1 > gx2），产物里留成退化框（`check_prelabel` 会报，导出侧只能整框丢弃）。
         # 故在两种口径**都算完之后**统一加一道归正 + 双向夹取：先保证 x1<x2 / y1<y2，再把两角都
-        # 夹进 [0,W]×[0,H]；夹后不足 1px 的判为噪声丢弃（与导出侧 export_det_dataset 同口径）。
+        # 夹进 [0,W]×[0,H]，夹后不足 1px 的框按噪声丢弃。
         # 注：`blocks` 口径本就双向夹紧，此处对其是恒等变换（不改它的既定结果）。
         cb = clamp_box((gx1, gy1, gx2, gy2), W, H)
         if cb is None:

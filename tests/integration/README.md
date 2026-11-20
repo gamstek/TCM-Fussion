@@ -15,3 +15,5 @@
 | [test_react.py](test_react.py) | 真实 LangGraph 与 stdio MCP 边界回归；模型响应使用可控替身，绝不联网推理。 |
 
 统一命令和测试输入边界见 [tests 导航](../README.md)。
+
+[test_measurement_gain.py](test_measurement_gain.py) 对拍冻结连翘四图的逐轮测量菜单和最终引用，并用独立构造输入验证跨视野重开。

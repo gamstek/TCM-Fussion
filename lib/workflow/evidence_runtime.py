@@ -18,6 +18,7 @@ from pathlib import Path
 
 import paths
 import scene_attributes
+from TCM_Fusion.lib.evidence.evidence_projection import recent_localizations
 from rule_engine import EvidenceCard, KnowledgeBase, pool_evidence
 from TCM_Fusion.lib.decision.rule_scoring import decide
 
@@ -309,8 +310,7 @@ class EvidenceRuntime:
                                 "checks": [{k: c.get(k) for k in ("feature_id", "state", "role")}
                                            for c in r["checks"]]} for r in d.get("ranking", [])[:3]]}
         return {"sample_id": self.sample_id, "decision": compact,
-                'presence_localizations': [o['presence_localization'] for o in state.get('observations', [])
-                                           if 'presence_localization' in o][-8:],
+                'presence_localizations': recent_localizations(state.get('observations', [])),
                 'observation_states':scored.get('observation_states',[]),'unobserved_state':'unknown',
                 "evidence_digest": scored["evidence_digest"],
                 "cards": {fid: {"present": c.present, "n_measured": c.n_instances,

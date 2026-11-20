@@ -239,6 +239,13 @@ def next_action(runtime, plan, state):
             if task == 'verify_identity':
                 _note_identity_block(plan, snap, crop['id'], meta.feature_id)
             return None, 'missing_legal_prerequisite'
+        if tool in {'segment_instance', 'measure_instances'} and plan['dimension']:
+            from TCM_Fusion.lib.agent.measurement_gain import measurement_menu, goal_consumers
+            scored = runtime.score(state.get('observations', []))
+            choices, groups, bindings = measurement_menu(runtime, [action], scored, workflow.targets())
+            group = groups.get(bindings.get(action['action_id']))
+            if not choices or goal_consumers(group, plan['goal']['semantic_task']) == []:
+                return None, 'measurement_value_changed'
         return action, 'action_ready'
     plan['status'] = 'completed'
     return None, 'local_goal_satisfied'

@@ -282,14 +282,6 @@ def describe_mask(mask):
 
 
 # ---------------------------------------------------------------- 剖面换算
-def _to_um(v_px, s):
-    """像素值 → μm：v_px / s（s 为每 μm 像素数）。s 无效或值为 None 时返回 None。
-
-    注意：面积类量需先平方换算，本函数只处理一维长度，调用方用 mul 参数适配。
-    """
-    return v_px / s if (s and s > 0 and v_px is not None) else None
-
-
 def measure_instance(inst, calib, herb=None):
     """InstanceMask + Calibration → 单实例完整测量记录（px + μm + 主判尺寸）。
 

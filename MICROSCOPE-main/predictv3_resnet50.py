@@ -12,7 +12,7 @@ from torchvision import models, transforms
 
 
 # ============================================================
-# 与 trainv3_resnet50_full.py 完全一致的确定性验证/推理预处理
+# 使用原工程确定性验证与推理的同一预处理口径
 # ============================================================
 class MicroscopePreprocess:
     def __init__(

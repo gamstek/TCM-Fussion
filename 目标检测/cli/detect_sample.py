@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 detect_sample.py — 检测管线（样品级重构版）：同一样品的多幅显微图像 → 目标子图 + 比例尺
-输入: 同一样品（同一批粉末）的多幅显微图像（--dir 整目录 / --group 按 group_key 过滤 / 逗号列表）
+输入: 同一样品（同一批粉末）的多幅显微图像（--dir 整目录 / --images 逗号列表）
 流程: 每幅图 → 检测引擎（`--engine vlm|yolo`，默认 vlm）：
       · vlm  —— **整图 VLM 检测 1 次**（模型与思考强度见 `config/vlm_config.json`）；
                 **空检分块兜底已于 2026-09-30 关闭**
@@ -34,17 +34,16 @@ runs/<run_id>/detection/ 以保持「一个 run = 一个工件集」）:
   ③人工复核时需要回到原图定位。
 
 用法:
-  python detect_sample.py --dir 大黄草酸钙簇晶 --group 大黄-2023 --limit 2
+  python detect_sample.py --dir 大黄草酸钙簇晶 --limit 2
   python detect_sample.py --images "p1.tif,p2.tif" --sample 我的样品
   python detect_sample.py --dir 大黄草酸钙簇晶 --engine yolo --limit 2   # P2：专用域检测器
   python detect_sample.py --dir 大黄草酸钙簇晶 --skip-crop   # 只出检测框不裁剪
-  python detect_sample.py --dir <原图目录> --out-dir <run>\detection   # 供 run_pipeline 编排
+  python detect_sample.py --dir <原图目录> --out-dir <run>/detection   # 供 run_pipeline 编排
   python detect_sample.py --dir <原图目录> --rollouts 5 --out-dir <实验目录>
       # 多轮自洽采样（V1 只加票不过滤）：每框多 votes/rollout_n，目检图标签带票数。
       # 默认 1 = 关；N>1 是实验口径，产物不能直接当交付（见 docs/检测多轮采样投票_方案与实验设计.md）
 """
 import argparse
-import csv
 import json
 import os
 import sys
@@ -66,15 +65,11 @@ from prompts import (CLASSIFY_VERSION, ENTITY_LABEL, PRIOR_KEYWORDS, PROMPT_S1, 
 import textvis  # noqa: E402 中文文字渲染（cv2.putText 不支持中文）
 
 OUT_ROOT = os.path.join(DET_RESULTS, "sample_detect")
-# manifest.csv 2026-10-09 随知识资产上提到项目根，故取 ls_common.PROJECT_ROOT。
-# （历史：P4-4 本脚本移入 cli/ 后，原先 dirname(dirname(__file__)) 会退到 detection/，
-#  --group 便去读不存在的 detection/manifest.csv —— 2026-09-29 端到端复查发现。）
-MANIFEST_ROOT = os.path.join(PROJECT_ROOT, "manifest.csv")
 IMG_EXTS = (".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp")
 
 
 def resolve_images(args):
-    """解析输入为 [(image_path, dir_name)] 列表；--group 按根 manifest 的 group_key 过滤。"""
+    """解析指定目录或图像列表，返回路径及其来源目录名。"""
     items = []
     if args.images:
         for p in [s.strip() for s in args.images.split(",") if s.strip()]:
@@ -96,13 +91,6 @@ def resolve_images(args):
             sys.exit(f"[FAIL] 目录不存在: {args.dir}")
     files = sorted(f for f in os.listdir(d) if f.lower().endswith(IMG_EXTS))
     items = [(os.path.abspath(os.path.join(d, f)), os.path.basename(d)) for f in files]
-    if args.group:
-        with open(MANIFEST_ROOT, encoding="utf-8-sig") as f:
-            gmap = {os.path.normpath(r["image_path"]): r.get("group_key", "")
-                    for r in csv.DictReader(f)}
-        items = [(p, dn) for p, dn in items if args.group in gmap.get(os.path.normpath(p), "")]
-        if not items:
-            sys.exit(f"[FAIL] --group {args.group} 未命中任何图像")
     if args.limit:
         items = items[:args.limit]
     return items
@@ -110,9 +98,8 @@ def resolve_images(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default="", help="样品图像目录（或目录名，自动在 显微像/ 下找）")
+    ap.add_argument("--dir", default="", help="样品图像目录（也可传显微镜像库或小样本库中的目录名）")
     ap.add_argument("--images", default="", help="逗号分隔的图像路径列表（与 --dir 二选一）")
-    ap.add_argument("--group", default="", help="按根 manifest group_key 过滤（如 大黄-2023）")
     ap.add_argument("--sample", default="", help="样品名（默认=目录名）")
     ap.add_argument("--limit", type=int, default=0, help="只处理前 N 幅")
     ap.add_argument("--engine", choices=["vlm", "yolo"], default="vlm",
@@ -147,7 +134,7 @@ def main():
                     help="stage 2 实现：vlm=提示词分类；model=自训分类器（需同时给 --cls-weights，"
                          "可配合 --engine yolo 走「YOLO 提框 + CNN 分类」）")
     ap.add_argument("--cls-weights", default="",
-                    help="--classifier model 的权重（`train_cls.py` 产物 best.pt）")
+                    help="--classifier model 的权重（原工程训练产出的 best.pt）")
     ap.add_argument("--out-dir", default="",
                     help="产物根（默认 results/detection/sample_detect/<sample>）；run_pipeline 指向"
                          " runs/<run_id>/detection 以保持「一个 run = 一个工件集」")
@@ -162,7 +149,7 @@ def main():
         if not args.two_stage:
             sys.exit("[FAIL] --classifier model 必须配 --two-stage：分类器只判 stage 1 给出的框")
         if not args.cls_weights:
-            sys.exit("[FAIL] --classifier model 需要 --cls-weights（train_cls.py 的 best.pt）")
+            sys.exit("[FAIL] --classifier model 需要 --cls-weights（原工程训练产出的 best.pt）")
         if not os.path.isfile(args.cls_weights if os.path.isabs(args.cls_weights)
                               else os.path.join(PROJECT_ROOT, args.cls_weights)):
             sys.exit("[FAIL] 分类器权重不存在：{}".format(args.cls_weights))

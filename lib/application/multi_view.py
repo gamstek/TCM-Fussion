@@ -7,7 +7,7 @@
 - inspect_sources: 校验目录/manifest 中的图片路径、SHA256 与重复性。
 - bind_config: 把源图与样品绑定进运行模板，生成新 case 配置。
 - run_multi_view: 创建独立 case、执行 doctor 并启动 run_pipeline。
-- `_validate_case_name` 等系列：Windows 合法/保留 case 名的内部校验。
+- _allocate_case_directory: 按北京时间创建简名目录，同秒重名时追加序号。
 
 关联：
 - 调用方 「cli/main.py」、「tests/application/test_multi_view.py」。
@@ -52,15 +52,25 @@ def _validate_case_name(case_name):
     return case_name
 
 
-def _format_case_name(subject, purpose, view_count, dry_run, token):
-    for label, tag in (('测试对象', subject), ('测试目的', purpose)):
-        if not isinstance(tag, str) or len(tag) > 16 or not _CASE_TAG.fullmatch(tag):
-            raise IntegrationError(
-                'MULTI_VIEW_NAME', f'{label}须为1至16个中文、字母、数字或单个连字符组成的短标签')
-    mode = '预检' if dry_run else '实跑'
-    stamp = datetime.now(_RUN_TIMEZONE).strftime('%Y%m%d-%H%M%S')
-    return f'{mode}__{subject}__{view_count:02d}图__{stamp}__{purpose}-{token}'
+def _validate_case_tag(label, tag):
+    if not isinstance(tag, str) or len(tag) > 16 or not _CASE_TAG.fullmatch(tag):
+        raise IntegrationError(
+            'MULTI_VIEW_NAME', f'{label}须为1至16个中文、字母、数字或单个连字符组成的短标签')
 
+
+def _allocate_case_directory(root, kind, subject, started_at):
+    date = f'{started_at.month}月{started_at.day}日'
+    stem = f'{kind}{subject}_{date}{started_at:%H时%M分%S秒}'
+    root.mkdir(parents=True, exist_ok=True)
+    base = root / stem
+    sequence = 2
+    while True:
+        try:
+            base.mkdir()
+            return base
+        except FileExistsError:
+            base = root / f'{stem}-{sequence:02d}'
+            sequence += 1
 
 def inspect_sources(source_dir, manifest=None):
     """Validate any positive number of distinct original files inside source_dir."""
@@ -127,8 +137,9 @@ def run_multi_view(source_dir, *, output_root=None, manifest=None,
                    subject=None, purpose=None):
     """Return fresh case on dry-run, completed run directory on live execution.
 
-    subject and purpose label the case directory; automatic names use a neutral
-    config sample_id. case_name is the legacy exact directory override.
+    subject labels the directory. Purpose and view count stay in case metadata;
+    sample_id is generated independently. A legacy exact name is accepted only
+    at a custom output root outside the project run-results directory.
     All failures after case creation write interface_status.json. Retrying means
     another case; no recorded observations, old A cache or hidden fallback.
     """
@@ -141,24 +152,32 @@ def run_multi_view(source_dir, *, output_root=None, manifest=None,
     template_path = project_path(config_template) if config_template else (
         Path(paths.PROJECT_ROOT) / 'config/multi_view.json')
     template = read_json(template_path)
-    root = project_path(output_root) if output_root else (
-        Path(paths.RUN_RESULTS))
+    default_root = project_path(paths.RUN_RESULTS)
+    root = project_path(output_root) if output_root else default_root
     source = project_path(source_dir)
     if root == source or root.is_relative_to(source):
         raise IntegrationError('MULTI_VIEW_SCOPE', '输出根不能位于输入图像目录内')
-    if case_name is not None and (subject is not None or purpose is not None):
-        raise IntegrationError('MULTI_VIEW_NAME', '旧参数 --name 不能与 --subject 或 --purpose 同用')
+    if case_name is not None:
+        if subject is not None or purpose is not None:
+            raise IntegrationError('MULTI_VIEW_NAME', '旧参数 --name 不能与 --subject 或 --purpose 同用')
+        if root.is_relative_to(default_root):
+            raise IntegrationError('MULTI_VIEW_NAME', '运行结果目录按统一格式命名，请用 --subject 指定对象')
+    subject = '未标注' if subject is None else subject
+    purpose = '链路测试' if purpose is None else purpose
+    _validate_case_tag('测试对象', subject)
+    _validate_case_tag('测试目的', purpose)
+    kind = '模拟' if dry_run else '实测'
+    started_at = datetime.now(_RUN_TIMEZONE)
     if case_name is None:
-        token = uuid.uuid4().hex[:8]
-        sample_id = 'case_' + token
-        base = root / _format_case_name(
-            '未标注' if subject is None else subject,
-            '链路测试' if purpose is None else purpose, len(bindings), dry_run, token)
+        sample_id = 'case_' + uuid.uuid4().hex[:8]
+        base = _allocate_case_directory(root, kind, subject, started_at)
     else:
         base = root / _validate_case_name(case_name)
         sample_id = re.sub(r'[^0-9A-Za-z_-]+', '_', case_name)[:64].strip('_') or base.name
-    base.mkdir(parents=True, exist_ok=False)
+        base.mkdir(parents=True, exist_ok=False)
     status = {'schema': 'multi-view-interface/v1', 'dry_run': bool(dry_run),
+              'kind': kind, 'subject': subject, 'purpose': purpose,
+              'view_count': len(bindings), 'started_at': started_at.isoformat(),
               'base': str(base), 'stage': 'copying', 'status': 'running'}
     write_json(base / 'interface_status.json', status)
     try:
