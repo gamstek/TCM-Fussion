@@ -1,0 +1,141 @@
+{
+  "schema": "problem-goal-port-offline/v1",
+  "tested_project": "D:\\TCM_Fusion",
+  "interpreter": "D:\\TCM_Fusion\\.venv\\Scripts\\python.exe",
+  "started_at": "2026-11-20T15:16:06+08:00",
+  "base_commit": "a289702c5126265a937debba9cd00adbec82f97e",
+  "code_commit": "cad8d0e7aad91a8491ac7ccdb9446f0fa1662228",
+  "working_tree": "正式工作区保留本地更新。代码提交仅包含问题授权迁移差异。",
+  "source_commits": [
+    "9b247f4",
+    "2cc6f56"
+  ],
+  "baseline": {
+    "test": "TCM_Fusion.tests.runtime.test_probe_budget.ProbeBudgetTests.test_split_preserves_both_p0_supporting_actions_in_serialized_model_menu",
+    "exit_code": 1,
+    "missing_menu_features": [
+      "vessel",
+      "starch_grain"
+    ],
+    "log_sha256": "0b4ca9306bc5c5b83e183a2a349ebb526209b3829d095e05a72a5d8cd7390dc2"
+  },
+  "focused": {
+    "unittest_ran": 149,
+    "passed_methods": 148,
+    "skips": [
+      "setUpClass (TCM_Fusion.tests.integration.test_measurement_gain.FrozenMeasurementTests) ... skipped '本机没有登记的连翘四图冻结案例'",
+      "test_reference_policy_field_parity_and_explicit_defaults (TCM_Fusion.tests.application.test_multi_view.MultiViewTests.test_reference_policy_field_parity_and_explicit_defaults) ... skipped 'historical reference case is not present in this workspace'"
+    ],
+    "result": "OK (skipped=2)",
+    "exit_code": 0,
+    "elapsed_seconds": 80.25,
+    "start": "2026-11-20T15:21:25+08:00",
+    "tests": [
+      "-m",
+      "unittest",
+      "-v",
+      "TCM_Fusion.tests.integration.test_problem_goals",
+      "TCM_Fusion.tests.agent.test_planning_choices",
+      "TCM_Fusion.tests.integration.test_measurement_gain",
+      "TCM_Fusion.tests.integration.test_fair_investigation",
+      "TCM_Fusion.tests.integration.test_adaptive_quality",
+      "TCM_Fusion.tests.runtime.test_probe_budget",
+      "TCM_Fusion.tests.application.test_multi_view",
+      "TCM_Fusion.tests.integration.test_feature_window",
+      "TCM_Fusion.tests.vision.test_identity_review"
+    ],
+    "log_sha256": "28a12014ba09c1fd19f39a5ce54a0d69845119fc20469f85d264548b838f6f08"
+  },
+  "full": {
+    "unittest_ran": 688,
+    "passed_methods": 687,
+    "skips": [
+      "test_reference_policy_field_parity_and_explicit_defaults (tests.application.test_multi_view.MultiViewTests.test_reference_policy_field_parity_and_explicit_defaults) ... skipped 'historical reference case is not present in this workspace'",
+      "setUpClass (tests.integration.test_measurement_gain.FrozenMeasurementTests) ... skipped '本机没有登记的连翘四图冻结案例'"
+    ],
+    "result": "OK (skipped=2)",
+    "exit_code": 0,
+    "elapsed_seconds": 332.438,
+    "start": "2026-11-20T15:24:56+08:00",
+    "tests": [
+      "-m",
+      "TCM_Fusion.cli.main",
+      "selftest"
+    ],
+    "log_sha256": "7482047d44707c922e968c80aa97c2dae4c39057fa22769d4de3a165ca83fcbd"
+  },
+  "b_assertions": {
+    "rule_engine": 59,
+    "adjudicator": 21,
+    "scene": 125
+  },
+  "problem_goal_tests": [
+    "test_empty_partial_failure_or_multiple_return_without_classification",
+    "test_existing_candidate_binds_without_another_scan",
+    "test_existing_measurement_reused_without_tool_or_new_evidence",
+    "test_identity_conflict_or_wrong_primary_does_not_produce_evidence",
+    "test_issue_menu_accounts_for_each_scan_tile",
+    "test_other_view_cannot_bind_or_satisfy_empty_view",
+    "test_paid_measurement_requires_a_beneficiary_of_this_problem",
+    "test_purpose_policy_needs_width_qualification_even_with_valid_segmentation",
+    "test_scope_cancellation_stale_and_mixed_choices",
+    "test_scope_rechecks_source_and_calibration",
+    "test_serialized_choice_and_paired_instance_baseline",
+    "test_step_cap_precedes_automatic_measurement",
+    "test_verified_vessel_bundle_does_not_measure_an_individual_width"
+  ],
+  "simulated_pair": {
+    "instance_goal_plans": 3,
+    "problem_goal_plans": 2,
+    "review_included": true,
+    "both_tool_sequences": [
+      "detect_fov_initial",
+      "feature_scan",
+      "classify_target",
+      "segment_instance",
+      "measure_instances"
+    ],
+    "qualifying_vessel_width_um": 19.5,
+    "measurement_records_equal": true,
+    "existing_measurement_extra_tools": 0,
+    "existing_evidence_version_unchanged": true
+  },
+  "frozen_white_peony_checks": [
+    {
+      "label": "S01",
+      "source": "dataset\\白芍4图\\796.tif",
+      "sha256": "07fe8f779b2255f3d581a3163543a05176330f743f20997dfca62ad01c8a0d16",
+      "historical_run": "fusion_e3ccdf8758284ab5bd7cfd180ebf6ed3",
+      "historical_folder": "实跑__S01__01图__20261120-143756__单图问题授权-8a2e07fe",
+      "historical_source_commit": "2cc6f56",
+      "historical_proposal": "牡蛎",
+      "historical_model_failure": "ASSESSMENT_INVALID",
+      "support_requested": 2,
+      "official_validator_accepted_support": 1,
+      "formal_config_only_change": "agent.workflow.problem_goal_execution",
+      "offline_model_calls": 0
+    },
+    {
+      "label": "S02",
+      "source": "dataset\\白芍4图\\B20180126.jpg",
+      "sha256": "16569404be5fa166f840611c37edef880787f1306d9b2c52027b15ecb1a9fe13",
+      "historical_run": "fusion_d6057f991be848c8982592545b6310a5",
+      "historical_folder": "实跑__S02__01图__20261120-144258__单图问题授权-5f5f323b",
+      "historical_source_commit": "2cc6f56",
+      "historical_proposal": "白芍",
+      "historical_model_failure": "ASSESSMENT_INVALID",
+      "support_requested": 4,
+      "official_validator_accepted_support": 1,
+      "formal_config_only_change": "agent.workflow.problem_goal_execution",
+      "offline_model_calls": 0
+    }
+  ],
+  "external_model_calls": 0,
+  "live_outcomes": {
+    "hard_recall": null,
+    "confusion_accuracy": null,
+    "false_recognition_rate": null,
+    "paired_case_latency": null,
+    "paired_total_tokens": null
+  }
+}
