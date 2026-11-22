@@ -1,0 +1,121 @@
+{
+  "entries": {
+    "32635207063d548d5ea1059f69d210968a1532ed81b7ef550378a44ab50db431": {
+      "action_id": "1e3193c543aef30446b31c708efd74125f141b6df935f349cc59d91501913d33",
+      "tool": "detect_fov_initial",
+      "target_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "32635207063d548d5ea1059f69d210968a1532ed81b7ef550378a44ab50db431",
+      "evidence_version": "b84f86b94f823f6f496569803283e25719034394d46176c76e33ee1580e4bac4",
+      "dependency_fingerprint": "03484127b47a3fbe61f2724a652ce8307a8c9f40ddd5fcb167ffc6ec625ca6b5",
+      "bundle": {
+        "root": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\32635207063d548d",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops.json": "f3cb68aaa5fbb1b2da0b900b37839f3967be2ad3abc32edd2ec2ae1d32ca7bbf"
+        },
+        "quality": null
+      },
+      "ended_at": 1795277897.5284116
+    },
+    "17a0596add6a107ba6d64db2525dd737f33fe10e6803dbae95076f42ac45c414": {
+      "action_id": "613cd90c34236483699488b6c3b92a83d6a80640367e84d96278bd2ea6d4f0c9",
+      "tool": "feature_scan",
+      "target_id": "feature_scan:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": true,
+      "operation_key": "17a0596add6a107ba6d64db2525dd737f33fe10e6803dbae95076f42ac45c414",
+      "feature_id": "epidermis_cell",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "scan_tiles_reserved": 4,
+      "criteria": [
+        {
+          "candidate_id": "大青叶",
+          "role": "supporting"
+        },
+        {
+          "candidate_id": "乌梅",
+          "role": "required"
+        }
+      ],
+      "evidence_version": "80f784b68bd5125ee35e132c975f3aeba7a9beeb170103f4425cdd4d6533f53a",
+      "dependency_fingerprint": "5ff1b7417f76b8b3aa9b3ec1b9feecf1b8368fdfe00f00631b6e41eb7d8ec866",
+      "bundle": {
+        "root": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\17a0596add6a107b",
+        "paths": {
+          "crops_dir": "scan/crops",
+          "completion": "scan/scan_result.json"
+        },
+        "files": {
+          "scan/crops/epidermis_cell_view_01_glm3df6d852daf1_01.json": "d0e76b5a4bd43d1162e0843ff8c0d5a96e66b67a9c209bf6e8bc558b7a645842",
+          "scan/crops/epidermis_cell_view_01_glm3df6d852daf1_01.png": "6eeec0526185ba18a6388d991d217f482d0c3a00014a8b310862fa0a7907436e",
+          "scan/scan_result.json": "c6eaf71065e7cef9831815f66b7e0ced99d0dd70a156192c440922745e868bbb"
+        },
+        "quality": null
+      },
+      "scan_coverage": {
+        "status": "shareable",
+        "crop_count": 1,
+        "successful_tiles": [
+          [
+            0,
+            0,
+            1920,
+            1080
+          ],
+          [
+            1920,
+            0,
+            3840,
+            1080
+          ],
+          [
+            0,
+            1080,
+            1920,
+            2160
+          ],
+          [
+            1920,
+            1080,
+            3840,
+            2160
+          ]
+        ],
+        "failed_tiles": [],
+        "unsearched_tiles": []
+      },
+      "ended_at": 1795277930.4445705
+    },
+    "25b4d7e8cd153f98aff786a1b09bc1799be1fdb0b59815527f8690573a631fd6": {
+      "action_id": "77c69c16f5f7faed8a19732cc39e0ce622e7809790707982cee93f00bf19b24a",
+      "tool": "classify_target",
+      "target_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "25b4d7e8cd153f98aff786a1b09bc1799be1fdb0b59815527f8690573a631fd6",
+      "instance_id": "inst:5d4a34c300a36d5606f6f3b3b5ec6533d34d86db147e48408d1a85479c634e92",
+      "semantic_key": "2caede78bbdc20434a6e9bb58319915e59dcf38b87dfdca5326ae2f952dd08cb",
+      "evidence_version": "e7955885a7a4796cb85f142dcd07e5c68f1e0fd61c51454c0b8ce92e7bd2db65",
+      "dependency_fingerprint": "2d31a66bbd6e529e25b8c4226cee308d1037095cdf0b9dbf9f0bf342491c35a6",
+      "bundle": {
+        "root": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\25b4d7e8cd153f98",
+        "paths": {
+          "classification": "classification"
+        },
+        "files": {
+          "classification/classification.json": "8b5604522e2c1a80bfef9808d9e450fb6190d69ca376bc256891e0ad4eab95a6"
+        },
+        "quality": null
+      },
+      "ended_at": 1795277964.4004211
+    }
+  }
+}

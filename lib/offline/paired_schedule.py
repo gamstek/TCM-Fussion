@@ -197,11 +197,12 @@ def inspect_run(run):
     current_goal = None
     for event in events:
         if event['phase'] == 'thought':
-            current_goal = event['action_id'] if (event.get('execution_choice') or {}).get('kind') == 'instance_goal' else None
+            mode = (event.get('execution_choice') or {}).get('kind')
+            current_goal = event['action_id'] if mode in {'instance_goal', 'identity_group'} else None
             children = []
         elif current_goal and event['phase'] == 'execution_timing' and event['action_id'] != current_goal:
             children.append(event['action_id'])
-        elif current_goal and event['phase'] == 'semantic_return':
+        elif current_goal and event['phase'] in {'semantic_return', 'identity_group_return'}:
             semantic_children[current_goal] = children
             current_goal = None
     graded, no_gain = 0, 0
@@ -210,7 +211,7 @@ def inspect_run(run):
         ids = [thought['action_id'], *thought.get('physical_partner_ids', [])]
         if thought.get('parallel_observation_id'):
             ids.append(thought['parallel_observation_id'])
-        if (thought.get('execution_choice') or {}).get('kind') == 'instance_goal':
+        if (thought.get('execution_choice') or {}).get('kind') in {'instance_goal', 'identity_group'}:
             if thought['action_id'] not in semantic_children:
                 continue
             ids.extend(semantic_children[thought['action_id']])

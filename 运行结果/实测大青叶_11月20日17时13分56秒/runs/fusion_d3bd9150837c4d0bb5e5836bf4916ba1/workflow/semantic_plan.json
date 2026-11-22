@@ -1,0 +1,43 @@
+{
+  "schema": "serial-semantic-plan/d3",
+  "plan_id": "plan:3293ce619d299e64fea247d0",
+  "goal": {
+    "semantic_task": "verify_identity",
+    "instance_ref": "inst:eec072b2d38582fcc7d4736985b40a976d7ca9feb6b8cfc47ffd69d6dab8367a",
+    "problem_id": "instance-question:084218a0d86435e89dc0"
+  },
+  "dimension": null,
+  "bound_input": "a92f8d8765dbc8fb74d42cf9f11e13d7cabcccf07ee8633bf668fc509baac479",
+  "bound_crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm53e654d2ac88_01",
+  "nodes": [
+    {
+      "node_id": "verify_identity",
+      "semantic_task": "verify_identity",
+      "instance_ref": "inst:eec072b2d38582fcc7d4736985b40a976d7ca9feb6b8cfc47ffd69d6dab8367a",
+      "depends_on": [],
+      "status": "blocked",
+      "required_facts": [
+        "instance_exists"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    }
+  ],
+  "status": "returned_to_react",
+  "identity_failure": {
+    "outcome": "unreadable",
+    "expected_feature": "cluster_crystal",
+    "reported_feature": null,
+    "instance_ref": "inst:eec072b2d38582fcc7d4736985b40a976d7ca9feb6b8cfc47ffd69d6dab8367a",
+    "semantic_task": "verify_identity",
+    "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm53e654d2ac88_01",
+    "classification_ref": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm53e654d2ac88_01",
+    "classification_sha256": "466a6d9f7549c27b690b37ddbbc6375c66439c7b02be78a5ef1afd6bea8c7167",
+    "evidence_version": "dc789a10c34be80ad42b1d438f0ab460047230bd93b183af233a338d9915f708",
+    "bound_input": "a92f8d8765dbc8fb74d42cf9f11e13d7cabcccf07ee8633bf668fc509baac479"
+  },
+  "return_reason": "identity_rejected"
+}

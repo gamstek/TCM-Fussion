@@ -18,7 +18,7 @@ from pathlib import Path
 from TCM_Fusion.lib.runtime.storage import IntegrationError
 
 
-def acquire(ledger_path, timeout=600):
+def acquire(ledger_path, timeout=600, *, cancel_event=None):
     path = Path(str(ledger_path)+".lock")
     path.parent.mkdir(parents=True, exist_ok=True)
     handle = path.open("a+b")
@@ -27,6 +27,9 @@ def acquire(ledger_path, timeout=600):
         handle.flush()
     start = time.monotonic()
     while True:
+        if cancel_event is not None and cancel_event.is_set():
+            handle.close()
+            raise IntegrationError('WORKFLOW_CANCELLED', '等待文件锁时任务已取消')
         try:
             handle.seek(0)
             if os.name == "nt":

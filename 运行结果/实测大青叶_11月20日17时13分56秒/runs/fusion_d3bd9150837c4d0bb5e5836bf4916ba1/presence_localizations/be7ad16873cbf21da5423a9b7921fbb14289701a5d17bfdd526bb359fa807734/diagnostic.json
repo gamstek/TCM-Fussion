@@ -1,0 +1,83 @@
+{
+  "policy_version": "presence_localization_shadow_v1",
+  "mode": "shadow",
+  "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+  "feature_id": "fiber",
+  "localization": "valid",
+  "quality": "low_detail",
+  "identity": "pending",
+  "verification_basis": [
+    {
+      "kind": "glm_localization_hypothesis",
+      "independent_support": false
+    }
+  ],
+  "findings": [],
+  "usage_eligibility": {
+    "presence": false,
+    "morphology": false,
+    "length": false,
+    "width": false,
+    "area": false
+  },
+  "legacy_presence_unchanged": true,
+  "state": "present_pending",
+  "observation_scope": {
+    "kind": "sent_full_fov",
+    "exhaustive": false
+  },
+  "source_tight_bbox": [
+    1300.0,
+    625.0,
+    3175.0,
+    1925.0
+  ],
+  "crop_bbox": [
+    1235,
+    560,
+    3240,
+    1990
+  ],
+  "transform": {
+    "kind": "full_image_resize",
+    "scale_xy": [
+      0.4,
+      0.4
+    ],
+    "padding_xy": [
+      0,
+      0
+    ],
+    "roi_xyxy": [
+      0,
+      0,
+      3840,
+      2160
+    ]
+  },
+  "model_input_size": [
+    1536,
+    864
+  ],
+  "spatial_agreement": [],
+  "artifacts": {
+    "target_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734\\target.png",
+    "context_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734\\context.png",
+    "target_sha256": "4abcfeead9f431fc25b3e3d26e2b76b2f2af8c54584e9bfeee4ccb92db17dbd8"
+  },
+  "quality_diagnostic": {
+    "status": "low_detail",
+    "score": 0.4284,
+    "flags": [
+      "low_detail"
+    ],
+    "metrics": {
+      "std": 0.0685,
+      "edge": 0.0096,
+      "width": 512,
+      "height": 355,
+      "area_ratio": 0.2939
+    },
+    "block_segment": false
+  }
+}

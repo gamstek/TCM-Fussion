@@ -40,6 +40,7 @@ import sys
 import csv
 import json
 import hashlib
+import math
 import argparse
 
 import numpy as np
@@ -177,12 +178,80 @@ def load_crop_index(masks_dir):
             continue
         stem = str(row.get("stem") or "").strip()
         if stem:
-            row["_png"] = os.path.join(cdir, str(row.get("png") or os.path.splitext(fn)[0] + ".png"))
+            row["_id"] = os.path.splitext(fn)[0]
+            png = str(row.get("png") or row["_id"] + ".png")
+            delivered = os.path.join(cdir, os.path.basename(png))
+            row["_png"] = delivered if os.path.isfile(delivered) else os.path.join(cdir, png)
             idx.setdefault(stem, []).append(row)
     return idx
 
 
-def resolve_overlay_base(images_path, inst, crop_idx):
+def measure_crop_frame(inst, record, row, crop, *, required, exact):
+    """把已绑定的 mask 坐标平移回原图，并记录影响尺寸的截断。"""
+    if not required:
+        return None
+    status = {"status": "not_bound", "crop_id": row.crop_id if row else None}
+    if not exact or not crop or not row.crop_id:
+        return status
+    status["status"] = "invalid_mapping"
+    window = crop.get("feature_window")
+    if not isinstance(window, dict) or window.get("schema") != contracts.FEATURE_WINDOW_SCHEMA:
+        return status
+    if row.raw.get("feature_window_schema") not in (None, "", window["schema"]):
+        return status
+    if (row.instance_id != inst.instance_id or row.feature_id != inst.label
+            or crop.get("feature_id") != inst.label
+            or crop.get("crop_id") != row.crop_id or not row.source_image_path
+            or crop.get("source_image_path") != row.source_image_path):
+        return status
+
+    def coords(value, n):
+        if (isinstance(value, list) and len(value) == n
+                and all(type(v) in (int, float) and math.isfinite(v) for v in value)):
+            return value
+        raise ValueError("invalid crop coordinates")
+
+    try:
+        x0, y0, x1, y1 = coords(crop.get("loose_box"), 4)
+        sw, sh = coords(window.get("source_size_wh"), 2)
+        tl, tt, tr, tb = coords(crop.get("tight_box"), 4)
+        a, b, c, d = coords(crop.get("tight_box_local"), 4)
+        delivered = coords(row.tight_bbox, 4)
+        clipped = int(row.raw.get("igm_associated_clipped_px") or 0)
+    except (ValueError, TypeError):
+        return status
+    h, w = inst.mask.shape
+    if (not all(type(v) is int for v in (x0, y0, x1, y1, sw, sh))
+            or not (0 <= x0 < x1 <= sw and 0 <= y0 < y1 <= sh)
+            or (x1 - x0, y1 - y0) != (w, h)
+            or not (0 <= a < c <= w and 0 <= b < d <= h)
+            or not all(math.isclose(v, expected, rel_tol=0, abs_tol=1e-6)
+                       for v, expected in zip((tl, tt, tr, tb), (a + x0, b + y0, c + x0, d + y0)))
+            or delivered != [round(v) for v in (a, b, c, d)] or clipped < 0):
+        return status
+
+    edges = {"left": bool(inst.mask[:, 0].any()), "top": bool(inst.mask[0].any()),
+             "right": bool(inst.mask[:, -1].any()), "bottom": bool(inst.mask[-1].any())}
+    source_edge = {"left": x0 == 0, "top": y0 == 0, "right": x1 == sw, "bottom": y1 == sh}
+    status.update(
+        status="possible_truncation" if any(edges.values()) or clipped else "valid",
+        loose_box_xyxy=[x0, y0, x1, y1], crop_edges=[k for k, hit in edges.items() if hit],
+        source_edges=[k for k, hit in edges.items() if hit and source_edge[k]],
+        associated_clipped_px=clipped,
+    )
+    if record.get("bbox_x") is None:
+        status["status"] = "empty_mask"
+        return status
+    bx, by = record["bbox_x"] + x0, record["bbox_y"] + y0
+    status["mask_bbox_source_xyxy"] = [bx, by, bx + record["bbox_w_px"], by + record["bbox_h_px"]]
+    for name in ("feret_p1_px", "feret_p2_px"):
+        point = record.get(name)
+        if point:
+            status[name] = [point[0] + x0, point[1] + y0]
+    return status
+
+
+def resolve_overlay_base(images_path, inst, crop_idx, *, crop=None, crop_id=""):
     """给叠加图找与 mask 同尺寸的底图；找不到返回 None（调用方回退灰底）。
 
     * 原图级 mask：--images 里的源图本身同尺寸，直接用；
@@ -190,11 +259,12 @@ def resolve_overlay_base(images_path, inst, crop_idx):
       源图不可用（未给 --images / 找不到该 stem）时，退回 `crops/` 里同尺寸的彩色小图。
     """
     h, w = inst.mask.shape[:2]
-    ipath = find_image(images_path, inst.image_stem)
+    ipath = (crop or {}).get("source_image_path") if crop_id else find_image(images_path, inst.image_stem)
     img = imread(ipath) if ipath else None
     if img is not None and img.shape[:2] == (h, w):
         return img
-    for row in crop_idx.get(inst.image_stem) or []:
+    candidates = ([crop] if crop else []) if crop_id else crop_idx.get(inst.image_stem, [])
+    for row in candidates:
         lb = [int(round(v)) for v in (row.get("loose_box") or [])]
         if img is not None and len(lb) == 4:
             x0, y0, x1, y1 = lb
@@ -317,24 +387,26 @@ def main(argv=None):
     print(f"[info] 解析到 {len(instances)} 个实例 mask")
 
     manifest_idx = load_manifest_index(args.manifest)
-    calib_cache = {}
     # 交付清单（<stem>*_measure_manifest.csv）：px_per_um 的唯一来源，同时携带
     # herb/object_label/source_image_path → 兼作 manifest 关联的消歧线索。
     # 2026-09-29（P2-1）改为契约装载器：字段解析与"px_per_um 是否有效"的判定统一在 contracts.py。
     delivery_meta = contracts.load_manifest_rows(args.masks)
+    delivery_by_mask = contracts.load_manifest_rows(args.masks, by_mask=True)
     # crop 侧车 json：crop 局部 mask 回贴源图坐标系的依据（叠加图底图）
     crop_idx = load_crop_index(args.masks)
     base_cache = {}
 
     # 标定硬门槛（2026-09-20）：px_per_um 唯一来源 = 分割交付清单，缺失即报错退出。
     # 一次列出全部缺项（而非逐图中断），便于批量补测后重跑。
-    def _ppu_of(stem):
-        row = delivery_meta.get(stem)
-        return row.px_per_um if (row and row.px_per_um) else 0.0
-
-    missing = sorted({i.image_stem for i in instances if not _ppu_of(i.image_stem)})
+    bindings = []
+    for inst in instances:
+        filename = os.path.basename(inst.meta.get("file") or "")
+        exact = delivery_by_mask.get(filename)
+        bindings.append((inst, exact or delivery_meta.get(inst.image_stem), exact is not None))
+    missing = sorted({os.path.basename(i.meta.get("file") or "") or i.image_stem
+                      for i, row, _ in bindings if not row or not row.px_per_um})
     if missing:
-        print(f"[FAIL] {len(missing)} 个源图在分割交付清单里没有有效 px_per_um，"
+        print(f"[FAIL] {len(missing)} 个交付项在分割清单里没有有效 px_per_um，"
               f"无法换算 μm（共 {len(instances)} 个实例）：", file=sys.stderr)
         for s in missing[:10]:
             print(f"         - {s}", file=sys.stderr)
@@ -347,27 +419,28 @@ def main(argv=None):
         return 2
 
     n_csv = n_json = 0
+    source_cache = {}
     csv_path = args.out_prefix + "_measurements.csv"
     jsonl_path = args.out_prefix + "_measurements.jsonl"
     with open(csv_path, "w", newline="", encoding="utf-8-sig") as fc, \
          open(jsonl_path, "w", encoding="utf-8") as fj:
         w = csv.DictWriter(fc, fieldnames=CSV_COLUMNS, extrasaction="ignore")
         w.writeheader()
-        for inst in instances:
-            drow = delivery_meta.get(inst.image_stem)      # MeasureManifestRow | None（契约对象）
-            if inst.image_stem not in calib_cache:
-                ipath = find_image(args.images, inst.image_stem)
-                if ipath is None:
-                    ipath = os.path.join(args.images or ".", inst.image_stem + ".jpg")
-                ppu = _ppu_of(inst.image_stem)
-                # 已在循环前统一校验，此处必有有效标定值
-                calib_cache[inst.image_stem] = (
-                    ipath, Calibration(ppu, None, None, "delivery_manifest", "ok"))
-            ipath, calib = calib_cache[inst.image_stem]
+        for inst, drow, exact in bindings:
+            if exact and os.path.isfile(drow.source_image_path):
+                ipath = drow.source_image_path
+            else:
+                if inst.image_stem not in source_cache:
+                    source_cache[inst.image_stem] = find_image(args.images, inst.image_stem)
+                ipath = source_cache[inst.image_stem]
+            calib = Calibration(drow.px_per_um, None, None, "delivery_manifest", "ok")
+            group = crop_idx.get(inst.image_stem, [])
+            crop_id = drow.crop_id if exact else ""
+            crop = next((item for item in group if item["_id"] == crop_id), None)
 
             # manifest 消歧：完整路径 → 交付清单 source_image_path（末两级）→ 唯一 stem，
             # 歧义即放弃关联（宁缺勿错，避免把记录挂到别的药材上）
-            meta = manifest_lookup(manifest_idx, ipath if os.path.isfile(ipath) else None,
+            meta = manifest_lookup(manifest_idx, ipath,
                                    inst.image_stem, drow.source_image_path if drow else "")
             mrec = {"image_stem": inst.image_stem, "instance_id": inst.instance_id,
                     "split": meta.get("suggested_split", "")}
@@ -394,6 +467,15 @@ def main(argv=None):
             if gran != contracts.GRANULARITY_DEFAULT:
                 rec.setdefault("flags", []).append("coarse_quant")
                 rec["granularity"] = gran
+            frame_required = bool(drow.raw.get("feature_window_schema") or (crop or {}).get("feature_window")
+                                  or (not exact and any(item.get("feature_window") for item in group)))
+            frame = measure_crop_frame(inst, rec, drow, crop, required=frame_required, exact=exact)
+            if frame is not None:
+                rec["crop_frame"] = frame
+                if frame["status"] != "valid":
+                    if "igm_review" not in rec["flags"]:
+                        rec["flags"].append("igm_review")
+                    rec["primary_value_um"] = None
 
             # CSV 契约：flags 用分号连接（"uncalibrated;multi_component"），
             # JSONL 保留原生数组；下游 Agent.evidence_pool 按此解析。
@@ -404,9 +486,10 @@ def main(argv=None):
             n_csv += 1
 
             if args.overlay_dir:
-                bkey = (inst.image_stem, inst.mask.shape)
+                bkey = (inst.image_stem, crop_id, inst.mask.shape)
                 if bkey not in base_cache:
-                    base_cache[bkey] = resolve_overlay_base(args.images, inst, crop_idx)
+                    base_cache[bkey] = resolve_overlay_base(args.images, inst, crop_idx, crop=crop,
+                                                           crop_id=crop_id)
                 vis = draw_overlay(base_cache[bkey], inst, rec)
                 imwrite(os.path.join(args.overlay_dir,
                                      f"{inst.image_stem}__inst{inst.instance_id}_测量.jpg"), vis)

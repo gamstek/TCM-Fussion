@@ -1,0 +1,83 @@
+{
+  "policy_version": "presence_localization_shadow_v1",
+  "mode": "shadow",
+  "source_image_sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+  "feature_id": "sand_crystal",
+  "localization": "valid",
+  "quality": "usable",
+  "identity": "pending",
+  "verification_basis": [
+    {
+      "kind": "glm_localization_hypothesis",
+      "independent_support": false
+    }
+  ],
+  "findings": [
+    "possible_border_truncation"
+  ],
+  "usage_eligibility": {
+    "presence": false,
+    "morphology": false,
+    "length": false,
+    "width": false,
+    "area": false
+  },
+  "legacy_presence_unchanged": true,
+  "state": "present_pending",
+  "observation_scope": {
+    "kind": "sent_full_fov",
+    "exhaustive": false
+  },
+  "source_tight_bbox": [
+    626.6666666666666,
+    426.6666666666667,
+    1906.6666666666667,
+    1536.0
+  ],
+  "crop_bbox": [
+    571,
+    371,
+    1962,
+    1536
+  ],
+  "transform": {
+    "kind": "full_image_resize",
+    "scale_xy": [
+      0.75,
+      0.75
+    ],
+    "padding_xy": [
+      0,
+      0
+    ],
+    "roi_xyxy": [
+      0,
+      0,
+      2048,
+      1536
+    ]
+  },
+  "model_input_size": [
+    1536,
+    1152
+  ],
+  "spatial_agreement": [],
+  "artifacts": {
+    "target_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\c24c6aac1bc1c8bde4524e90fd6897938efe2cd7a8b3eb783fbde50f6d89906b\\target.png",
+    "context_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\c24c6aac1bc1c8bde4524e90fd6897938efe2cd7a8b3eb783fbde50f6d89906b\\context.png",
+    "target_sha256": "9599216ba13dcce49e1d2371c6d5357071fe7a7f3c9607d2edd4cda7f2239b52"
+  },
+  "quality_diagnostic": {
+    "status": "usable",
+    "score": 0.7402,
+    "flags": [],
+    "metrics": {
+      "std": 0.1365,
+      "edge": 0.01459,
+      "width": 512,
+      "height": 444,
+      "area_ratio": 0.4514
+    },
+    "block_segment": false
+  }
+}

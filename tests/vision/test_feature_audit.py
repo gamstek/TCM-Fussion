@@ -78,6 +78,8 @@ class FeatureAuditTests(WorkflowFixture, unittest.TestCase):
         before = {p: p.read_bytes() for p in workflow.root.rglob('*.json')}
         audit = build_feature_audit(snapshot, out_dir=self.root/'audit', feature_ids=[])
         self.assertEqual(audit['schema'], 'feature-audit/v2')
+        self.assertEqual(audit['summary']['n_input_views'], 1)
+        self.assertEqual(audit['summary']['n_with_examples'], 0)
         self.assertEqual(audit['evidence_version'], snapshot['version'])
         self.assertTrue(audit['non_blocking'])
         self.assertEqual(audit['feature_ids'], ['fiber', 'single_crystal'])

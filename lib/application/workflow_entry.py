@@ -24,7 +24,10 @@ from TCM_Fusion.lib.decision.collaboration import fuse, knowledge_base
 WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'semantic_execution':{'type':'boolean'},
     'problem_goal_execution':{'type':'boolean'},
+    'compact_view_ids':{'type':'boolean'},
     'physical_parallel':{'type':'boolean'},
+    'identity_group_execution':{'type':'boolean'},
+    'observation_group_execution':{'type':'boolean'},
     'python':{'type':'string'},
     'detector':{'enum':['yolo']},
     'targeted_recovery':{'type':'boolean'},
@@ -41,14 +44,8 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'final_assessment_seconds':{'type':'number','exclusiveMinimum':0,'maximum':120},
     'feature_audit':{'type':'boolean'},
     'feature_audit_features':{'type':'array','items':{'type':'string'}},
-    'image_exemplar_audit':{'type':'boolean'},
-    'image_exemplar_audit_min_det_score':{'type':'number','minimum':0,'maximum':1},
-    'image_exemplar_audit_max_crops':{'type':'integer','minimum':1,'maximum':50},
-    'image_exemplar_audit_skip_classified':{'type':'boolean'},
-    'image_exemplar_bank':{'type':'string'},
-    'image_exemplar_positive':{'type':'integer','minimum':1,'maximum':20},
-    'image_exemplar_negative':{'type':'integer','minimum':1,'maximum':20},
-    'image_exemplar_seconds':{'type':'number','exclusiveMinimum':0,'maximum':180},
+    'identity_review_bank':{'type':'string','minLength':1},
+    'identity_review_cnn_margin':{'type':'number','minimum':0,'maximum':1},
     'cnn_weights':{'type':'string'},
     'cnn_meta':{'type':'string'},
     'cnn_threshold':{'type':'number','minimum':0,'maximum':1},
@@ -74,6 +71,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'fast_classify_max_per_view':{'type':'integer','minimum':1,'maximum':32},
     'classify_batch_enabled':{'type':'boolean'},
     'context_compact':{'type':'boolean'},
+    'criterion_impact_menu':{'type':'boolean'},
     'context_max_actions':{'type':'integer','minimum':5,'maximum':64},
     'auto_measure_after_segment':{'type':'boolean'},
     # 保留历史配置的类型校验，当前调查顺序由 ReAct 选择。
@@ -103,12 +101,13 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'locate_expand':{'type':'number','minimum':1,'maximum':3},
     'locate_min_box_side':{'type':'integer','minimum':16,'maximum':1024},
     'locate_min_roi_side':{'type':'integer','minimum':64,'maximum':2048},
+    'feature_crop_policy':{'enum':['legacy','structure_v1']},
     'box_quality_enabled':{'type':'boolean'},
     'igm_size':{'type':'string','pattern':'^[0-9]{3,4}x[0-9]{3,4}$'},
     'box_quality_retry':{'type':'boolean'},
     'enabled_tools':{'type':'array','uniqueItems':True,'items':{'enum':[
         'detect_fov_initial','calibrate_fov','segment_instance','classify_target','classify_crops_batch','measure_instances','detect_region',
-        'locate_feature','feature_scan','hybrid_scan','image_exemplar_audit']}},
+        'locate_feature','feature_scan','hybrid_scan']}},
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
     'agent_driven_coverage':{'type':'boolean'},
@@ -125,15 +124,27 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
         'box':{'type':'array','minItems':4,'maxItems':4,'items':{'type':'integer','minimum':0}}}}}}}
 
 
+def validate_workflow_config(workflow):
+    if isinstance(workflow, dict):
+        retired = any(key.startswith('image_exemplar_') for key in workflow)
+        enabled = workflow.get('enabled_tools')
+        if retired or isinstance(enabled, list) and 'image_exemplar_audit' in enabled:
+            raise IntegrationError('ACTION_DENIED', '旧示例审计已下线。新任务请移除 image_exemplar_* 配置及 '
+                                   'enabled_tools 中的 image_exemplar_audit。原运行请按原版回放。')
+    validate_arguments(WORKFLOW_SCHEMA, workflow)
+
+
 async def execute_workflow(config,a,directory,*,routing,start,job,status_path,code_baseline=None):
     workflow = config['agent']['workflow']
+    if not isinstance(workflow, dict):
+        validate_workflow_config(workflow)
     # fast 是唯一标准路径：配置不再提供 false 开关，缺失时补成 true。
     workflow.setdefault('fast_yolo_stage2', True)
     if 'agent_policy' not in workflow and config['agent'].get('planner', 'llm') == 'llm':
         from copy import deepcopy
         config = deepcopy(config)
         config['agent']['workflow']['agent_policy'] = 'adaptive_v2'
-    validate_arguments(WORKFLOW_SCHEMA,config['agent']['workflow'])
+    validate_workflow_config(config['agent']['workflow'])
     from TCM_Fusion.lib.runtime.runtime_readiness import planner_preflight
     preflight=planner_preflight(config)
     write_json(directory/'agent_preflight.json',preflight)

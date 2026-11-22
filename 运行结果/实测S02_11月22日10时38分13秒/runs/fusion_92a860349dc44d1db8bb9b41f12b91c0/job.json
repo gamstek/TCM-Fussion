@@ -1,0 +1,22 @@
+{
+  "job_id": "fusion_92a860349dc44d1db8bb9b41f12b91c0",
+  "sample_id": "case_2e72aabc",
+  "status": "completed",
+  "stage": "done",
+  "config_sha256": "47adb94e4c7653275ba8f1f9893f907df5a3833eff71bc7ea89d36494bfb75e5",
+  "result": "D:\\TCM_Fusion\\运行结果\\实测S02_11月22日10时38分13秒\\runs\\fusion_92a860349dc44d1db8bb9b41f12b91c0\\fusion.json",
+  "needs_review": true,
+  "route": "workflow_agent",
+  "elapsed_seconds": 23.169193400011864,
+  "output": "D:\\TCM_Fusion\\运行结果\\实测S02_11月22日10时38分13秒\\runs\\fusion_92a860349dc44d1db8bb9b41f12b91c0\\output.json",
+  "code_signature": {
+    "baseline": "725377e3f356dabd2487e20a842e1b23c7d2a48a823faed816388bfae087574e",
+    "current": "725377e3f356dabd2487e20a842e1b23c7d2a48a823faed816388bfae087574e",
+    "changed": false,
+    "changed_at": null,
+    "read_error": null,
+    "checks": 5,
+    "started_at": "2026-11-22T10:38:23+0800",
+    "path": "D:\\TCM_Fusion\\运行结果\\实测S02_11月22日10时38分13秒\\runs\\fusion_92a860349dc44d1db8bb9b41f12b91c0\\code_signature.json"
+  }
+}

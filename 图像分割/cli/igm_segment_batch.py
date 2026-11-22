@@ -190,6 +190,8 @@ def assemble(items, results, out_dir):
         rows = []
         for k, it in enumerate((g for g in group if results[g["crop_id"]]["ok"]), 1):
             res = results[it["crop_id"]]
+            window = it["cj"].get("feature_window") or {}
+            igm_meta = res["meta"] or {}
             name = f"{stem}__{it['feature_id']}__inst{k:02d}.png"
             shutil.copyfile(os.path.join(out_dir, "igm", it["crop_id"], "mask.png"),
                             os.path.join(masks_dir, name))
@@ -206,6 +208,8 @@ def assemble(items, results, out_dir):
                 "px_per_um": it["px_per_um"],
                 "igm_status": (res["meta"] or {}).get("status", ""),
                 "igm_area_ratio": (res["meta"] or {}).get("area_ratio", ""),
+                "feature_window_schema": window.get("schema", ""),
+                "igm_associated_clipped_px": igm_meta.get("associated_clipped_px", igm_meta.get("clipped_px", "")),
                 # 框粒度（量化可用性闸门）：由检测侧 stage 2 逐 crop 给出（crop 随行 json），
                 # 缺省 instance。几何侧据此对 bundle/sheet/clump 打 coarse_quant（只作存在性）。
                 "granularity": getattr(it["meta"], "granularity", "") or contracts.GRANULARITY_DEFAULT,

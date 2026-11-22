@@ -74,6 +74,11 @@ class PhysicalScheduleTests(WorkflowFixture,unittest.TestCase):
             self.assertEqual(self.s.store.current()['version'],head)
         self.assertEqual(read_json(self.s.budget_path)['used'],{'initialization':2,'observation':2})
         self.assertEqual(len(self.backend.calls),4)
+        timings = schedule.epoch_timings(read_json(self.s.operations)['entries'])
+        self.assertEqual(len(timings), 2)
+        for group in timings:
+            self.assertEqual((group['branches'],group['timed_branches'],group['accepted']), (2,2,2))
+            self.assertGreater(group['overlapping_branch_seconds'], 0)
 
     def test_close_fences_private_result_and_unknown_http(self):
         actions = self.setup_pair()

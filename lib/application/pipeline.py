@@ -87,9 +87,8 @@ def validate_config(config):
     if agent.get("mode") == "llm_shadow" and not config.get("allow_network", False):
         raise IntegrationError("NETWORK_DISABLED", "LLM shadow需要显式允许联网")
     if "workflow" in agent:
-        from TCM_Fusion.lib.application.workflow_entry import WORKFLOW_SCHEMA
-        from TCM_Fusion.lib.tools.tool_registry import validate_arguments
-        validate_arguments(WORKFLOW_SCHEMA,agent["workflow"])
+        from TCM_Fusion.lib.application.workflow_entry import validate_workflow_config
+        validate_workflow_config(agent['workflow'])
         if agent["workflow"].get("problem_goal_execution") and (
                 agent["workflow"].get("semantic_execution") is False
                 or agent["workflow"].get("agent_policy", "adaptive_v2") != "adaptive_v2"

@@ -1,0 +1,31 @@
+{
+  "source_sha256": "f0db3c7b1303f3d9fcd60ef66c043b4d4f07ecd690f5c016dc784b74c568648a",
+  "image_size": [
+    434,
+    202
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "其他",
+      "tight_bbox": [
+        8.3,
+        0.0,
+        410.7,
+        196.0
+      ],
+      "confidence": "low",
+      "score": 0.2567,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ]
+}

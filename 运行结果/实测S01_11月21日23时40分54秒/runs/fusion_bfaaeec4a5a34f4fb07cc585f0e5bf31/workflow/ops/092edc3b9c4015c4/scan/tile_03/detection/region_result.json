@@ -1,0 +1,53 @@
+{
+  "dets": [
+    {
+      "label": "表皮细胞",
+      "tight_bbox": [
+        1934.25,
+        1633.25,
+        2538.75,
+        2135.75
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "黄棕色细胞团，可见多角形细胞相互嵌合成片，垂周壁略波状弯曲",
+      "source_tight_bbox": [
+        2035,
+        1717,
+        2438,
+        2052
+      ],
+      "locate_expand": 1.5
+    },
+    {
+      "label": "表皮细胞",
+      "tight_bbox": [
+        2534.0,
+        1720.25,
+        3110.0,
+        2156.75
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "黄棕色片状细胞群，排列紧密，细胞呈类方形/多角形，壁弯曲",
+      "source_tight_bbox": [
+        2630,
+        1793,
+        3014,
+        2084
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1920,
+    1080,
+    3840,
+    2160
+  ],
+  "feature_id": "epidermis_cell",
+  "engine": "glm_targeted",
+  "count": 2,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

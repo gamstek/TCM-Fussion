@@ -70,7 +70,6 @@
 | `auto_prepare_stage`、`auto_required_measurement` | 旧字段继续兼容。模型按合法菜单选择调查，同一对象合格分割后的自动测量仍由 `auto_measure_after_segment` 控制。 |
 | `cnn_other_fallback` | 兼容旧配置。CNN 的 other 不作为身份确认。 |
 | `feature_audit` | 通用特征旁路审计开关。指定 `feature_audit_features` 可限定审计类别。 |
-| `image_exemplar_seconds` | 审计进程超时取该值与阶段剩余时间上限的较小值。缺省沿用通用上限。 |
 | 历史路径和签名 | 旧文件按原内容保留。代码签名随新包路径变化，历史任务的续跑与提示发布继续受既有指纹校验。 |
 
 ## 验收与回滚

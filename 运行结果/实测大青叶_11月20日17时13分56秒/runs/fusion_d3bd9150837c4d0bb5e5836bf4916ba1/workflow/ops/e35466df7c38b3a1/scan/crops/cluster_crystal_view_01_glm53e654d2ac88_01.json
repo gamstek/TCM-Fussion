@@ -1,0 +1,63 @@
+{
+  "crop_id": "cluster_crystal_view_01_glm53e654d2ac88_01",
+  "png": "cluster_crystal_view_01_glm53e654d2ac88_01.png",
+  "source_image_path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_01.tif",
+  "stem": "view_01",
+  "feature_id": "cluster_crystal",
+  "object_label": "草酸钙簇晶",
+  "herb": "",
+  "px_per_um": null,
+  "tight_box": [
+    2047,
+    1442,
+    2412,
+    1615
+  ],
+  "tight_box_local": [
+    116,
+    68,
+    481,
+    241
+  ],
+  "loose_box": [
+    1931,
+    1374,
+    2527,
+    1682
+  ],
+  "crop_size": "596x308",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.65,
+  "det_confidence": "medium",
+  "source_tight_bbox": [
+    2047,
+    1442,
+    2412,
+    1615
+  ],
+  "locate_expand": 1.5,
+  "feature_window": {
+    "schema": "feature-window/v1",
+    "source_size_wh": [
+      3840,
+      2160
+    ],
+    "profile": "outline",
+    "axis_deg": null,
+    "axis_basis": null,
+    "source_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+    "classification_box_local": [
+      0,
+      0,
+      596,
+      308
+    ],
+    "identity_box_local": [
+      24,
+      24,
+      572,
+      284
+    ]
+  }
+}

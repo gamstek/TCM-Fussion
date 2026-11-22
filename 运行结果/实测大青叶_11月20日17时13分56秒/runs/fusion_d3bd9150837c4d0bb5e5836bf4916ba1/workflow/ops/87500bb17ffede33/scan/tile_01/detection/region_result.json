@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "表皮细胞",
+      "tight_bbox": [
+        2106.75,
+        456.0,
+        2942.25,
+        1386.0
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "成片细胞嵌合排列，表面观多角形/类方形，垂周壁隐约波状弯曲，呈黄棕色含色素颗粒，符合表皮细胞片特征",
+      "source_tight_bbox": [
+        2246,
+        611,
+        2803,
+        1231
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    1920,
+    0,
+    3840,
+    2160
+  ],
+  "feature_id": "epidermis_cell",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

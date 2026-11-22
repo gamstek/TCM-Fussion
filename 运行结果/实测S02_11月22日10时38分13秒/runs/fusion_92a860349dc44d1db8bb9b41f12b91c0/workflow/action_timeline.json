@@ -1,0 +1,23 @@
+{
+  "schema": "action-timeline/v1",
+  "started_at": 1795315106.624823,
+  "actions": {
+    "detect_fov_initial|img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710": {
+      "action_id": "detect_fov_initial|img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "tool": "detect_fov_initial",
+      "target_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "evidence_version": "2c9bc91d6f57ec4975039288f90728f456efa3454f316d8d12e9ddffaeb96fcc",
+      "eligible_at": 1795315106.6238241,
+      "eligibility_basis": "offered",
+      "first_offered_at": 1795315106.6238241,
+      "last_offered_at": 1795315112.6642578,
+      "offer_count": 2,
+      "selected_at": null,
+      "started_at": null,
+      "ended_at": null,
+      "status": "offered",
+      "error_code": null,
+      "blocking_reasons": []
+    }
+  }
+}

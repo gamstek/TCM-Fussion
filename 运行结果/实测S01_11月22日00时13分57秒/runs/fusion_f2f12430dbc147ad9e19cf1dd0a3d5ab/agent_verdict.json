@@ -1,0 +1,1290 @@
+{
+  "sample_id": "case_cf5ec20e",
+  "score_version": "b-rule/4",
+  "ranking": [
+    {
+      "id": "滑石",
+      "display": "滑石",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "mineral_feature",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "不规则块片无色，有层层剥落痕迹",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "mineral_feature",
+          "penalty": 0.009,
+          "note": "主判特征未检出（按通道灵敏度打折）",
+          "basis": "missing_admitted_evidence"
+        }
+      ],
+      "rule_score": 0.0,
+      "score": 0.215058,
+      "confidence": 0.0,
+      "raw_score": -0.009,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.430116,
+      "b_confidence": 0.0,
+      "fused_score": 0.215058,
+      "b_score": 0.0
+    },
+    {
+      "id": "大青叶",
+      "display": "大青叶",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "indigo_crystal",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "靛蓝结晶蓝色，存在于叶肉组织和表皮细胞中，细小颗粒状或片状，常聚集成堆",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "epidermis_cell",
+          "role": "supporting",
+          "tier": "P1",
+          "present": true,
+          "state": "MORPHOLOGY_UNVERIFIED",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.5,
+          "q_state": 0.6,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "下表皮细胞垂周壁稍弯曲略呈连珠状增厚（补充）",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": [],
+          "observation_scope": "feature_presence",
+          "raw_rule_state": "NO_REF"
+        },
+        {
+          "feature_id": "stoma",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "气孔不等式，副卫细胞3～4个",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "indigo_crystal",
+          "penalty": 0.009,
+          "note": "主判特征未检出（按通道灵敏度打折）",
+          "basis": "missing_admitted_evidence"
+        }
+      ],
+      "rule_score": 0.0,
+      "score": 0.17782,
+      "confidence": 0.0,
+      "raw_score": 0.2205,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.355639,
+      "b_confidence": 0.0,
+      "fused_score": 0.17782,
+      "b_score": 0.0
+    },
+    {
+      "id": "秦皮",
+      "display": "秦皮",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "sand_crystal",
+          "role": "required",
+          "tier": "C",
+          "present": true,
+          "state": "MORPHOLOGY_UNVERIFIED",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.3,
+          "q_state": 0.6,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": [],
+          "observation_scope": "feature_presence",
+          "raw_rule_state": "NO_REF"
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [],
+      "rule_score": 0.0,
+      "score": 0.055361,
+      "confidence": 0.0,
+      "raw_score": 0.1377,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.110722,
+      "b_confidence": 0.0,
+      "fused_score": 0.055361,
+      "b_score": 0.0
+    },
+    {
+      "id": "穿心莲",
+      "display": "穿心莲",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "calcium_carbonate",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "叶表皮组织中含钟乳体螺旋状晶细胞，直径至36μm、长至180μm，大端有脐样点痕",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 36,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "non_glandular_hair",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "非腺毛1～4细胞，长约至160μm",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "glandular_hair",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "腺鳞4、6(8)细胞，直径至40μm",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 40,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "stoma",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "气孔直轴式",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "calcium_carbonate",
+          "penalty": 0.009,
+          "note": "主判特征未检出（按通道灵敏度打折）",
+          "basis": "missing_admitted_evidence"
+        }
+      ],
+      "rule_score": 0.0,
+      "score": 0.009746,
+      "confidence": 0.0,
+      "raw_score": -0.009,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.019493,
+      "b_confidence": 0.0,
+      "fused_score": 0.009746,
+      "b_score": 0.0
+    },
+    {
+      "id": "乌梅",
+      "display": "乌梅",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "epidermis_cell",
+          "role": "required",
+          "tier": "P1",
+          "present": true,
+          "state": "MORPHOLOGY_UNVERIFIED",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.5,
+          "q_state": 0.6,
+          "abundance": "多见",
+          "m_abundance": 0.95,
+          "score_contribution": 0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "果皮表皮细胞淡黄棕色，表面观类多角形，壁稍厚，非腺毛或毛茸脱落痕迹多见",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": [],
+          "observation_scope": "feature_presence",
+          "raw_rule_state": "NO_REF"
+        },
+        {
+          "feature_id": "non_glandular_hair",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": "多见",
+          "m_abundance": 0.95,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "非腺毛或毛茸脱落后的痕迹多见",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [],
+      "rule_score": 0.0,
+      "score": 0.008448,
+      "confidence": 0.0,
+      "raw_score": 0.218,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.016896,
+      "b_confidence": 0.0,
+      "fused_score": 0.008448,
+      "b_score": 0.0
+    },
+    {
+      "id": "雄黄",
+      "display": "雄黄",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "mineral_feature",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "不规则碎块金黄色或橙黄色，有光泽",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "mineral_feature",
+          "penalty": 0.009,
+          "note": "主判特征未检出（按通道灵敏度打折）",
+          "basis": "missing_admitted_evidence"
+        }
+      ],
+      "rule_score": 0.0,
+      "score": 0.005004,
+      "confidence": 0.0,
+      "raw_score": -0.009,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.010009,
+      "b_confidence": 0.0,
+      "fused_score": 0.005004,
+      "b_score": 0.0
+    }
+  ],
+  "verdict": "insufficient_evidence",
+  "conclusion": null,
+  "margin": 0.0,
+  "needs_review": true,
+  "notes": [
+    "必需判据未全部核验或 B 规则分未达倾向门槛。"
+  ],
+  "support_feature_count": 0,
+  "alternatives": [
+    {
+      "id": "大青叶",
+      "display": "大青叶",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "indigo_crystal",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "靛蓝结晶蓝色，存在于叶肉组织和表皮细胞中，细小颗粒状或片状，常聚集成堆",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "epidermis_cell",
+          "role": "supporting",
+          "tier": "P1",
+          "present": true,
+          "state": "MORPHOLOGY_UNVERIFIED",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.5,
+          "q_state": 0.6,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "下表皮细胞垂周壁稍弯曲略呈连珠状增厚（补充）",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": [],
+          "observation_scope": "feature_presence",
+          "raw_rule_state": "NO_REF"
+        },
+        {
+          "feature_id": "stoma",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "气孔不等式，副卫细胞3～4个",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "indigo_crystal",
+          "penalty": 0.009,
+          "note": "主判特征未检出（按通道灵敏度打折）",
+          "basis": "missing_admitted_evidence"
+        }
+      ],
+      "rule_score": 0.0,
+      "score": 0.17782,
+      "confidence": 0.0,
+      "raw_score": 0.2205,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.355639,
+      "b_confidence": 0.0,
+      "fused_score": 0.17782,
+      "b_score": 0.0
+    },
+    {
+      "id": "秦皮",
+      "display": "秦皮",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "sand_crystal",
+          "role": "required",
+          "tier": "C",
+          "present": true,
+          "state": "MORPHOLOGY_UNVERIFIED",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.3,
+          "q_state": 0.6,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "薄壁细胞含草酸钙砂晶（极细小颗粒状结晶，常充满细胞）",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": [],
+          "observation_scope": "feature_presence",
+          "raw_rule_state": "NO_REF"
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [],
+      "rule_score": 0.0,
+      "score": 0.055361,
+      "confidence": 0.0,
+      "raw_score": 0.1377,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.110722,
+      "b_confidence": 0.0,
+      "fused_score": 0.055361,
+      "b_score": 0.0
+    },
+    {
+      "id": "穿心莲",
+      "display": "穿心莲",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "calcium_carbonate",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "叶表皮组织中含钟乳体螺旋状晶细胞，直径至36μm、长至180μm，大端有脐样点痕",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 36,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "non_glandular_hair",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "非腺毛1～4细胞，长约至160μm",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "glandular_hair",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "腺鳞4、6(8)细胞，直径至40μm",
+          "quant_bounds": {
+            "dim": "feret_max",
+            "min": null,
+            "max": 40,
+            "extreme": null
+          },
+          "scene_factor": null,
+          "instance_refs": []
+        },
+        {
+          "feature_id": "stoma",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "气孔直轴式",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [
+        {
+          "feature_id": "calcium_carbonate",
+          "penalty": 0.009,
+          "note": "主判特征未检出（按通道灵敏度打折）",
+          "basis": "missing_admitted_evidence"
+        }
+      ],
+      "rule_score": 0.0,
+      "score": 0.009746,
+      "confidence": 0.0,
+      "raw_score": -0.009,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.019493,
+      "b_confidence": 0.0,
+      "fused_score": 0.009746,
+      "b_score": 0.0
+    },
+    {
+      "id": "乌梅",
+      "display": "乌梅",
+      "kind": "herb",
+      "checks": [
+        {
+          "feature_id": "epidermis_cell",
+          "role": "required",
+          "tier": "P1",
+          "present": true,
+          "state": "MORPHOLOGY_UNVERIFIED",
+          "quant_note": null,
+          "morph_plausibility": 0.85,
+          "reliability": 0.9,
+          "weight": 0.5,
+          "q_state": 0.6,
+          "abundance": "多见",
+          "m_abundance": 0.95,
+          "score_contribution": 0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "果皮表皮细胞淡黄棕色，表面观类多角形，壁稍厚，非腺毛或毛茸脱落痕迹多见",
+          "quant_bounds": null,
+          "scene_factor": 1.0,
+          "instance_refs": [],
+          "observation_scope": "feature_presence",
+          "raw_rule_state": "NO_REF"
+        },
+        {
+          "feature_id": "non_glandular_hair",
+          "role": "supporting",
+          "tier": "P1",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.5,
+          "q_state": 0.0,
+          "abundance": "多见",
+          "m_abundance": 0.95,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "非腺毛或毛茸脱落后的痕迹多见",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": []
+        }
+      ],
+      "wrong_present": [],
+      "absent_required": [],
+      "rule_score": 0.0,
+      "score": 0.008448,
+      "confidence": 0.0,
+      "raw_score": 0.218,
+      "support_count": 0,
+      "cap_dom_wide": false,
+      "cap_non_official": false,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "scene_fit": 0,
+      "scene_reasons": [],
+      "a_probability": 0.016896,
+      "b_confidence": 0.0,
+      "fused_score": 0.008448,
+      "b_score": 0.0
+    }
+  ],
+  "source_images": [
+    "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\view_01.tif"
+  ],
+  "agent": {
+    "mode": "workflow_react",
+    "vlm_calls": 8,
+    "planning_calls": 9,
+    "identity_review": false
+  },
+  "candidate_scope": {
+    "scope": "open_strict",
+    "a_topk_ids": [
+      "秦皮",
+      "大青叶",
+      "穿心莲",
+      "滑石",
+      "雄黄",
+      "乌梅"
+    ],
+    "kept_ids": [
+      "乌梅",
+      "大青叶",
+      "滑石",
+      "秦皮",
+      "穿心莲",
+      "雄黄"
+    ],
+    "dropped": [
+      {
+        "id": "G1",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G2",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G3",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "G4",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "五味子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "使君子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "党参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "厚朴",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "地黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大腹皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "大黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "射干",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "山楂",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "川楝子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "广藿香",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "当归",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "木香",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "板蓝根",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "柴胡",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "栀子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桂枝",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桑白皮",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "桔梗",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "槟榔",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "水牛角",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "泽泻",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "淡竹叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "淫羊藿",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "牡蛎",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "牵牛子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "猪苓",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "玄参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "王不留行",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "甘草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "白头翁",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "白芍",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "益母草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "知母",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "石膏",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "红花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "肉桂",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "艾叶",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "苦参",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "苦杏仁",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "茯苓",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "茵陈",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "荆芥",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "荜茇",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "莱菔子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "菊花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "菟丝子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "葶苈子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "薄荷",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "虎杖",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "蝉蜕",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "诃子",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "辣蓼",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "连翘",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "郁金",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "金银花",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "防风",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "青黛",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "香附",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "马齿苋",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "鱼腥草",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麦冬",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麦芽",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "麻黄",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄柏",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄芩",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄芪",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "黄连",
+        "reason": "not_in_a_topk"
+      },
+      {
+        "id": "龙胆",
+        "reason": "not_in_a_topk"
+      }
+    ],
+    "policy": "A Top-K 为 Plan B 重点；非 A 仅在 open_strict 且 required+supporting 全部符合时保留"
+  },
+  "fusion_weights": {
+    "a": 0.5,
+    "b": 0.5,
+    "a_folds": 5
+  },
+  "fusion_policy": "A 先验 + B 证据加权；B verdict/证据状态不由 A 改写",
+  "candidate_admission": {
+    "available": false,
+    "decision": "verify",
+    "fallback": true,
+    "reason": "rule evidence requires review; no model admission requested",
+    "decision_source": "runtime_precondition"
+  }
+}

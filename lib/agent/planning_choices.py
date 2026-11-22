@@ -6,6 +6,7 @@ react_graph最终仍逐项校验并晚绑定。model_view仅作短编号映射�
 
 主要定义：
 - attach。给当前实际可见动作建立目标/问题入口；不把菜单外动作偷偷加进来。
+- with_criterion_impact。把可见动作关联到已有判据、量纲收益及同问题反馈。
 - decision_fields / decision_instruction。按当轮菜单给出可用的决策格式，正常规划与格式修正共用。
 - model_view。短编号只在一次请求内有效；返回送模副本及短编号反解，保持原上下文不变。
 - decode。只展开模型明确选择的模式；不按优先级代选、不补第二个问题。
@@ -18,6 +19,8 @@ react_graph最终仍逐项校验并晚绑定。model_view仅作短编号映射�
 """
 import copy
 import re
+import json
+from collections import Counter, defaultdict
 
 from TCM_Fusion.lib.decision.comparison_problems import _action_feature, action_question
 from TCM_Fusion.lib.runtime.storage import IntegrationError, digest
@@ -42,6 +45,8 @@ def action_state(runtime, actions, evidence, targets):
                else 'current_step'}
         if fid:
             row.update(feature_id=fid, presence_states=sorted(presence.get((image, fid), ())))
+        if action.get('scene_criteria'):
+            row['scene_criteria'] = action['scene_criteria']
         rows[action['action_id']] = row
     return rows
 
@@ -100,11 +105,14 @@ def attach(runtime, context, *, can_pair, targets=None, measurement_actions=None
             if a['tool'] not in {'presence_check', 'scene_check'}:
                 continue
             q = action_question(runtime, a, targets=targets)
-            consumers = sorted({c['candidate_id'] for c in criteria if c['feature'] == q['feature_id']})
+            if a['tool'] == 'scene_check':
+                consumers = sorted({c['candidate_id'] for c in a.get('scene_criteria', [])})
+                limits = '只观察该视野中已有特征的组织语境，不能确认身份或尺寸'
+            else:
+                consumers = sorted({c['candidate_id'] for c in criteria if c['feature'] == q['feature_id']})
+                limits = '共同存在性不能区分这些消费者的形态/尺寸；未见仅限当前视野'
             questions.append({**q, 'action_id':a['action_id'], 'tool':a['tool'],
-                'shared_consumers':consumers,
-                'limits':'共同存在性不能区分这些消费者的形态/尺寸；未见仅限当前视野'
-                    if consumers else '场景上下文不单独确认药材'})
+                'shared_consumers':consumers, 'limits':limits})
     goals = []
     if runtime.workflow.config.get('semantic_execution', False):
         from TCM_Fusion.lib.agent.semantic_execution import options
@@ -157,6 +165,98 @@ def attach(runtime, context, *, can_pair, targets=None, measurement_actions=None
     return out
 
 
+# 阶段标签描述可推进的步骤，实际证据资格由工具和判据检查。
+_CRITERION_STEPS = {
+    'detect_fov_initial': 'discover', 'detect_region': 'discover',
+    'feature_scan': 'discover', 'locate_feature': 'discover', 'hybrid_scan': 'discover',
+    'presence_check': 'presence', 'classify_target': 'identity', 'classify_crops_batch': 'identity',
+    'calibrate_fov': 'calibrate', 'segment_instance': 'mask', 'measure_instances': 'measure',
+}
+
+
+def _criterion_key(question, consumer):
+    quant = consumer.get('quant') or {}
+    dimension = question.get('dimension')
+    bounds = (dimension, quant.get('min'), quant.get('max'), quant.get('extreme')) if dimension else None
+    return (consumer['candidate_id'], consumer['role'], question['feature_id'], consumer.get('state'), bounds)
+
+
+def with_criterion_impact(context, comparison, *, targets=None, feedback=()):
+    """以当前菜单为准，用一次内共享的索引呈现各动作的判据用途。"""
+    actions = {a['action_id']: a for a in (*context['actions'], *context.get('parallel_observations', []))}
+    targets = targets or {}
+    by_action = defaultdict(list)
+    by_feature = defaultdict(list)
+    for question in comparison.get('questions', []):
+        by_feature[question['feature_id']].append(question)
+        for aid in question.get('legal_action_ids', []):
+            if aid in actions:
+                by_action[aid].append(question)
+
+    objectives = dict(context.get('action_objectives') or {})
+    previous = {row['question_id']: row for row in feedback if row.get('question_id')}
+    measurements = context.get('measurement_groups') or {}
+    states = context.get('action_state') or {}
+    rows = {}
+    for aid, action in actions.items():
+        tool = action['tool']
+        step = _CRITERION_STEPS.get(tool)
+        if step is None:
+            continue
+        questions = by_action[aid]
+        target_id = (action.get('args') or {}).get('target_id')
+        if tool == 'classify_crops_batch':
+            features = dict.fromkeys(_action_feature({'args': {'target_id': crop['id']}}, targets)
+                                     for crop in targets.get(target_id, {}).get('crops', []))
+            questions = [q for fid in features for q in by_feature[fid]]
+        elif tool == 'calibrate_fov':
+            features = dict.fromkeys(_action_feature({'args': {'target_id': crop['id']}}, targets)
+                                     for crop in targets.values() if crop.get('kind') == 'crop'
+                                     and crop.get('image_id') == target_id)
+            questions = [q for fid in features for q in by_feature[fid]]
+
+        group = measurements.get(states.get(aid, {}).get('measurement_group'), {})
+        references = {}
+        for question in questions:
+            dimension = question.get('dimension')
+            if step in {'calibrate', 'mask', 'measure'} and not dimension:
+                continue
+            gain = (group.get('dimensions') or {}).get(dimension)
+            beneficiaries = ({(row['candidate_id'], row.get('role')) for row in gain['consumers']
+                              if row['reasons']} if gain is not None else None)
+            for consumer in question.get('consumers', []):
+                candidate, role = consumer['candidate_id'], consumer['role']
+                if beneficiaries is not None:
+                    if (candidate, role) not in beneficiaries:
+                        continue
+                elif consumer.get('criterion_assessed'):
+                    continue
+                key = _criterion_key(question, consumer)
+                references[rows.setdefault(key, len(rows))] = None
+        if references:
+            base = objectives.get(aid) or {}
+            row = {'criterion_refs': list(references), 'evidence_step': step}
+            if 'recent_latency_seconds' in base:
+                row['recent_latency_seconds'] = base['recent_latency_seconds']
+            last = previous.get(base.get('question_id'))
+            if last and not last.get('progress'):
+                row['last_question_result'] = [last['tool'], 'no_gain' if last.get('accepted') else 'failed']
+            objectives[aid] = row
+
+    if not rows:
+        return context
+    workflow = (context.get('evidence') or {}).get('workflow') or {}
+    visible_questions = (workflow.get('comparison_problems') or {}).get('questions', [])
+    visible = {}
+    for q, question in enumerate(visible_questions):
+        for c, consumer in enumerate(question.get('consumers', [])):
+            visible.setdefault(_criterion_key(question, consumer), [q, c])
+    # 已送模的判据通过下标引用。比较窗口之外的必要判据各自只补一行。
+    index = [visible[key] if key in visible else [*key[:4], list(key[4]) if key[4] else None]
+             for key in rows]
+    return {**context, 'criterion_index': index, 'action_objectives': objectives}
+
+
 def decision_fields(context):
     """列出当前菜单可表达的主选择和字段，用于正常规划与格式修正。"""
     offers = context.get('execution_options') or {}
@@ -167,6 +267,8 @@ def decision_fields(context):
         fields['problem_goal'] = ['kind', 'goal_id']
     if offers.get('questions') and offers.get('max_questions', 1):
         fields['observe_questions'] = ['kind', 'question_ids']
+    if offers.get('identity_group'):
+        fields['identity_group'] = ['kind', 'action_ids']
     if offers.get('physical_groups', offers.get('physical_pairs')):
         fields['physical_group'] = ['kind', 'action_ids']
     return fields
@@ -177,9 +279,15 @@ def decision_instruction(context):
     modes = decision_fields(context)
     offers = context.get('execution_options') or {}
     lines = [
-        '只返回一个JSON对象，按证据选择本轮可用格式，顶层decision_summary说明为何值得做或停止。',
+        '只返回一个JSON对象。decision内只放该模式的选择字段，理由写在顶层decision_summary。',
         '单步 {"decision":{"kind":"action","action_id":"A编号"}} 从 actions 选择一个动作，补扫和局部重检也从这里选。',
     ]
+    if context.get('criterion_index'):
+        lines.append(
+            'criterion_refs从0起查criterion_index。双项行是comparison_problems.questions和consumers下标，'
+            '五项行是候选、角色、特征、状态、量程（量纲/下限/上限/极值）。evidence_step提示可能推进的步骤。'
+            'last_question_result为同视野同问题反馈。量纲须合格实测。'
+        )
     if 'instance_goal' in modes:
         lines.append(
             '语义目标 {"decision":{"kind":"instance_goal","goal_id":"G编号"}} 只用 execution_options.goals 的 goal_id。'
@@ -192,13 +300,30 @@ def decision_instruction(context):
     if 'observe_questions' in modes:
         limit = min(offers.get('max_questions', 1), len(offers['questions']))
         count = '1项' if limit == 1 else f'1至{limit}项不同的观察'
+        width = offers.get('observation_wave_size')
+        example_ids = '["Q编号"]'
+        id_instruction = '只用'
+        if width and limit > width:
+            # 仅示意跨过一批的写法，避免用当轮真实编号替模型选项。
+            example_ids = json.dumps(['Q甲', 'Q乙', 'Q丙'][:width+1], ensure_ascii=False, separators=(',', ':'))
+            id_instruction = '示意编号须换为'
         lines.append(
-            '观察组 {"decision":{"kind":"observe_questions","question_ids":["Q编号"]}} '
-            f'只用 execution_options.questions 的 question_id，选{count}。'
-            'A/O编号用于动作，Q编号用于问题。若第二项依赖第一项结果，先做单步。'
+            '观察组 {"decision":{"kind":"observe_questions","question_ids":' + example_ids + '}} '
+            f'{id_instruction} execution_options.questions 的 question_id，选{count}。'
+            'A/O编号用于动作，Q编号用于问题。各项必须独立；若后项依赖前项结果，先选前项。'
             '独立执行后当轮汇总，同源观察不能视为统计独立。'
             'shared_consumers列出共用该问题的候选，存在性观察仍需结合各候选的形态和尺寸判据。'
         )
+        if width:
+            lines.append(f'每批最多{width}项，各项单独扣费。新阳性、未知或调查方向改变即交回余项。')
+            if limit > width:
+                lines.append('列表按你的调查顺序填写。若首批顺利完成且方向稳定，已列的后项可直接执行。'
+                             '若现在就值得查，可一并列入；若价值低可略过，若须等具体结果再决定可暂缓。'
+                             '有意暂缓时，可在decision_summary开头简记取舍或所等的反馈。')
+    if 'identity_group' in modes:
+        lines.append('顺序身份核验 {"decision":{"kind":"identity_group","action_ids":["A编号","另一A编号"]}}。'
+                     '从 identity_group.action_ids 按执行顺序选择2至limit张独立裁图，避开conflicts内的组合。'
+                     '仅在前张读不清仍值得核验后张时选择；身份确认、冲突、调查依据改变或工具失败即回交。')
     if 'physical_group' in modes:
         group_rule = (
             '在 physical_groups 的同一工具组中从不同 views 各选一个，共2至limit项。'
@@ -213,8 +338,9 @@ def decision_instruction(context):
     if context.get('parallel_observations') and any(
             action['tool'] == 'detect_fov_initial' for action in context.get('actions', [])):
         lines.append(
-            '若有独立原图核验，单步初检可选填 parallel_observation_id，'
-            '从 parallel_observations 选与初检同视野的O编号。YOLO负责出框。'
+            '单步初检可搭配同视野的独立原图观察。格式 '
+            '{"decision":{"kind":"action","action_id":"A编号"},"parallel_observation_id":"O编号"}。'
+            'parallel_observation_id在顶层，从本轮parallel_observations选O编号，无合适项就省略。YOLO负责出框。'
         )
     return ' '.join(lines)
 
@@ -235,6 +361,9 @@ def model_view(context):
         if match and original == match[1] and original.get('args'):
             row.pop('args')
             row['args_from_action'] = match[0]
+    if 'action_state' in out:
+        for row in (*out['actions'], *out['parallel_observations']):
+            row.pop('scene_criteria', None)
     out['action_objectives'] = {aliases[k]:v for k,v in out.get('action_objectives',{}).items() if k in aliases}
     if 'action_state' in out:
         out['action_state'] = {aliases[k]: v for k,v in out['action_state'].items() if k in aliases}
@@ -246,6 +375,10 @@ def model_view(context):
             out[field] = [{**r,'action_id':aliases[r['action_id']]}
                           for r in out[field] if r.get('action_id') in aliases]
     offers = out.get('execution_options') or {}
+    if 'identity_group' in offers:
+        group = offers['identity_group']
+        group['action_ids'] = [aliases[a] for a in group['action_ids']]
+        group['conflicts'] = [[aliases[a], aliases[b]] for a, b in group['conflicts']]
     if 'physical_pairs' in offers:
         offers['physical_pairs'] = [[aliases[a],aliases[b]] for a,b in offers['physical_pairs']]
     for group in offers.get('physical_groups',[]):
@@ -266,6 +399,16 @@ def model_view(context):
     offers['questions'] = [{**q, 'question_id':f'Q{i}', 'canonical_question_id':q['question_id'],
                             'action_id':aliases[q['action_id']]}
         for i,q in enumerate(offers.get('questions',[]),1) if q['action_id'] in aliases]
+    limit = min(offers.get('max_questions', 1), len(offers['questions']))
+    width = offers.get('observation_wave_size')
+    if width and limit > width:
+        offers['choice_note'] = (f'本轮可一次授权1至{limit}题，每批最多执行{width}题；'
+                                 '可跨批选择、只选部分或直接复核。')
+    if previous := out.get('last_observation_group'):
+        remaining = set(previous['unissued'])
+        out['last_observation_group'] = {
+            'reason':previous['reason'], 'issued_count':len(previous['issued']), 'unissued_count':len(remaining),
+            'still_offered':[q['question_id'] for q in offers['questions'] if ids[q['action_id']] in remaining]}
     if 'execution_options' in out:
         out['execution_options'] = offers
         # 已在主选择表关联动作，不再重复两套无关联长ID菜单/契约。
@@ -308,7 +451,8 @@ def decode(reply, context):
     if not isinstance(decision,dict):
         raise IntegrationError('PLANNER_CHOICE_INVALID','decision须为对象')
     value = {k:v for k,v in reply.items() if k != 'decision'}
-    # 只归一已知说明字段；未知字段、混合执行选择仍失败，绝不补选动作。
+    # 只归一已知的附加字段，主选择仍按各模式的结构严格解码。
+    normalization = {}
     notes = {'decision_summary', 'override_reason', 'reason', 'rationale', 'explanation'}
     moved = sorted(set(decision) & notes)
     if any(not isinstance(decision[k], str) for k in moved):
@@ -319,18 +463,38 @@ def decode(reply, context):
                 ('decision_summary', 'reason', 'rationale', 'explanation') if decision.get(k)), '')
         if not value.get('override_reason') and decision.get('override_reason'):
             value['override_reason'] = decision['override_reason'][:240]
-        value['choice_normalization'] = {'metadata_fields': moved, 'selected_action_changed': False,
-                                          'new_planning_requests': 0}
+        normalization['metadata_fields'] = moved
         decision = {k:v for k,v in decision.items() if k not in notes}
+
     kind = decision.get('kind')
+    observation_field = 'parallel_observation_id'
+    if kind == 'action' and observation_field in decision:
+        decision = dict(decision)
+        observation_id = decision.pop(observation_field)
+        if observation_field in value and value[observation_field] != observation_id:
+            value.pop(observation_field)
+            normalization['discarded_optional_fields'] = {observation_field: 'conflicting_values'}
+        else:
+            value[observation_field] = observation_id
+            normalization['relocated_fields'] = [observation_field]
+
     selectors = {'action_id', 'proposal', 'semantic_goal', 'problem_goal_id', 'parallel_question_id',
                  'parallel_observation_id', 'physical_partner_id', 'physical_partner_ids'}
     if (kind == 'problem_goal' and selectors.intersection(value)) or 'problem_goal_id' in value:
         raise IntegrationError('PLANNER_CHOICE_AMBIGUOUS', '问题授权只能作为本轮唯一主选择')
+    if ('identity_tail' in value or 'observation_ids' in value
+            or kind in {'identity_group','observe_questions'} and selectors.intersection(value)):
+        raise IntegrationError('PLANNER_CHOICE_AMBIGUOUS', '分组核验只接受一种执行选择')
     audit_decision = decision
     offers = context.get('execution_options') or {}
     if kind == 'action' and set(decision) == {'kind','action_id'}:
         value['action_id'] = decision['action_id']
+    elif kind == 'identity_group' and set(decision) == {'kind', 'action_ids'}:
+        from TCM_Fusion.lib.agent.identity_group import allowed
+        ids = decision['action_ids']
+        if not allowed(ids, offers.get('identity_group', {})):
+            raise IntegrationError('PLANNER_CHOICE_INVALID', '须选择本轮可组合的独立身份动作')
+        value['action_id'], value['identity_tail'] = ids[0], ids[1:]
     elif kind in {'physical_group','physical_pair'} and set(decision) == {'kind','action_ids'}:
         pair = decision['action_ids']
         if (not physical_allowed(pair,offers) or kind=='physical_pair' and len(pair)!=2 or
@@ -351,7 +515,7 @@ def decode(reply, context):
         requested = decision['question_ids']
         if (not isinstance(requested,list) or not 1 <= len(requested) <= offers.get('max_questions',1)
                 or any(not isinstance(x,str) for x in requested) or len(set(requested))!=len(requested)):
-            raise IntegrationError('PLANNER_QUESTIONS_INVALID','问题组须为本轮1–2个不同问题')
+            raise IntegrationError('PLANNER_QUESTIONS_INVALID','须在本轮上限内选择不同问题')
         selected=[];missing=0
         for identifier in requested:
             q=next((q for q in offers.get('questions',[]) if identifier in {
@@ -364,7 +528,9 @@ def decode(reply, context):
         if len({q.get('canonical_question_id',q['question_id']) for q in selected}) != len(selected):
             raise IntegrationError('PLANNER_QUESTIONS_INVALID','不能重复同一物理问题')
         value['action_id']=selected[0]['action_id']
-        if len(selected)>1:
+        if len(selected)>2 or len(selected)==2 and offers.get('observation_wave_size') == 1:
+            value['observation_ids']=[q['action_id'] for q in selected]
+        elif len(selected)>1:
             value['parallel_question_id']=selected[1].get('canonical_question_id',selected[1]['question_id'])
         if missing:
             value['partial_choice_rejection']={'reason':'PLANNER_QUESTION_UNAVAILABLE',
@@ -374,6 +540,10 @@ def decode(reply, context):
                             'rejected_question_count':missing}
     else:
         raise IntegrationError('PLANNER_CHOICE_INVALID','未知模式或多余选择字段')
+    if normalization:
+        value['choice_normalization'] = {
+            **normalization, 'selected_action_changed': False, 'new_planning_requests': 0,
+        }
     value['execution_choice']={'kind':kind,'requested':audit_decision}
     return value
 
@@ -382,13 +552,21 @@ def diagnose(reply, context):
     """错误只留数量、已知命名空间与有限短编号；不保存无效自由值。"""
     choice=reply.get('decision') if isinstance(reply,dict) else None
     choice=choice if isinstance(choice,dict) else {}
-    requested=choice.get('question_ids');requested=requested if isinstance(requested,list) else []
-    table=(context.get('execution_options')or{}).get('questions',[])
-    aliases={q['question_id'] for q in table}
-    canonical={q.get('canonical_question_id',q['question_id']) for q in table}
+    offers = context.get('execution_options') or {}
+    if choice.get('kind') == 'identity_group':
+        requested = choice.get('action_ids')
+        table = offers.get('identity_group', {})
+        aliases = set(table.get('action_ids', []))
+        canonical = aliases
+    else:
+        requested = choice.get('question_ids')
+        table = offers.get('questions', [])
+        aliases = {q['question_id'] for q in table}
+        canonical = {q.get('canonical_question_id', q['question_id']) for q in table}
+    requested = requested if isinstance(requested, list) else []
     expected = {'action': {'kind','action_id'}, 'instance_goal': {'kind','goal_id'}, 'problem_goal': {'kind','goal_id'},
-                'observe_questions': {'kind','question_ids'}}.get(choice.get('kind'), {'kind'})
-    return {'kind':choice.get('kind') if choice.get('kind') in {'action','instance_goal','problem_goal','observe_questions'}else 'unknown',
+                'identity_group': {'kind', 'action_ids'}, 'observe_questions': {'kind','question_ids'}}.get(choice.get('kind'), {'kind'})
+    return {'kind':choice.get('kind') if choice.get('kind') in {'action','instance_goal','problem_goal','identity_group','observe_questions'}else 'unknown',
         'extra_field_names':[k for k in choice if isinstance(k,str) and k not in expected
                              and re.fullmatch(r'[a-z_]{1,40}',k)][:8],
         'requested_count':len(requested),'current_short_matches':sum(isinstance(x,str)and x in aliases for x in requested),
@@ -397,12 +575,37 @@ def diagnose(reply, context):
                                and x not in aliases][:2], 'menu_sha256':digest(table)}
 
 
+def compact_view_references(context):
+    """同一轮内可逆地压缩重复视野引用，包括复合工件 ID 和字典键。"""
+    raw = json.dumps(context, ensure_ascii=False, separators=(',', ':'))
+    if '@V' in raw or 'view_id_map' in context:
+        return context, {}
+    pattern = r'img_[0-9a-f]{64}(?![0-9a-f])'
+    counts = Counter(re.findall(pattern, raw))
+    names = {key: f'@V{i}@' for i, key in enumerate(sorted(counts), 1) if counts[key] > 1}
+    if not names:
+        return context, {}
+    short = re.sub(pattern, lambda hit: names.get(hit[0], hit[0]), raw)
+    reverse = {value: key for key, value in names.items()}
+    return {**json.loads(short), 'view_id_map': reverse}, reverse
+
+
+def restore_view_references(reply, reverse):
+    if not reverse:
+        return reply
+    raw = json.dumps(reply, ensure_ascii=False)
+    return json.loads(re.sub(r'@V[0-9]+@', lambda hit: reverse.get(hit[0], hit[0]), raw))
+
+
 def audit(context):
     """保存真实送模菜单而非全部合法集合；供下一次排查可见性。"""
     return {'schema':'planner-offer/v1','actions':context['actions'],
+        **({'view_id_map':context['view_id_map']} if 'view_id_map' in context else {}),
         'execution_options':context.get('execution_options',{}),
         'parallel_observations':context.get('parallel_observations',[]),
         'action_state':context.get('action_state', {}),
+        **({key: context[key] for key in ('criterion_index', 'action_objectives')}
+           if context.get('criterion_index') else {}),
         'measurement_groups':context.get('measurement_groups', {}),
         'round_delta':context.get('round_delta', {}),
         'remaining_budget':context.get('remaining_budget'),

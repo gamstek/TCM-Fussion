@@ -159,29 +159,9 @@ def _classifications(operations):
                 doc = read_json(root / folder / 'classification.json')
             except (OSError, ValueError):
                 continue
-            rows.append({'tool': tool, **{key: doc.get(key) for key in fields}})
-    return rows
-
-
-def _image_audits(operations):
-    rows=[]
-    for op in (operations or {}).values():
-        if op.get('tool')!='image_exemplar_audit':
-            continue
-        bundle=op.get('bundle') or {}; root=Path(bundle.get('root') or '')
-        path=root/'image_audit/audit.json'
-        if not path.is_file(): continue
-        try: doc=read_json(path)
-        except (OSError,ValueError): continue
-        target_score = doc.get('target_score')
-        if target_score is None and doc.get('feature_id') == 'needle_crystal':
-            target_score = doc.get('needle_score')
-        rows.append({'target_id':doc.get('target_id'),'feature_id':doc.get('feature_id'),
-                     'target_score':target_score,
-                     'negative_similarity':doc.get('negative_similarity'),
-                     'negative_margin':doc.get('negative_margin'),'audit_label':doc.get('audit_label'),
-                     'confidence':doc.get('confidence'),'reason':doc.get('reason'),
-                     'review_status':doc.get('review_status'),'non_blocking':doc.get('non_blocking')})
+            visual = doc.get('visual_identity')
+            rows.append({'tool': tool, **{key: doc.get(key) for key in fields},
+                         **({'visual_identity': visual} if visual else {})})
     return rows
 
 
@@ -329,7 +309,7 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
         if row is not top and row is not formal_top:
             alternative_rows.append(row)
     return {
-        "schema": "diagnosis-output/v1",
+        "schema": "diagnosis-output/v2",
         "rule_score_version": verdict.get("score_version"),
         "sample_id": sample_id,
         "status": status,
@@ -371,7 +351,6 @@ def project_output(sample_id, verdict, result, a, *, artifacts=None):
         "judgement": None if projection_error else assessment.get('judgement'),
         "fusion_ranking": [{"id":r.get('id'), "score":r.get('score')} for r in verdict.get('ranking',[])],
         "feature_audit": result.get('feature_audit'),
-        "image_exemplar_audits": _image_audits(result.get('operations')),
         "audit": {
             "rule_verdict": verdict.get("verdict"),
             "internal_needs_review": bool(verdict.get("needs_review")),

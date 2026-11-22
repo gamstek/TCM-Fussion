@@ -1,0 +1,14 @@
+{
+  "operation_key": "2e85234afd9aeea832e921c6c3138b785fd800c5dda0e69bc17172016c3af986",
+  "budget_path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\runs\\fusion_10b350f52c24466e8c885db64d8d49ac\\workflow\\resources.json",
+  "limits": {
+    "initialization": 2,
+    "recompute": 30,
+    "network": 200,
+    "planning": 60,
+    "observation": 40,
+    "total": 400,
+    "finalization": 1
+  },
+  "identity": "fa82c3812ce5d3b8e8cc66cc5be04c71b405a29e734bdb3549a99015e2539deb"
+}

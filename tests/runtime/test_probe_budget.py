@@ -59,6 +59,20 @@ class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(first, second)
         self.assertEqual(before, read_json(self.runtime.workflow.budget_path))
 
+    def test_compacted_operations_and_unreadable_required_crop_keep_their_scope(self):
+        from TCM_Fusion.lib.agent.react_graph import compact_evidence
+        evidence = compact_evidence({'workflow': {
+            'operations':[{'tool':'feature_scan'}, {'tool':'classify_target'}],
+            'required_states':[{'required_states':[{'feature_id':'vessel'}]}],
+            'classifications':[{'crop_id':'c', 'feature_id':'', 'requested_feature_id':'vessel',
+                                'reject':'unreadable'}]}})
+        self.runtime.workflow.config['context_compact'] = True
+        wf = compact_round_context({'evidence':evidence}, self.runtime.workflow)['evidence']['workflow']
+        self.assertEqual((wf['operations_total'], wf['operations_omitted']), (2,2))
+        pending, = wf['classification_summary']['active_unverified']
+        self.assertEqual((pending['crop_id'],pending['requested_feature_id'],pending['reject']),
+                         ('c','vessel','unreadable'))
+
     async def test_presence_shadow_is_compacted_before_model_context(self):
         self.runtime.workflow.config['context_compact'] = True
         shadow = {
@@ -256,6 +270,30 @@ class ProbeBudgetTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(rejected[0]['new_planning_requests'], 0)
                 else:
                     self.assertFalse(rejected)
+
+    async def test_long_observation_selection_only_charges_issued_prefix(self):
+        runtime = self.scan_runtime(observation_group_execution=True, supporting_probe_total=3,
+                                    supporting_probe_scan_total=2, protect_investigation_budget=False)
+        runtime.a['fold_rankings'] = [[{'label':'白芍','probability':.6},
+                                       {'label':'大青叶','probability':.4}]] * 5
+        box = LocalToolbox(runtime, ledger_path=self.root/'group.json', backend=FixtureBackend())
+        chosen = []
+        class Planner:
+            def choose(inner, context):
+                if chosen:
+                    return {'action_id':'review'}, None
+                qs = context['execution_options']['questions']
+                first = [next(q for q in qs if q['feature_id']==f) for f in ('fiber','stoma')]
+                third = next(q for q in qs if q not in first)
+                rows = [*first, third]
+                chosen.extend(q['action_id'] for q in rows)
+                return {'decision':{'kind':'observe_questions','question_ids':[q['question_id'] for q in rows]}}, None
+        trace = await run_react(runtime, box, planner=Planner(), planner_mode='scripted', max_steps=8)
+        self.assertEqual(trace['last_observation_group'], {'selected':chosen, 'issued':chosen[:1],
+                         'unissued':chosen[1:], 'reason':'SUPPORTING_POOL_BUDGET'})
+        self.assertEqual(box.backend.calls, chosen[:1])
+        self.assertEqual(set(read_json(box.ledger_path)['entries']), set(chosen[:1]))
+        self.assertEqual(read_json(runtime.workflow.budget_path)['used']['observation'], 1)
 
     async def test_split_preserves_both_p0_supporting_actions_in_serialized_model_menu(self):
         comparison = {}

@@ -1,0 +1,83 @@
+{
+  "policy_version": "presence_localization_shadow_v1",
+  "mode": "shadow",
+  "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+  "feature_id": "sand_crystal",
+  "localization": "valid",
+  "quality": "low_detail",
+  "identity": "pending",
+  "verification_basis": [
+    {
+      "kind": "glm_localization_hypothesis",
+      "independent_support": false
+    }
+  ],
+  "findings": [],
+  "usage_eligibility": {
+    "presence": false,
+    "morphology": false,
+    "length": false,
+    "width": false,
+    "area": false
+  },
+  "legacy_presence_unchanged": true,
+  "state": "present_pending",
+  "observation_scope": {
+    "kind": "sent_full_fov",
+    "exhaustive": false
+  },
+  "source_tight_bbox": [
+    2237.5,
+    537.5,
+    2900.0,
+    1175.0
+  ],
+  "crop_bbox": [
+    2205,
+    505,
+    2931,
+    1206
+  ],
+  "transform": {
+    "kind": "full_image_resize",
+    "scale_xy": [
+      0.4,
+      0.4
+    ],
+    "padding_xy": [
+      0,
+      0
+    ],
+    "roi_xyxy": [
+      0,
+      0,
+      3840,
+      2160
+    ]
+  },
+  "model_input_size": [
+    1536,
+    864
+  ],
+  "spatial_agreement": [],
+  "artifacts": {
+    "target_png": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\presence_localizations\\949191a59e2eee1de20594bc32f4d03e00d6e32be1b33518a5c449d56f64bcfd\\target.png",
+    "context_png": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\presence_localizations\\949191a59e2eee1de20594bc32f4d03e00d6e32be1b33518a5c449d56f64bcfd\\context.png",
+    "target_sha256": "274d77ee4be164d735d28304c8564bd840aa3d68c08a7ed13fdf41c78e248df6"
+  },
+  "quality_diagnostic": {
+    "status": "low_detail",
+    "score": 0.4913,
+    "flags": [
+      "low_detail"
+    ],
+    "metrics": {
+      "std": 0.1146,
+      "edge": 0.00704,
+      "width": 512,
+      "height": 493,
+      "area_ratio": 0.0509
+    },
+    "block_segment": false
+  }
+}

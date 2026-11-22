@@ -39,9 +39,9 @@ def candidates(snapshot, image_id):
 
 
 def single_granularity(identity):
-    """旧分类沿用裁图粒度；分类明确标成束、片或团时不能作为单个对象测量。"""
-    grain = read_json(identity['path']).get('granularity') or contracts.GRANULARITY_DEFAULT
-    return grain == 'instance'
+    """旧分类缺少粒度时延用单实例默认值，调用方另行核对裁图本身。"""
+    grain = read_json(identity['path']).get('granularity')
+    return contracts.effective_granularity('instance', grain) == 'instance'
 
 
 def qualified_facts(runtime, snapshot, crop, bound, dimension):

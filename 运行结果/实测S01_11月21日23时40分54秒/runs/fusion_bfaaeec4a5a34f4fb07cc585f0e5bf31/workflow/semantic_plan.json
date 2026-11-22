@@ -1,0 +1,43 @@
+{
+  "schema": "serial-semantic-plan/d3",
+  "plan_id": "plan:83949d7b1017026c152ef9a7",
+  "goal": {
+    "semantic_task": "verify_identity",
+    "instance_ref": "inst:0c5be39d54f6f7b4ae5e753d5e43b945f418594e38f6aa9a74f394c5bcb80e41",
+    "problem_id": "instance-question:4642d82daf9a6e80ec23"
+  },
+  "dimension": null,
+  "bound_input": "6ebb0eb0d5543e03da8beec33307e5cdba87db2ce434ddcbddddfca66840a7c5",
+  "bound_crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+  "nodes": [
+    {
+      "node_id": "verify_identity",
+      "semantic_task": "verify_identity",
+      "instance_ref": "inst:0c5be39d54f6f7b4ae5e753d5e43b945f418594e38f6aa9a74f394c5bcb80e41",
+      "depends_on": [],
+      "status": "blocked",
+      "required_facts": [
+        "instance_exists"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    }
+  ],
+  "status": "returned_to_react",
+  "identity_failure": {
+    "outcome": "unreadable",
+    "expected_feature": "epidermis_cell",
+    "reported_feature": null,
+    "instance_ref": "inst:0c5be39d54f6f7b4ae5e753d5e43b945f418594e38f6aa9a74f394c5bcb80e41",
+    "semantic_task": "verify_identity",
+    "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+    "classification_ref": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+    "classification_sha256": "eaacccc2de3d8e7f5f520975319efcd330227c012e45a4031f7283cd85e44a80",
+    "evidence_version": "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82",
+    "bound_input": "6ebb0eb0d5543e03da8beec33307e5cdba87db2ce434ddcbddddfca66840a7c5"
+  },
+  "return_reason": "identity_rejected"
+}

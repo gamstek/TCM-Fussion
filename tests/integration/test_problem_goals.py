@@ -296,6 +296,47 @@ class ProblemGoalTests(D3Fixture, unittest.TestCase):
         self.assertEqual(event['reason'], 'granularity_not_qualified')
         self.assertNotIn('segment_instance', r.workflow.backend.calls)
 
+    def test_instance_and_direct_routes_respect_reviewed_granularity(self):
+        from TCM_Fusion.lib.agent.semantic_execution import compile_goal
+        for grain in ('instance', 'bundle'):
+            with self.subTest(grain=grain):
+                r = self.prepared(grain, VesselStages(granularity=grain), auto_measure_after_segment=True)
+                scan = next(a for a in r.workflow.propose() if a['tool'] == 'feature_scan'
+                            and a['args']['target_id'].endswith(':vessel'))
+                self.assertTrue(r.workflow.execute(scan)['accepted'])
+                classify = next(a for a in r.workflow.propose() if a['tool'] == 'classify_target'
+                                and 'vessel-0' in a['args']['target_id'])
+                offers = attach(r, {'actions': r.workflow.propose()}, can_pair=False)
+                goal = next(g['goal'] for g in offers['execution_options']['goals']
+                            if g['feature_id'] == 'vessel' and g['goal']['semantic_task'] == 'measure_width')
+                plan = compile_goal(r, goal, classify)
+                self.assertTrue(r.workflow.execute(classify)['accepted'])
+                if grain == 'bundle':
+                    self.assertEqual(next_action(r, plan, self.state())[1], 'granularity_not_qualified')
+                segment = next(a for a in r.workflow.propose() if a['tool'] == 'segment_instance'
+                               and 'vessel-0' in a['args']['target_id'])
+                self.assertTrue(r.workflow.execute(segment)['accepted'])
+                record, = r.workflow.store.verified_records()
+                self.assertEqual('coarse_quant' in record['flags'], grain == 'bundle')
+                self.assertEqual(bool(r.score([])['cards']['vessel'].dims), grain == 'instance')
+
+    def test_late_bundle_classification_revokes_previously_measured_dimension(self):
+        r = self.prepared('late-bundle', StageFixture(), auto_measure_after_segment=True)
+        workflow = r.workflow
+        crop = next(v for v in workflow.targets().values() if v['kind'] == 'crop')
+        segment = workflow.backend.execute(workflow, 'segment_instance', crop, self.root/'early-seg', None)
+        workflow.accept('segment_instance', crop, segment, workflow.store.current()['version'])
+        previous, = workflow.store.verified_records()
+        self.assertNotIn('coarse_quant', previous.get('flags', []))
+        identity = self.root/'late-classification'
+        write_json(identity/'classification.json', {'feature_id':'single_crystal', 'label':'方晶',
+                   'confidence':'high', 'granularity':'clump'})
+        workflow.accept('classify_target', crop, {'classification':str(identity)},
+                        workflow.store.current()['version'])
+        revised, = workflow.store.verified_records()
+        self.assertIn('coarse_quant', revised['flags'])
+        self.assertFalse(r.score([])['cards']['single_crystal'].dims)
+
     def test_scope_rechecks_source_and_calibration(self):
         r = self.prepared('read-set')
         ctx = attach(r, {'actions': r.workflow.propose()}, can_pair=False)

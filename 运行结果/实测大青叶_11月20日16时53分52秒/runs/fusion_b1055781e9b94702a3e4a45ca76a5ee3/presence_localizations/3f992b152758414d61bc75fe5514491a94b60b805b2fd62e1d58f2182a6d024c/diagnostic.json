@@ -1,0 +1,83 @@
+{
+  "policy_version": "presence_localization_shadow_v1",
+  "mode": "shadow",
+  "source_image_sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+  "feature_id": "mineral_feature",
+  "localization": "valid",
+  "quality": "usable",
+  "identity": "pending",
+  "verification_basis": [
+    {
+      "kind": "glm_localization_hypothesis",
+      "independent_support": false
+    }
+  ],
+  "findings": [
+    "possible_border_truncation"
+  ],
+  "usage_eligibility": {
+    "presence": false,
+    "morphology": false,
+    "length": false,
+    "width": false,
+    "area": false
+  },
+  "legacy_presence_unchanged": true,
+  "state": "present_pending",
+  "observation_scope": {
+    "kind": "sent_full_fov",
+    "exhaustive": false
+  },
+  "source_tight_bbox": [
+    613.3333333333334,
+    413.3333333333333,
+    1866.6666666666667,
+    1536.0
+  ],
+  "crop_bbox": [
+    557,
+    357,
+    1922,
+    1536
+  ],
+  "transform": {
+    "kind": "full_image_resize",
+    "scale_xy": [
+      0.75,
+      0.75
+    ],
+    "padding_xy": [
+      0,
+      0
+    ],
+    "roi_xyxy": [
+      0,
+      0,
+      2048,
+      1536
+    ]
+  },
+  "model_input_size": [
+    1536,
+    1152
+  ],
+  "spatial_agreement": [],
+  "artifacts": {
+    "target_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\runs\\fusion_b1055781e9b94702a3e4a45ca76a5ee3\\presence_localizations\\3f992b152758414d61bc75fe5514491a94b60b805b2fd62e1d58f2182a6d024c\\target.png",
+    "context_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\runs\\fusion_b1055781e9b94702a3e4a45ca76a5ee3\\presence_localizations\\3f992b152758414d61bc75fe5514491a94b60b805b2fd62e1d58f2182a6d024c\\context.png",
+    "target_sha256": "94f50a90a794d23e6aa86ab6081b97ab1bad6e9fb09bd783a516719bf1d5267b"
+  },
+  "quality_diagnostic": {
+    "status": "usable",
+    "score": 0.7366,
+    "flags": [],
+    "metrics": {
+      "std": 0.1368,
+      "edge": 0.01441,
+      "width": 512,
+      "height": 459,
+      "area_ratio": 0.4473
+    },
+    "block_segment": false
+  }
+}

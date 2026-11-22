@@ -1,0 +1,42 @@
+{
+  "schema": "instance-ledger/d2",
+  "evidence_version": "afb46b8d6dca506df226dac2f527c01eeed24803c11e8087da9ea3db2c7b66b5",
+  "instances": {
+    "inst:58d053a10cca15bfb89fd4ab3b7ad81c3be09028d13a8e1cc7bac724ddc2a8dc": {
+      "instance_id": "inst:58d053a10cca15bfb89fd4ab3b7ad81c3be09028d13a8e1cc7bac724ddc2a8dc",
+      "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_bbox": [
+        901.75,
+        357.25,
+        1287.25,
+        511.75
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+          "sha256": "89f7153d2d5ab0cbb5b18612c4630a9f5b94c01d078fd59c9fbcca44dc7c24ce",
+          "pixels_sha256": "f0db3c7b1303f3d9fcd60ef66c043b4d4f07ecd690f5c016dc784b74c568648a"
+        }
+      ],
+      "classifications": [
+        {
+          "artifact_id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+          "sha256": "1cc0af248b2a1228b13ce7e843b13fab263c3e2bd7f80bd9a43cb44dc595b03c"
+        }
+      ],
+      "mask_versions": [],
+      "measurements": [],
+      "attempts": [
+        {
+          "operation_key": "2e85234afd9aeea832e921c6c3138b785fd800c5dda0e69bc17172016c3af986",
+          "semantic_key": "dd5d79d687b526b777d7fd564c448479acde6a0fba085901f6772e176e07d65f",
+          "tool": "classify_target",
+          "status": "done",
+          "error_code": null
+        }
+      ]
+    }
+  },
+  "associations": []
+}

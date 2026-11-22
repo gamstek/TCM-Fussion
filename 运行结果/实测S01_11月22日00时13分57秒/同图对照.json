@@ -1,0 +1,927 @@
+{
+  "baseline": {
+    "case": "实测S01_11月21日23时40分54秒",
+    "run": "fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31",
+    "sha": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+    "a_cache_reused": false,
+    "signature": [
+      "75fe56e5a06a3ce496e1330f4c6a584bcbdafc01d99be730aea818019fb0c0b0",
+      "75fe56e5a06a3ce496e1330f4c6a584bcbdafc01d99be730aea818019fb0c0b0"
+    ],
+    "observation_group": false,
+    "duration": 424.45661330223083,
+    "planning": 11,
+    "planning_s": 138.001,
+    "steps": [
+      {
+        "round": 1,
+        "observations": [
+          "mineral_feature"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [
+          "sand_crystal",
+          "mineral_feature",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "indigo_crystal",
+          "calcium_carbonate",
+          "epidermis_cell"
+        ],
+        "planning_s": 11.969,
+        "tool": "presence_check",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 24.968
+      },
+      {
+        "round": 2,
+        "observations": [
+          "indigo_crystal",
+          "epidermis_cell"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [
+          "sand_crystal",
+          "indigo_crystal",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "calcium_carbonate",
+          "epidermis_cell"
+        ],
+        "planning_s": 14.094,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "selected_questions": [
+          "indigo_crystal",
+          "epidermis_cell"
+        ],
+        "execution_s": 27.469
+      },
+      {
+        "round": 3,
+        "observations": [
+          "sand_crystal",
+          "calcium_carbonate"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [
+          "sand_crystal",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "calcium_carbonate"
+        ],
+        "planning_s": 13.25,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "selected_questions": [
+          "sand_crystal",
+          "calcium_carbonate"
+        ],
+        "execution_s": 48.047
+      },
+      {
+        "round": 4,
+        "observations": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "planning_s": 11.14,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "selected_questions": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "execution_s": 31.437
+      },
+      {
+        "round": 5,
+        "observations": [
+          "glandular_hair"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [
+          "glandular_hair"
+        ],
+        "planning_s": 11.657,
+        "tool": "presence_check",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 13.281
+      },
+      {
+        "round": 6,
+        "observations": [],
+        "stages": [
+          "detect_fov_initial"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 9.344,
+        "tool": "detect_fov_initial",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 9.172
+      },
+      {
+        "round": 7,
+        "observations": [],
+        "stages": [
+          "feature_scan"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 12.484,
+        "tool": "feature_scan",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 18.656
+      },
+      {
+        "round": 8,
+        "observations": [],
+        "stages": [
+          "classify_target",
+          "classify_target"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 10.516,
+        "tool": "classify_target",
+        "kind": "identity_group",
+        "selected_questions": [],
+        "execution_s": 30.235
+      },
+      {
+        "round": 9,
+        "observations": [],
+        "stages": [
+          "classify_target"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 13.25,
+        "tool": "classify_target",
+        "kind": "instance_goal",
+        "selected_questions": [],
+        "execution_s": 27.641
+      },
+      {
+        "round": 10,
+        "observations": [],
+        "stages": [
+          "classify_target"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 16.453,
+        "tool": "classify_target",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 12.735
+      },
+      {
+        "round": 11,
+        "observations": [],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 13.844,
+        "tool": "request_review",
+        "kind": "action",
+        "selected_questions": []
+      }
+    ],
+    "op_counts": {
+      "detect_fov_initial": 1,
+      "feature_scan": 1,
+      "classify_target": 4
+    },
+    "read_counts": {},
+    "operations_status": {
+      "done": 6
+    },
+    "tool_calls": 14,
+    "observation_plans": 5,
+    "execution_s": 243.641,
+    "observations": [
+      {
+        "tool": "presence_check",
+        "feature": "mineral_feature",
+        "accepted": true,
+        "present": false,
+        "conf": 0.72,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "indigo_crystal",
+        "accepted": true,
+        "present": false,
+        "conf": 0.88,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "epidermis_cell",
+        "accepted": true,
+        "present": true,
+        "conf": 0.62,
+        "state": "present_pending",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "sand_crystal",
+        "accepted": true,
+        "present": true,
+        "conf": 0.6,
+        "state": "present_pending",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "calcium_carbonate",
+        "accepted": true,
+        "present": false,
+        "conf": 0.78,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "stoma",
+        "accepted": true,
+        "present": false,
+        "conf": 0.72,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "non_glandular_hair",
+        "accepted": true,
+        "present": false,
+        "conf": 0.6,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "glandular_hair",
+        "accepted": true,
+        "present": false,
+        "conf": 0.65,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      }
+    ],
+    "resources": {
+      "planning": 11,
+      "network": 33,
+      "observation": 12,
+      "initialization": 1,
+      "recompute": 1,
+      "finalization": 1
+    },
+    "candidate": "大青叶",
+    "status": "tentative",
+    "review": true,
+    "verdict": "insufficient_evidence",
+    "stop": "planner_request_review",
+    "review_reasons": [
+      "FORMAL_REQUIRES_REVIEW",
+      "CANDIDATE_AUDIT_INCOMPLETE",
+      "INSUFFICIENT_FEATURE_TYPES",
+      "CANDIDATE_NOT_FORMAL_CONCLUSION",
+      "FORMAL_VERDICT_NOT_AUTHORIZED"
+    ],
+    "score": "大青叶：B规则排序分=0.0；融合排序分=0.17782；已验证独立特征类数=0；B规则计分特征类数=0；B规则最低计分类数=2。上述分数不是校准正确率；交付复核要求见 review_reasons。",
+    "primary_fov_rank": [
+      {
+        "rank": 1,
+        "label": "滑石",
+        "probability": 0.4301
+      },
+      {
+        "rank": 2,
+        "label": "大青叶",
+        "probability": 0.3556
+      },
+      {
+        "rank": 3,
+        "label": "秦皮",
+        "probability": 0.1107
+      }
+    ],
+    "full_fold_digest": "567d17e55bd1d31a26a9a228b2b801611c3b7fecc5e0c49d2cb153dabfe6cabf",
+    "crop_count": 4,
+    "classifications": [
+      {
+        "feature_id": "",
+        "reject": "unreadable",
+        "confidence": "low",
+        "identity_verified": false
+      },
+      {
+        "feature_id": "",
+        "reject": "unreadable",
+        "confidence": "low",
+        "identity_verified": false
+      },
+      {
+        "feature_id": "",
+        "reject": "unreadable",
+        "confidence": "low",
+        "identity_verified": false
+      },
+      {
+        "feature_id": "secretory_tissue",
+        "reject": "",
+        "confidence": "low",
+        "identity_verified": false
+      }
+    ],
+    "scan": [
+      {
+        "feature_id": "epidermis_cell",
+        "status": "shareable",
+        "crop_count": 4,
+        "successful_tile_count": 4
+      }
+    ],
+    "artifact_counts": {
+      "image": 1,
+      "detection": 2,
+      "crop_pixels": 4,
+      "crop": 4,
+      "classification": 4
+    },
+    "audited": [
+      {
+        "candidate_id": "秦皮",
+        "hypothesis_status": "investigating",
+        "required": {
+          "sand_crystal": "present_pending"
+        },
+        "supporting": {},
+        "review_complete": false
+      },
+      {
+        "candidate_id": "大青叶",
+        "hypothesis_status": "investigating",
+        "required": {
+          "indigo_crystal": "local_absent"
+        },
+        "supporting": {
+          "epidermis_cell": "present_pending",
+          "stoma": "local_absent"
+        },
+        "review_complete": false
+      },
+      {
+        "candidate_id": "穿心莲",
+        "hypothesis_status": "investigating",
+        "required": {
+          "calcium_carbonate": "local_absent"
+        },
+        "supporting": {
+          "non_glandular_hair": "local_absent",
+          "glandular_hair": "local_absent",
+          "stoma": "local_absent"
+        },
+        "review_complete": true
+      },
+      {
+        "candidate_id": "滑石",
+        "hypothesis_status": "investigating",
+        "required": {
+          "mineral_feature": "local_absent"
+        },
+        "supporting": {},
+        "review_complete": true
+      },
+      {
+        "candidate_id": "雄黄",
+        "hypothesis_status": "investigating",
+        "required": {
+          "mineral_feature": "local_absent"
+        },
+        "supporting": {},
+        "review_complete": true
+      },
+      {
+        "candidate_id": "乌梅",
+        "hypothesis_status": "investigating",
+        "required": {
+          "epidermis_cell": "present_pending"
+        },
+        "supporting": {
+          "non_glandular_hair": "local_absent"
+        },
+        "review_complete": false
+      }
+    ],
+    "incomplete": [
+      "秦皮",
+      "大青叶",
+      "乌梅"
+    ],
+    "planning_usage": 197844,
+    "observation_usage": 23550,
+    "final_usage": 27262,
+    "started_at": "2026-11-21T23:40:54.162824+08:00",
+    "ended_at": "2026-11-21T23:47:58.619437+08:00",
+    "job_elapsed_seconds": 421.7118651000201,
+    "observation_receipts": {
+      "local_absence": 6,
+      "positive": 2
+    },
+    "companion_rejections": [],
+    "timings": {
+      "raw_observations": 145.202,
+      "identity_classify": 70.611,
+      "initial": 9.172,
+      "scan": 18.656,
+      "other": 42.815
+    }
+  },
+  "current": {
+    "case": "实测S01_11月22日00时13分57秒",
+    "run": "fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab",
+    "sha": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+    "a_cache_reused": false,
+    "signature": [
+      "8ce712b41cb5dcd212a737951ceac2218ab1d6df987b58f9cf7d572c40971e83",
+      "8ce712b41cb5dcd212a737951ceac2218ab1d6df987b58f9cf7d572c40971e83"
+    ],
+    "observation_group": true,
+    "duration": 360.1320254802704,
+    "planning": 9,
+    "planning_s": 129.281,
+    "steps": [
+      {
+        "round": 1,
+        "observations": [
+          "mineral_feature"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 8,
+        "offered_questions": [
+          "sand_crystal",
+          "mineral_feature",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "indigo_crystal",
+          "calcium_carbonate",
+          "epidermis_cell"
+        ],
+        "planning_s": 14.937,
+        "tool": "presence_check",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 28.5
+      },
+      {
+        "round": 2,
+        "observations": [
+          "indigo_crystal",
+          "sand_crystal"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 7,
+        "offered_questions": [
+          "sand_crystal",
+          "indigo_crystal",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "calcium_carbonate",
+          "epidermis_cell"
+        ],
+        "planning_s": 13.141,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "selected_questions": [
+          "indigo_crystal",
+          "sand_crystal"
+        ],
+        "execution_s": 33.328
+      },
+      {
+        "round": 3,
+        "observations": [
+          "epidermis_cell",
+          "calcium_carbonate"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 5,
+        "offered_questions": [
+          "epidermis_cell",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "calcium_carbonate"
+        ],
+        "planning_s": 13.0,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "selected_questions": [
+          "epidermis_cell",
+          "calcium_carbonate"
+        ],
+        "execution_s": 16.313
+      },
+      {
+        "round": 4,
+        "observations": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 3,
+        "offered_questions": [
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "planning_s": 11.938,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "selected_questions": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "execution_s": 16.891
+      },
+      {
+        "round": 5,
+        "observations": [
+          "glandular_hair"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 1,
+        "offered_questions": [
+          "glandular_hair"
+        ],
+        "planning_s": 14.109,
+        "tool": "presence_check",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 62.641
+      },
+      {
+        "round": 6,
+        "observations": [],
+        "stages": [
+          "detect_fov_initial"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 10.906,
+        "tool": "detect_fov_initial",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 7.641
+      },
+      {
+        "round": 7,
+        "observations": [],
+        "stages": [
+          "feature_scan"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 16.969,
+        "tool": "feature_scan",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 15.5
+      },
+      {
+        "round": 8,
+        "observations": [],
+        "stages": [
+          "classify_target"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 15.172,
+        "tool": "classify_target",
+        "kind": "action",
+        "selected_questions": [],
+        "execution_s": 18.313
+      },
+      {
+        "round": 9,
+        "observations": [],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 19.109,
+        "tool": "request_review",
+        "kind": "action",
+        "selected_questions": []
+      }
+    ],
+    "op_counts": {
+      "detect_fov_initial": 1,
+      "feature_scan": 1,
+      "classify_target": 1
+    },
+    "read_counts": {},
+    "operations_status": {
+      "done": 3
+    },
+    "tool_calls": 11,
+    "observation_plans": 5,
+    "execution_s": 199.127,
+    "observations": [
+      {
+        "tool": "presence_check",
+        "feature": "mineral_feature",
+        "accepted": true,
+        "present": false,
+        "conf": 0.65,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "indigo_crystal",
+        "accepted": true,
+        "present": false,
+        "conf": 0.85,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "sand_crystal",
+        "accepted": true,
+        "present": true,
+        "conf": 0.62,
+        "state": "present_pending",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "epidermis_cell",
+        "accepted": true,
+        "present": true,
+        "conf": 0.6,
+        "state": "present_pending",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "calcium_carbonate",
+        "accepted": true,
+        "present": false,
+        "conf": 0.78,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "stoma",
+        "accepted": true,
+        "present": false,
+        "conf": 0.65,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "non_glandular_hair",
+        "accepted": true,
+        "present": false,
+        "conf": 0.75,
+        "state": "not_observed_local",
+        "error_code": null,
+        "new_requests": 1
+      },
+      {
+        "tool": "presence_check",
+        "feature": "glandular_hair",
+        "accepted": false,
+        "present": null,
+        "conf": null,
+        "state": null,
+        "error_code": "UPSTREAM_REMOTE_DISCONNECTED",
+        "new_requests": 1
+      }
+    ],
+    "resources": {
+      "planning": 9,
+      "network": 25,
+      "observation": 9,
+      "initialization": 1,
+      "recompute": 1,
+      "finalization": 1
+    },
+    "candidate": "大青叶",
+    "status": "tentative",
+    "review": true,
+    "verdict": "insufficient_evidence",
+    "stop": "planner_request_review",
+    "review_reasons": [
+      "FORMAL_REQUIRES_REVIEW",
+      "CANDIDATE_AUDIT_INCOMPLETE",
+      "INSUFFICIENT_FEATURE_TYPES",
+      "CANDIDATE_NOT_FORMAL_CONCLUSION",
+      "FORMAL_VERDICT_NOT_AUTHORIZED"
+    ],
+    "score": "大青叶：B规则排序分=0.0；融合排序分=0.17782；已验证独立特征类数=0；B规则计分特征类数=0；B规则最低计分类数=2。上述分数不是校准正确率；交付复核要求见 review_reasons。",
+    "primary_fov_rank": [
+      {
+        "rank": 1,
+        "label": "滑石",
+        "probability": 0.4301
+      },
+      {
+        "rank": 2,
+        "label": "大青叶",
+        "probability": 0.3556
+      },
+      {
+        "rank": 3,
+        "label": "秦皮",
+        "probability": 0.1107
+      }
+    ],
+    "full_fold_digest": "567d17e55bd1d31a26a9a228b2b801611c3b7fecc5e0c49d2cb153dabfe6cabf",
+    "crop_count": 1,
+    "classifications": [
+      {
+        "feature_id": "",
+        "reject": "unreadable",
+        "confidence": "low",
+        "identity_verified": false
+      }
+    ],
+    "scan": [
+      {
+        "feature_id": "epidermis_cell",
+        "status": "shareable",
+        "crop_count": 1,
+        "successful_tile_count": 4
+      }
+    ],
+    "artifact_counts": {
+      "image": 1,
+      "detection": 2,
+      "crop_pixels": 1,
+      "crop": 1,
+      "classification": 1
+    },
+    "audited": [
+      {
+        "candidate_id": "秦皮",
+        "hypothesis_status": "investigating",
+        "required": {
+          "sand_crystal": "present_pending"
+        },
+        "supporting": {},
+        "review_complete": false
+      },
+      {
+        "candidate_id": "大青叶",
+        "hypothesis_status": "investigating",
+        "required": {
+          "indigo_crystal": "local_absent"
+        },
+        "supporting": {
+          "epidermis_cell": "present_pending",
+          "stoma": "local_absent"
+        },
+        "review_complete": false
+      },
+      {
+        "candidate_id": "穿心莲",
+        "hypothesis_status": "investigating",
+        "required": {
+          "calcium_carbonate": "local_absent"
+        },
+        "supporting": {
+          "non_glandular_hair": "local_absent",
+          "glandular_hair": "failed_or_unknown",
+          "stoma": "local_absent"
+        },
+        "review_complete": false
+      },
+      {
+        "candidate_id": "滑石",
+        "hypothesis_status": "paused",
+        "required": {
+          "mineral_feature": "local_absent"
+        },
+        "supporting": {},
+        "review_complete": true
+      },
+      {
+        "candidate_id": "雄黄",
+        "hypothesis_status": "investigating",
+        "required": {
+          "mineral_feature": "local_absent"
+        },
+        "supporting": {},
+        "review_complete": true
+      },
+      {
+        "candidate_id": "乌梅",
+        "hypothesis_status": "investigating",
+        "required": {
+          "epidermis_cell": "present_pending"
+        },
+        "supporting": {
+          "non_glandular_hair": "local_absent"
+        },
+        "review_complete": false
+      }
+    ],
+    "incomplete": [
+      "秦皮",
+      "大青叶",
+      "穿心莲",
+      "乌梅"
+    ],
+    "planning_usage": 160123,
+    "observation_usage": 18505,
+    "final_usage": 25151,
+    "started_at": "2026-11-22T00:13:57.394136+08:00",
+    "ended_at": "2026-11-22T00:19:57.526161+08:00",
+    "job_elapsed_seconds": 357.6130657999893,
+    "observation_receipts": {
+      "local_absence": 5,
+      "positive": 2,
+      "unknown": 1
+    },
+    "companion_rejections": [
+      {
+        "round": 1,
+        "reason": "not_offered_for_initial_view",
+        "extra_planning_requests": 0
+      }
+    ],
+    "timings": {
+      "raw_observations": 157.673,
+      "identity_classify": 18.313,
+      "initial": 7.641,
+      "scan": 15.5,
+      "other": 31.724
+    }
+  }
+}

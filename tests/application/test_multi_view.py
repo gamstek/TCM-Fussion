@@ -219,6 +219,14 @@ class MultiViewTests(unittest.TestCase):
             with self.assertRaises(IntegrationError):
                 F.bind_config(cfg, images, sample_id='test', a_python=paths.VENV_PY)
 
+    def test_template_rejects_retired_image_exemplar_settings(self):
+        images = [str(self.source / row['view']) for row in self.proof['views']]
+        for settings in ({'image_exemplar_audit': False}, {'enabled_tools': ['image_exemplar_audit']}):
+            with self.subTest(settings=settings), self.assertRaises(IntegrationError):
+                template = copy.deepcopy(self.template)
+                template['agent']['workflow'].update(settings)
+                F.bind_config(template, images, sample_id='test', a_python=paths.VENV_PY)
+
     def test_legacy_template_semantic_default_and_independent_overrides(self):
         images = [str(self.source / row['view']) for row in self.proof['views']]
         for semantic, physical in ((None, True), (False, True), (True, False), (False, False)):

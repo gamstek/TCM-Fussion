@@ -214,14 +214,15 @@ def compact(context, previous=None):
         'reactivation_allowed': True, 'detail_access': 'query_criteria / read_evidence_detail'}
     for field in ('actions', 'parallel_observations'):
         out[field] = [{k: a[k] for k in ('action_id', 'tool', 'args', 'mandatory',
-                                       'target_id', 'feature_id', 'image_id') if k in a}
+                                       'target_id', 'feature_id', 'image_id', 'scene_criteria') if k in a}
                       for a in out.get(field, [])]
     objectives = out.get('action_objectives', {})
     if objectives:
-        first = next(iter(objectives.values()))
+        first = next((row for row in objectives.values() if 'expected_resolution' in row), {})
         out['objective_contract'] = {k: first[k] for k in ('expected_resolution', 'stop_condition') if k in first}
         out['action_objectives'] = {key: {k: row[k] for k in ('problem_id', 'objective', 'question_id',
-                                      'incremental_value', 'recent_latency_seconds') if k in row}
+                                      'incremental_value', 'recent_latency_seconds', 'criterion_refs',
+                                       'evidence_step', 'last_question_result') if k in row}
                                     for key, row in objectives.items()}
     for row in out.get('previous_observations', []):
         action = row.get('action') or {}

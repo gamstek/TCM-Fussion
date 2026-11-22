@@ -1,0 +1,147 @@
+{
+  "schema": "instance-ledger/d2",
+  "evidence_version": "ac35a0745195942ba6ce135c8332d2786a833b01404f9344aae56552211c5c5c",
+  "instances": {
+    "inst:2af5e63619a91579e8ac9b9346a0253d2283544ddc941b90af7730656e353dfd": {
+      "instance_id": "inst:2af5e63619a91579e8ac9b9346a0253d2283544ddc941b90af7730656e353dfd",
+      "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_bbox": [
+        856.75,
+        523.0,
+        1314.25,
+        919.0
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+          "sha256": "0d5da4f6a3dbcc236166094e1a4ce7d79f99ff42647f3e412f49602e80273d67",
+          "pixels_sha256": "c7e6fc467da3a02c19c4e5a753489a471b0b983c650a2c2105c55ac846868518"
+        }
+      ],
+      "classifications": [
+        {
+          "artifact_id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+          "sha256": "fbbb886c31d2ff871de6ec027558b23eb42447d72baf3d386f5af5b7a91a8a58"
+        }
+      ],
+      "mask_versions": [],
+      "measurements": [],
+      "attempts": [
+        {
+          "operation_key": "0cf90c76250eefafd7a7c5e5291626d2ab2724cfd3d5403d9c1bf70f323f3d8d",
+          "semantic_key": "79df993dcd4a7ef9cfbc599f8ff6bcaf92a89f34b2653af52a138c3814ce70d6",
+          "tool": "classify_target",
+          "status": "done",
+          "error_code": null
+        }
+      ]
+    },
+    "inst:93c72ca10d910ad0b11d3aec822bdf47b657e1b031ca2a64acda88e09d2311e7": {
+      "instance_id": "inst:93c72ca10d910ad0b11d3aec822bdf47b657e1b031ca2a64acda88e09d2311e7",
+      "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_bbox": [
+        1238.5,
+        1460.25,
+        1871.5,
+        2160.0
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+          "sha256": "e41b03a319867310f9eccec52666db03ff256421b83f701ce41a105a5ce6f7c1",
+          "pixels_sha256": "f4d092ef4a27943c60fcdd5b0c3d5780523c7cd05c71ea99511443e68b968b09"
+        }
+      ],
+      "classifications": [
+        {
+          "artifact_id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+          "sha256": "74f87073cf4b149e36a3f0901e90a6c2189f830bc6529b88090065fed8aa9930"
+        }
+      ],
+      "mask_versions": [],
+      "measurements": [],
+      "attempts": [
+        {
+          "operation_key": "7013401fd10ca80dc99e943f2385ce76e1296c7969598d325251a04c65124d5f",
+          "semantic_key": "a1777a66b6b3263fdd51b271aa72490aa677d9c84e2e0af662e6830bcc6afc43",
+          "tool": "classify_target",
+          "status": "done",
+          "error_code": null
+        }
+      ]
+    },
+    "inst:0c5be39d54f6f7b4ae5e753d5e43b945f418594e38f6aa9a74f394c5bcb80e41": {
+      "instance_id": "inst:0c5be39d54f6f7b4ae5e753d5e43b945f418594e38f6aa9a74f394c5bcb80e41",
+      "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_bbox": [
+        1934.25,
+        1633.25,
+        2538.75,
+        2135.75
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+          "sha256": "00ecfa938a9e0b5a02b3c9515a07d0ccba20faf6dc186774c1f5a9579ba3e670",
+          "pixels_sha256": "f322507acc050bc9667fa183ccf59917f3fd39fecdc154534593bf610aac2d08"
+        }
+      ],
+      "classifications": [
+        {
+          "artifact_id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+          "sha256": "eaacccc2de3d8e7f5f520975319efcd330227c012e45a4031f7283cd85e44a80"
+        }
+      ],
+      "mask_versions": [],
+      "measurements": [],
+      "attempts": [
+        {
+          "operation_key": "8a549acb39d23e0f3c20ab61080abfecc5535e1a2c441b71a869e3935dd409fb",
+          "semantic_key": "8ac49cfbe901d8d405a62658032651542455739777be524fc292c9f9073e5eb7",
+          "tool": "classify_target",
+          "status": "done",
+          "error_code": null
+        }
+      ]
+    },
+    "inst:b16b0e3db419f4fad2bf50a02ad19559385b8b7725e984a83ef560f31edf93fb": {
+      "instance_id": "inst:b16b0e3db419f4fad2bf50a02ad19559385b8b7725e984a83ef560f31edf93fb",
+      "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_bbox": [
+        2534.0,
+        1720.25,
+        3110.0,
+        2156.75
+      ],
+      "association": "exact_coordinates",
+      "crop_versions": [
+        {
+          "artifact_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02",
+          "sha256": "a4c69e0343b9fd246444ad3ead678413d2a09611308ab252e7262d09beccf191",
+          "pixels_sha256": "faaf8fd5239e176003e27b27c37e5bfb74ba92e45c28987845ad58baef55477c"
+        }
+      ],
+      "classifications": [
+        {
+          "artifact_id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02",
+          "sha256": "fbbda6a44556ebf2c03790e5fa1b974f7dcd245802d78170ba26fe3cf66cd0a8"
+        }
+      ],
+      "mask_versions": [],
+      "measurements": [],
+      "attempts": [
+        {
+          "operation_key": "c510b540b6d70f5129e0c1f98b3c8ddc1affd160980c738b42c8d244b36130e7",
+          "semantic_key": "50c093f92db9b522d93ee1042cd5516ee2ca0cdb43256a73c6e2fe60f3217607",
+          "tool": "classify_target",
+          "status": "done",
+          "error_code": null
+        }
+      ]
+    }
+  },
+  "associations": []
+}

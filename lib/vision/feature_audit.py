@@ -171,6 +171,8 @@ def _candidate(crop, meta, classification, issues):
                 issues.append({'artifact_id': classification['id'], 'error': 'CLASSIFICATION_UNREADABLE'})
                 document = {}
 
+    visual_input = document.get('visual_input')
+    visual_input = visual_input if isinstance(visual_input, dict) else {}
     feature = document.get('feature_id') or None
     score = document.get('confidence_score')
     target_score = negative_margin = None
@@ -188,7 +190,9 @@ def _candidate(crop, meta, classification, issues):
         'classified_feature_id': feature, 'confidence_source': document.get('confidence_source'),
         'classification_id': classification['id'] if classification else None,
         'target_score': target_score, 'negative_margin': negative_margin,
-        'status': status, 'non_blocking': True,
+        'status': status, 'non_blocking': True, 'reject': document.get('reject'),
+        'review_input_mode': visual_input.get('mode'),
+        'review_fallback': visual_input.get('fallback'),
     }
 
 
@@ -248,6 +252,10 @@ def build_feature_audit(snapshot, *, out_dir, feature_ids=None):
     summary = {
         'feature_ids': feature_ids,
         'n_candidates': len(candidates),
+        'n_input_views': sum(item['kind'] == 'image' for item in artifacts.values()),
+        'views_with_candidates': len({row['view'] for row in candidates}),
+        'n_target_only': sum(row['review_input_mode'] == 'target_only' for row in candidates),
+        'n_with_examples': sum(row['review_input_mode'] == 'target_with_examples' for row in candidates),
         **{status: sum(row['status'] == status for row in candidates) for status in (
             'classified_target', 'classified_non_target', 'classification_unresolved',
             'high_score_unclassified', 'low_score_unclassified')},

@@ -25,6 +25,8 @@
       "semantic_execution": true,
       "problem_goal_execution": true,
       "physical_parallel": true,
+      "identity_group_execution": true,
+      "observation_group_execution": true,
       "python": ".venv/vision/Scripts/python.exe",
       "detector": "yolo",
       "targeted_recovery": true,
@@ -70,14 +72,8 @@
         "pollen_grain",
         "other"
       ],
-      "image_exemplar_audit": true,
-      "image_exemplar_audit_min_det_score": 0.8,
-      "image_exemplar_audit_max_crops": 6,
-      "image_exemplar_audit_skip_classified": true,
-      "image_exemplar_bank": "config/feature_exemplar_bank.json",
-      "image_exemplar_positive": 4,
-      "image_exemplar_negative": 4,
-      "image_exemplar_seconds": 60,
+      "identity_review_bank": "config/identity_review_bank.json",
+      "identity_review_cnn_margin": 0.15,
       "cnn_weights": "分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/best.pt",
       "cnn_meta": "分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/model_meta.json",
       "cnn_threshold": 0.75,
@@ -88,6 +84,7 @@
       "fast_classify_max_per_view": 3,
       "classify_batch_enabled": true,
       "context_compact": true,
+      "compact_view_ids": true,
       "context_recent_observations": 6,
       "context_recent_operations": 8,
       "tool_timeout_seconds": 180,
@@ -148,6 +145,7 @@
       "locate_expand": 1.5,
       "locate_min_box_side": 90,
       "locate_min_roi_side": 256,
+      "feature_crop_policy": "structure_v1",
       "box_quality_enabled": true,
       "box_quality_retry": true,
       "enabled_tools": [
@@ -159,9 +157,7 @@
         "measure_instances",
         "detect_region",
         "locate_feature",
-        "feature_scan",
-        "hybrid_scan",
-        "image_exemplar_audit"
+        "feature_scan"
       ],
       "fast_recovery_selection": "per_feature",
       "fast_recovery_roles": [

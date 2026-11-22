@@ -1,0 +1,114 @@
+{
+  "identity": "bc84c8109df66f225323e56ae83bb4b9d6cbfcadba95f0c080a80798f07c177e",
+  "parent": "80f784b68bd5125ee35e132c975f3aeba7a9beeb170103f4425cdd4d6533f53a",
+  "artifacts": {
+    "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\view_01.tif",
+      "sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "parents": [],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "detected:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "detected:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "detection",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\32635207063d548d\\detection\\crops.json",
+      "sha256": "f3cb68aaa5fbb1b2da0b900b37839f3967be2ad3abc32edd2ec2ae1d32ca7bbf",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01:pixels": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01:pixels",
+      "kind": "crop_pixels",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\17a0596add6a107b\\scan\\crops\\epidermis_cell_view_01_glm3df6d852daf1_01.png",
+      "sha256": "6eeec0526185ba18a6388d991d217f482d0c3a00014a8b310862fa0a7907436e",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "kind": "crop",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\17a0596add6a107b\\scan\\crops\\epidermis_cell_view_01_glm3df6d852daf1_01.json",
+      "sha256": "d0e76b5a4bd43d1162e0843ff8c0d5a96e66b67a9c209bf6e8bc558b7a645842",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01:pixels"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "identity_required": true,
+      "box_source": "glm",
+      "box_quality": "low_detail",
+      "box_quality_score": 0.3177,
+      "box_quality_flags": [
+        "low_detail"
+      ],
+      "box_quality_metrics": {
+        "std": 0.0584,
+        "edge": 0.00628,
+        "width": 411,
+        "height": 512,
+        "area_ratio": 0.0377
+      },
+      "box_quality_retry": false,
+      "det_score": 0.65,
+      "det_confidence": "medium",
+      "detection_tool": "feature_scan",
+      "valid": true
+    },
+    "scanned:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell": {
+      "id": "scanned:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell",
+      "kind": "detection",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\17a0596add6a107b\\scan\\scan_result.json",
+      "sha256": "c6eaf71065e7cef9831815f66b7e0ced99d0dd70a156192c440922745e868bbb",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01": {
+      "id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "kind": "classification",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\25b4d7e8cd153f98\\classification\\classification.json",
+      "sha256": "8b5604522e2c1a80bfef9808d9e450fb6190d69ca376bc256891e0ad4eab95a6",
+      "parents": [
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "feature_id": "",
+      "label": "身份待定",
+      "classification_tool": "classify_target",
+      "requested_feature_id": "epidermis_cell",
+      "granularity": "clump",
+      "reject": "unreadable",
+      "glm_confidence": "low",
+      "yolo_confidence": null,
+      "confidence_source": "glm",
+      "confidence_score": 0.3,
+      "review_required": false,
+      "review_reason": "身份待定，目标图未报告可定位的鉴别结构",
+      "visual_identity_status": "pending",
+      "identity_confidence": "low",
+      "glm_confidence_score": 0.3,
+      "identity_verified": false,
+      "identity_basis": "classifier_confidence",
+      "identity_review": false,
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "e7955885a7a4796cb85f142dcd07e5c68f1e0fd61c51454c0b8ce92e7bd2db65"
+}

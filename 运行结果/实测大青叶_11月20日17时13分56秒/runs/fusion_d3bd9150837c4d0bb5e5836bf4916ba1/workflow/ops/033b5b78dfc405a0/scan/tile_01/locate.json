@@ -1,0 +1,19 @@
+{
+  "tool": "locate_feature",
+  "source": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_03.jpg",
+  "output": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\033b5b78dfc405a0\\scan\\tile_01\\detection",
+  "roi": [
+    1024,
+    0,
+    2048,
+    768
+  ],
+  "feature_id": "fiber",
+  "px_per_um": null,
+  "locate_expand": 1.5,
+  "locate_min_box_side": 90,
+  "locate_min_roi_side": 256,
+  "feature_crop_policy": "structure_v1",
+  "feature_hint": "目标正例：纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离 易混负例（不要当目标）：表皮细胞：片状/多边形边界；导管：管腔/环纹/网纹；石细胞：厚壁/胞腔；分泌组织：油室/油管/腔隙",
+  "existing_boxes": []
+}

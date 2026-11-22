@@ -28,6 +28,9 @@ def project(runtime, *, scope_id=None, measurement_id=None):
                 (measurement_id is not None and measurement_id not in entry['depends_on'])):
             continue
         row=copy.deepcopy(entry['data']);row.pop('quality_assessment',None)
+        frame = row.get('crop_frame')
+        if frame is not None and (not isinstance(frame, dict) or frame.get('status') != 'valid'):
+            continue
         scope=entry['scope'];seg=snap['artifacts'].get(scope,{})
         qa=session.assessment(seg)
         if qa is None:continue  # 旧工件无新评估，保持保守。
@@ -45,7 +48,8 @@ def project(runtime, *, scope_id=None, measurement_id=None):
         if not qa['integrity'] or not qa['uses']['existence']['allowed']:continue
         # 仅投影，不修改原记录旗标。按量纲显式剥离不允许的量化和形状。
         pd=row.get('primary_dimension','');use=dimension_use(pd)
-        if not qa['uses'][use]['allowed'] or use=='area' or not any(x in pd for x in ('width','feret_max')):
+        coarse = 'coarse_quant' in contracts.parse_flags(row.get('flags'))
+        if coarse or not qa['uses'][use]['allowed'] or use=='area' or not any(x in pd for x in ('width','feret_max')):
             row['primary_value_um']=None;row['calibration_status']='unqualified'
         row['flags']=[f for f in contracts.parse_flags(row.get('flags')) if f!='igm_review']
         if not qa['uses']['morphology']['allowed']:
@@ -54,6 +58,6 @@ def project(runtime, *, scope_id=None, measurement_id=None):
         for key in list(row):
             if any(s in key for s in ('feret','width','area','perimeter')) and key not in {'primary_dimension'}:
                 field_use=dimension_use(key)
-                if not qa['uses'][field_use]['allowed']:row[key]=None
+                if coarse or not qa['uses'][field_use]['allowed']:row[key]=None
         rows.append(row)
     return rows

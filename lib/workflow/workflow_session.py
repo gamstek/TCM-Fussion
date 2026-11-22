@@ -29,7 +29,7 @@ from TCM_Fusion.lib.evidence.instance_ledger import attempt as instance_attempt,
 
 
 TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','classify_crops_batch','measure_instances','detect_region',
-       'locate_feature','feature_scan','hybrid_scan','image_exemplar_audit')
+       'locate_feature','feature_scan','hybrid_scan')
 
 
 class WorkflowSession:
@@ -38,12 +38,17 @@ class WorkflowSession:
         import threading
         self.cancel_event=threading.Event()
         self.config=copy.deepcopy(config);self.sample_id=runtime.sample_id
+        self.config.setdefault('fast_recovery_selection', 'legacy_bundle')
         if self.config.get('agent_policy') == 'adaptive_v2':
             self.config.setdefault('physical_parallel',True)
             self.config.setdefault('max_parallel',4)
         self.python=interpreter(config.get('python'));self.allow_network=allow_network
         self.yolo_signature = {}
         self.cnn_signature = None
+        self.identity_review_bank = None
+        if config.get('identity_review_bank'):
+            from TCM_Fusion.lib.vision.identity_review import load_review_bank
+            self.identity_review_bank = load_review_bank(config['identity_review_bank'])
         if config.get('detector', 'yolo') != 'yolo':
             raise IntegrationError('CONFIG_INVALID', '出框后端仅支持 YOLO')
         if not runtime.simulation:
@@ -75,7 +80,9 @@ class WorkflowSession:
                               'config':config,'simulation':runtime.simulation,'vlm':runtime.config_identity,
                               'backend':self.code_signature,'python':file_hash(self.python),
                               **({'yolo': self.yolo_signature} if self.yolo_signature else {}),
-                              **({'stage2':self.cnn_signature} if self.cnn_signature else {})})
+                              **({'stage2':self.cnn_signature} if self.cnn_signature else {}),
+                              **({'identity_review_bank': self.identity_review_bank['sha256']}
+                                 if self.identity_review_bank else {})})
         self.store=EvidenceStore(self.root/'evidence',self.identity)
         self.budget_path=self.root/'resources.json';self.operations=self.root/'operations.json'
         self.timeline_path=self.root/'action_timeline.json'
@@ -211,7 +218,16 @@ class WorkflowSession:
     def purpose_quality(self):
         return self.config.get('quality_evaluation','legacy')=='purpose_v1'
 
-    def crop_segmentation_admission(self, target):
+    def crop_granularity(self, crop, meta):
+        identity = self.store.current()['artifacts'].get('classification:' + crop['id'], {})
+        reviewed = None
+        if identity.get('valid'):
+            reviewed = identity.get('granularity')
+            if reviewed is None:
+                reviewed = read_json(identity['path']).get('granularity')
+        return contracts.effective_granularity(meta.granularity, reviewed)
+
+    def crop_segmentation_admission(self, target, *, classification=None):
         """裁图纹理只作建议；低细节图须有同类别身份确认才能尝试分割。
 
         供工具提议与规划摘要共用，只判断裁图/身份；标定、预算和mask仍走原检查，
@@ -221,6 +237,11 @@ class WorkflowSession:
         quality = target.get('box_quality')
         result = {'quality': quality, 'allowed': True, 'reason': 'existing_prerequisites',
                   'quality_advisory_only': False, 'grants_dimension_evidence': False}
+        if classification is None and (quality == 'low_detail' or self.config.get('identity_review_bank')):
+            classification = self.store.current()['artifacts'].get('classification:' + target['id'], {})
+        classification = classification or {}
+        if classification.get('valid') and classification.get('visual_identity_status') == 'pending':
+            return {**result, 'allowed': False, 'reason': 'visual_identity_pending'}
         if not self.config.get('box_quality_enabled', True):
             return result
         if quality == 'blank':
@@ -228,7 +249,6 @@ class WorkflowSession:
         if quality != 'low_detail':
             return result
         result.update(quality_advisory_only=True)
-        classification = self.store.current()['artifacts'].get('classification:' + target['id'], {})
         if not classification.get('valid') or not classification.get('identity_verified'):
             return {**result, 'allowed': False, 'reason': 'identity_confirmation_required'}
         meta = contracts.CropMeta.from_json(target['path'])
@@ -440,7 +460,7 @@ class WorkflowSession:
                     continue
                 dim = quant.get('dim')
                 for record in self.runtime.records:
-                    if record.get('feature') != feature_id:
+                    if record.get('feature') != feature_id or 'coarse_quant' in contracts.parse_flags(record.get('flags')):
                         continue
                     value = record.get(dim)
                     if not finite_number(value, minimum=0):
@@ -484,7 +504,7 @@ class WorkflowSession:
         scan_enabled = self.config.get('feature_scan_enabled', True)
         if scan_enabled and self.config.get('fast_recovery_selection', 'legacy_bundle') == 'per_feature':
             targets.update(self.fast_recovery_targets(arts))
-        elif scan_enabled:
+        elif scan_enabled and self.config.get('hybrid_scan_enabled', True):
             # Compatibility: 旧配置仍保留每图一次 required 合并补扫。
             operations=read_json(self.operations)['entries']
             required=[]
@@ -603,7 +623,15 @@ class WorkflowSession:
         from TCM_Fusion.lib.runtime.probe_budget import enabled, available
         unified = enabled(self.runtime)
         options = self.recovery_options()
-        present = set().union(*self._classified_features_by_image(arts).values())
+        from TCM_Fusion.lib.evidence.evidence_projection import supports_criterion
+        satisfied = set()
+        if options and any(a.get('valid') and a.get('kind') == 'measurement' for a in arts.values()):
+            from TCM_Fusion.lib.evidence.purpose_evidence import project
+            records = project(self.runtime) if self.purpose_quality() else self.store.verified_records()
+            checks = self.runtime._score_rules([], self.config.get('min_support_features'),
+                                               records=records)['decision']['ranking']
+            satisfied = {(row['id'], c['feature_id'], c['role']) for row in checks
+                         for c in row['checks'] if supports_criterion(c)}
         entries = list(read_json(self.operations)['entries'].values())
         feature_cap = max(1, int(self.config.get('fast_fallback_max_features', 2)))
         locate_cap = max(1, int(self.config.get('fast_fallback_max_locate_calls', 6)))
@@ -622,7 +650,8 @@ class WorkflowSession:
                                  and any(c.get('role')=='supporting' for c in (row.get('criteria') or []))}
         out = {}
         for image, info in self.runtime.images.items():
-            if not arts.get('detected:' + image, {}).get('valid'):
+            detection = arts.get('detected:' + image, {})
+            if not detection.get('valid') or detection.get('source_size_wh') == [1, 1]:
                 continue
             crops = [(cid, a) for cid, a in arts.items()
                      if a.get('valid') and a.get('kind') == 'crop' and a.get('image_id') == image]
@@ -647,7 +676,8 @@ class WorkflowSession:
             for option in options:
                 fid = option['feature_id']
                 key = prefix + fid
-                if fid in present or key in attempted:
+                if key in attempted or all((c['candidate_id'], fid, c['role']) in satisfied
+                                           for c in option['criteria']):
                     continue
                 roles={c.get('role') for c in option.get('criteria') or []}
                 support_candidates={c.get('candidate_id') for c in option.get('criteria') or []
@@ -683,7 +713,8 @@ class WorkflowSession:
         supported = {fid for label, fid in FEATURE_ID.items() if label in CLASSIFY_HINTS}
         measured = {record.get('feature_id') or record.get('feature')
                     for record in self.store.verified_records()
-                    if finite_number(record.get('primary_value_um'), minimum=1e-12)}
+                    if finite_number(record.get('primary_value_um'), minimum=1e-12)
+                    and 'coarse_quant' not in contracts.parse_flags(record.get('flags'))}
         return list(dict.fromkeys(c['feature'] for row in criteria_diff(r.kb, interest['ids'], {})
                                   for c in row['criteria'] if c['role'] == 'required'
                                   and c['feature'] in supported and c['feature'] not in measured))
@@ -695,7 +726,8 @@ class WorkflowSession:
         if tool in {'segment_instance','detect_region','locate_feature'}:
             scale='scale:'+target['image_id']
             if scale in arts and arts[scale]['valid']:ids+=[scale]
-        if tool == 'segment_instance' and target.get('identity_required'):
+        if tool == 'segment_instance' and (target.get('identity_required') or
+                arts.get('classification:'+target['id'], {}).get('valid')):
             ids.append('classification:'+target['id'])
         return sorted(set(ids))
 
@@ -855,15 +887,13 @@ class WorkflowSession:
                 if not any(a['action_id'] == action['action_id'] for a in out):
                     out.append(action)
         crops=[]
-        audit_done=sum(1 for row in done.values()
-                       if row.get('tool')=='image_exemplar_audit')
-        audit_cap=max(1,int(self.config.get('image_exemplar_audit_max_crops',6)))
         target_map=self.targets()
         for tid,t in target_map.items():
             tool=None;image=t['image_id']
             origin = t if t.get('kind')=='crop' else arts.get(t.get('crop_id'), {})
             if (t.get('kind') == 'segmentation' and origin
-                    and not self.crop_segmentation_admission(origin)['allowed']):
+                    and not self.crop_segmentation_admission(
+                        origin, classification=arts.get('classification:'+origin['id'], {}))['allowed']):
                 continue
             if origin.get('identity_required') and paused_features:
                 meta=contracts.CropMeta.from_json(origin['path'])
@@ -904,22 +934,11 @@ class WorkflowSession:
                     # stage2/CNN 很快：所有候选都先识别，不因框质量或高分绕过而跳过分类证据；
                     # fast 模式对普通 YOLO crop 设置每视野上限，避免几十个低价值 crop 串行吃满预算。
                     offer('classify_target', t, (2, 'classify_all_crops', tid))
-                if not self.crop_segmentation_admission(t)['allowed']:
+                if not self.crop_segmentation_admission(t, classification=classification)['allowed']:
                     continue
                 if (t.get('identity_required')
                         and not classification.get('identity_verified')):
                     continue
-                if self.config.get('image_exemplar_audit', False) and audit_done<audit_cap:
-                    meta=contracts.CropMeta.from_json(t['path'])
-                    score=0.0
-                    try:score=float(t.get('det_score') or 0)
-                    except (TypeError,ValueError):pass
-                    skip_classified=bool(self.config.get('image_exemplar_audit_skip_classified',True)
-                        and classification.get('identity_verified'))
-                    if (meta.feature_id and score>=float(self.config.get('image_exemplar_audit_min_det_score',.8))
-                            and not skip_classified):
-                        offer('image_exemplar_audit', t, (2, 'image_exemplar_audit', tid))
-                        audit_done+=1
                 scale=arts.get('scale:'+image,{})
                 seg=arts.get('seg:'+tid,{})
                 review_measure=bool(review_plan and review_plan['target_id']=='seg:'+tid)
@@ -1011,6 +1030,7 @@ class WorkflowSession:
             image = value.get('image_id')
             feature = value.get('feature_id')
             if (value.get('valid') and value.get('kind') == 'classification'
+                    and value.get('identity_verified', self.config.get('fast_recovery_selection','legacy_bundle') == 'legacy_bundle')
                     and image in self.runtime.images and isinstance(feature, str) and feature.strip()):
                 features.setdefault(image, set()).add(feature)
         return features
@@ -1230,7 +1250,7 @@ class WorkflowSession:
             # 类别复核是一次受控视觉观察：只占观察/网络预算，不挤占测量所需的重算额度；
             # 其网络请求由同一worker内的HTTP守卫按请求键记账，这里不重复预约。
             pool=('initialization' if tool=='detect_fov_initial' else
-                  'observation' if tool in {'classify_target','image_exemplar_audit'} else 'recompute')
+                  'observation' if tool=='classify_target' else 'recompute')
             from TCM_Fusion.lib.runtime.probe_budget import describe
             self.charge(pool,key,network=tool!='classify_target',
                         probe=describe(self.runtime,action,target))
@@ -1374,7 +1394,11 @@ class WorkflowSession:
                 parents = target['parents']
             replacements=read_json(completion).get('replacements',{}) if tool=='detect_region' else {}
             for m in metas:
-                if file_hash(m.source_image_path)!=self.runtime.images[image]['sha256']:
+                source_sha = self.runtime.images[image]['sha256']
+                frame = m.raw.get('feature_window')
+                if (file_hash(m.source_image_path) != source_sha
+                        or (frame is not None
+                            and (not isinstance(frame, dict) or frame.get('source_sha256') != source_sha))):
                     raise IntegrationError('SAMPLE_MISMATCH','检测产物不属于绑定原图')
                 cid='crop:'+image+':'+m.crop_id
                 if m.crop_id in replacements:
@@ -1394,7 +1418,9 @@ class WorkflowSession:
                     ('scanned:'+image if tool=='feature_scan' else 'detected:'+target['id']))
             if target.get('fast_recovery'):
                 marker = 'scanned:' + image + ':' + target['feature_id']
-            items.append(self._art(marker,'detection',completion,parents,image_id=image))
+            dimensions = read_json(completion).get('image_size') if tool == 'detect_fov_initial' else None
+            items.append(self._art(marker,'detection',completion,parents,image_id=image,
+                                   **({'source_size_wh': dimensions} if dimensions else {})))
             scales={m.px_per_um for m in metas if finite_number(m.px_per_um,minimum=1e-12)}
             if len(scales)==1 and not self.store.current()['artifacts'].get('scale:'+image,{}).get('valid'):
                 scale_file=Path(completion).parent/'accepted_scale.json'
@@ -1453,14 +1479,6 @@ class WorkflowSession:
             items.append(self._art(sid,'segmentation',root/'instances.json',deps,image_id=image,
                                    masks=str(root/'masks'),quality=result['quality'],crop_id=target['id'],
                                    **extra))
-        elif tool=='image_exemplar_audit':
-            root=Path(result['audit']);doc=read_json(root)
-            if doc.get('schema') not in {'image-exemplar-audit/v1','image-exemplar-audit/v2'}:
-                raise IntegrationError('AUDIT_OUTPUT_INVALID','图片示例审计 schema 不匹配')
-            items.append(self._art('image_audit:'+target['id'],'image_audit',root,[target['id']],
-                                   image_id=image, target_id=target['id'],
-                                   contact_sheet=result.get('contact_sheet'),
-                                   review_status='auto_unreviewed', non_blocking=True))
         elif tool=='classify_crops_batch':
             parent=self.store.current()['version'];committed=0
             crops={c['id']:c for c in target.get('crops') or []}
@@ -1483,16 +1501,35 @@ class WorkflowSession:
             fid=str(doc.get('feature_id') or '').strip();label=str(doc.get('label') or '').strip()
             if not label:raise IntegrationError('CLASSIFY_EMPTY','分类结果缺类别')
             cid='classification:'+target['id']
+            meta=contracts.CropMeta.from_json(target['path'])
+            grain=contracts.effective_granularity(meta.granularity, doc.get('granularity'))
+            visual = doc.get('visual_identity') or {}
+            visual_status = visual.get('status')
+            review_status = doc.get('reject') == 'pending_review'
             items.append(self._art(cid,'classification',root/'classification.json',[target['id']],
                                    image_id=image,crop_id=target.get('crop_id') or target['id'],
                                    feature_id=fid,label=label,classification_tool=classification_source,
+                                   requested_feature_id=meta.feature_id, granularity=grain, reject=doc.get('reject'),
                                    glm_confidence=doc.get('glm_confidence'),
                                    yolo_confidence=doc.get('yolo_confidence'),
                                    confidence_source=doc.get('confidence_source'),
                                    confidence_score=doc.get('confidence_score'),
-                                   review_required=bool(doc.get('reject') == 'pending_review'),
-                                   review_reason=doc.get('reason') if doc.get('reject') == 'pending_review' else None))
-            meta=contracts.CropMeta.from_json(target['path'])
+                                   review_required=review_status,
+                                   review_reason=doc.get('reason') if review_status or visual_status == 'pending' else None,
+                                   **({'visual_identity_status': visual_status} if visual_status else {})))
+            # 首次复核也可能晚于原 YOLO 框的测量。保留存在性，撤回该范围的旧量纲资格。
+            if grain != 'instance':
+                snapshot = self.store.current()
+                scope = 'seg:' + target['id']
+                segment = snapshot['artifacts'].get(scope, {})
+                if cid not in segment.get('parents', []):
+                    for previous in snapshot['records']:
+                        if previous['scope'] == scope:
+                            replace = [scope]
+                            row = copy.deepcopy(previous)
+                            row['data']['flags'] = sorted(set(contracts.parse_flags(row['data'].get('flags'))) | {'coarse_quant'})
+                            row['depends_on'] = list(dict.fromkeys([*row['depends_on'], cid]))
+                            rows.append(row)
             # 原裁图与改判裁图共用同一次分类的置信度判定。
             # 只有“身份门要求”的 crop 才强制 fid==crop.feature_id；普通 YOLO crop 允许
             # 高置信分类改判，否则这些 classification 永远进不了 B 规则。
@@ -1522,7 +1559,9 @@ class WorkflowSession:
                 new_id=f"{meta.crop_id}__as_{fid}"
                 side=contracts.crop_sidecar(new_id,str(Path(meta.png).resolve()),meta.source_image_path,
                     meta.stem,fid,label,'',meta.px_per_um,meta.tight_box,meta.tight_box_local,
-                    meta.loose_box,meta.crop_size,meta.pad_info,meta.granularity)
+                    meta.loose_box,meta.crop_size,meta.pad_info,grain)
+                if meta.raw.get('feature_window'):
+                    side['feature_window'] = meta.raw['feature_window']
                 p=root/(new_id+'.json');write_json(p,side)
                 new_crop_id='crop:'+image+':'+new_id
                 reviewed = items[-1]
@@ -1547,6 +1586,9 @@ class WorkflowSession:
             items.append(self._art(mid,'measurement',path,parents,image_id=image,
                                    diagnostic_review=bool(result.get('diagnostic_review')),
                                    component_selection=result.get('component_selection')))
+            snapshot = self.store.current()['artifacts']
+            crop = snapshot[snapshot[target['id']]['crop_id']]
+            grain = self.crop_granularity(crop, contracts.CropMeta.from_json(crop['path']))
             for rec in parsed:
                 import math
                 scale=self.store.current()['artifacts'].get('scale:'+image,{})
@@ -1555,6 +1597,8 @@ class WorkflowSession:
                     not math.isclose(rec.calibration_px_per_um,scale['px_per_um'],rel_tol=1e-9)):
                     raise IntegrationError('MEASUREMENT_SCOPE','测量视野或尺度不合法')
                 raw=copy.deepcopy(rec.raw);raw.pop('herb',None)
+                if grain != 'instance':
+                    raw['flags'] = sorted(set(contracts.parse_flags(raw.get('flags'))) | {'coarse_quant'})
                 raw.pop('quality_assessment',None)  # 外来字段不能赋予用途资格。
                 if result.get('diagnostic_review'):
                     raw['diagnostic_review']=True

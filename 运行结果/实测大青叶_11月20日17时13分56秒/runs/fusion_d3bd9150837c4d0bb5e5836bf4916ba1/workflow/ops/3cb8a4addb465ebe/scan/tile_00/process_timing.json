@@ -1,0 +1,7 @@
+{
+  "started_at": 1795166555.3344283,
+  "ended_at": 1795166565.6182387,
+  "elapsed_seconds": 10.297,
+  "returncode": 0,
+  "scope": "subprocess including local startup and cleanup"
+}

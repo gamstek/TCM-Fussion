@@ -6,11 +6,12 @@
 
 主要定义：
 - main: 解析 `--context`，读取绑定 crop（可选 `tight_box_local` 二次裁剪），调用一次分类并写 `classification.json`。
+- 视觉身份复核：用已绑定的对照计划准备同图幅输入，校验模型报告的可见结构。
 - geometry_context: 与 `detect_sample._geom_ctx` 同口径的纯几何提示文本（长宽比、尺寸、占画面比例），只影响提示词，不参与判定。
 - 模块级约束: 文字型 confidence 按 glm high=0.90 / medium=0.65 / low=0.30 折算为 `confidence_score`。
 
 关联：
-- 直接依赖 「lib/runtime/storage.py」。
+- 直接依赖 「lib/runtime/storage.py」、「lib/vision/identity_review.py」。
 - 从项目根通过 python -m 启动。
 """
 import argparse
@@ -54,12 +55,20 @@ def main(argv=None):
     config = load_config()
     key = resolve_key(config)
     context = geometry_context(ctx['tight_box'], width, height) if ctx.get('tight_box') else ""
-    hints = str(ctx.get('feature_hint') or '').strip()
-    if hints:
-        context = (context + "\n" + hints).strip()
-    value = classify_crop(crop, config['vlm'], key, ctx=context)
+    review = ctx.get('identity_review')
+    if review is None:
+        hints = str(ctx.get('feature_hint') or '').strip()
+        if hints:
+            context = (context + "\n" + hints).strip()
+        value = classify_crop(crop, config['vlm'], key, ctx=context)
+    else:
+        from TCM_Fusion.lib.vision.identity_review import finish_review, prepare_review
+        value = classify_crop(crop, config['vlm'], key,
+                              review_input=lambda native, baseline: prepare_review(native, baseline, review, context))
     if not isinstance(value, dict):
         raise IntegrationError('CLASSIFY_OUTPUT_INVALID', '分类返回不是结构化对象')
+    if review is not None:
+        value = finish_review(value)
     out = Path(ctx['output'])
     out.mkdir(parents=True, exist_ok=True)
     raw_conf = value.get('confidence')

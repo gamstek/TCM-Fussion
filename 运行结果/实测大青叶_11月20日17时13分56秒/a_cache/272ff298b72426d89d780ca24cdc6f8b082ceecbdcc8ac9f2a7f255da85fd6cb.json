@@ -1,0 +1,2083 @@
+{
+  "status": "ok",
+  "provenance": "original_cli",
+  "ranking": [
+    {
+      "rank": 1,
+      "label": "大青叶",
+      "probability": 0.6265
+    },
+    {
+      "rank": 2,
+      "label": "桔梗",
+      "probability": 0.1921
+    },
+    {
+      "rank": 3,
+      "label": "地黄",
+      "probability": 0.1504
+    },
+    {
+      "rank": 4,
+      "label": "秦皮",
+      "probability": 0.008
+    },
+    {
+      "rank": 5,
+      "label": "穿心莲",
+      "probability": 0.0039
+    },
+    {
+      "rank": 6,
+      "label": "党参联结乳管",
+      "probability": 0.0038
+    },
+    {
+      "rank": 7,
+      "label": "龙胆",
+      "probability": 0.0034
+    },
+    {
+      "rank": 8,
+      "label": "柴胡",
+      "probability": 0.0026
+    },
+    {
+      "rank": 9,
+      "label": "香附",
+      "probability": 0.0025
+    },
+    {
+      "rank": 10,
+      "label": "乌梅",
+      "probability": 0.0023
+    },
+    {
+      "rank": 11,
+      "label": "金银花",
+      "probability": 0.0011
+    },
+    {
+      "rank": 12,
+      "label": "苍术",
+      "probability": 0.0007
+    },
+    {
+      "rank": 13,
+      "label": "防风",
+      "probability": 0.0006
+    },
+    {
+      "rank": 14,
+      "label": "大黄淀粉粒",
+      "probability": 0.0004
+    },
+    {
+      "rank": 15,
+      "label": "麻黄",
+      "probability": 0.0001
+    },
+    {
+      "rank": 16,
+      "label": "郁金",
+      "probability": 0.0001
+    },
+    {
+      "rank": 17,
+      "label": "板蓝根木纤维",
+      "probability": 0.0001
+    },
+    {
+      "rank": 18,
+      "label": "白芍",
+      "probability": 0.0001
+    },
+    {
+      "rank": 19,
+      "label": "鱼腥草",
+      "probability": 0.0001
+    },
+    {
+      "rank": 20,
+      "label": "水牛角",
+      "probability": 0.0001
+    },
+    {
+      "rank": 21,
+      "label": "黄连",
+      "probability": 0.0001
+    },
+    {
+      "rank": 22,
+      "label": "木香木纤维",
+      "probability": 0.0001
+    },
+    {
+      "rank": 23,
+      "label": "马齿苋",
+      "probability": 0.0001
+    },
+    {
+      "rank": 24,
+      "label": "淡竹叶",
+      "probability": 0.0001
+    },
+    {
+      "rank": 25,
+      "label": "枳壳",
+      "probability": 0.0001
+    },
+    {
+      "rank": 26,
+      "label": "陈皮",
+      "probability": 0.0001
+    },
+    {
+      "rank": 27,
+      "label": "滑石",
+      "probability": 0.0
+    },
+    {
+      "rank": 28,
+      "label": "木香菊糖",
+      "probability": 0.0
+    },
+    {
+      "rank": 29,
+      "label": "益母草",
+      "probability": 0.0
+    },
+    {
+      "rank": 30,
+      "label": "白头翁",
+      "probability": 0.0
+    },
+    {
+      "rank": 31,
+      "label": "青黛",
+      "probability": 0.0
+    },
+    {
+      "rank": 32,
+      "label": "甘草",
+      "probability": 0.0
+    },
+    {
+      "rank": 33,
+      "label": "牡丹皮",
+      "probability": 0.0
+    },
+    {
+      "rank": 34,
+      "label": "黄芪",
+      "probability": 0.0
+    },
+    {
+      "rank": 35,
+      "label": "栀子",
+      "probability": 0.0
+    },
+    {
+      "rank": 36,
+      "label": "牡蛎",
+      "probability": 0.0
+    },
+    {
+      "rank": 37,
+      "label": "广藿香",
+      "probability": 0.0
+    },
+    {
+      "rank": 38,
+      "label": "荆芥外果皮细胞",
+      "probability": 0.0
+    },
+    {
+      "rank": 39,
+      "label": "苦杏仁",
+      "probability": 0.0
+    },
+    {
+      "rank": 40,
+      "label": "菟丝子",
+      "probability": 0.0
+    },
+    {
+      "rank": 41,
+      "label": "射干",
+      "probability": 0.0
+    },
+    {
+      "rank": 42,
+      "label": "玄明粉",
+      "probability": 0.0
+    },
+    {
+      "rank": 43,
+      "label": "板蓝根石细胞",
+      "probability": 0.0
+    },
+    {
+      "rank": 44,
+      "label": "红花",
+      "probability": 0.0
+    },
+    {
+      "rank": 45,
+      "label": "茯苓",
+      "probability": 0.0
+    },
+    {
+      "rank": 46,
+      "label": "淫羊藿",
+      "probability": 0.0
+    },
+    {
+      "rank": 47,
+      "label": "石膏",
+      "probability": 0.0
+    },
+    {
+      "rank": 48,
+      "label": "麦芽",
+      "probability": 0.0
+    },
+    {
+      "rank": 49,
+      "label": "大黄草酸钙簇晶",
+      "probability": 0.0
+    },
+    {
+      "rank": 50,
+      "label": "大黄导管",
+      "probability": 0.0
+    },
+    {
+      "rank": 51,
+      "label": "党参石细胞",
+      "probability": 0.0
+    },
+    {
+      "rank": 52,
+      "label": "艾叶",
+      "probability": 0.0
+    },
+    {
+      "rank": 53,
+      "label": "知母",
+      "probability": 0.0
+    },
+    {
+      "rank": 54,
+      "label": "槟榔",
+      "probability": 0.0
+    },
+    {
+      "rank": 55,
+      "label": "黄芩",
+      "probability": 0.0
+    },
+    {
+      "rank": 56,
+      "label": "苦参",
+      "probability": 0.0
+    },
+    {
+      "rank": 57,
+      "label": "葶苈子",
+      "probability": 0.0
+    },
+    {
+      "rank": 58,
+      "label": "桑白皮",
+      "probability": 0.0
+    },
+    {
+      "rank": 59,
+      "label": "诃子",
+      "probability": 0.0
+    },
+    {
+      "rank": 60,
+      "label": "玄参",
+      "probability": 0.0
+    },
+    {
+      "rank": 61,
+      "label": "茵陈",
+      "probability": 0.0
+    },
+    {
+      "rank": 62,
+      "label": "山楂",
+      "probability": 0.0
+    },
+    {
+      "rank": 63,
+      "label": "雄黄",
+      "probability": 0.0
+    },
+    {
+      "rank": 64,
+      "label": "厚朴",
+      "probability": 0.0
+    },
+    {
+      "rank": 65,
+      "label": "王不留行",
+      "probability": 0.0
+    },
+    {
+      "rank": 66,
+      "label": "连翘",
+      "probability": 0.0
+    },
+    {
+      "rank": 67,
+      "label": "肉桂",
+      "probability": 0.0
+    },
+    {
+      "rank": 68,
+      "label": "黄柏晶纤维",
+      "probability": 0.0
+    }
+  ],
+  "folds": 5,
+  "probability_precision": 4,
+  "calibrated": false,
+  "resident_models": false,
+  "coverage": "single_view",
+  "warning": "原CLI四位小数；保留原排序，不能冒充原始float概率或已校准置信度",
+  "fold_rankings": [
+    [
+      {
+        "rank": 1,
+        "label": "地黄",
+        "probability": 0.6138191819190979
+      },
+      {
+        "rank": 2,
+        "label": "大青叶",
+        "probability": 0.24914605915546417
+      },
+      {
+        "rank": 3,
+        "label": "桔梗",
+        "probability": 0.08147603273391724
+      },
+      {
+        "rank": 4,
+        "label": "穿心莲",
+        "probability": 0.01785263605415821
+      },
+      {
+        "rank": 5,
+        "label": "秦皮",
+        "probability": 0.011737754568457603
+      },
+      {
+        "rank": 6,
+        "label": "柴胡",
+        "probability": 0.005377210211008787
+      },
+      {
+        "rank": 7,
+        "label": "乌梅",
+        "probability": 0.003642179537564516
+      },
+      {
+        "rank": 8,
+        "label": "龙胆",
+        "probability": 0.003059319220483303
+      },
+      {
+        "rank": 9,
+        "label": "香附",
+        "probability": 0.0029828553088009357
+      },
+      {
+        "rank": 10,
+        "label": "苍术",
+        "probability": 0.0026438140776008368
+      },
+      {
+        "rank": 11,
+        "label": "防风",
+        "probability": 0.002255200408399105
+      },
+      {
+        "rank": 12,
+        "label": "大黄淀粉粒",
+        "probability": 0.0018897713162004948
+      },
+      {
+        "rank": 13,
+        "label": "郁金",
+        "probability": 0.0006519194575957954
+      },
+      {
+        "rank": 14,
+        "label": "金银花",
+        "probability": 0.0005079955444671214
+      },
+      {
+        "rank": 15,
+        "label": "黄连",
+        "probability": 0.0004383873601909727
+      },
+      {
+        "rank": 16,
+        "label": "麻黄",
+        "probability": 0.0003616628237068653
+      },
+      {
+        "rank": 17,
+        "label": "白芍",
+        "probability": 0.0002901978441514075
+      },
+      {
+        "rank": 18,
+        "label": "党参联结乳管",
+        "probability": 0.00026611858629621565
+      },
+      {
+        "rank": 19,
+        "label": "陈皮",
+        "probability": 0.00025164723047055304
+      },
+      {
+        "rank": 20,
+        "label": "鱼腥草",
+        "probability": 0.00014030616148374975
+      },
+      {
+        "rank": 21,
+        "label": "淡竹叶",
+        "probability": 0.00013222984853200614
+      },
+      {
+        "rank": 22,
+        "label": "马齿苋",
+        "probability": 0.00011395251203794032
+      },
+      {
+        "rank": 23,
+        "label": "木香菊糖",
+        "probability": 0.00010014689905801788
+      },
+      {
+        "rank": 24,
+        "label": "栀子",
+        "probability": 9.838584082899615e-05
+      },
+      {
+        "rank": 25,
+        "label": "板蓝根木纤维",
+        "probability": 8.402451931033283e-05
+      },
+      {
+        "rank": 26,
+        "label": "牡丹皮",
+        "probability": 6.826136814197525e-05
+      },
+      {
+        "rank": 27,
+        "label": "枳壳",
+        "probability": 5.958861220278777e-05
+      },
+      {
+        "rank": 28,
+        "label": "白头翁",
+        "probability": 5.331030843080953e-05
+      },
+      {
+        "rank": 29,
+        "label": "青黛",
+        "probability": 4.3647127313306555e-05
+      },
+      {
+        "rank": 30,
+        "label": "木香木纤维",
+        "probability": 4.0015325794229284e-05
+      },
+      {
+        "rank": 31,
+        "label": "射干",
+        "probability": 3.457638740655966e-05
+      },
+      {
+        "rank": 32,
+        "label": "滑石",
+        "probability": 3.365305747138336e-05
+      },
+      {
+        "rank": 33,
+        "label": "牡蛎",
+        "probability": 3.017699418705888e-05
+      },
+      {
+        "rank": 34,
+        "label": "益母草",
+        "probability": 2.9754850402241573e-05
+      },
+      {
+        "rank": 35,
+        "label": "红花",
+        "probability": 2.847872929123696e-05
+      },
+      {
+        "rank": 36,
+        "label": "苦杏仁",
+        "probability": 2.796337503241375e-05
+      },
+      {
+        "rank": 37,
+        "label": "荆芥外果皮细胞",
+        "probability": 2.792710074572824e-05
+      },
+      {
+        "rank": 38,
+        "label": "黄芪",
+        "probability": 2.3751770640956238e-05
+      },
+      {
+        "rank": 39,
+        "label": "大黄草酸钙簇晶",
+        "probability": 2.366765693295747e-05
+      },
+      {
+        "rank": 40,
+        "label": "大黄导管",
+        "probability": 2.3550283003714867e-05
+      },
+      {
+        "rank": 41,
+        "label": "菟丝子",
+        "probability": 1.8358427041675895e-05
+      },
+      {
+        "rank": 42,
+        "label": "茯苓",
+        "probability": 1.5977953808032908e-05
+      },
+      {
+        "rank": 43,
+        "label": "水牛角",
+        "probability": 1.5475467080250382e-05
+      },
+      {
+        "rank": 44,
+        "label": "板蓝根石细胞",
+        "probability": 1.4498452401312534e-05
+      },
+      {
+        "rank": 45,
+        "label": "槟榔",
+        "probability": 1.11560475488659e-05
+      },
+      {
+        "rank": 46,
+        "label": "黄芩",
+        "probability": 7.80047139414819e-06
+      },
+      {
+        "rank": 47,
+        "label": "麦芽",
+        "probability": 5.082145889900858e-06
+      },
+      {
+        "rank": 48,
+        "label": "淫羊藿",
+        "probability": 4.169617113802815e-06
+      },
+      {
+        "rank": 49,
+        "label": "葶苈子",
+        "probability": 3.7883128243265674e-06
+      },
+      {
+        "rank": 50,
+        "label": "苦参",
+        "probability": 3.779075314014335e-06
+      },
+      {
+        "rank": 51,
+        "label": "石膏",
+        "probability": 3.597884642658755e-06
+      },
+      {
+        "rank": 52,
+        "label": "艾叶",
+        "probability": 3.2196833217312815e-06
+      },
+      {
+        "rank": 53,
+        "label": "桑白皮",
+        "probability": 3.171438947902061e-06
+      },
+      {
+        "rank": 54,
+        "label": "玄参",
+        "probability": 3.0075761969783343e-06
+      },
+      {
+        "rank": 55,
+        "label": "广藿香",
+        "probability": 2.884220975829521e-06
+      },
+      {
+        "rank": 56,
+        "label": "玄明粉",
+        "probability": 2.683535512915114e-06
+      },
+      {
+        "rank": 57,
+        "label": "甘草",
+        "probability": 2.53663097282697e-06
+      },
+      {
+        "rank": 58,
+        "label": "诃子",
+        "probability": 1.8803832517733099e-06
+      },
+      {
+        "rank": 59,
+        "label": "王不留行",
+        "probability": 1.7294229337494471e-06
+      },
+      {
+        "rank": 60,
+        "label": "党参石细胞",
+        "probability": 1.6367072248613113e-06
+      },
+      {
+        "rank": 61,
+        "label": "雄黄",
+        "probability": 1.602268525857653e-06
+      },
+      {
+        "rank": 62,
+        "label": "山楂",
+        "probability": 1.5472198811039561e-06
+      },
+      {
+        "rank": 63,
+        "label": "厚朴",
+        "probability": 1.2061292409271118e-06
+      },
+      {
+        "rank": 64,
+        "label": "知母",
+        "probability": 9.79773176368326e-07
+      },
+      {
+        "rank": 65,
+        "label": "茵陈",
+        "probability": 3.03724277728179e-07
+      },
+      {
+        "rank": 66,
+        "label": "连翘",
+        "probability": 2.4160985390153655e-07
+      },
+      {
+        "rank": 67,
+        "label": "肉桂",
+        "probability": 2.398455762886442e-07
+      },
+      {
+        "rank": 68,
+        "label": "黄柏晶纤维",
+        "probability": 4.576611800644059e-08
+      }
+    ],
+    [
+      {
+        "rank": 1,
+        "label": "大青叶",
+        "probability": 0.9962589740753174
+      },
+      {
+        "rank": 2,
+        "label": "秦皮",
+        "probability": 0.0029857440385967493
+      },
+      {
+        "rank": 3,
+        "label": "桔梗",
+        "probability": 0.0003634913300629705
+      },
+      {
+        "rank": 4,
+        "label": "地黄",
+        "probability": 0.00016787364438641816
+      },
+      {
+        "rank": 5,
+        "label": "柴胡",
+        "probability": 4.996631105314009e-05
+      },
+      {
+        "rank": 6,
+        "label": "穿心莲",
+        "probability": 2.7067890187026933e-05
+      },
+      {
+        "rank": 7,
+        "label": "麻黄",
+        "probability": 2.399269214947708e-05
+      },
+      {
+        "rank": 8,
+        "label": "淡竹叶",
+        "probability": 1.8820031982613727e-05
+      },
+      {
+        "rank": 9,
+        "label": "黄芪",
+        "probability": 1.6756774130044505e-05
+      },
+      {
+        "rank": 10,
+        "label": "青黛",
+        "probability": 1.61730913532665e-05
+      },
+      {
+        "rank": 11,
+        "label": "党参联结乳管",
+        "probability": 1.567758954479359e-05
+      },
+      {
+        "rank": 12,
+        "label": "苍术",
+        "probability": 6.982971171964891e-06
+      },
+      {
+        "rank": 13,
+        "label": "防风",
+        "probability": 6.487142854894046e-06
+      },
+      {
+        "rank": 14,
+        "label": "木香木纤维",
+        "probability": 5.8081259339815006e-06
+      },
+      {
+        "rank": 15,
+        "label": "龙胆",
+        "probability": 5.715348379453644e-06
+      },
+      {
+        "rank": 16,
+        "label": "乌梅",
+        "probability": 5.488387614605017e-06
+      },
+      {
+        "rank": 17,
+        "label": "大黄淀粉粒",
+        "probability": 4.57020360045135e-06
+      },
+      {
+        "rank": 18,
+        "label": "陈皮",
+        "probability": 3.4872907690441934e-06
+      },
+      {
+        "rank": 19,
+        "label": "板蓝根木纤维",
+        "probability": 2.531644213377149e-06
+      },
+      {
+        "rank": 20,
+        "label": "水牛角",
+        "probability": 2.1945209027762758e-06
+      },
+      {
+        "rank": 21,
+        "label": "滑石",
+        "probability": 1.8679603499549557e-06
+      },
+      {
+        "rank": 22,
+        "label": "白芍",
+        "probability": 1.8560592707217438e-06
+      },
+      {
+        "rank": 23,
+        "label": "黄连",
+        "probability": 1.021222601593763e-06
+      },
+      {
+        "rank": 24,
+        "label": "桑白皮",
+        "probability": 8.13939664112695e-07
+      },
+      {
+        "rank": 25,
+        "label": "知母",
+        "probability": 8.118194614326057e-07
+      },
+      {
+        "rank": 26,
+        "label": "香附",
+        "probability": 7.537782948929816e-07
+      },
+      {
+        "rank": 27,
+        "label": "郁金",
+        "probability": 7.325886599574005e-07
+      },
+      {
+        "rank": 28,
+        "label": "金银花",
+        "probability": 6.954701916583872e-07
+      },
+      {
+        "rank": 29,
+        "label": "马齿苋",
+        "probability": 5.885679001949029e-07
+      },
+      {
+        "rank": 30,
+        "label": "牡丹皮",
+        "probability": 5.518679699889617e-07
+      },
+      {
+        "rank": 31,
+        "label": "木香菊糖",
+        "probability": 4.1092891933658393e-07
+      },
+      {
+        "rank": 32,
+        "label": "广藿香",
+        "probability": 3.7687317444579094e-07
+      },
+      {
+        "rank": 33,
+        "label": "艾叶",
+        "probability": 2.518100927773048e-07
+      },
+      {
+        "rank": 34,
+        "label": "茯苓",
+        "probability": 1.3434660672828613e-07
+      },
+      {
+        "rank": 35,
+        "label": "大黄导管",
+        "probability": 1.322500082778788e-07
+      },
+      {
+        "rank": 36,
+        "label": "牡蛎",
+        "probability": 1.2394733062137675e-07
+      },
+      {
+        "rank": 37,
+        "label": "苦参",
+        "probability": 1.2335065946444956e-07
+      },
+      {
+        "rank": 38,
+        "label": "黄芩",
+        "probability": 1.2305690688663162e-07
+      },
+      {
+        "rank": 39,
+        "label": "红花",
+        "probability": 1.2219095424370607e-07
+      },
+      {
+        "rank": 40,
+        "label": "诃子",
+        "probability": 1.1426035939621215e-07
+      },
+      {
+        "rank": 41,
+        "label": "鱼腥草",
+        "probability": 9.008094536966382e-08
+      },
+      {
+        "rank": 42,
+        "label": "甘草",
+        "probability": 8.522172123548444e-08
+      },
+      {
+        "rank": 43,
+        "label": "玄明粉",
+        "probability": 7.96028274407945e-08
+      },
+      {
+        "rank": 44,
+        "label": "板蓝根石细胞",
+        "probability": 6.784315331742619e-08
+      },
+      {
+        "rank": 45,
+        "label": "淫羊藿",
+        "probability": 6.69271500441937e-08
+      },
+      {
+        "rank": 46,
+        "label": "益母草",
+        "probability": 5.6711140672405236e-08
+      },
+      {
+        "rank": 47,
+        "label": "茵陈",
+        "probability": 4.713325552074821e-08
+      },
+      {
+        "rank": 48,
+        "label": "党参石细胞",
+        "probability": 4.394701846877069e-08
+      },
+      {
+        "rank": 49,
+        "label": "大黄草酸钙簇晶",
+        "probability": 3.989586616626184e-08
+      },
+      {
+        "rank": 50,
+        "label": "麦芽",
+        "probability": 2.74561120505723e-08
+      },
+      {
+        "rank": 51,
+        "label": "石膏",
+        "probability": 2.0981220316684812e-08
+      },
+      {
+        "rank": 52,
+        "label": "荆芥外果皮细胞",
+        "probability": 1.9684071261849567e-08
+      },
+      {
+        "rank": 53,
+        "label": "菟丝子",
+        "probability": 1.7989439271559604e-08
+      },
+      {
+        "rank": 54,
+        "label": "枳壳",
+        "probability": 1.4100319134513484e-08
+      },
+      {
+        "rank": 55,
+        "label": "雄黄",
+        "probability": 9.318408267233735e-09
+      },
+      {
+        "rank": 56,
+        "label": "白头翁",
+        "probability": 7.618210062787512e-09
+      },
+      {
+        "rank": 57,
+        "label": "槟榔",
+        "probability": 5.486532117515708e-09
+      },
+      {
+        "rank": 58,
+        "label": "厚朴",
+        "probability": 4.3813672689907435e-09
+      },
+      {
+        "rank": 59,
+        "label": "葶苈子",
+        "probability": 3.9235539261994745e-09
+      },
+      {
+        "rank": 60,
+        "label": "栀子",
+        "probability": 2.851526570424312e-09
+      },
+      {
+        "rank": 61,
+        "label": "苦杏仁",
+        "probability": 1.6184197315638471e-09
+      },
+      {
+        "rank": 62,
+        "label": "黄柏晶纤维",
+        "probability": 1.3984579050330126e-09
+      },
+      {
+        "rank": 63,
+        "label": "玄参",
+        "probability": 1.3508946183904413e-09
+      },
+      {
+        "rank": 64,
+        "label": "连翘",
+        "probability": 1.2841517849082607e-09
+      },
+      {
+        "rank": 65,
+        "label": "射干",
+        "probability": 5.839978500787879e-10
+      },
+      {
+        "rank": 66,
+        "label": "山楂",
+        "probability": 5.196463814804986e-10
+      },
+      {
+        "rank": 67,
+        "label": "肉桂",
+        "probability": 2.168899920773626e-10
+      },
+      {
+        "rank": 68,
+        "label": "王不留行",
+        "probability": 1.41627556904389e-10
+      }
+    ],
+    [
+      {
+        "rank": 1,
+        "label": "大青叶",
+        "probability": 0.9824862480163574
+      },
+      {
+        "rank": 2,
+        "label": "地黄",
+        "probability": 0.0074247149750590324
+      },
+      {
+        "rank": 3,
+        "label": "龙胆",
+        "probability": 0.002433016197755933
+      },
+      {
+        "rank": 4,
+        "label": "秦皮",
+        "probability": 0.0018728406867012382
+      },
+      {
+        "rank": 5,
+        "label": "香附",
+        "probability": 0.0017359666526317596
+      },
+      {
+        "rank": 6,
+        "label": "乌梅",
+        "probability": 0.0011411313898861408
+      },
+      {
+        "rank": 7,
+        "label": "党参联结乳管",
+        "probability": 0.0007978203357197344
+      },
+      {
+        "rank": 8,
+        "label": "桔梗",
+        "probability": 0.0005433337646536529
+      },
+      {
+        "rank": 9,
+        "label": "柴胡",
+        "probability": 0.0005114602972753346
+      },
+      {
+        "rank": 10,
+        "label": "水牛角",
+        "probability": 0.00023019379295874387
+      },
+      {
+        "rank": 11,
+        "label": "木香木纤维",
+        "probability": 0.0001671289064688608
+      },
+      {
+        "rank": 12,
+        "label": "苍术",
+        "probability": 0.00012528088700491935
+      },
+      {
+        "rank": 13,
+        "label": "金银花",
+        "probability": 7.969613943714648e-05
+      },
+      {
+        "rank": 14,
+        "label": "麻黄",
+        "probability": 7.916029426269233e-05
+      },
+      {
+        "rank": 15,
+        "label": "大黄淀粉粒",
+        "probability": 5.670099562848918e-05
+      },
+      {
+        "rank": 16,
+        "label": "穿心莲",
+        "probability": 5.4575433750869706e-05
+      },
+      {
+        "rank": 17,
+        "label": "青黛",
+        "probability": 4.079550853930414e-05
+      },
+      {
+        "rank": 18,
+        "label": "滑石",
+        "probability": 4.069719580002129e-05
+      },
+      {
+        "rank": 19,
+        "label": "板蓝根木纤维",
+        "probability": 3.7883164623053744e-05
+      },
+      {
+        "rank": 20,
+        "label": "淫羊藿",
+        "probability": 2.3124321160139516e-05
+      },
+      {
+        "rank": 21,
+        "label": "白芍",
+        "probability": 1.596549918758683e-05
+      },
+      {
+        "rank": 22,
+        "label": "益母草",
+        "probability": 1.2311583304835949e-05
+      },
+      {
+        "rank": 23,
+        "label": "广藿香",
+        "probability": 1.1185785297129769e-05
+      },
+      {
+        "rank": 24,
+        "label": "白头翁",
+        "probability": 8.206367965613026e-06
+      },
+      {
+        "rank": 25,
+        "label": "马齿苋",
+        "probability": 7.211136562546017e-06
+      },
+      {
+        "rank": 26,
+        "label": "板蓝根石细胞",
+        "probability": 6.522222065541428e-06
+      },
+      {
+        "rank": 27,
+        "label": "枳壳",
+        "probability": 6.124729679868324e-06
+      },
+      {
+        "rank": 28,
+        "label": "鱼腥草",
+        "probability": 5.86420583204017e-06
+      },
+      {
+        "rank": 29,
+        "label": "牡蛎",
+        "probability": 5.584698556049261e-06
+      },
+      {
+        "rank": 30,
+        "label": "淡竹叶",
+        "probability": 5.345610588847194e-06
+      },
+      {
+        "rank": 31,
+        "label": "黄芪",
+        "probability": 3.397219188627787e-06
+      },
+      {
+        "rank": 32,
+        "label": "防风",
+        "probability": 3.184241677445243e-06
+      },
+      {
+        "rank": 33,
+        "label": "木香菊糖",
+        "probability": 2.4607718387414934e-06
+      },
+      {
+        "rank": 34,
+        "label": "玄明粉",
+        "probability": 2.144641484846943e-06
+      },
+      {
+        "rank": 35,
+        "label": "茯苓",
+        "probability": 1.9845970200549345e-06
+      },
+      {
+        "rank": 36,
+        "label": "大黄草酸钙簇晶",
+        "probability": 1.8424794916427345e-06
+      },
+      {
+        "rank": 37,
+        "label": "诃子",
+        "probability": 1.8277942217537202e-06
+      },
+      {
+        "rank": 38,
+        "label": "陈皮",
+        "probability": 1.7657683883953723e-06
+      },
+      {
+        "rank": 39,
+        "label": "桑白皮",
+        "probability": 1.560660166433081e-06
+      },
+      {
+        "rank": 40,
+        "label": "甘草",
+        "probability": 1.5597838682879228e-06
+      },
+      {
+        "rank": 41,
+        "label": "郁金",
+        "probability": 1.4983380651756306e-06
+      },
+      {
+        "rank": 42,
+        "label": "石膏",
+        "probability": 1.3934143225924345e-06
+      },
+      {
+        "rank": 43,
+        "label": "麦芽",
+        "probability": 1.0094076969835442e-06
+      },
+      {
+        "rank": 44,
+        "label": "党参石细胞",
+        "probability": 9.138531140706618e-07
+      },
+      {
+        "rank": 45,
+        "label": "黄芩",
+        "probability": 9.049696245710948e-07
+      },
+      {
+        "rank": 46,
+        "label": "牡丹皮",
+        "probability": 8.421073403042101e-07
+      },
+      {
+        "rank": 47,
+        "label": "黄连",
+        "probability": 7.811383397893223e-07
+      },
+      {
+        "rank": 48,
+        "label": "山楂",
+        "probability": 7.628977414242399e-07
+      },
+      {
+        "rank": 49,
+        "label": "玄参",
+        "probability": 5.135538572176301e-07
+      },
+      {
+        "rank": 50,
+        "label": "射干",
+        "probability": 4.6474994519485335e-07
+      },
+      {
+        "rank": 51,
+        "label": "荆芥外果皮细胞",
+        "probability": 4.624720872925536e-07
+      },
+      {
+        "rank": 52,
+        "label": "雄黄",
+        "probability": 4.486068121423159e-07
+      },
+      {
+        "rank": 53,
+        "label": "知母",
+        "probability": 3.534501900048781e-07
+      },
+      {
+        "rank": 54,
+        "label": "槟榔",
+        "probability": 3.0238942372307065e-07
+      },
+      {
+        "rank": 55,
+        "label": "苦参",
+        "probability": 2.908660690081888e-07
+      },
+      {
+        "rank": 56,
+        "label": "厚朴",
+        "probability": 2.4456315372844983e-07
+      },
+      {
+        "rank": 57,
+        "label": "茵陈",
+        "probability": 2.1104065694999008e-07
+      },
+      {
+        "rank": 58,
+        "label": "苦杏仁",
+        "probability": 2.1087627999349934e-07
+      },
+      {
+        "rank": 59,
+        "label": "艾叶",
+        "probability": 1.4290445449205436e-07
+      },
+      {
+        "rank": 60,
+        "label": "大黄导管",
+        "probability": 1.360236012715177e-07
+      },
+      {
+        "rank": 61,
+        "label": "菟丝子",
+        "probability": 1.1643206931921668e-07
+      },
+      {
+        "rank": 62,
+        "label": "红花",
+        "probability": 7.626857012610344e-08
+      },
+      {
+        "rank": 63,
+        "label": "肉桂",
+        "probability": 6.168635025005642e-08
+      },
+      {
+        "rank": 64,
+        "label": "葶苈子",
+        "probability": 5.997257090939456e-08
+      },
+      {
+        "rank": 65,
+        "label": "栀子",
+        "probability": 1.7731172974322362e-08
+      },
+      {
+        "rank": 66,
+        "label": "连翘",
+        "probability": 1.0908242309426441e-08
+      },
+      {
+        "rank": 67,
+        "label": "王不留行",
+        "probability": 5.071768782727304e-09
+      },
+      {
+        "rank": 68,
+        "label": "黄柏晶纤维",
+        "probability": 1.2505997348810638e-09
+      }
+    ],
+    [
+      {
+        "rank": 1,
+        "label": "大青叶",
+        "probability": 0.9019277095794678
+      },
+      {
+        "rank": 2,
+        "label": "地黄",
+        "probability": 0.05332794040441513
+      },
+      {
+        "rank": 3,
+        "label": "桔梗",
+        "probability": 0.02761046402156353
+      },
+      {
+        "rank": 4,
+        "label": "龙胆",
+        "probability": 0.0037595212925225496
+      },
+      {
+        "rank": 5,
+        "label": "乌梅",
+        "probability": 0.003737603547051549
+      },
+      {
+        "rank": 6,
+        "label": "党参联结乳管",
+        "probability": 0.003184156259521842
+      },
+      {
+        "rank": 7,
+        "label": "穿心莲",
+        "probability": 0.0013355194823816419
+      },
+      {
+        "rank": 8,
+        "label": "柴胡",
+        "probability": 0.0011472285259515047
+      },
+      {
+        "rank": 9,
+        "label": "金银花",
+        "probability": 0.00110152259003371
+      },
+      {
+        "rank": 10,
+        "label": "香附",
+        "probability": 0.0009214939782395959
+      },
+      {
+        "rank": 11,
+        "label": "秦皮",
+        "probability": 0.0006777061498723924
+      },
+      {
+        "rank": 12,
+        "label": "鱼腥草",
+        "probability": 0.0002096954412991181
+      },
+      {
+        "rank": 13,
+        "label": "枳壳",
+        "probability": 0.0002075582160614431
+      },
+      {
+        "rank": 14,
+        "label": "苍术",
+        "probability": 0.00020750160911120474
+      },
+      {
+        "rank": 15,
+        "label": "防风",
+        "probability": 0.0001684423186816275
+      },
+      {
+        "rank": 16,
+        "label": "淡竹叶",
+        "probability": 7.131725578801706e-05
+      },
+      {
+        "rank": 17,
+        "label": "大黄淀粉粒",
+        "probability": 5.733262878493406e-05
+      },
+      {
+        "rank": 18,
+        "label": "水牛角",
+        "probability": 4.2835694330278784e-05
+      },
+      {
+        "rank": 19,
+        "label": "白头翁",
+        "probability": 3.902604294125922e-05
+      },
+      {
+        "rank": 20,
+        "label": "板蓝根木纤维",
+        "probability": 3.531952097546309e-05
+      },
+      {
+        "rank": 21,
+        "label": "广藿香",
+        "probability": 2.783849231491331e-05
+      },
+      {
+        "rank": 22,
+        "label": "滑石",
+        "probability": 2.701335324672982e-05
+      },
+      {
+        "rank": 23,
+        "label": "茯苓",
+        "probability": 2.0087200027774088e-05
+      },
+      {
+        "rank": 24,
+        "label": "陈皮",
+        "probability": 1.698985943221487e-05
+      },
+      {
+        "rank": 25,
+        "label": "郁金",
+        "probability": 1.3053661859885324e-05
+      },
+      {
+        "rank": 26,
+        "label": "牡丹皮",
+        "probability": 1.1910196917597204e-05
+      },
+      {
+        "rank": 27,
+        "label": "黄芪",
+        "probability": 1.1317880307615269e-05
+      },
+      {
+        "rank": 28,
+        "label": "青黛",
+        "probability": 1.1175275176356081e-05
+      },
+      {
+        "rank": 29,
+        "label": "菟丝子",
+        "probability": 9.910437256621663e-06
+      },
+      {
+        "rank": 30,
+        "label": "益母草",
+        "probability": 8.078594873950351e-06
+      },
+      {
+        "rank": 31,
+        "label": "马齿苋",
+        "probability": 7.567954071419081e-06
+      },
+      {
+        "rank": 32,
+        "label": "射干",
+        "probability": 6.701741767756175e-06
+      },
+      {
+        "rank": 33,
+        "label": "玄明粉",
+        "probability": 6.347193448164035e-06
+      },
+      {
+        "rank": 34,
+        "label": "红花",
+        "probability": 5.759378382208524e-06
+      },
+      {
+        "rank": 35,
+        "label": "石膏",
+        "probability": 5.679498826793861e-06
+      },
+      {
+        "rank": 36,
+        "label": "白芍",
+        "probability": 5.107599463372026e-06
+      },
+      {
+        "rank": 37,
+        "label": "甘草",
+        "probability": 4.733321929961676e-06
+      },
+      {
+        "rank": 38,
+        "label": "麻黄",
+        "probability": 4.528722001850838e-06
+      },
+      {
+        "rank": 39,
+        "label": "黄连",
+        "probability": 4.283865564502776e-06
+      },
+      {
+        "rank": 40,
+        "label": "木香木纤维",
+        "probability": 3.3937906209757784e-06
+      },
+      {
+        "rank": 41,
+        "label": "知母",
+        "probability": 3.165971520502353e-06
+      },
+      {
+        "rank": 42,
+        "label": "木香菊糖",
+        "probability": 2.8747103897330817e-06
+      },
+      {
+        "rank": 43,
+        "label": "槟榔",
+        "probability": 2.84646421278012e-06
+      },
+      {
+        "rank": 44,
+        "label": "麦芽",
+        "probability": 2.018537770709372e-06
+      },
+      {
+        "rank": 45,
+        "label": "党参石细胞",
+        "probability": 1.3357812349568121e-06
+      },
+      {
+        "rank": 46,
+        "label": "栀子",
+        "probability": 1.0548061482040794e-06
+      },
+      {
+        "rank": 47,
+        "label": "牡蛎",
+        "probability": 8.075502364590648e-07
+      },
+      {
+        "rank": 48,
+        "label": "苦杏仁",
+        "probability": 7.245498636621051e-07
+      },
+      {
+        "rank": 49,
+        "label": "荆芥外果皮细胞",
+        "probability": 6.592742920474848e-07
+      },
+      {
+        "rank": 50,
+        "label": "大黄导管",
+        "probability": 6.076010095057427e-07
+      },
+      {
+        "rank": 51,
+        "label": "苦参",
+        "probability": 5.821848958476039e-07
+      },
+      {
+        "rank": 52,
+        "label": "大黄草酸钙簇晶",
+        "probability": 5.630597570416285e-07
+      },
+      {
+        "rank": 53,
+        "label": "板蓝根石细胞",
+        "probability": 4.528149020188721e-07
+      },
+      {
+        "rank": 54,
+        "label": "桑白皮",
+        "probability": 2.304845452272275e-07
+      },
+      {
+        "rank": 55,
+        "label": "诃子",
+        "probability": 1.7915967021053802e-07
+      },
+      {
+        "rank": 56,
+        "label": "茵陈",
+        "probability": 1.664956954527952e-07
+      },
+      {
+        "rank": 57,
+        "label": "艾叶",
+        "probability": 1.5884450021985685e-07
+      },
+      {
+        "rank": 58,
+        "label": "黄芩",
+        "probability": 1.0632235358798425e-07
+      },
+      {
+        "rank": 59,
+        "label": "连翘",
+        "probability": 7.29103462049352e-08
+      },
+      {
+        "rank": 60,
+        "label": "淫羊藿",
+        "probability": 6.319524459286185e-08
+      },
+      {
+        "rank": 61,
+        "label": "葶苈子",
+        "probability": 5.7985680257388594e-08
+      },
+      {
+        "rank": 62,
+        "label": "玄参",
+        "probability": 4.191083746718505e-08
+      },
+      {
+        "rank": 63,
+        "label": "厚朴",
+        "probability": 3.01500122645848e-08
+      },
+      {
+        "rank": 64,
+        "label": "王不留行",
+        "probability": 1.8295699177883762e-08
+      },
+      {
+        "rank": 65,
+        "label": "黄柏晶纤维",
+        "probability": 1.241105174187851e-08
+      },
+      {
+        "rank": 66,
+        "label": "雄黄",
+        "probability": 1.2096847967768554e-08
+      },
+      {
+        "rank": 67,
+        "label": "山楂",
+        "probability": 1.1802861799026232e-08
+      },
+      {
+        "rank": 68,
+        "label": "肉桂",
+        "probability": 1.121512394064439e-08
+      }
+    ],
+    [
+      {
+        "rank": 1,
+        "label": "桔梗",
+        "probability": 0.8507556319236755
+      },
+      {
+        "rank": 2,
+        "label": "地黄",
+        "probability": 0.0775090679526329
+      },
+      {
+        "rank": 3,
+        "label": "秦皮",
+        "probability": 0.022705279290676117
+      },
+      {
+        "rank": 4,
+        "label": "党参联结乳管",
+        "probability": 0.014561806805431843
+      },
+      {
+        "rank": 5,
+        "label": "龙胆",
+        "probability": 0.007712188642472029
+      },
+      {
+        "rank": 6,
+        "label": "香附",
+        "probability": 0.0068111480213701725
+      },
+      {
+        "rank": 7,
+        "label": "柴胡",
+        "probability": 0.005727614276111126
+      },
+      {
+        "rank": 8,
+        "label": "金银花",
+        "probability": 0.003855441464111209
+      },
+      {
+        "rank": 9,
+        "label": "乌梅",
+        "probability": 0.0031247385777533054
+      },
+      {
+        "rank": 10,
+        "label": "大青叶",
+        "probability": 0.0027419349644333124
+      },
+      {
+        "rank": 11,
+        "label": "苍术",
+        "probability": 0.0005768967093899846
+      },
+      {
+        "rank": 12,
+        "label": "板蓝根木纤维",
+        "probability": 0.0005357735208235681
+      },
+      {
+        "rank": 13,
+        "label": "防风",
+        "probability": 0.0004998718504793942
+      },
+      {
+        "rank": 14,
+        "label": "麻黄",
+        "probability": 0.0002514796215109527
+      },
+      {
+        "rank": 15,
+        "label": "水牛角",
+        "probability": 0.0002514479565434158
+      },
+      {
+        "rank": 16,
+        "label": "白芍",
+        "probability": 0.00023966575099620968
+      },
+      {
+        "rank": 17,
+        "label": "马齿苋",
+        "probability": 0.00022475425794254988
+      },
+      {
+        "rank": 18,
+        "label": "鱼腥草",
+        "probability": 0.0001865250087575987
+      },
+      {
+        "rank": 19,
+        "label": "木香木纤维",
+        "probability": 0.00016633093764539808
+      },
+      {
+        "rank": 20,
+        "label": "穿心莲",
+        "probability": 0.0001532343158032745
+      },
+      {
+        "rank": 21,
+        "label": "淡竹叶",
+        "probability": 0.00012184883235022426
+      },
+      {
+        "rank": 22,
+        "label": "甘草",
+        "probability": 0.00011543855362106115
+      },
+      {
+        "rank": 23,
+        "label": "益母草",
+        "probability": 0.0001091608646675013
+      },
+      {
+        "rank": 24,
+        "label": "滑石",
+        "probability": 0.00010131270391866565
+      },
+      {
+        "rank": 25,
+        "label": "大黄淀粉粒",
+        "probability": 9.671854058979079e-05
+      },
+      {
+        "rank": 26,
+        "label": "木香菊糖",
+        "probability": 7.692205690545961e-05
+      },
+      {
+        "rank": 27,
+        "label": "枳壳",
+        "probability": 6.87611973262392e-05
+      },
+      {
+        "rank": 28,
+        "label": "牡蛎",
+        "probability": 5.408143988461234e-05
+      },
+      {
+        "rank": 29,
+        "label": "郁金",
+        "probability": 5.313235305948183e-05
+      },
+      {
+        "rank": 30,
+        "label": "黄连",
+        "probability": 5.253868948784657e-05
+      },
+      {
+        "rank": 31,
+        "label": "黄芪",
+        "probability": 5.12192455062177e-05
+      },
+      {
+        "rank": 32,
+        "label": "陈皮",
+        "probability": 5.103090006741695e-05
+      },
+      {
+        "rank": 33,
+        "label": "白头翁",
+        "probability": 4.1888135456247255e-05
+      },
+      {
+        "rank": 34,
+        "label": "牡丹皮",
+        "probability": 3.7122867070138454e-05
+      },
+      {
+        "rank": 35,
+        "label": "玄明粉",
+        "probability": 3.5384025977691635e-05
+      },
+      {
+        "rank": 36,
+        "label": "荆芥外果皮细胞",
+        "probability": 3.0043438528082334e-05
+      },
+      {
+        "rank": 37,
+        "label": "苦杏仁",
+        "probability": 2.642149047460407e-05
+      },
+      {
+        "rank": 38,
+        "label": "板蓝根石细胞",
+        "probability": 2.5084524168050848e-05
+      },
+      {
+        "rank": 39,
+        "label": "菟丝子",
+        "probability": 2.4050525098573416e-05
+      },
+      {
+        "rank": 40,
+        "label": "麦芽",
+        "probability": 2.235453030152712e-05
+      },
+      {
+        "rank": 41,
+        "label": "石膏",
+        "probability": 2.154867979697883e-05
+      },
+      {
+        "rank": 42,
+        "label": "党参石细胞",
+        "probability": 1.8457752958056517e-05
+      },
+      {
+        "rank": 43,
+        "label": "广藿香",
+        "probability": 1.7973063222598284e-05
+      },
+      {
+        "rank": 44,
+        "label": "艾叶",
+        "probability": 1.7808077245717868e-05
+      },
+      {
+        "rank": 45,
+        "label": "知母",
+        "probability": 1.568414518260397e-05
+      },
+      {
+        "rank": 46,
+        "label": "青黛",
+        "probability": 1.522017646493623e-05
+      },
+      {
+        "rank": 47,
+        "label": "淫羊藿",
+        "probability": 1.29840882436838e-05
+      },
+      {
+        "rank": 48,
+        "label": "葶苈子",
+        "probability": 1.2201924619148485e-05
+      },
+      {
+        "rank": 49,
+        "label": "苦参",
+        "probability": 1.2112130207242444e-05
+      },
+      {
+        "rank": 50,
+        "label": "黄芩",
+        "probability": 1.0121820196218323e-05
+      },
+      {
+        "rank": 51,
+        "label": "红花",
+        "probability": 9.947900252882391e-06
+      },
+      {
+        "rank": 52,
+        "label": "射干",
+        "probability": 9.088304977922235e-06
+      },
+      {
+        "rank": 53,
+        "label": "槟榔",
+        "probability": 6.446577117458219e-06
+      },
+      {
+        "rank": 54,
+        "label": "大黄导管",
+        "probability": 4.530731530394405e-06
+      },
+      {
+        "rank": 55,
+        "label": "栀子",
+        "probability": 4.31036869485979e-06
+      },
+      {
+        "rank": 56,
+        "label": "诃子",
+        "probability": 3.5097330055577913e-06
+      },
+      {
+        "rank": 57,
+        "label": "茵陈",
+        "probability": 3.448627012403449e-06
+      },
+      {
+        "rank": 58,
+        "label": "茯苓",
+        "probability": 3.4279921692359494e-06
+      },
+      {
+        "rank": 59,
+        "label": "大黄草酸钙簇晶",
+        "probability": 2.9344053018576233e-06
+      },
+      {
+        "rank": 60,
+        "label": "桑白皮",
+        "probability": 2.6624713882483775e-06
+      },
+      {
+        "rank": 61,
+        "label": "玄参",
+        "probability": 1.983706624741899e-06
+      },
+      {
+        "rank": 62,
+        "label": "山楂",
+        "probability": 1.7229893956027809e-06
+      },
+      {
+        "rank": 63,
+        "label": "雄黄",
+        "probability": 1.6539073612875654e-06
+      },
+      {
+        "rank": 64,
+        "label": "厚朴",
+        "probability": 1.3812601764584542e-06
+      },
+      {
+        "rank": 65,
+        "label": "连翘",
+        "probability": 1.1677724387482158e-06
+      },
+      {
+        "rank": 66,
+        "label": "肉桂",
+        "probability": 8.802770707916352e-07
+      },
+      {
+        "rank": 67,
+        "label": "王不留行",
+        "probability": 7.122516763047315e-07
+      },
+      {
+        "rank": 68,
+        "label": "黄柏晶纤维",
+        "probability": 6.845830853308144e-07
+      }
+    ]
+  ],
+  "cache_key": "272ff298b72426d89d780ca24cdc6f8b082ceecbdcc8ac9f2a7f255da85fd6cb",
+  "cache_hit": false,
+  "image": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_04.jpg",
+  "input_sha256": "de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+  "signature": {
+    "image": "de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+    "weights": [
+      "370671e689b582516daeed33805e1e8311d835048f4bbfa2d3ccc7830b7ae504",
+      "3b7806387aa5292d55cbf8aa8d8bff8874227b36677ec362e7f04a3360a8c6c1",
+      "1a5073aa96d7740047142d091f4e59c8f3a984ef4ae512b6b8231cac59bea3c8",
+      "28b2e6a2199d543d4cff49986278da89a528609808f189fea2b9e5b4d4986b0c",
+      "2e68d52c040d7e518a3828bac8d68dc5d4cd75bebec31edcb8436ea41ae6e0c7"
+    ],
+    "script": "4213de718ddd22cc8fcef008b0e749f60a417b20265686a578271ba2d7896c1e",
+    "python": "D:\\TCM_Fusion\\.venv\\vision\\Scripts\\python.exe",
+    "python_sha256": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "adapter_version": 3
+  },
+  "elapsed_seconds": 6.538360000005923
+}

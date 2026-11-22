@@ -15,7 +15,7 @@ from types import SimpleNamespace
 
 from TCM_Fusion.lib.evidence.stage_recording import bundle
 from TCM_Fusion.lib.offline.workflow_replay import RecordedStages
-from TCM_Fusion.lib.runtime.storage import IntegrationError, write_json
+from TCM_Fusion.lib.runtime.storage import IntegrationError, file_hash, write_json
 
 
 class StageReplayTests(unittest.TestCase):
@@ -63,7 +63,11 @@ class StageReplayTests(unittest.TestCase):
         write_json(audit, {'schema': 'image-exemplar-audit/v2', 'non_blocking': True})
         sheet = self.source/'contact.jpg'
         sheet.write_bytes(b'fixture contact sheet bytes')
-        recording = bundle({'audit': audit, 'contact_sheet': sheet}, self.source)
+        recording = {
+            'root': str(self.source),
+            'paths': {'audit': audit.name, 'contact_sheet': sheet.name},
+            'files': {path.name: file_hash(path) for path in (audit, sheet)},
+        }
         replayed = self.replay('image_exemplar_audit', recording)
         self.assertEqual(Path(replayed['audit']).read_bytes(), audit.read_bytes())
         self.assertEqual(Path(replayed['contact_sheet']).read_bytes(), sheet.read_bytes())

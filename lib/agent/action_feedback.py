@@ -16,12 +16,11 @@ from TCM_Fusion.lib.runtime.storage import finite_number
 def objective(action):
     tool=action.get('tool','');args=action.get('args',{})
     return {'problem_id':args.get('feature_id') or args.get('target_id') or tool,
-            'objective':{'presence_check':'核验合法候选差异特征','scene_check':'完成强制场景上下文',
+            'objective':{'presence_check':'核验合法候选差异特征','scene_check':'核对已有结晶证据的组织语境',
                 'measure_instances':'获取具有用途资格的真实量化证据','segment_instance':'恢复可用目标掩码',
                 'detect_region':'局部 YOLO 重检',
                 'feature_scan':'按 feature_id 做全视野分块的目标条件候选扫描',
                 'hybrid_scan':'并发执行 YOLO 初检与多特征 GLM 全视野扫描，并一次提交汇合结果',
-                'image_exemplar_audit':'用正负示例 contact sheet 对 crop 做非阻断图片示例审计',
                 'locate_feature':'用 GLM 核验选定局部并提出待验证框'}.get(tool,'读取或恢复有效证据'),
             'expected_resolution':'增加有效证据/反证或解除实际前置阻塞',
             'stop_condition':'同依赖重复动作、服务失败、预算或截止，不以生成过门为成功'}

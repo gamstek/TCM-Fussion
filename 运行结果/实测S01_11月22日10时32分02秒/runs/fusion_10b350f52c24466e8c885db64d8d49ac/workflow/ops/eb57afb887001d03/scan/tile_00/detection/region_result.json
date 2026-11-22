@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "表皮细胞",
+      "tight_bbox": [
+        901.75,
+        357.25,
+        1287.25,
+        511.75
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "黄棕色多角形细胞，壁较平直，色深均一，疑似种皮表皮细胞",
+      "source_tight_bbox": [
+        966,
+        383,
+        1223,
+        486
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    0,
+    0,
+    1920,
+    1080
+  ],
+  "feature_id": "epidermis_cell",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

@@ -80,6 +80,8 @@ class LifecycleTests(WorkflowFixture, unittest.TestCase):
         audit = read_json(self.root/'feature_audit/feature_audit.json')
         output = read_json(self.root/'output.json')
         self.assertEqual(audit, output['feature_audit'])
+        self.assertEqual(output['schema'], 'diagnosis-output/v2')
+        self.assertNotIn('image_exemplar_audits', output)
         self.assertEqual(audit['evidence_version'], runtime.workflow.store.current()['version'])
 
     def test_core_delivery_is_readable_when_visual_audit_fails(self):

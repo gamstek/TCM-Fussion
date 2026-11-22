@@ -1,0 +1,3402 @@
+{
+  "schema": "final-assessment/v1",
+  "method": "deterministic",
+  "simulation": false,
+  "stop_reason": "runtime_request_review",
+  "candidate_id": "大青叶",
+  "candidate_display": "大青叶",
+  "termination": {
+    "reason": "UPSTREAM_NETWORK_FAILED",
+    "route": "runtime_request_review",
+    "category": "service",
+    "decision_source": "runtime_fallback",
+    "planner_degraded": true
+  },
+  "selection": "formal",
+  "decision_layers": {
+    "formal": {
+      "verdict": "insufficient_evidence",
+      "conclusion": null,
+      "authorized": false,
+      "needs_review": true
+    },
+    "fusion_leader": {
+      "id": "大青叶",
+      "display": "大青叶",
+      "score": 0.289656,
+      "support": [],
+      "counter": []
+    },
+    "b_leader": {
+      "id": "G1",
+      "display": "赤芍 / 牡丹皮",
+      "score": 0.0,
+      "support": [],
+      "counter": []
+    }
+  },
+  "status": "tentative",
+  "judgement": "现有证据暂倾向：大青叶；尚不能确认，需要复核。；中间证据显示 indigo_crystal 待核验，正式证据不足。",
+  "explanation": "依据全部已收集证据及原规则综合排序给出当前倾向。判据状态：indigo_crystal=MORPHOLOGY_UNVERIFIED；epidermis_cell=NOT_DETECTED；stoma=NOT_DETECTED。原规则说明：必需判据未全部核验或 B 规则分未达倾向门槛。。正式判据未满足不等于原图中不存在该目标；已检测或分类但缺少合格尺寸的实例仍待核验。",
+  "explanation_source": "deterministic",
+  "narrative_warnings": [],
+  "score_summary": "大青叶：B规则排序分=0.0；融合排序分=0.289656；已验证独立特征类数=0；B规则计分特征类数=0；B规则最低计分类数=2。上述分数不是校准正确率；交付复核要求见 review_reasons。",
+  "supporting_evidence": [],
+  "presence_observations": [
+    {
+      "id": "observation:9ef3e95e71b53c2b6f13f4b1",
+      "kind": "observation",
+      "data": {
+        "accepted": true,
+        "action": {
+          "tool": "presence_check",
+          "args": {
+            "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+            "feature_id": "indigo_crystal",
+            "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+          },
+          "action_id": "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d"
+        },
+        "result": {
+          "present": true,
+          "conf": 0.65,
+          "reason": "图中右上方一大块叶肉组织碎片内可见多个深蓝绿色颗粒状色素团块聚集，符合靛蓝结晶成堆分布于叶肉组织的特征。",
+          "ok": true,
+          "localization_proposal": {
+            "bbox": [
+              890,
+              225,
+              1160,
+              495
+            ],
+            "coordinate_space": "model_input_pixels"
+          }
+        },
+        "observation_state": "present",
+        "dimension_eligible": false,
+        "claim_scope": "feature_presence",
+        "related_candidate_ids": [
+          "大青叶",
+          "青黛"
+        ],
+        "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+      },
+      "supports_candidate_ids": [
+        "大青叶",
+        "青黛"
+      ],
+      "counters_candidate_ids": []
+    }
+  ],
+  "local_absence_observations": [
+    {
+      "id": "observation:adcf9e641c4841da13606e85",
+      "kind": "observation",
+      "data": {
+        "accepted": true,
+        "action": {
+          "tool": "presence_check",
+          "args": {
+            "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+            "feature_id": "indigo_crystal",
+            "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+          },
+          "action_id": "a362b349f9ba66ff6ad558b8055a8cff61ec7016b8e0e797bd46f8c02f243602"
+        },
+        "result": {
+          "present": false,
+          "conf": 0.88,
+          "reason": "视野中主要为棕色组织碎片（含暗色内含物）与左上角绿色叶绿体团块及无色碎屑，未见蓝色颗粒状或片状、成堆聚集的靛蓝结晶特征。",
+          "ok": true
+        },
+        "observation_state": "absent",
+        "dimension_eligible": false,
+        "claim_scope": "feature_presence",
+        "related_candidate_ids": [
+          "大青叶",
+          "青黛"
+        ],
+        "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+      },
+      "supports_candidate_ids": [],
+      "counters_candidate_ids": []
+    },
+    {
+      "id": "observation:10af4eb920a6a4c29d20c6c0",
+      "kind": "observation",
+      "data": {
+        "accepted": true,
+        "action": {
+          "tool": "presence_check",
+          "args": {
+            "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+            "feature_id": "indigo_crystal",
+            "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+          },
+          "action_id": "8223316f295acccc871e5b2b2db9331d279764cc39d8793aeacc2e0ec1502ad0"
+        },
+        "result": {
+          "present": false,
+          "conf": 0.92,
+          "reason": "视野中仅见黄褐色至暗橄榄色的不规则团块与碎屑，未观察到任何蓝色颗粒状或片状的靛蓝结晶聚集。",
+          "ok": true
+        },
+        "observation_state": "absent",
+        "dimension_eligible": false,
+        "claim_scope": "feature_presence",
+        "related_candidate_ids": [
+          "大青叶",
+          "青黛"
+        ],
+        "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+      },
+      "supports_candidate_ids": [],
+      "counters_candidate_ids": []
+    }
+  ],
+  "counterevidence": [],
+  "unresolved": [
+    {
+      "id": "criterion:6dab74c06db9699546423c80",
+      "kind": "criterion",
+      "data": {
+        "candidate_id": "大青叶",
+        "feature_id": "indigo_crystal",
+        "role": "required",
+        "tier": "C",
+        "present": true,
+        "state": "MORPHOLOGY_UNVERIFIED",
+        "quant_note": null,
+        "morph_plausibility": 0.85,
+        "reliability": 0.9,
+        "weight": 0.3,
+        "q_state": 0.6,
+        "abundance": null,
+        "m_abundance": 1.0,
+        "score_contribution": 0,
+        "penalty": 0.0,
+        "n_instances": 0,
+        "stats": null,
+        "morph_text": "靛蓝结晶蓝色，存在于叶肉组织和表皮细胞中，细小颗粒状或片状，常聚集成堆",
+        "quant_bounds": null,
+        "scene_factor": 1.0,
+        "instance_refs": [],
+        "observation_scope": "feature_presence",
+        "raw_rule_state": "NO_REF",
+        "claim_scope": "feature_presence",
+        "dimension_eligible": false
+      },
+      "supports_candidate_ids": [],
+      "counters_candidate_ids": []
+    }
+  ],
+  "unresolved_scope": "selected candidate and execution facts; full cohort gaps in candidate_audit",
+  "candidate_audit": {
+    "schema": "candidate-audit/v1",
+    "candidates": [
+      {
+        "candidate_id": "秦皮",
+        "display": "秦皮",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "sand_crystal",
+            "state": "present_pending",
+            "rule_state": "MORPHOLOGY_UNVERIFIED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 2,
+            "provided_fov_count": 4,
+            "availability_reason": "reachable_via_prerequisite",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              }
+            ],
+            "fact_ref": "criterion:01880b0fc8bf98039a82a2d4"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "sand_crystal"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "大青叶",
+        "display": "大青叶",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "indigo_crystal",
+            "state": "present_pending",
+            "rule_state": "MORPHOLOGY_UNVERIFIED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 3,
+            "provided_fov_count": 4,
+            "availability_reason": "reachable_via_prerequisite",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              }
+            ],
+            "fact_ref": "criterion:6dab74c06db9699546423c80"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "epidermis_cell",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "2907dc98d679a30b2606052efc875ebbedf8573f999c0018bed5e1f7c452b3c4",
+              "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723",
+              "5ca2fc272d36bf3dd3abb7bf318e9a11183bc917f5d9ce1ba763edb869ccdfa6",
+              "93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869",
+              "433ab8158714003124a4b1c8b574321af83e03f5fe871297a310df40688a19c9"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "2907dc98d679a30b2606052efc875ebbedf8573f999c0018bed5e1f7c452b3c4",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "5ca2fc272d36bf3dd3abb7bf318e9a11183bc917f5d9ce1ba763edb869ccdfa6",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "433ab8158714003124a4b1c8b574321af83e03f5fe871297a310df40688a19c9",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:5feeb2c09bf9f4cf8b1f28e7"
+          },
+          {
+            "feature_id": "stoma",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "e405d03d51f48b23f79508fbda852e87ebc058e55a2d5fe469a8f50fb24451ff",
+              "a86064aa690ab2c8a8a5f9967468d2eab77a449184ddac76bef4f0ea8e7bcadd",
+              "702934d930fc24a6d364218d4e239d0b2547f1f3492ba39e2f9732a40f2dbe6d",
+              "f14cc5e59232f856872a96640a3cbb9de8a8b91f71bac73dcefa10bbcd0feb96",
+              "7d6a11a369d72df985317517f48e2be9ca7f3c14fa5818a55632b3a672920ea4"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "e405d03d51f48b23f79508fbda852e87ebc058e55a2d5fe469a8f50fb24451ff",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "a86064aa690ab2c8a8a5f9967468d2eab77a449184ddac76bef4f0ea8e7bcadd",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "702934d930fc24a6d364218d4e239d0b2547f1f3492ba39e2f9732a40f2dbe6d",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "f14cc5e59232f856872a96640a3cbb9de8a8b91f71bac73dcefa10bbcd0feb96",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "7d6a11a369d72df985317517f48e2be9ca7f3c14fa5818a55632b3a672920ea4",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:c4de9d70b34fd0f7bcd5f464"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "indigo_crystal",
+          "epidermis_cell",
+          "stoma"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "穿心莲",
+        "display": "穿心莲",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "calcium_carbonate",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "4254477c112536e73e12d2369ffa33a610ac80eeae60b25740c46c6d2505ec58",
+              "1e851956602ddd2bf070e42461bab07cea6d1da99e8d4b5585879a098f7561e9",
+              "c98f76209d06e4d6570b4d6a9746a7d3bf177005ce2db277c122a051291646b3",
+              "b4610386bea03ae9aaeae2b518f4605e8e88abb4a89d21377d8761f2deed4ea2"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "4254477c112536e73e12d2369ffa33a610ac80eeae60b25740c46c6d2505ec58",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "1e851956602ddd2bf070e42461bab07cea6d1da99e8d4b5585879a098f7561e9",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "c98f76209d06e4d6570b4d6a9746a7d3bf177005ce2db277c122a051291646b3",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "b4610386bea03ae9aaeae2b518f4605e8e88abb4a89d21377d8761f2deed4ea2",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:dd2fd2eeb95643f9ee7bb71d"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "non_glandular_hair",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "e5d93619de357c592ea2ecabf22c69bbadc1b5b6e14cd5fa23385e4f6b7e5671",
+              "d84a4bcdb8cb27ad71e0fa06f5e102ee8d26c3a9abec504981b173b0a434db02",
+              "20259d8922b8fccfdd0b4f80878a33177b06f05f9ca22918b790f3f46c894495",
+              "4ccf6038b71e1d8c3c4cf4ab4ca1c652734d9bad67de5172421414295a32771d",
+              "649161aa0c9cac6c1bd53b10275705654c2dfae65d759e5eed99afb50a5fb1b7"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "e5d93619de357c592ea2ecabf22c69bbadc1b5b6e14cd5fa23385e4f6b7e5671",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "d84a4bcdb8cb27ad71e0fa06f5e102ee8d26c3a9abec504981b173b0a434db02",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "20259d8922b8fccfdd0b4f80878a33177b06f05f9ca22918b790f3f46c894495",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "4ccf6038b71e1d8c3c4cf4ab4ca1c652734d9bad67de5172421414295a32771d",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "649161aa0c9cac6c1bd53b10275705654c2dfae65d759e5eed99afb50a5fb1b7",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:b6fe2308368166dc7ca5e1e5"
+          },
+          {
+            "feature_id": "glandular_hair",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "9296d771bc9ff7404cc3926622ff8a4176f440d14206f5c58399d5660a7a27fc",
+              "5969a2ad3a260226c61546cc383bd05cceeb0961021f624758b056f64436235f",
+              "a5e20b6ca13a6d916f03b9b77f2eeaaba2db2fe011ed3d1bd8d4bc1ec4136025",
+              "f19cf3644a8780b36579fd4bb6b029de13d6ee22a36bd44e66d0a6752a6991d5"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "9296d771bc9ff7404cc3926622ff8a4176f440d14206f5c58399d5660a7a27fc",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "5969a2ad3a260226c61546cc383bd05cceeb0961021f624758b056f64436235f",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "a5e20b6ca13a6d916f03b9b77f2eeaaba2db2fe011ed3d1bd8d4bc1ec4136025",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "f19cf3644a8780b36579fd4bb6b029de13d6ee22a36bd44e66d0a6752a6991d5",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:b20497bfa16396b047c19ac9"
+          },
+          {
+            "feature_id": "stoma",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "e405d03d51f48b23f79508fbda852e87ebc058e55a2d5fe469a8f50fb24451ff",
+              "a86064aa690ab2c8a8a5f9967468d2eab77a449184ddac76bef4f0ea8e7bcadd",
+              "702934d930fc24a6d364218d4e239d0b2547f1f3492ba39e2f9732a40f2dbe6d",
+              "f14cc5e59232f856872a96640a3cbb9de8a8b91f71bac73dcefa10bbcd0feb96",
+              "7d6a11a369d72df985317517f48e2be9ca7f3c14fa5818a55632b3a672920ea4"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "e405d03d51f48b23f79508fbda852e87ebc058e55a2d5fe469a8f50fb24451ff",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "a86064aa690ab2c8a8a5f9967468d2eab77a449184ddac76bef4f0ea8e7bcadd",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "702934d930fc24a6d364218d4e239d0b2547f1f3492ba39e2f9732a40f2dbe6d",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "f14cc5e59232f856872a96640a3cbb9de8a8b91f71bac73dcefa10bbcd0feb96",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "7d6a11a369d72df985317517f48e2be9ca7f3c14fa5818a55632b3a672920ea4",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:fd2a1ba8774bad24361fe1c1"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "calcium_carbonate",
+          "non_glandular_hair",
+          "glandular_hair",
+          "stoma"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "滑石",
+        "display": "滑石",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "mineral_feature",
+            "state": "present_pending",
+            "rule_state": "MORPHOLOGY_UNVERIFIED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 2,
+            "provided_fov_count": 4,
+            "availability_reason": "reachable_via_prerequisite",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              }
+            ],
+            "fact_ref": "criterion:1ca91cf949300edaf887e975"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "mineral_feature"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "雄黄",
+        "display": "雄黄",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "mineral_feature",
+            "state": "present_pending",
+            "rule_state": "MORPHOLOGY_UNVERIFIED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 2,
+            "provided_fov_count": 4,
+            "availability_reason": "reachable_via_prerequisite",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              }
+            ],
+            "fact_ref": "criterion:e6faf278589c6eab8eff4da7"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "mineral_feature"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "乌梅",
+        "display": "乌梅",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "epidermis_cell",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "2907dc98d679a30b2606052efc875ebbedf8573f999c0018bed5e1f7c452b3c4",
+              "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723",
+              "5ca2fc272d36bf3dd3abb7bf318e9a11183bc917f5d9ce1ba763edb869ccdfa6",
+              "93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869",
+              "433ab8158714003124a4b1c8b574321af83e03f5fe871297a310df40688a19c9"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "2907dc98d679a30b2606052efc875ebbedf8573f999c0018bed5e1f7c452b3c4",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "5ca2fc272d36bf3dd3abb7bf318e9a11183bc917f5d9ce1ba763edb869ccdfa6",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "433ab8158714003124a4b1c8b574321af83e03f5fe871297a310df40688a19c9",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:64ff088f3949a1a3bcf8d14d"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "non_glandular_hair",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "e5d93619de357c592ea2ecabf22c69bbadc1b5b6e14cd5fa23385e4f6b7e5671",
+              "d84a4bcdb8cb27ad71e0fa06f5e102ee8d26c3a9abec504981b173b0a434db02",
+              "20259d8922b8fccfdd0b4f80878a33177b06f05f9ca22918b790f3f46c894495",
+              "4ccf6038b71e1d8c3c4cf4ab4ca1c652734d9bad67de5172421414295a32771d",
+              "649161aa0c9cac6c1bd53b10275705654c2dfae65d759e5eed99afb50a5fb1b7"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "e5d93619de357c592ea2ecabf22c69bbadc1b5b6e14cd5fa23385e4f6b7e5671",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "d84a4bcdb8cb27ad71e0fa06f5e102ee8d26c3a9abec504981b173b0a434db02",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "20259d8922b8fccfdd0b4f80878a33177b06f05f9ca22918b790f3f46c894495",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "4ccf6038b71e1d8c3c4cf4ab4ca1c652734d9bad67de5172421414295a32771d",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "649161aa0c9cac6c1bd53b10275705654c2dfae65d759e5eed99afb50a5fb1b7",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:3453e5fb3fc0f3b373ac1b5c"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "epidermis_cell",
+          "non_glandular_hair"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "连翘",
+        "display": "连翘",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "fiber",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "1bc16201c854c26bdd3c80ee60f4b923875fdd1ceaf4fd64e57a89f08be9b7bd",
+              "be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734",
+              "f14f0e1f3ec64157e9865abe6e568af0e874407ffbc33408cefb5bd96f92923f",
+              "b92a067de55d4fdba0d6f5f7840e510430d15d5b8331405e73301c24783d3814",
+              "827d645df4a3ea64883109762ff33eb6f82cb782a44b680e42fdd3fab48fa4ac"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bc16201c854c26bdd3c80ee60f4b923875fdd1ceaf4fd64e57a89f08be9b7bd",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "f14f0e1f3ec64157e9865abe6e568af0e874407ffbc33408cefb5bd96f92923f",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "b92a067de55d4fdba0d6f5f7840e510430d15d5b8331405e73301c24783d3814",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "827d645df4a3ea64883109762ff33eb6f82cb782a44b680e42fdd3fab48fa4ac",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:d39075df81e82f55a5536b8d"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "fiber"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "桔梗",
+        "display": "桔梗",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "secretory_tissue",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "7b0c6a0d4888bb5094c21d3ed565d538cceb5badb1e650c28bc117adf70ed2ac",
+              "e42a61f8f9f4869e5ee35b69842bf024359820a50bf8f826b26026e131264fb5",
+              "d763051682a6d101f3421a3589dbfd155a264a4ee765fa5fd108c388e311240b",
+              "e05aebd7ef30c898d4e2d60373a4e53c0aea3a5663d2d27ed8ba229783878cd3",
+              "31ee6c1962b15210ab8b770134acc2e141c0ab54525a33e5c50c7e1159dc3604"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "7b0c6a0d4888bb5094c21d3ed565d538cceb5badb1e650c28bc117adf70ed2ac",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "e42a61f8f9f4869e5ee35b69842bf024359820a50bf8f826b26026e131264fb5",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "d763051682a6d101f3421a3589dbfd155a264a4ee765fa5fd108c388e311240b",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "e05aebd7ef30c898d4e2d60373a4e53c0aea3a5663d2d27ed8ba229783878cd3",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "31ee6c1962b15210ab8b770134acc2e141c0ab54525a33e5c50c7e1159dc3604",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:ec0e5d8fa3665dfe22218812"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "secretory_tissue"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "牡蛎",
+        "display": "牡蛎",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "mineral_feature",
+            "state": "present_pending",
+            "rule_state": "MORPHOLOGY_UNVERIFIED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 2,
+            "provided_fov_count": 4,
+            "availability_reason": "reachable_via_prerequisite",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              }
+            ],
+            "fact_ref": "criterion:4631a6519d0160aa42cd32ce"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "mineral_feature"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "菟丝子",
+        "display": "菟丝子",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "palisade_cell",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "af246474debf4aff818c85f469d3b3a2cf49aa2341778e6e7c919debfdcfecfe",
+              "fa9b238ae2a801fffc0f97a98c74411af8baf9e02bb5fe66f4ddd84772dbd1fa",
+              "c8b678c471f5dd776c46b263d9dece854892cc8ddcce19fd7ba04bfc465b78b8",
+              "2d571f6dea991ff75476029e8045692292dcf3d88e427fb2f448636effab727e"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "af246474debf4aff818c85f469d3b3a2cf49aa2341778e6e7c919debfdcfecfe",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "fa9b238ae2a801fffc0f97a98c74411af8baf9e02bb5fe66f4ddd84772dbd1fa",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "c8b678c471f5dd776c46b263d9dece854892cc8ddcce19fd7ba04bfc465b78b8",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "2d571f6dea991ff75476029e8045692292dcf3d88e427fb2f448636effab727e",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:858ae53b1ceb6e7fdea2506f"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "palisade_cell"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "白芍",
+        "display": "白芍",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "cluster_crystal",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "e261c122ee8c001c2cb97c99488abeb23053d2c11944f3af684f0d5b37a68d19"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "e261c122ee8c001c2cb97c99488abeb23053d2c11944f3af684f0d5b37a68d19",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:927246c38c82da5317e3f0a2"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "starch_grain",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "ceb8a272e61e26f94cebb7c314ab19c71473df24a95d72b01fdceb8212135223"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "ceb8a272e61e26f94cebb7c314ab19c71473df24a95d72b01fdceb8212135223",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:b368406c90876f780af56cd8"
+          },
+          {
+            "feature_id": "vessel",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "db9e13df30d30f49f2b4b9ae368087207984feccab692557cff7f32f4bb51303"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "db9e13df30d30f49f2b4b9ae368087207984feccab692557cff7f32f4bb51303",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:8011a56c9185db4044780a4e"
+          },
+          {
+            "feature_id": "fiber",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "1bc16201c854c26bdd3c80ee60f4b923875fdd1ceaf4fd64e57a89f08be9b7bd",
+              "be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734",
+              "f14f0e1f3ec64157e9865abe6e568af0e874407ffbc33408cefb5bd96f92923f",
+              "b92a067de55d4fdba0d6f5f7840e510430d15d5b8331405e73301c24783d3814",
+              "827d645df4a3ea64883109762ff33eb6f82cb782a44b680e42fdd3fab48fa4ac"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bc16201c854c26bdd3c80ee60f4b923875fdd1ceaf4fd64e57a89f08be9b7bd",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "f14f0e1f3ec64157e9865abe6e568af0e874407ffbc33408cefb5bd96f92923f",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "b92a067de55d4fdba0d6f5f7840e510430d15d5b8331405e73301c24783d3814",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "827d645df4a3ea64883109762ff33eb6f82cb782a44b680e42fdd3fab48fa4ac",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:66649fa8fb771b78e1cc310e"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "cluster_crystal",
+          "starch_grain",
+          "vessel",
+          "fiber"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "地黄",
+        "display": "地黄",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "parenchyma_cell",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "2d396bbe35497fea6f6b8e622ecb4e305e355e615187271b739d37ab83e92252",
+              "e4effb33494a1c47426d4d88929afff1f4a73e1471b7260e845bb28222c7e4f4",
+              "1395dac2a794d6c8a1b80b5d0471aabaf1a430d7e677b4cef36afa2a54b3f46c",
+              "c1566fabb3facfe6718bff40d786eade8c43fbf8a58e14711a81bf42143d0136"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "2d396bbe35497fea6f6b8e622ecb4e305e355e615187271b739d37ab83e92252",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "e4effb33494a1c47426d4d88929afff1f4a73e1471b7260e845bb28222c7e4f4",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "1395dac2a794d6c8a1b80b5d0471aabaf1a430d7e677b4cef36afa2a54b3f46c",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "c1566fabb3facfe6718bff40d786eade8c43fbf8a58e14711a81bf42143d0136",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:420269ce0318877d6fbadd23"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "secretory_tissue",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "7b0c6a0d4888bb5094c21d3ed565d538cceb5badb1e650c28bc117adf70ed2ac",
+              "e42a61f8f9f4869e5ee35b69842bf024359820a50bf8f826b26026e131264fb5",
+              "d763051682a6d101f3421a3589dbfd155a264a4ee765fa5fd108c388e311240b",
+              "e05aebd7ef30c898d4e2d60373a4e53c0aea3a5663d2d27ed8ba229783878cd3",
+              "31ee6c1962b15210ab8b770134acc2e141c0ab54525a33e5c50c7e1159dc3604"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "7b0c6a0d4888bb5094c21d3ed565d538cceb5badb1e650c28bc117adf70ed2ac",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "e42a61f8f9f4869e5ee35b69842bf024359820a50bf8f826b26026e131264fb5",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "d763051682a6d101f3421a3589dbfd155a264a4ee765fa5fd108c388e311240b",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "e05aebd7ef30c898d4e2d60373a4e53c0aea3a5663d2d27ed8ba229783878cd3",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "31ee6c1962b15210ab8b770134acc2e141c0ab54525a33e5c50c7e1159dc3604",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:09b6ce90b2887282d1c6cb50"
+          },
+          {
+            "feature_id": "vessel",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "db9e13df30d30f49f2b4b9ae368087207984feccab692557cff7f32f4bb51303"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "db9e13df30d30f49f2b4b9ae368087207984feccab692557cff7f32f4bb51303",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:3c13dcb62a11afb4ee2667b3"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "parenchyma_cell",
+          "secretory_tissue",
+          "vessel"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "龙胆",
+        "display": "龙胆",
+        "hypothesis_status": "proposed",
+        "required": [
+          {
+            "feature_id": "needle_crystal",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "89b27779081d755ffd452a23b0e43fb9573de1f322caa4b4805d68dc4a257656"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "89b27779081d755ffd452a23b0e43fb9573de1f322caa4b4805d68dc4a257656",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:1a5e22eea2531192b90c81bc"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "epidermis_cell",
+            "state": "unchecked",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 0,
+            "provided_fov_count": 4,
+            "availability_reason": "available",
+            "action_ids": [
+              "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+              "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+              "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+              "2907dc98d679a30b2606052efc875ebbedf8573f999c0018bed5e1f7c452b3c4",
+              "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723",
+              "5ca2fc272d36bf3dd3abb7bf318e9a11183bc917f5d9ce1ba763edb869ccdfa6",
+              "93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869",
+              "433ab8158714003124a4b1c8b574321af83e03f5fe871297a310df40688a19c9"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "6b10e05202a4664c960e82ec550ed26c5930d9f17f781cc76a5730b06829c851",
+                "tool": "detect_fov_initial",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "1bce441d895640109a2bbdb010d2999ae34278fffbe89e1c8d93dd81ee999128",
+                "tool": "detect_fov_initial",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "8901a1a4ebef561ce308a7de3af40942ba61726b4413e23d7239b42b35f02a3b",
+                "tool": "detect_fov_initial",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "discovery_prerequisite",
+                "budget_class": "initialization",
+                "is_evidence": false,
+                "limit": "可能发现实例；空框不证明不存在；后继逐项校验"
+              },
+              {
+                "action_id": "2907dc98d679a30b2606052efc875ebbedf8573f999c0018bed5e1f7c452b3c4",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723",
+                "tool": "presence_check",
+                "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "5ca2fc272d36bf3dd3abb7bf318e9a11183bc917f5d9ce1ba763edb869ccdfa6",
+                "tool": "presence_check",
+                "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              },
+              {
+                "action_id": "433ab8158714003124a4b1c8b574321af83e03f5fe871297a310df40688a19c9",
+                "tool": "presence_check",
+                "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:5d352a14919865c6b36ced87"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "needle_crystal",
+          "epidermis_cell"
+        ],
+        "paused_is_excluded": false
+      }
+    ],
+    "unmapped": [],
+    "candidate_ids": [
+      "秦皮",
+      "大青叶",
+      "穿心莲",
+      "滑石",
+      "雄黄",
+      "乌梅",
+      "连翘",
+      "桔梗",
+      "牡蛎",
+      "菟丝子",
+      "白芍",
+      "地黄",
+      "龙胆"
+    ],
+    "complete": false,
+    "incomplete_candidate_ids": [
+      "秦皮",
+      "大青叶",
+      "穿心莲",
+      "滑石",
+      "雄黄",
+      "乌梅",
+      "连翘",
+      "桔梗",
+      "牡蛎",
+      "菟丝子",
+      "白芍",
+      "地黄",
+      "龙胆"
+    ],
+    "actionable_gaps": true,
+    "comparison_required": true,
+    "scope": "current provided fields of view; local absence never excludes a specimen",
+    "policy": "review is always allowed; incomplete audit cannot authorize a complete differential conclusion"
+  },
+  "candidate_review_complete": false,
+  "decision_readiness_shadow": {
+    "schema": "decision-readiness/shadow-v1",
+    "mode": "shadow",
+    "selected_candidate_id": "大青叶",
+    "audit_complete": false,
+    "formal_authorized": false,
+    "selected_required_gaps": [
+      "indigo_crystal"
+    ],
+    "competing_required_gaps": {
+      "秦皮": [
+        "sand_crystal"
+      ],
+      "穿心莲": [
+        "calcium_carbonate"
+      ],
+      "滑石": [
+        "mineral_feature"
+      ],
+      "雄黄": [
+        "mineral_feature"
+      ],
+      "乌梅": [
+        "epidermis_cell"
+      ],
+      "连翘": [
+        "fiber"
+      ],
+      "桔梗": [
+        "secretory_tissue"
+      ],
+      "牡蛎": [
+        "mineral_feature"
+      ],
+      "菟丝子": [
+        "palisade_cell"
+      ],
+      "白芍": [
+        "cluster_crystal"
+      ],
+      "地黄": [
+        "parenchyma_cell"
+      ],
+      "龙胆": [
+        "needle_crystal"
+      ]
+    },
+    "supporting_gaps": {
+      "大青叶": [
+        "epidermis_cell",
+        "stoma"
+      ],
+      "穿心莲": [
+        "non_glandular_hair",
+        "glandular_hair",
+        "stoma"
+      ],
+      "乌梅": [
+        "non_glandular_hair"
+      ],
+      "白芍": [
+        "starch_grain",
+        "vessel",
+        "fiber"
+      ],
+      "地黄": [
+        "secretory_tissue",
+        "vessel"
+      ],
+      "龙胆": [
+        "epidermis_cell"
+      ]
+    },
+    "unmapped": [],
+    "would_be_ready": false,
+    "production_authorization_changed": false,
+    "limit": "未查supporting不单独判否；required观察完成不等于排除竞争候选，仍需独立风险验证"
+  },
+  "formal_verdict": "insufficient_evidence",
+  "formal_conclusion_id": null,
+  "candidate_comparison": [
+    {
+      "candidate_id": "大青叶",
+      "display": "大青叶",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.289656,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:6dab74c06db9699546423c80"
+      ]
+    },
+    {
+      "candidate_id": "秦皮",
+      "display": "秦皮",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.057259,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:01880b0fc8bf98039a82a2d4"
+      ]
+    },
+    {
+      "candidate_id": "滑石",
+      "display": "滑石",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.053886,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:1ca91cf949300edaf887e975"
+      ]
+    },
+    {
+      "candidate_id": "桔梗",
+      "display": "桔梗",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.027736,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.06,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:ec0e5d8fa3665dfe22218812"
+      ]
+    },
+    {
+      "candidate_id": "地黄",
+      "display": "地黄",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.0196,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:420269ce0318877d6fbadd23"
+      ]
+    },
+    {
+      "candidate_id": "牡蛎",
+      "display": "牡蛎",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.009357,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:4631a6519d0160aa42cd32ce"
+      ]
+    },
+    {
+      "candidate_id": "菟丝子",
+      "display": "菟丝子",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.008984,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.06,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:858ae53b1ceb6e7fdea2506f"
+      ]
+    },
+    {
+      "candidate_id": "乌梅",
+      "display": "乌梅",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.005132,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.06,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:64ff088f3949a1a3bcf8d14d"
+      ]
+    },
+    {
+      "candidate_id": "连翘",
+      "display": "连翘",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.005018,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.06,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:d39075df81e82f55a5536b8d"
+      ]
+    },
+    {
+      "candidate_id": "穿心莲",
+      "display": "穿心莲",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.003533,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:dd2fd2eeb95643f9ee7bb71d"
+      ]
+    },
+    {
+      "candidate_id": "白芍",
+      "display": "白芍",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.002041,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.24,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:927246c38c82da5317e3f0a2"
+      ]
+    },
+    {
+      "candidate_id": "雄黄",
+      "display": "雄黄",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.00126,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:e6faf278589c6eab8eff4da7"
+      ]
+    },
+    {
+      "candidate_id": "龙胆",
+      "display": "龙胆",
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "fused_score": 0.0007,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.24,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "supported_criteria": [],
+      "required_gaps": [
+        "criterion:1a5e22eea2531192b90c81bc"
+      ]
+    }
+  ],
+  "rule_notes": [
+    "必需判据未全部核验或 B 规则分未达倾向门槛。"
+  ],
+  "provisional": {
+    "schema": "provisional-ranking/v1",
+    "policy": "temporary only; formal verdict and formal support count unchanged",
+    "source": "classification artifacts, one best class per crop",
+    "ranking": [
+      {
+        "candidate_id": "大青叶",
+        "display": "大青叶",
+        "provisional_score": 0.393742,
+        "provisional_delta": 0.104086,
+        "formal_score": 0.289656,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "indigo_crystal",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          },
+          {
+            "feature_id": "epidermis_cell",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "stoma",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "indigo_crystal",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "秦皮",
+        "display": "秦皮",
+        "provisional_score": 0.268711,
+        "provisional_delta": 0.211452,
+        "formal_score": 0.057259,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "sand_crystal",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "sand_crystal",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "滑石",
+        "display": "滑石",
+        "provisional_score": 0.264663,
+        "provisional_delta": 0.210777,
+        "formal_score": 0.053886,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "mineral_feature",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "mineral_feature",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "牡蛎",
+        "display": "牡蛎",
+        "provisional_score": 0.211229,
+        "provisional_delta": 0.201872,
+        "formal_score": 0.009357,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "mineral_feature",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "mineral_feature",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "雄黄",
+        "display": "雄黄",
+        "provisional_score": 0.201511,
+        "provisional_delta": 0.200251,
+        "formal_score": 0.00126,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "mineral_feature",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "mineral_feature",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "桔梗",
+        "display": "桔梗",
+        "provisional_score": 0.033283,
+        "provisional_delta": 0.005547,
+        "formal_score": 0.027736,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "secretory_tissue",
+            "role": "required",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "地黄",
+        "display": "地黄",
+        "provisional_score": 0.02352,
+        "provisional_delta": 0.00392,
+        "formal_score": 0.0196,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "parenchyma_cell",
+            "role": "required",
+            "tier": "C",
+            "state": "NOT_DETECTED",
+            "weight": 0.3,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "secretory_tissue",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "vessel",
+            "role": "supporting",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "菟丝子",
+        "display": "菟丝子",
+        "provisional_score": 0.010781,
+        "provisional_delta": 0.001797,
+        "formal_score": 0.008984,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "palisade_cell",
+            "role": "required",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "乌梅",
+        "display": "乌梅",
+        "provisional_score": 0.006158,
+        "provisional_delta": 0.001026,
+        "formal_score": 0.005132,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "epidermis_cell",
+            "role": "required",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "non_glandular_hair",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "连翘",
+        "display": "连翘",
+        "provisional_score": 0.006022,
+        "provisional_delta": 0.001004,
+        "formal_score": 0.005018,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "fiber",
+            "role": "required",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "穿心莲",
+        "display": "穿心莲",
+        "provisional_score": 0.004239,
+        "provisional_delta": 0.000706,
+        "formal_score": 0.003533,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "calcium_carbonate",
+            "role": "required",
+            "tier": "C",
+            "state": "NOT_DETECTED",
+            "weight": 0.3,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "non_glandular_hair",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "glandular_hair",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "stoma",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "白芍",
+        "display": "白芍",
+        "provisional_score": 0.00245,
+        "provisional_delta": 0.000409,
+        "formal_score": 0.002041,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "cluster_crystal",
+            "role": "required",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "starch_grain",
+            "role": "supporting",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "vessel",
+            "role": "supporting",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "fiber",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "龙胆",
+        "display": "龙胆",
+        "provisional_score": 0.000841,
+        "provisional_delta": 0.000141,
+        "formal_score": 0.0007,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "needle_crystal",
+            "role": "required",
+            "tier": "P0",
+            "state": "NOT_DETECTED",
+            "weight": 1.0,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "epidermis_cell",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      }
+    ],
+    "top_candidate": "大青叶",
+    "formal_top_candidate": "大青叶"
+  },
+  "review_required": true,
+  "review_reasons": [
+    "FORMAL_REQUIRES_REVIEW",
+    "CANDIDATE_AUDIT_INCOMPLETE",
+    "INSUFFICIENT_FEATURE_TYPES",
+    "CANDIDATE_NOT_FORMAL_CONCLUSION",
+    "FORMAL_VERDICT_NOT_AUTHORIZED"
+  ],
+  "confidence_basis": {
+    "rule_score": 0.0,
+    "rule_confidence": 0.0,
+    "score_components": {
+      "version": "b-rule/4",
+      "support_weight": 0.2,
+      "required_total": 1,
+      "required_matched": 0,
+      "required_complete": false,
+      "required_attainment": 0,
+      "missing_required_penalty": 0,
+      "required_base": 0.0,
+      "supporting_contributions": {},
+      "supporting_strength": 0,
+      "supporting_bonus": 0,
+      "disjoint_counter_strength": 0,
+      "disjoint_counter_penalty": 0.0,
+      "disjoint_counterevidence": []
+    },
+    "calibrated_probability": null,
+    "fused_score": 0.289656,
+    "support_count": 0,
+    "verified_feature_count": 0,
+    "min_support_features": 2,
+    "level_meaning": "delivery_authorization_not_probability",
+    "level": "low",
+    "has_admitted_b_support": true
+  },
+  "evidence_packet": {
+    "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\runs\\fusion_b1055781e9b94702a3e4a45ca76a5ee3\\final_evidence.json",
+    "sha256": "1ace6b79a7597f6b53935065ad9f8821d647e7e6171b009b26db74bfbb242acb",
+    "fact_count": 72,
+    "hash_method": "canonical_json_sha256",
+    "evidence_version": "2f1d3c83794261d77dea60d9bad0f18be11a2c43eaa9a3600e676c0de2435c88"
+  },
+  "model_failure": "UPSTREAM_NETWORK_FAILED",
+  "model_validation_error": null,
+  "model_proposal": null,
+  "model_citation_audit": null,
+  "usage": null,
+  "new_image_calls": 0,
+  "new_tool_calls": 0,
+  "timing": {
+    "elapsed_seconds": 5.579,
+    "model_call_seconds": 5.219,
+    "scope": "read-only evidence packet, optional model call/validation and local assessment"
+  }
+}

@@ -1,6 +1,6 @@
 """把受控阶段的结果绑定到独立工作目录和文件摘要。
 
-记录单阶段文件、批量分类的逐裁图结果，以及示例审计及其拼图。回放按相对路径重建输出，批量失败仅保留结构化状态。
+记录单阶段文件以及批量分类的逐裁图结果。回放按相对路径重建输出，批量失败仅保留结构化状态。
 
 主要定义：
 - bundle 整理阶段产物相对路径、摘要及回放结果。
@@ -31,11 +31,8 @@ def bundle(result, work):
         return path.relative_to(root).as_posix()
 
     fields = ('crops_dir', 'completion', 'regions', 'scale', 'segmentation', 'classification',
-              'measurements', 'delivery', 'audit', 'contact_sheet')
-    paths = {
-        key: record_path(result[key], required_file=key in {'audit', 'contact_sheet'})
-        for key in fields if key in result
-    }
+              'measurements', 'delivery')
+    paths = {key: record_path(result[key]) for key in fields if key in result}
     value = {'root': str(root), 'paths': paths, 'files': files, 'quality': result.get('quality')}
     if 'classifications' in result:
         rows = []

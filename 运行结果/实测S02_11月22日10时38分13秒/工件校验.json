@@ -1,0 +1,15 @@
+{
+  "运行摘要.md": "2def367673a38d3e163d817ccf695938c491824835d7cbb018db80f8ec449770",
+  "input_proof.json": "a5032b96dcb4cc093586132568b97a077f8b42fab8c2d9dfee7539acb5ba5cd8",
+  "interface_status.json": "9e08c9a20333dc875bb6578f0df6f34fd8e79ddeb1f9e6052abb5763c5aded4c",
+  "doctor.json": "40f72d286f03872bc3c68fe48387dc6b30e7d133ee89b847a314879503b3162b",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/agent_trace.json": "0fcb53ff2320ffbcb62de13d5ca1786546a6670884b1427999a157decd17e02b",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/final_evidence.json": "10e5d7f52115570f333438caae3706ecbab86cfffa3999d36667d4f37ed1a018",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/final_assessment.json": "896e628734e0f08b67c33070f6aa8fd56e5f821ea79326d71f6704e40741e566",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/a_prediction.json": "004dea1f9385fd50b902ac17b25ec56b10d42fec68a0691f13032b2792b99b54",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/code_signature_start.json": "aa553253aca0bb4ecb0c5a49d4857b91af1eee986ba4a611d8b5d78409eb4841",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/code_signature_end.json": "66c31a80240052ab5610eb5e9108c9db5a9f1ebecb89ba275b66bca9f47f4c06",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/output.json": "b027abda3e3103ff6c039ef57012b0dc31f12886c64babdfa4d39d82df99a0d1",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/workflow/resources.json": "98e659b038c12d183cdcb5e61f5f3946ef621474e28acbc02ec9d70c25e1b677",
+  "runs/fusion_92a860349dc44d1db8bb9b41f12b91c0/workflow/operations.json": "af243a5c5bdcea56a714e71daf1a4c85f7188dfda38aaa12359c298b89033bdc"
+}

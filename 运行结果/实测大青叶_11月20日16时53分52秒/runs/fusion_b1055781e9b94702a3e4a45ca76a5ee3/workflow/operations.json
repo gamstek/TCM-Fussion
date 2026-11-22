@@ -1,0 +1,27 @@
+{
+  "entries": {
+    "d08684af876d95b304335b4a312e59ef1155353a17a9b99048e6ac47c05f6097": {
+      "action_id": "97ec56f02788445c569ebfc9e6ed5c95379484d44c8bd58746623f1394875155",
+      "tool": "detect_fov_initial",
+      "target_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "status": "done",
+      "accepted": true,
+      "repair_completed": false,
+      "operation_key": "d08684af876d95b304335b4a312e59ef1155353a17a9b99048e6ac47c05f6097",
+      "evidence_version": "2f1d3c83794261d77dea60d9bad0f18be11a2c43eaa9a3600e676c0de2435c88",
+      "dependency_fingerprint": "10d669f39e71dadf53377979d5666ebd95e590196f15a50896ef6dab50e50372",
+      "bundle": {
+        "root": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\runs\\fusion_b1055781e9b94702a3e4a45ca76a5ee3\\workflow\\ops\\d08684af876d95b3",
+        "paths": {
+          "crops_dir": "detection/crops",
+          "completion": "detection/crops.json"
+        },
+        "files": {
+          "detection/crops.json": "f3cb68aaa5fbb1b2da0b900b37839f3967be2ad3abc32edd2ec2ae1d32ca7bbf"
+        },
+        "quality": null
+      },
+      "ended_at": 1795165099.6500971
+    }
+  }
+}

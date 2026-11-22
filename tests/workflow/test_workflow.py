@@ -159,6 +159,20 @@ class WorkflowTests(WorkflowFixture, unittest.TestCase):
                             for o in options))
         self.assertNotIn('needle_crystal', {o['feature_id'] for o in options})
 
+    def test_failed_identity_keeps_required_feature_scan_available(self):
+        r = self._generic_recovery_runtime(('黄芩',))
+        workflow = r.workflow
+        image = next(iter(r.images))
+        key = 'feature_scan:' + image + ':fiber'
+        self.assertIn(key, workflow.targets())
+        doc = self.root/'mismatch.json'
+        write_json(doc, {'feature_id':'fiber', 'label':'纤维'})
+        item = workflow._art('classification:mismatch', 'classification', doc, [image],
+                             image_id=image, feature_id='fiber', identity_verified=False)
+        workflow.store.commit(workflow.store.current()['version'], [item])
+        self.assertIn(key, workflow.targets())
+        self.assertFalse(workflow.coverage()['required_all'])
+
     def test_generic_roles_can_limit_supporting_without_needle_fallback(self):
         runtime = self._generic_recovery_runtime(fast_recovery_roles=['supporting'])
         features = {t['feature_id'] for t in runtime.workflow.targets().values()
@@ -275,6 +289,9 @@ class WorkflowTests(WorkflowFixture, unittest.TestCase):
                 self.assertEqual(read_json(result['completion'])['feature_id'], fid)
                 self.assertEqual(seen[-1]['feature_id'], fid)
                 self.assertTrue(seen[-1]['feature_hint'])
+                self.assertNotEqual(seen[-1]['roi'], [0, 0, 300, 300])
+                self.assertTrue(result['partial'])
+                self.assertTrue(read_json(result['completion'])['partial'])
                 if fid != 'needle_crystal':
                     self.assertNotIn('针晶可散在', seen[-1]['feature_hint'])
 
@@ -451,6 +468,8 @@ class WorkflowTests(WorkflowFixture, unittest.TestCase):
         with patch.object(workflow.store, 'current', return_value=snapshot), \
                 patch.object(workflow, 'recovery_features', return_value=['fiber', 'stone_cell']):
             self.assertFalse(workflow.coverage()['required_all'])
+            with patch.dict(workflow.config, hybrid_scan_enabled=False):
+                self.assertFalse(any(key.startswith('hybrid_scan:') for key in workflow.targets()))
             for image_id in runtime.images:
                 self.assertEqual(workflow.targets()['hybrid_scan:' + image_id]['features'],
                                  ['stone_cell'])

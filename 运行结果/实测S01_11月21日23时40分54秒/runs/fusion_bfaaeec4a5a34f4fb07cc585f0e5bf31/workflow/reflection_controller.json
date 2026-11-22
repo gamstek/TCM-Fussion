@@ -1,0 +1,720 @@
+{
+  "schema": "task-reflection-controller/d3",
+  "scope": "task_policy_only",
+  "evidence_effect": "none",
+  "rows": [
+    {
+      "key": "b672ef017717dc6122f40e24347b45b67f966da4289b717170ad2e384e01f5fb",
+      "tool": "presence_check",
+      "problem_id": "mineral_feature",
+      "question_id": "physical-question:6e375ee015b6b9d314d7cadd",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 24891.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "c9582d2a1e9536c7d0b25d90daac7a34dc83c21929168ca451ff838cbac3469f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "7f371c0f67942067b08dbce128814759d413cc574d0381cfed50218fc3e2a63e",
+      "tool": "presence_check",
+      "problem_id": "indigo_crystal",
+      "question_id": "physical-question:0d389e38328eb1de37c40c59",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 10578.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "c9582d2a1e9536c7d0b25d90daac7a34dc83c21929168ca451ff838cbac3469f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "fd0d6b8b16c8d72ec9ae23581368f1061589f48e15d4be99bd4e9f0951b01ad2",
+      "tool": "presence_check",
+      "problem_id": "epidermis_cell",
+      "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 27078.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "c9582d2a1e9536c7d0b25d90daac7a34dc83c21929168ca451ff838cbac3469f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "aef17775f7a6e046564c94eed2a950311e0f2586756bd56608dd585a1ea5fd11",
+      "tool": "presence_check",
+      "problem_id": "sand_crystal",
+      "question_id": "physical-question:2d8de4bc1f34627fa651475b",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 47812.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "c9582d2a1e9536c7d0b25d90daac7a34dc83c21929168ca451ff838cbac3469f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "fdfb3fc310f08470babce14dac4316270e9a4310acd960846e53a4bb4e2b47cf",
+      "tool": "presence_check",
+      "problem_id": "calcium_carbonate",
+      "question_id": "physical-question:e3d2bd6f4c968d8d5cf134d5",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 13766.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "c9582d2a1e9536c7d0b25d90daac7a34dc83c21929168ca451ff838cbac3469f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "73de795c4de17bac6d198cfeb29ddba101adefdd35d1cb003db2e58b45a53dcc",
+      "tool": "presence_check",
+      "problem_id": "stoma",
+      "question_id": "physical-question:9e995965ab54d761d13e4462",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 17750.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "c9582d2a1e9536c7d0b25d90daac7a34dc83c21929168ca451ff838cbac3469f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "62a1c3548a42e571861899752e5438a99207a068f91038deee6785d8b8c99ef9",
+      "tool": "presence_check",
+      "problem_id": "non_glandular_hair",
+      "question_id": "physical-question:ed2ec30b331799bade018555",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 31031.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "c9582d2a1e9536c7d0b25d90daac7a34dc83c21929168ca451ff838cbac3469f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "f00fbcb5aae66df5f8b6aebc2ee99b26a8f2051aedf6046db22eba240c46dd01",
+      "tool": "presence_check",
+      "problem_id": "glandular_hair",
+      "question_id": "physical-question:9722023c8111da572e690db5",
+      "progress_axes": {
+        "evidence": true,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 13156.0,
+      "objective": "核验合法候选差异特征",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "c9582d2a1e9536c7d0b25d90daac7a34dc83c21929168ca451ff838cbac3469f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "29e9f897cc06d28f93349f9b4f1eac3d0d716b763dea9f2b12679f6252dd61bd",
+      "tool": "detect_fov_initial",
+      "problem_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "question_id": "physical-question:960ccb880479109c1dff22c4",
+      "progress_axes": {
+        "evidence": false,
+        "capability": true,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 9015.0,
+      "objective": "读取或恢复有效证据",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "30bbe10783017067b0dbabf1151cf365691172279b3f98ce39a2b19f39e11186",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "0d7fa5b71c788b7e55a5573e05330bb7d22e7bf9a58302b7cea42c33dc73c904",
+      "tool": "feature_scan",
+      "problem_id": "feature_scan:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell",
+      "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+      "progress_axes": {
+        "evidence": false,
+        "capability": true,
+        "diagnostic": false
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 18453.0,
+      "objective": "按 feature_id 做全视野分块的目标条件候选扫描",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "964b8425802fd524cde21cb6c6a70267dfdac4b319f00b7f5cb56c601b58f333",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "60e3c8ce4769352646997e30efe1fbaf2dfc98c70b967636b0568b2b3a3a1bb0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "79df993dcd4a7ef9cfbc599f8ff6bcaf92a89f34b2653af52a138c3814ce70d6",
+      "tool": "classify_target",
+      "problem_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+      "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+      "progress_axes": {
+        "evidence": false,
+        "capability": false,
+        "diagnostic": true
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 17765.0,
+      "objective": "读取或恢复有效证据",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "338759b2f32a27957b10418c943031214113e3e16570d064f4f1226daa0268a4",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "453a04b0654fd19ecb3b966c86b70f282e114a10aa7879a6cb4e929210c88c6c",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "a1777a66b6b3263fdd51b271aa72490aa677d9c84e2e0af662e6830bcc6afc43",
+      "tool": "classify_target",
+      "problem_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+      "progress_axes": {
+        "evidence": false,
+        "capability": false,
+        "diagnostic": true
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 11969.0,
+      "objective": "读取或恢复有效证据",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "7e3b846cf9c7728f53f2f46be7698288904b91d5eaf15900c2c6b61d240d839f",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "4beb9815ebc2dceba20c2181a37a5f3c582670919a55bc8988348287ddd45de0",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "8ac49cfbe901d8d405a62658032651542455739777be524fc292c9f9073e5eb7",
+      "tool": "classify_target",
+      "problem_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+      "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+      "progress_axes": {
+        "evidence": false,
+        "capability": false,
+        "diagnostic": true
+      },
+      "progress": true,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 27406.0,
+      "objective": "读取或恢复有效证据",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "452aab16e99452188cb30056f1022fc99922129f6d709a301101ceb4428204b4",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    },
+    {
+      "key": "50c093f92db9b522d93ee1042cd5516ee2ca0cdb43256a73c6e2fe60f3217607",
+      "tool": "classify_target",
+      "problem_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02",
+      "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+      "progress_axes": {
+        "evidence": false,
+        "capability": false,
+        "diagnostic": false
+      },
+      "progress": false,
+      "accepted": true,
+      "failure_code": null,
+      "latency_ms": 12469.0,
+      "objective": "读取或恢复有效证据",
+      "resolved_criteria": [],
+      "candidate_support_changes": {},
+      "qualified_counter_changes": [],
+      "primary_required_progress": false,
+      "discrimination_progress": "not_established",
+      "evidence_version": "ac35a0745195942ba6ce135c8332d2786a833b01404f9344aae56552211c5c5c",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "input_fingerprint": "63aa8fe51c59287bb342d3f0022aab26cb656a98b97e9834db8c0b5fe2857f0a",
+      "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+    }
+  ],
+  "cards": [
+    {
+      "reflection_id": "reflection:aac48a381c22a4d68ca48006",
+      "scope": "task",
+      "issue_id": "issue:49a70de6b0ebdb023b4c9998",
+      "revision": 1,
+      "failure_type": "goal_identity",
+      "affected_candidates": [
+        "秦皮",
+        "大青叶",
+        "穿心莲",
+        "滑石",
+        "雄黄",
+        "乌梅"
+      ],
+      "evidence_refs": [
+        "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82"
+      ],
+      "trigger_fingerprint": "dfb448ac3116460d71aaa499a9c588c3e719ba0637528921564f7c2a042f81da",
+      "facts": [],
+      "baseline": {
+        "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+        "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "input_fingerprint": "452aab16e99452188cb30056f1022fc99922129f6d709a301101ceb4428204b4",
+        "key": "8ac49cfbe901d8d405a62658032651542455739777be524fc292c9f9073e5eb7",
+        "tool": "classify_target",
+        "failure_code": "unreadable",
+        "evidence_version": "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82",
+        "progress_axes": {
+          "evidence": false,
+          "capability": false,
+          "diagnostic": true
+        }
+      },
+      "change_condition": "switch_question",
+      "proposed_patch": {
+        "avoid_action_keys": [],
+        "activate_candidates": [],
+        "recommended_exit": "review",
+        "reflection_id": "reflection:aac48a381c22a4d68ca48006",
+        "change_condition": "switch_question"
+      },
+      "expected_gain": "resolve a different gap or supply verifiably changed input",
+      "interpretation": "候选支持增加不等于排除其他候选；主解释未核验与真正反证分开处理",
+      "stop_condition": "no valid change or repeated no progress within existing budgets",
+      "evidence_effect": "none",
+      "identity_failure": {
+        "outcome": "unreadable",
+        "expected_feature": "epidermis_cell",
+        "reported_feature": null,
+        "instance_ref": "inst:0c5be39d54f6f7b4ae5e753d5e43b945f418594e38f6aa9a74f394c5bcb80e41",
+        "semantic_task": "verify_identity",
+        "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+        "classification_ref": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+        "classification_sha256": "eaacccc2de3d8e7f5f520975319efcd330227c012e45a4031f7283cd85e44a80",
+        "evidence_version": "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82",
+        "bound_input": "6ebb0eb0d5543e03da8beec33307e5cdba87db2ce434ddcbddddfca66840a7c5",
+        "return_reason": "identity_rejected"
+      }
+    },
+    {
+      "reflection_id": "reflection:38d6e8f368b736ac5be502f7",
+      "scope": "task",
+      "issue_id": "issue:42cd2ae6994bb1c23e051e64",
+      "revision": 1,
+      "failure_type": "identity",
+      "affected_candidates": [
+        "秦皮",
+        "大青叶",
+        "穿心莲",
+        "滑石",
+        "雄黄",
+        "乌梅"
+      ],
+      "evidence_refs": [
+        "ac35a0745195942ba6ce135c8332d2786a833b01404f9344aae56552211c5c5c"
+      ],
+      "trigger_fingerprint": "fc98f6a7609af659a2826308e8fd4b3957bb0b16e1e251608250257c62e63050",
+      "facts": [
+        {
+          "key": "a1777a66b6b3263fdd51b271aa72490aa677d9c84e2e0af662e6830bcc6afc43",
+          "tool": "classify_target",
+          "problem_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+          "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+          "progress_axes": {
+            "evidence": false,
+            "capability": false,
+            "diagnostic": true
+          },
+          "progress": true,
+          "accepted": true,
+          "failure_code": null,
+          "latency_ms": 11969.0,
+          "objective": "读取或恢复有效证据",
+          "resolved_criteria": [],
+          "candidate_support_changes": {},
+          "qualified_counter_changes": [],
+          "primary_required_progress": false,
+          "discrimination_progress": "not_established",
+          "evidence_version": "7e3b846cf9c7728f53f2f46be7698288904b91d5eaf15900c2c6b61d240d839f",
+          "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "input_fingerprint": "4beb9815ebc2dceba20c2181a37a5f3c582670919a55bc8988348287ddd45de0",
+          "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+        },
+        {
+          "key": "8ac49cfbe901d8d405a62658032651542455739777be524fc292c9f9073e5eb7",
+          "tool": "classify_target",
+          "problem_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+          "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+          "progress_axes": {
+            "evidence": false,
+            "capability": false,
+            "diagnostic": true
+          },
+          "progress": true,
+          "accepted": true,
+          "failure_code": null,
+          "latency_ms": 27406.0,
+          "objective": "读取或恢复有效证据",
+          "resolved_criteria": [],
+          "candidate_support_changes": {},
+          "qualified_counter_changes": [],
+          "primary_required_progress": false,
+          "discrimination_progress": "not_established",
+          "evidence_version": "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82",
+          "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "input_fingerprint": "452aab16e99452188cb30056f1022fc99922129f6d709a301101ceb4428204b4",
+          "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+        },
+        {
+          "key": "50c093f92db9b522d93ee1042cd5516ee2ca0cdb43256a73c6e2fe60f3217607",
+          "tool": "classify_target",
+          "problem_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02",
+          "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+          "progress_axes": {
+            "evidence": false,
+            "capability": false,
+            "diagnostic": false
+          },
+          "progress": false,
+          "accepted": true,
+          "failure_code": null,
+          "latency_ms": 12469.0,
+          "objective": "读取或恢复有效证据",
+          "resolved_criteria": [],
+          "candidate_support_changes": {},
+          "qualified_counter_changes": [],
+          "primary_required_progress": false,
+          "discrimination_progress": "not_established",
+          "evidence_version": "ac35a0745195942ba6ce135c8332d2786a833b01404f9344aae56552211c5c5c",
+          "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "input_fingerprint": "63aa8fe51c59287bb342d3f0022aab26cb656a98b97e9834db8c0b5fe2857f0a",
+          "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+        }
+      ],
+      "baseline": {
+        "key": "50c093f92db9b522d93ee1042cd5516ee2ca0cdb43256a73c6e2fe60f3217607",
+        "tool": "classify_target",
+        "problem_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02",
+        "question_id": "physical-question:b5542aa6bb8c8dc828bddc43",
+        "progress_axes": {
+          "evidence": false,
+          "capability": false,
+          "diagnostic": false
+        },
+        "progress": false,
+        "accepted": true,
+        "failure_code": null,
+        "latency_ms": 12469.0,
+        "objective": "读取或恢复有效证据",
+        "resolved_criteria": [],
+        "candidate_support_changes": {},
+        "qualified_counter_changes": [],
+        "primary_required_progress": false,
+        "discrimination_progress": "not_established",
+        "evidence_version": "ac35a0745195942ba6ce135c8332d2786a833b01404f9344aae56552211c5c5c",
+        "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "input_fingerprint": "63aa8fe51c59287bb342d3f0022aab26cb656a98b97e9834db8c0b5fe2857f0a",
+        "candidate_signature": "b93b5a1c0c22b4fa46860fb047387b28ff29e15e480d34aab6e96f396cfe517c"
+      },
+      "change_condition": "switch_question",
+      "proposed_patch": {
+        "avoid_action_keys": [
+          "50c093f92db9b522d93ee1042cd5516ee2ca0cdb43256a73c6e2fe60f3217607"
+        ],
+        "activate_candidates": [],
+        "recommended_exit": "review",
+        "reflection_id": "reflection:38d6e8f368b736ac5be502f7",
+        "change_condition": "switch_question"
+      },
+      "expected_gain": "resolve a different gap or supply verifiably changed input",
+      "interpretation": "候选支持增加不等于排除其他候选；主解释未核验与真正反证分开处理",
+      "stop_condition": "no valid change or repeated no progress within existing budgets",
+      "evidence_effect": "none"
+    }
+  ],
+  "applications": [
+    {
+      "reflection_id": "reflection:aac48a381c22a4d68ca48006",
+      "issue_id": "issue:49a70de6b0ebdb023b4c9998",
+      "revision": 1,
+      "disposition": "apply",
+      "selected_action_id": "fec0f01de8d69a4474454d71b591d6fbce0ae74627a13d471efb9ba7aaec4f84",
+      "extra_planning_calls": 0,
+      "transition": "different_input",
+      "applied": true,
+      "posterior_pending": true,
+      "policy_delta": {
+        "action_order_effect": "model_selected_only",
+        "changes_current_menu_or_scope": false,
+        "declared_action_transition": "different_input",
+        "selected_action_id": "fec0f01de8d69a4474454d71b591d6fbce0ae74627a13d471efb9ba7aaec4f84"
+      },
+      "evidence_effect": "none"
+    },
+    {
+      "reflection_id": "reflection:aac48a381c22a4d68ca48006",
+      "applied": true,
+      "next_action_key": "50c093f92db9b522d93ee1042cd5516ee2ca0cdb43256a73c6e2fe60f3217607",
+      "repeated_avoided_key": false,
+      "change_condition": "different_input",
+      "condition_observed": true,
+      "new_information": false,
+      "effective": false,
+      "progress_axes": {
+        "evidence": false,
+        "capability": false,
+        "diagnostic": false
+      },
+      "evidence_added": false,
+      "policy_delta": {
+        "action_order_effect": "model_selected_only",
+        "changes_current_menu_or_scope": false,
+        "declared_action_transition": "different_input",
+        "selected_action_id": "fec0f01de8d69a4474454d71b591d6fbce0ae74627a13d471efb9ba7aaec4f84"
+      },
+      "recommended_exit": "review",
+      "evidence_version": "ac35a0745195942ba6ce135c8332d2786a833b01404f9344aae56552211c5c5c",
+      "causal_improvement_validated": false,
+      "strategy": {
+        "change_condition": "different_input",
+        "expected": "qualified_evidence"
+      },
+      "qualified_fact_added": false,
+      "goal_gap_resolved": false,
+      "expected_outcome_observed": false,
+      "attribution": "temporal_followup_not_causal_proof",
+      "posterior_pending": false
+    },
+    {
+      "reflection_id": "reflection:38d6e8f368b736ac5be502f7",
+      "issue_id": "issue:42cd2ae6994bb1c23e051e64",
+      "revision": 1,
+      "disposition": "apply",
+      "selected_action_id": "review",
+      "extra_planning_calls": 0,
+      "transition": "stop",
+      "applied": true,
+      "posterior_pending": true,
+      "policy_delta": {
+        "action_order_effect": "model_selected_only",
+        "changes_current_menu_or_scope": false,
+        "declared_action_transition": "stop",
+        "selected_action_id": "review"
+      },
+      "evidence_effect": "none"
+    },
+    {
+      "reflection_id": "reflection:38d6e8f368b736ac5be502f7",
+      "applied": true,
+      "posterior_pending": false,
+      "termination": "planner_request_review",
+      "condition_observed": true,
+      "effective": false,
+      "evidence_added": false,
+      "evidence_effect": "none",
+      "exit_recommendation_followed": true,
+      "declared_exit_condition_consistent": true,
+      "policy_delta": {
+        "action_order_effect": "model_selected_only",
+        "changes_current_menu_or_scope": false,
+        "declared_action_transition": "stop",
+        "selected_action_id": "review"
+      },
+      "causal_improvement_validated": false,
+      "strategy": {
+        "change_condition": "stop",
+        "expected": "stop"
+      },
+      "qualified_fact_added": false,
+      "goal_gap_resolved": false,
+      "expected_outcome_observed": true
+    }
+  ],
+  "rejections": [],
+  "issues": {
+    "issue:49a70de6b0ebdb023b4c9998": {
+      "revision": 1,
+      "fingerprint": "dfb448ac3116460d71aaa499a9c588c3e719ba0637528921564f7c2a042f81da"
+    },
+    "issue:42cd2ae6994bb1c23e051e64": {
+      "revision": 1,
+      "fingerprint": "fc98f6a7609af659a2826308e8fd4b3957bb0b16e1e251608250257c62e63050"
+    }
+  },
+  "responses": [
+    {
+      "issue_id": "issue:49a70de6b0ebdb023b4c9998",
+      "revision": 1,
+      "disposition": "apply",
+      "selected_action_id": "fec0f01de8d69a4474454d71b591d6fbce0ae74627a13d471efb9ba7aaec4f84",
+      "extra_planning_calls": 0,
+      "transition": "different_input"
+    },
+    {
+      "issue_id": "issue:42cd2ae6994bb1c23e051e64",
+      "revision": 1,
+      "disposition": "apply",
+      "selected_action_id": "review",
+      "extra_planning_calls": 0,
+      "transition": "stop"
+    }
+  ],
+  "exposures": [
+    {
+      "request_number": 10,
+      "issue_id": "issue:49a70de6b0ebdb023b4c9998",
+      "revision": 1,
+      "reflection_id": "reflection:aac48a381c22a4d68ca48006",
+      "fact_refs": [
+        "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82"
+      ],
+      "exposure": "submitted_to_planner"
+    },
+    {
+      "request_number": 11,
+      "issue_id": "issue:42cd2ae6994bb1c23e051e64",
+      "revision": 1,
+      "reflection_id": "reflection:38d6e8f368b736ac5be502f7",
+      "fact_refs": [
+        "ac35a0745195942ba6ce135c8332d2786a833b01404f9344aae56552211c5c5c"
+      ],
+      "exposure": "submitted_to_planner"
+    }
+  ],
+  "goal_failures": [
+    {
+      "issue_id": "issue:49a70de6b0ebdb023b4c9998",
+      "outcome": "unreadable",
+      "expected_feature": "epidermis_cell",
+      "reported_feature": null,
+      "instance_ref": "inst:0c5be39d54f6f7b4ae5e753d5e43b945f418594e38f6aa9a74f394c5bcb80e41",
+      "semantic_task": "verify_identity",
+      "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+      "classification_ref": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+      "classification_sha256": "eaacccc2de3d8e7f5f520975319efcd330227c012e45a4031f7283cd85e44a80",
+      "evidence_version": "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82",
+      "bound_input": "6ebb0eb0d5543e03da8beec33307e5cdba87db2ce434ddcbddddfca66840a7c5",
+      "return_reason": "identity_rejected"
+    }
+  ],
+  "pending": null,
+  "avoided": []
+}

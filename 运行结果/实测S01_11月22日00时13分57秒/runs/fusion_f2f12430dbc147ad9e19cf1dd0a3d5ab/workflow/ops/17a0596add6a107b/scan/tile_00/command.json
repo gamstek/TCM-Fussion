@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "D:\\TCM_Fusion\\.venv\\vision\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "TCM_Fusion.cli.workflow_worker",
+    "--context",
+    "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\17a0596add6a107b\\scan\\tile_00\\locate.json"
+  ],
+  "timeout_seconds": 180.0
+}

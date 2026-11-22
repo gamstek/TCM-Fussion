@@ -14,7 +14,7 @@
 """
 import argparse
 from pathlib import Path
-from TCM_Fusion.lib.runtime.storage import read_json, write_json, IntegrationError
+from TCM_Fusion.lib.runtime.storage import file_hash, read_json, write_json, IntegrationError
 
 
 def main(argv=None):
@@ -22,6 +22,11 @@ def main(argv=None):
     args=parser.parse_args(argv);ctx=read_json(args.context)
     from ls_common import imread_cn, TRUSTED_STATUSES
     from detect_core import lookup_px_per_um
+    structure_crop = ctx.get('feature_crop_policy') == 'structure_v1'
+    try:
+        source_sha = file_hash(ctx['source']) if structure_crop else None
+    except OSError as exc:
+        raise IntegrationError('IMAGE_INVALID', '无法读取绑定原图') from exc
     img=imread_cn(ctx['source'])
     if img is None:raise IntegrationError('IMAGE_INVALID','无法读取绑定原图')
     out=Path(ctx['output']);out.mkdir(parents=True,exist_ok=True)
@@ -39,13 +44,13 @@ def main(argv=None):
     import cv2
     import contracts
     h,w=img.shape[:2]
-    from TCM_Fusion.lib.runtime.storage import file_hash
     if targeted:
         from detect_core import detect_once
         from prompts import CLASSIFY_HINTS
         from ls_common import load_config, resolve_key
         x1, y1, x2, y2 = map(int, ctx['roi'])
-        if not (0 <= x1 < x2 <= w and 0 <= y1 < y2 <= h and (x2-x1)*(y2-y1) < w*h):
+        from TCM_Fusion.lib.vision.image_tiling import local_roi
+        if not local_roi((x1, y1, x2, y2), w, h):
             raise IntegrationError('ROI_INVALID', 'GLM 定向定位仅接受原图局部')
         # 观察窗口至少 min_roi_side，避免在过小 ROI 内强迫模型给框。
         min_roi = int(ctx.get('locate_min_roi_side') or 0)
@@ -54,6 +59,8 @@ def main(argv=None):
             cx, cy = (rx1+rx2)//2, (ry1+ry2)//2
             rx1, rx2 = max(0, cx-min_roi//2), min(w, cx+min_roi//2)
             ry1, ry2 = max(0, cy-min_roi//2), min(h, cy+min_roi//2)
+        if (rx2-rx1)*(ry2-ry1) == w*h:
+            rx1, ry1, rx2, ry2 = x1, y1, x2, y2
         label = next((name for name, fid in FEATURE_ID.items() if fid == ctx['feature_id']), None)
         if label not in CLASSIFY_HINTS:
             raise IntegrationError('ACTION_DENIED', '该特征没有受信形态描述')
@@ -109,7 +116,7 @@ def main(argv=None):
         result = {'dets': dets, 'roi': ctx['roi'], 'feature_id': ctx['feature_id']}
     else:
         result = read_json(ctx['boxes'])
-        if (result['source_sha256'] != file_hash(ctx['source']) or result['image_size'] != [w, h]
+        if (result['source_sha256'] != (source_sha or file_hash(ctx['source'])) or result['image_size'] != [w, h]
                 or result['roi'] != ctx.get('roi')):
             raise IntegrationError('SAMPLE_MISMATCH', 'YOLO 框与绑定原图或局部范围不一致')
     detections = result['dets']
@@ -126,20 +133,32 @@ def main(argv=None):
             print(f'[warn] 自动标定失败，保留检测框并置 px_per_um=None: {type(exc).__name__}: {exc}', flush=True)
     crops=out/'crops';crops.mkdir()
     from TCM_Fusion.lib.runtime.storage import digest
+    from TCM_Fusion.lib.vision.feature_window import feature_window
     count=0;replacements={};used_replacements=set();seen=list(ctx.get('existing_boxes',[]))
     for d in detections:
+        fid = FEATURE_ID[d['label']]
+        box = d['tight_bbox']
+        classification_window = loose_box(box,w,h)
+        identity_box = box
+        window_info = None
+        if structure_crop:
+            seed = d.get('source_tight_bbox', box)
+            window_info = feature_window(img, seed, fid, context_box=classification_window)
+            if window_info is not None:
+                box = d['tight_bbox'] = seed
         # 已有同类区域不重复注入；复用框IoU原语，不把重复实例当新证据。
-        overlaps=[b for b in seen if d['label']==b['label'] and iou_box(d['tight_bbox'],b['box'])>=0.5]
+        overlaps=[b for b in seen if d['label']==b['label'] and iou_box(box,b['box'])>=0.5]
         replacement=next((b['id'] for b in overlaps if b.get('id')==ctx.get('replace_id')),None)
         if replacement in used_replacements:continue
         if overlaps and replacement is None:continue
-        count+=1;fid=FEATURE_ID[d['label']];stem=Path(ctx['source']).stem
+        count+=1;stem=Path(ctx['source']).stem
         suffix = '' if initial else ('_glm' if targeted else '_roi')+digest(ctx['roi'])[:12]
         cid=f'{fid}_{stem}{suffix}_{count:02d}'
         if replacement:
             replacements[cid]=replacement;used_replacements.add(replacement)
-        seen.append({'id':cid,'label':d['label'],'box':d['tight_bbox']})
-        box=d['tight_bbox'];ox,oy,ex,ey=loose_box(box,w,h)
+        seen.append({'id':cid,'label':d['label'],'box':box})
+        window, frame = window_info if window_info is not None else (classification_window, None)
+        ox,oy,ex,ey=window
         crop=img[oy:ey,ox:ex];ok,encoded=cv2.imencode('.png',crop)
         if not ok:raise IntegrationError('CROP_ENCODE','裁图编码失败')
         with (crops/(cid+'.png')).open('wb') as f:f.write(encoded.tobytes())
@@ -153,7 +172,16 @@ def main(argv=None):
         if d.get('source_tight_bbox') is not None:
             side['source_tight_bbox']=d['source_tight_bbox']
             side['locate_expand']=d.get('locate_expand')
+        if frame is not None:
+            offset = [ox, oy, ox, oy]
+            side['feature_window'] = {
+                **frame, 'source_sha256': source_sha,
+                'classification_box_local': [v - p for v, p in zip(classification_window, offset)],
+                'identity_box_local': [int(v - p) for v, p in zip(identity_box, offset)],
+            }
         write_json(crops/(cid+'.json'),side)
+    if source_sha and file_hash(ctx['source']) != source_sha:
+        raise IntegrationError('SAMPLE_MISMATCH', '裁图期间绑定原图发生变化')
     if initial:
         write_json(out/'crops.json', {**result, 'engine':'yolo', 'count':count,
                                      'coordinate_system':'original_pixels'})

@@ -1,0 +1,1008 @@
+{
+  "schema": "identity-review-bank/v2",
+  "selection_basis": {
+    "report": "分类器设计权重与CNN权重/cls_runs/abl_320_lb_e40_ls01_mix01_s20261031/report.json",
+    "report_sha256": "1ebefcd5459ca9faa314719786b836d931d273d9080e565ca1ea3a6c55347958",
+    "metric": "各对计测试混淆矩阵的双向误判",
+    "reviewed_crop_selection": {
+      "report": "运行结果/测试运行总报告.md#resnet18-example-selection",
+      "model": "resnet18",
+      "imgsz": 320,
+      "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+      "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+      "preprocessor_sha256": "5c878d3bd6458542e7509849e4695cfbc89f090a63871cd06563f30bb9978d71"
+    }
+  },
+  "pairs": [
+    {
+      "id": "01",
+      "features": [
+        "vessel",
+        "fiber"
+      ],
+      "test_confusions": 6,
+      "example_ids": [
+        "pair_01_p",
+        "pair_01_n"
+      ],
+      "review_board_sha256": "64f369ccbd08620180189372b03696ce10741f1d7ec76c463f8d20b4dd69a0d4"
+    },
+    {
+      "id": "02",
+      "features": [
+        "stone_cell",
+        "secretory_tissue"
+      ],
+      "test_confusions": 24,
+      "example_ids": [
+        "pair_02_p",
+        "pair_02_n"
+      ],
+      "review_board_sha256": "51ab523df7cd60b1ca2d0c038569639e8e1427bee853459bc2653e8a5c521dec"
+    },
+    {
+      "id": "03",
+      "features": [
+        "stone_cell",
+        "fiber"
+      ],
+      "test_confusions": 22,
+      "example_ids": [
+        "pair_03_p",
+        "pair_03_n"
+      ],
+      "review_board_sha256": "18a8e2b7f65e6d38c44fe84a99665988f8ba6e16a654aded0e83ca4093764fef"
+    },
+    {
+      "id": "04",
+      "features": [
+        "secretory_tissue",
+        "fiber"
+      ],
+      "test_confusions": 12,
+      "example_ids": [
+        "pair_04_p",
+        "pair_04_n"
+      ],
+      "review_board_sha256": "7474139fc16e100cb72e952d121068a87c49df9cad875f0fac0fbdf723cd0b87"
+    },
+    {
+      "id": "05",
+      "features": [
+        "cluster_crystal",
+        "starch_grain"
+      ],
+      "test_confusions": 11,
+      "example_ids": [
+        "pair_05_p",
+        "pair_05_n"
+      ],
+      "review_board_sha256": "d5c31c5fca38d883be94abc5231aa038e2ada804f7c8500ea3b64c3599207e78"
+    },
+    {
+      "id": "06",
+      "features": [
+        "stone_cell",
+        "starch_grain"
+      ],
+      "test_confusions": 10,
+      "example_ids": [
+        "pair_06_p",
+        "pair_06_n"
+      ],
+      "review_board_sha256": "ee56a41d7dc5290d4f6ca9daa03bc642e7e80fa155454ebeea1f565783e4eb5f"
+    },
+    {
+      "id": "07",
+      "features": [
+        "single_crystal",
+        "starch_grain"
+      ],
+      "test_confusions": 9,
+      "example_ids": [
+        "pair_07_p",
+        "pair_07_n"
+      ],
+      "review_board_sha256": "7d28c6e3494b9d414ad09d6ba9e1428de56a6911823386b2f9f88da721187d49"
+    }
+  ],
+  "examples": [
+    {
+      "id": "vessel_changshan_8",
+      "feature_id": "vessel",
+      "file": "identity_review_crops/vessel_changshan_8.jpg",
+      "sha256": "4918ac863a11567bd816fc9c6a4ac67a6b4e1b41254b258abfb8324dc21ed289",
+      "source_image": "数据量太少合集/常山导管/8.tif",
+      "source_sha256": "ac8f13191bd551ada8cc3ce691bc1af69f88f600eb1f2a1da883b7069f1e7874",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "source_box_xyxy": [
+        1190,
+        691,
+        2765,
+        1750
+      ],
+      "source_coordinate_system": "exif_transposed_pixels",
+      "source_label_review": "human_reviewed_library_per_user",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "cue_to_review": "管壁上规则横向增厚",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "fiber_muxiang_w20170172",
+      "feature_id": "fiber",
+      "file": "identity_review_crops/fiber_muxiang_w20170172.jpg",
+      "sha256": "74e03e99c49e4d19cbb9db5adcb89c84e000e44f22030682b34adbda8cd715ee",
+      "source_image": "显微镜像/木香木纤维/W20170172(3).jpg",
+      "source_sha256": "e89b235ef8abd5915ce37671e13d8c50ac28f64dcd0ebc07eb51330cd07c2719",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        676,
+        31,
+        1331,
+        1336
+      ],
+      "source_coordinate_system": "exif_transposed_pixels",
+      "source_label_review": "human_reviewed_library_per_user",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "cue_to_review": "成束长纤维上连续纵壁和窄腔",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "stone_dangshen_w20162286",
+      "feature_id": "stone_cell",
+      "file": "identity_review_crops/stone_dangshen_w20162286.jpg",
+      "sha256": "5076e27ccafdd843d1e3400bfcb4b7c1d9c47703c661f39c59151d742c42c6c8",
+      "source_image": "显微镜像/党参石细胞/W20162286.jpg",
+      "source_sha256": "ffea2372d584535a6a5920611ab59ab155a62267d4f4e4e8f3a3081c25de8582",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        594,
+        568,
+        1495,
+        1229
+      ],
+      "source_coordinate_system": "exif_transposed_pixels",
+      "source_label_review": "human_reviewed_library_per_user",
+      "review_status": "pending_human_review",
+      "training_overlap": "unverified",
+      "cue_to_review": "多角形厚壁围绕窄小胞腔"
+    },
+    {
+      "id": "secretory_dangshen_20230631",
+      "feature_id": "secretory_tissue",
+      "file": "identity_review_crops/secretory_dangshen_20230631.jpg",
+      "sha256": "dcc4ff5df51733066be8aae34204f1f29054ae278f60d4a3f46717aba92616f5",
+      "source_image": "显微镜像/党参联结乳管/20230631.tif",
+      "source_sha256": "d4e223829ed49a76707506d2f80e1af7b680acf0d3729554f7623ee8e40938d3",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "source_box_xyxy": [
+        1075,
+        497,
+        3149,
+        1814
+      ],
+      "source_coordinate_system": "exif_transposed_pixels",
+      "source_label_review": "human_reviewed_library_per_user",
+      "review_status": "pending_human_review",
+      "training_overlap": "unverified",
+      "cue_to_review": "管状结构中可见较暗的滴状内含物，待复核是否位于乳管腔内"
+    },
+    {
+      "id": "cluster_dahuang_d20180250",
+      "feature_id": "cluster_crystal",
+      "file": "identity_review_crops/cluster_dahuang_d20180250.jpg",
+      "sha256": "44c63e4813203c62bae72281a4687a5219c25fe6811a4c4ca333c967dae6450c",
+      "source_image": "显微镜像/大黄草酸钙簇晶/D20180250.jpg",
+      "source_sha256": "7d09924675b0717e788ab8381d0741d41fa75cd80fc4b2df2e59a6e45ffdcb74",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        492,
+        154,
+        1966,
+        1260
+      ],
+      "source_coordinate_system": "exif_transposed_pixels",
+      "source_label_review": "human_reviewed_library_per_user",
+      "review_status": "pending_human_review",
+      "training_overlap": "unverified",
+      "cue_to_review": "中心相连的放射晶棱"
+    },
+    {
+      "id": "starch_dahuang_w20150599",
+      "feature_id": "starch_grain",
+      "file": "identity_review_crops/starch_dahuang_w20150599.jpg",
+      "sha256": "e5c3a9ce87e9a5ff09009078c5a8cd193eee1f80a90f53018cae3df3f02d805f",
+      "source_image": "显微镜像/大黄淀粉粒/W20150599.jpg",
+      "source_sha256": "3f9c0764747356394f16fe7336ca1c345e87c7f99338fa38e1a545eb8c2b6bd6",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        635,
+        461,
+        1516,
+        1137
+      ],
+      "source_coordinate_system": "exif_transposed_pixels",
+      "source_label_review": "human_reviewed_library_per_user",
+      "review_status": "pending_human_review",
+      "training_overlap": "unverified",
+      "cue_to_review": "多个独立近圆颗粒及内部脐点或纹理"
+    },
+    {
+      "id": "single_zhuling_b20230825",
+      "feature_id": "single_crystal",
+      "file": "identity_review_crops/single_zhuling_b20230825.jpg",
+      "sha256": "d803687aa5be5b4dabbfd23854fe3f294b6c7e6750b292dac6d5295a06a0f44d",
+      "source_image": "数据量太少合集/猪苓方晶/B20230825.jpg",
+      "source_sha256": "ec313d9e38f6fc9e4f5be642f29675819e98dd59ff6195a716acefe0c4a3d005",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        573,
+        399,
+        1331,
+        1106
+      ],
+      "source_coordinate_system": "exif_transposed_pixels",
+      "source_label_review": "human_reviewed_library_per_user",
+      "review_status": "pending_human_review",
+      "training_overlap": "unverified",
+      "cue_to_review": "清晰折线晶面与棱角"
+    },
+    {
+      "id": "pair_01_p",
+      "feature_id": "fiber",
+      "file": "identity_review_crops/pair_01_p.png",
+      "sha256": "e6d8de3fd43af77531d5fd1d4f381bbdf6603059d530e53d28e9168c9a5b25d6",
+      "source_image": "数据量太少合集/常山木纤维/12.tif",
+      "source_sha256": "166dcf74524dfcef59e2286d5ec65d87155affa59ff5b60a90fbef9a4ca41866",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "source_box_xyxy": [
+        1229,
+        562,
+        2995,
+        1836
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "沿纤维长轴延伸的连续胞壁",
+          "crop_xy": [
+            950,
+            383
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "胞壁之间的细长狭腔",
+          "crop_xy": [
+            1081,
+            594
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.8212774991989136
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.03301101177930832
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_01_n",
+      "feature_id": "vessel",
+      "file": "identity_review_crops/pair_01_n.png",
+      "sha256": "224f00b46ec5c2753be02b4086284fcf63bf5680dc3f297bcbbf7f5686dee905",
+      "source_image": "数据量太少合集/常山导管/4.tif",
+      "source_sha256": "b8265b807a047360a265cb3ee23985e7d4722ce88ef45ef8a262da42cfead996",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "source_box_xyxy": [
+        1382,
+        778,
+        2458,
+        1382
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "管壁上连续几道规则横向增厚",
+          "crop_xy": [
+            585,
+            221
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.7863675951957703
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.05097409337759018
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_02_p",
+      "feature_id": "secretory_tissue",
+      "file": "identity_review_crops/pair_02_p.png",
+      "sha256": "d1b7b1c86807c4b78ea7f920f7ca6bb7198b432f9c9962f86a62544b5e632e87",
+      "source_image": "显微镜像/党参联结乳管/W20161027(3).jpg",
+      "source_sha256": "3aa071ecdee68806f2fe436cef70bdc0b02b8f23a75168483340ddcd131c3703",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        0,
+        0,
+        1188,
+        891
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "斜行管状带内聚集的细小颗粒",
+          "crop_xy": [
+            590,
+            458
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.9307591319084167
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.011812172830104828
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_02_n",
+      "feature_id": "stone_cell",
+      "file": "identity_review_crops/pair_02_n.png",
+      "sha256": "03250323b642426e2a8185a6947adeab35f68b15ab552f059120fd1fd5445779",
+      "source_image": "显微镜像/板蓝根石细胞/389.tif",
+      "source_sha256": "7df20ae59ea9b30e868cecca4d71d34c66d53d8a4406c82783361cc671d9cf64",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "source_box_xyxy": [
+        404,
+        24,
+        3546,
+        1953
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "胞腔外侧呈层状的厚壁",
+          "crop_xy": [
+            1971,
+            964
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "厚壁包围的较浅胞腔区",
+          "crop_xy": [
+            1671,
+            1220
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.31963562965393066
+        },
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.2435159832239151
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_03_p",
+      "feature_id": "fiber",
+      "file": "identity_review_crops/pair_03_p.png",
+      "sha256": "b3379655bc122b3e86cec1a8a990a0039981ab069193d7f18ac93e8f8512d982",
+      "source_image": "显微镜像/板蓝根木纤维/20241211.tif",
+      "source_sha256": "c387ac72efecd0c768e4041b1d84526e5af3471a52546dc9c3765358188207a4",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "source_box_xyxy": [
+        1421,
+        194,
+        3379,
+        1663
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "细长纤维连续的纵向胞壁",
+          "crop_xy": [
+            889,
+            499
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "长壁之间的狭窄亮带",
+          "crop_xy": [
+            1084,
+            326
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.5435301661491394
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.09236260503530502
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_03_n",
+      "feature_id": "stone_cell",
+      "file": "identity_review_crops/pair_03_n.png",
+      "sha256": "8abe7fa3ba73845a794f271c62658b413b1c3faf9243046c15d6c7e12a030513",
+      "source_image": "显微镜像/板蓝根石细胞/标本D20200626.jpg",
+      "source_sha256": "2f8490febdadd49d00faf40de8becc59e90daa7cc51dc47676670eb4621892cd",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        424,
+        15,
+        1426,
+        1236
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "长形石细胞上端闭合的厚壁",
+          "crop_xy": [
+            213,
+            48
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "厚壁之内的狭长胞腔",
+          "crop_xy": [
+            618,
+            755
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.6851685047149658
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.07826558500528336
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_04_p",
+      "feature_id": "secretory_tissue",
+      "file": "identity_review_crops/pair_04_p.png",
+      "sha256": "28ce68f09d77749f66c18ee0dc63be20007aaaece09e5a725dd775e015cb1809",
+      "source_image": "显微镜像/党参联结乳管/B20170547(3).jpg",
+      "source_sha256": "2336418b584b1c1a34a695d2cc9e908ac5f68db85aaadee94c87c4fec202109f",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        205,
+        215,
+        1802,
+        1152
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "斜行带内的颗粒样纹理，核对其与管腔的位置",
+          "crop_xy": [
+            1304,
+            626
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.8956789970397949
+        },
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.01903243362903595
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_04_n",
+      "feature_id": "fiber",
+      "file": "identity_review_crops/pair_04_n.png",
+      "sha256": "c9df8a97900489ed0a9f60b6ffd1cef700a0245afb9aa6d47c120ec992307330",
+      "source_image": "显微镜像/木香木纤维/3.jpg",
+      "source_sha256": "bb48b49fe8f0d6abc2abd81ae0808228febf70c2c84ad8c8cccdb30331b505b3",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        369,
+        61,
+        1741,
+        1413
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "纤维束左侧连续的纵壁",
+          "crop_xy": [
+            356,
+            724
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "束内另一条平行的长胞壁",
+          "crop_xy": [
+            453,
+            589
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "07_secretory_tissue",
+          "feature_id": "secretory_tissue",
+          "prob": 0.4626792371273041
+        },
+        {
+          "class": "11_fiber",
+          "feature_id": "fiber",
+          "prob": 0.29652920365333557
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_05_p",
+      "feature_id": "cluster_crystal",
+      "file": "identity_review_crops/pair_05_p.png",
+      "sha256": "ade464377efad457a59fd18c0bfbde96f57dd95935feb9ed6573319063ec7824",
+      "source_image": "显微镜像/大黄草酸钙簇晶/B20241234.jpg",
+      "source_sha256": "4460c2efc6cbb8a5ebf395e68202c01de614d9c6f50a072bbb3c15b8492b4961",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        266,
+        154,
+        1679,
+        1306
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "晶棱从此处向周围放射",
+          "crop_xy": [
+            614,
+            637
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "外缘可辨的角状晶棱",
+          "crop_xy": [
+            341,
+            203
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "00_cluster_crystal",
+          "feature_id": "cluster_crystal",
+          "prob": 0.8142831921577454
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.03238826245069504
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_05_n",
+      "feature_id": "starch_grain",
+      "file": "identity_review_crops/pair_05_n.png",
+      "sha256": "dab5b33da723202ee133333f4396e3ebcddfdc300b835fb04e35be29ddf02ac1",
+      "source_image": "显微镜像/大黄淀粉粒/9.jpg",
+      "source_sha256": "65dfce2f721434b3e161bd09a74c94d918cfc54781989fb9198afdce9b265ea2",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        737,
+        553,
+        1311,
+        983
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "右侧颗粒独立的近圆外缘",
+          "crop_xy": [
+            495,
+            272
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "上方另一颗粒的近圆外缘",
+          "crop_xy": [
+            459,
+            65
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "00_cluster_crystal",
+          "feature_id": "cluster_crystal",
+          "prob": 0.5394266843795776
+        },
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.11325433105230331
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_06_p",
+      "feature_id": "stone_cell",
+      "file": "identity_review_crops/pair_06_p.png",
+      "sha256": "a7518a0afd1ad187d2241f0ed93e77f1f5296820b95ab1db3be765c5426f0197",
+      "source_image": "显微镜像/党参石细胞/B20143307.jpg",
+      "source_sha256": "849533a7e68689b990210625a584ca4ecd0eca912a57b841948ad3e5d5e299b9",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        532,
+        399,
+        1331,
+        1398
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "胞腔外围的厚壁",
+          "crop_xy": [
+            663,
+            709
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "被厚壁围住的胞腔",
+          "crop_xy": [
+            450,
+            498
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.8303877711296082
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.032527726143598557
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_06_n",
+      "feature_id": "starch_grain",
+      "file": "identity_review_crops/pair_06_n.png",
+      "sha256": "5f77481c25770d1ea1260dce29e857ed31c7bd3a5186bbafd268424c56e80535",
+      "source_image": "显微镜像/大黄淀粉粒/7.jpg",
+      "source_sha256": "d2ab026e575a16608c73a1c789b97c3ad3e2d43c4b0dffab44ab2a23c5220014",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        1024,
+        998,
+        1536,
+        1536
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "颗粒中央的星裂状脐点",
+          "crop_xy": [
+            278,
+            364
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "颗粒下侧的圆弧外缘",
+          "crop_xy": [
+            215,
+            480
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.749103307723999
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.047328319400548935
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_07_p",
+      "feature_id": "single_crystal",
+      "file": "identity_review_crops/pair_07_p.png",
+      "sha256": "c4b8f4b0b8451e5e16adf69e498735776fab4eaeccf461de7f0af4312f879b5a",
+      "source_image": "数据量太少合集/猪苓方晶/B20180299.jpg",
+      "source_sha256": "465d1e3c934c19bc1928e75630cd96e61dd0d9fed2bf8f670cc14e59fd16286b",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        721,
+        701,
+        1107,
+        1113
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "晶面左侧的直边",
+          "crop_xy": [
+            110,
+            150
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "两条晶面边界相接的棱角",
+          "crop_xy": [
+            160,
+            56
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "13_other",
+          "feature_id": "other",
+          "prob": 0.41776561737060547
+        },
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.2589326500892639
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    },
+    {
+      "id": "pair_07_n",
+      "feature_id": "starch_grain",
+      "file": "identity_review_crops/pair_07_n.png",
+      "sha256": "a76728f7e87504a64a858323e8ae9a43a945bd29c6efa36a1548ead9e4ae48ce",
+      "source_image": "显微镜像/大黄淀粉粒/7.jpg",
+      "source_sha256": "d2ab026e575a16608c73a1c789b97c3ad3e2d43c4b0dffab44ab2a23c5220014",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "source_box_xyxy": [
+        1068,
+        1119,
+        1448,
+        1492
+      ],
+      "source_coordinate_system": "source_pixels",
+      "review_landmarks": [
+        {
+          "number": 1,
+          "cue": "颗粒中央的星裂状脐点",
+          "crop_xy": [
+            227,
+            239
+          ]
+        },
+        {
+          "number": 2,
+          "cue": "颗粒左下方的圆弧外缘",
+          "crop_xy": [
+            100,
+            289
+          ]
+        }
+      ],
+      "cnn_top2": [
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.31944477558135986
+        },
+        {
+          "class": "04_stone_cell",
+          "feature_id": "stone_cell",
+          "prob": 0.1984470784664154
+        }
+      ],
+      "source_label_review": "user_confirmed_crop",
+      "review_status": "human_reviewed",
+      "training_overlap": "unverified",
+      "reviewed_by": "用户",
+      "reviewed_on": "2026-11-20"
+    }
+  ]
+}

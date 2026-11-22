@@ -1,0 +1,83 @@
+{
+  "policy_version": "presence_localization_shadow_v1",
+  "mode": "shadow",
+  "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+  "feature_id": "epidermis_cell",
+  "localization": "valid",
+  "quality": "low_detail",
+  "identity": "pending",
+  "verification_basis": [
+    {
+      "kind": "glm_localization_hypothesis",
+      "independent_support": false
+    }
+  ],
+  "findings": [],
+  "usage_eligibility": {
+    "presence": false,
+    "morphology": false,
+    "length": false,
+    "width": false,
+    "area": false
+  },
+  "legacy_presence_unchanged": true,
+  "state": "present_pending",
+  "observation_scope": {
+    "kind": "sent_full_fov",
+    "exhaustive": false
+  },
+  "source_tight_bbox": [
+    1987.5,
+    1637.5,
+    2525.0,
+    2050.0
+  ],
+  "crop_bbox": [
+    1963,
+    1613,
+    2549,
+    2074
+  ],
+  "transform": {
+    "kind": "full_image_resize",
+    "scale_xy": [
+      0.4,
+      0.4
+    ],
+    "padding_xy": [
+      0,
+      0
+    ],
+    "roi_xyxy": [
+      0,
+      0,
+      3840,
+      2160
+    ]
+  },
+  "model_input_size": [
+    1536,
+    864
+  ],
+  "spatial_agreement": [],
+  "artifacts": {
+    "target_png": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\presence_localizations\\93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869\\target.png",
+    "context_png": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\presence_localizations\\93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869\\context.png",
+    "target_sha256": "2ae2e9ac4f2408182762cf77bcef128f3c310854accb9c8aa0ca90888206dfd9"
+  },
+  "quality_diagnostic": {
+    "status": "low_detail",
+    "score": 0.3133,
+    "flags": [
+      "low_detail"
+    ],
+    "metrics": {
+      "std": 0.0622,
+      "edge": 0.00569,
+      "width": 512,
+      "height": 393,
+      "area_ratio": 0.0267
+    },
+    "block_segment": false
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "identity": "d8bb3a30a36a09874fa1634e1a641881cac0713295c9e9ad767534bc69fa4d2d",
+  "parent": "029e30dde2fd24bfa5a8977e85927dbe2d4b40981ae06b8d20bce23dfde29926",
+  "artifacts": {
+    "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_01.tif",
+      "sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "parents": [],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2": {
+      "id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_02.tif",
+      "sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "parents": [],
+      "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "valid": true
+    },
+    "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984": {
+      "id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_03.jpg",
+      "sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+      "parents": [],
+      "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+      "valid": true
+    },
+    "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad": {
+      "id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_04.jpg",
+      "sha256": "de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+      "parents": [],
+      "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+      "valid": true
+    },
+    "detected:img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2": {
+      "id": "detected:img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "kind": "detection",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\39999d5c936915e1\\detection\\crops.json",
+      "sha256": "9554b44fb381704fe28e0fbd8c5dcb928870a33f4837c55dba6ccfd55955a463",
+      "parents": [
+        "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2"
+      ],
+      "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "valid": true
+    }
+  },
+  "records": [],
+  "stage_receipt": "39999d5c936915e1b8d64e2f3ec3f90a8b7da1f3e32882ffb31faf6de67a7717",
+  "version": "3a3df3abcacf1be8f821f9482dfafa3dcaef2775a2eb7541e5a9c9feeba1bcfe"
+}

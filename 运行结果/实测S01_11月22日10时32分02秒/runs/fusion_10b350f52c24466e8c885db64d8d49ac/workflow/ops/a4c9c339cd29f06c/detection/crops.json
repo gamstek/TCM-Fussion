@@ -1,0 +1,60 @@
+{
+  "source_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+  "image_size": [
+    3840,
+    2160
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "其他",
+      "tight_bbox": [
+        1626.3,
+        314.2,
+        1938.3,
+        670.3
+      ],
+      "confidence": "low",
+      "score": 0.3955,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "其他",
+      "tight_bbox": [
+        2258.8,
+        569.5,
+        2914.8,
+        1221.4
+      ],
+      "confidence": "high",
+      "score": 0.9328,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "其他",
+      "tight_bbox": [
+        820.1,
+        959.0,
+        1217.9,
+        1252.9
+      ],
+      "confidence": "medium",
+      "score": 0.525,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ],
+  "engine": "yolo",
+  "count": 0,
+  "coordinate_system": "original_pixels"
+}

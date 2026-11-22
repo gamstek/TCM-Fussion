@@ -147,6 +147,166 @@ class D3Tests(fixtures.D3Fixture, unittest.TestCase):
         self.assertTrue(any(e['phase']=='reflection_patch_applied' for e in trace['events']))
         self.assertTrue(read_json(r.workflow.root/'reflection_controller.json')['applications'])
 
+    def test_visible_fov_list_survives_new_evidence_without_another_read(self):
+        r = self.detected()
+        candidate = r.kb.candidates()[0]['id']
+        r.a = {'status': 'ok', 'fold_rankings': [[{'label': candidate, 'probability': .9}]]}
+        seen = []
+        class Planner:
+            def choose(inner, ctx):
+                seen.append(ctx)
+                if len(seen) > 3:
+                    return {'action_id': 'review'}, None
+                tool = ['list_fovs', 'query_criteria', 'classify_target'][len(seen)-1]
+                chosen = next(a for a in ctx['actions'] if a['tool'] == tool)
+                return {'action_id': chosen['action_id']}, None
+        trace = self.run_agent(r, Planner())
+        self.assertEqual(trace['planning_requests'], 4)
+        self.assertFalse(any(a['tool'] == 'query_criteria' and a['args']['candidate_id'] == candidate
+                             for a in seen[-1]['actions']))
+        criteria = next(row for row in seen[-1]['read_results'] if row['tool'] == 'query_criteria')
+        self.assertEqual(criteria['result']['criteria'], r.kb.candidates()[0])
+        self.assertFalse(criteria['stale'])
+        tools = [a['tool'] for a in seen[-1]['actions']]
+        self.assertNotIn('list_fovs', tools)
+        self.assertIn('read_scale', tools)
+        receipt = next(row for row in seen[-1]['read_results'] if row['tool'] == 'list_fovs')
+        self.assertFalse(receipt['stale'])
+        self.assertEqual([row['image_id'] for row in receipt['result']['fovs']], list(r.images))
+
+    def test_evicted_static_read_reopens_without_tool_call_or_new_evidence(self):
+        from unittest.mock import patch
+        r = self.detected()
+        order = ['list_fovs', 'read_scale', 'classify_target', 'list_features',
+                 'criteria_diff', 'segment_instance', 'list_artifacts', 'list_fovs']
+        seen = []
+        class Planner:
+            def choose(inner, ctx):
+                seen.append(ctx)
+                if len(seen) > len(order):
+                    return {'action_id': 'review'}, None
+                chosen = next(a for a in ctx['actions'] if a['tool'] == order[len(seen)-1])
+                return {'action_id': chosen['action_id']}, None
+        with patch.object(LocalToolbox, 'read', autospec=True, side_effect=LocalToolbox.read) as reader:
+            trace = self.run_agent(r, Planner())
+        self.assertEqual(sum(call.args[1] == 'list_fovs' for call in reader.call_args_list), 1)
+        self.assertEqual([e['source'] for e in trace['events'] if e['phase'] == 'read'
+                          and e['tool'] == 'list_fovs'], ['tool', 'static_receipt'])
+        self.assertEqual(seen[1]['read_results'][-1], seen[-1]['read_results'][-1])
+
+    def test_only_review_affordable_spends_no_planning_request(self):
+        r = self.detected()
+        r.candidate_policy = {}
+        r.workflow.limits['finalization'] = 0
+        used = read_json(r.workflow.budget_path)['used']
+        r.workflow.limits['total'] = sum(used.values()) + 2
+        class Planner:
+            def choose(inner, ctx):
+                self.fail('预算只允许复核时仍发起了规划')
+        trace = self.run_agent(r, Planner())
+        self.assertEqual(trace['planning_requests'], 0)
+        self.assertEqual(trace['termination_reason'], 'only_review_affordable')
+        self.assertTrue(trace['needs_review'])
+        self.assertEqual(read_json(r.workflow.budget_path)['used'], used)
+
+    def identity_pair(self, backend=None):
+        runtime = self.detected(backend=backend, identity_group_execution=True)
+        crop = next(t for t in runtime.workflow.targets().values() if t['kind'] == 'crop')
+        second = fixtures.InstanceFixture.alias(self, runtime, crop, name='independent',
+                                               box=[12, 0, 20, 8], pixels=b'independent')
+        return runtime, [crop['id'], second['id']]
+
+    def choose_identity_pair(self, runtime, targets):
+        class Planner:
+            def choose(inner, ctx):
+                if ctx.get('last_identity_group'):
+                    return {'action_id': 'review'}, None
+                ids = {a['args']['target_id']: a['action_id'] for a in ctx['actions']
+                       if a['tool'] == 'classify_target'}
+                return {'decision': {'kind': 'identity_group', 'action_ids': [ids[t] for t in targets]}}, None
+        return self.run_agent(runtime, Planner())
+
+    def test_identity_group_positive_returns_before_second_crop_and_charges_one(self):
+        runtime, targets = self.identity_pair()
+        trace = self.choose_identity_pair(runtime, targets)
+        result = trace['last_identity_group']
+        self.assertEqual((result['reason'], result['attempted'], result['unissued']),
+                         ('identity_verified', targets[:1], targets[1:]))
+        self.assertEqual(runtime.workflow.backend.calls.count('classify_target'), 1)
+        self.assertEqual(read_json(runtime.workflow.budget_path)['used']['observation'], 1)
+        self.assertNotIn('classification:'+targets[1], runtime.workflow.store.current()['artifacts'])
+        self.assertEqual(trace['planning_requests'], 2)
+
+    def neutral_identity_group(self, after_first=None):
+        class Unreadable(StageFixture):
+            def execute(inner, session, tool, target, work, context):
+                if tool != 'classify_target':
+                    return super().execute(session, tool, target, work, context)
+                inner.calls.append(tool)
+                write_json(work/'classification/classification.json',
+                           {'label':'身份待定', 'reject':'unreadable', 'feature_id':'', 'confidence':'low',
+                            'crop_id':target.get('crop_id'), 'granularity':'instance'})
+                if inner.calls.count(tool) == 1 and after_first:
+                    after_first(session, targets[1])
+                return {'classification':str(work/'classification')}
+        runtime, targets = self.identity_pair(Unreadable())
+        return runtime, targets, self.choose_identity_pair(runtime, targets)
+
+    def test_identity_group_unreadable_rebinds_in_order_and_charges_each(self):
+        runtime, targets, trace = self.neutral_identity_group()
+        result = trace['last_identity_group']
+        self.assertEqual((result['reason'], result['attempted'], result['unissued']), ('completed', targets, []))
+        items = [e for e in trace['events'] if e['phase'] == 'identity_group_item']
+        self.assertEqual([e['outcome'] for e in items], ['unreadable', 'unreadable'])
+        self.assertEqual(len({e['operation_key'] for e in items}), 2)
+        self.assertEqual(len({e['evidence_version'] for e in items}), 2)
+        self.assertEqual(read_json(runtime.workflow.budget_path)['used']['observation'], 2)
+        self.assertEqual(trace['planning_requests'], 2)
+
+    def test_identity_group_changed_remaining_pixels_return_without_second_charge(self):
+        def replace(session, target_id):
+            crop = session.targets()[target_id]
+            Path(read_json(crop['path'])['png']).write_bytes(b'changed during first read')
+        runtime, targets, trace = self.neutral_identity_group(replace)
+        result = trace['last_identity_group']
+        self.assertEqual((result['reason'], result['unissued']), ('identity_input_changed', targets[1:]))
+        self.assertEqual(read_json(runtime.workflow.budget_path)['used']['observation'], 1)
+
+    def test_identity_group_exhausted_budget_returns_without_second_charge(self):
+        def restrict(session, target_id):
+            session.limits['observation'] = 1
+        runtime, targets, trace = self.neutral_identity_group(restrict)
+        self.assertEqual(trace['last_identity_group']['unissued'], targets[1:])
+        self.assertEqual(read_json(runtime.workflow.budget_path)['used']['observation'], 1)
+
+    def test_identity_group_failure_stops_and_preserves_failed_operation(self):
+        backend = StageFixture(fail='classify_target')
+        runtime, targets = self.identity_pair(backend)
+        trace = self.choose_identity_pair(runtime, targets)
+        self.assertEqual(trace['last_identity_group']['unissued'], targets[1:])
+        rows = [v for v in read_json(runtime.workflow.operations)['entries'].values()
+                if v['tool'] == 'classify_target']
+        self.assertEqual([(r['target_id'], r['status']) for r in rows], [(targets[0], 'failed')])
+        self.assertEqual(read_json(runtime.workflow.budget_path)['used']['observation'], 1)
+
+    def test_identity_group_rejects_alias_overlap_duplicates_and_unoffered(self):
+        from TCM_Fusion.lib.agent.identity_group import offer
+        from TCM_Fusion.lib.agent.planning_choices import decode, model_view
+        runtime, members = self.identity_pair()
+        flow = runtime.workflow
+        first = flow.targets()[members[0]]
+        alias = fixtures.InstanceFixture.alias(self, runtime, first, box=[2, 0, 10, 8], pixels=b'overlapping')
+        actions = [a for a in flow.propose() if a['tool'] == 'classify_target']
+        menu, _ = offer(flow, actions, flow.targets(), 2)
+        wire, _ = model_view({'actions': actions, 'execution_options': {'identity_group':menu}})
+        ids = {a['args']['target_id']:a['action_id'] for a in wire['actions']}
+        a, b = [ids[k] for k in members]
+        for group in ([a,a], [a,ids[alias['id']]], [a,'A999'], [a,b,ids[alias['id']]]):
+            with self.subTest(group=group), self.assertRaises(IntegrationError):
+                decode({'decision':{'kind':'identity_group','action_ids':group}},wire)
+        self.assertEqual(decode({'decision':{'kind':'identity_group','action_ids':[b,a]}},wire)['identity_tail'], [a])
+        self.assertEqual(offer(flow, actions, flow.targets(), 1), ({}, {}))
+
     def test_invalid_reflection_does_not_reject_valid_stop(self):
         r=self.detected()
         class Planner:

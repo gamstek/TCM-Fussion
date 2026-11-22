@@ -1,0 +1,44 @@
+{
+  "identity": "65edca985acf7d0722d67ecf6ea66ff6f4b6e2801025b2761695c8362694ff62",
+  "parent": "b93501bf6baa64dff9359b9f367490a076fb83f007c1c7cb67c8cee96015381d",
+  "artifacts": {
+    "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\view_01.tif",
+      "sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "parents": [],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2": {
+      "id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\view_02.tif",
+      "sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "parents": [],
+      "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "valid": true
+    },
+    "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984": {
+      "id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\view_03.jpg",
+      "sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+      "parents": [],
+      "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+      "valid": true
+    },
+    "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad": {
+      "id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\view_04.jpg",
+      "sha256": "de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+      "parents": [],
+      "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "287912829ca9248e434b5fe147360dc3c6e69548bcdc227b7553202f01d4a515"
+}

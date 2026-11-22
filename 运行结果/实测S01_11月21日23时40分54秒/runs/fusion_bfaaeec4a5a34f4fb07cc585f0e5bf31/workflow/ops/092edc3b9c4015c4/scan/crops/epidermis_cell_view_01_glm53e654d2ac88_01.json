@@ -1,0 +1,40 @@
+{
+  "crop_id": "epidermis_cell_view_01_glm53e654d2ac88_01",
+  "png": "epidermis_cell_view_01_glm53e654d2ac88_01.png",
+  "source_image_path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\view_01.tif",
+  "stem": "view_01",
+  "feature_id": "epidermis_cell",
+  "object_label": "表皮细胞",
+  "herb": "",
+  "px_per_um": null,
+  "tight_box": [
+    1934.25,
+    1633.25,
+    2538.75,
+    2135.75
+  ],
+  "tight_box_local": [
+    25.25,
+    25.25,
+    629.75,
+    527.75
+  ],
+  "loose_box": [
+    1909,
+    1608,
+    2563,
+    2160
+  ],
+  "crop_size": "654x552",
+  "pad_info": "",
+  "granularity": "instance",
+  "det_score": 0.65,
+  "det_confidence": "medium",
+  "source_tight_bbox": [
+    2035,
+    1717,
+    2438,
+    2052
+  ],
+  "locate_expand": 1.5
+}

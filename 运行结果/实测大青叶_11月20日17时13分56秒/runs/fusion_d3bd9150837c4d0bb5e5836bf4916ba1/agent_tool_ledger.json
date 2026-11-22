@@ -1,0 +1,1851 @@
+{
+  "identity": "d8bb3a30a36a09874fa1634e1a641881cac0713295c9e9ad767534bc69fa4d2d",
+  "requests": 23,
+  "entries": {
+    "a362b349f9ba66ff6ad558b8055a8cff61ec7016b8e0e797bd46f8c02f243602": {
+      "action_id": "a362b349f9ba66ff6ad558b8055a8cff61ec7016b8e0e797bd46f8c02f243602",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.92,
+        "reason": "视野内仅见棕黄色条纹状组织块（中央）、绿色叶肉团块（左上）及黄橙色颗粒与无色碎屑，未见蓝色颗粒状或片状的靛蓝结晶",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "indigo_crystal",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "a362b349f9ba66ff6ad558b8055a8cff61ec7016b8e0e797bd46f8c02f243602",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          1,
+          "indigo_crystal",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1920,
+        "completion_tokens": 529,
+        "total_tokens": 2449
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 18.406,
+        "worker_elapsed_seconds": 18.593,
+        "http_timing": {
+          "send_to_completion_seconds": 18.406,
+          "send_to_headers_seconds": 18.406,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+        "feature_id": "indigo_crystal",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "b69d821110b343fdafddc108c8ab7f77502e42b0881554f6f83779e827201004": {
+      "action_id": "b69d821110b343fdafddc108c8ab7f77502e42b0881554f6f83779e827201004",
+      "accepted": false,
+      "result": {
+        "ok": false,
+        "error_code": "UPSTREAM_NETWORK_FAILED"
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "mineral_feature",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "b69d821110b343fdafddc108c8ab7f77502e42b0881554f6f83779e827201004",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          8,
+          "mineral_feature",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹"
+        ]
+      },
+      "status": "failed",
+      "cache_hit": false,
+      "new_requests": 1,
+      "error_type": "IntegrationError",
+      "error_code": "UPSTREAM_NETWORK_FAILED",
+      "diagnostics": {
+        "stage": "http_request",
+        "attempts": 1,
+        "worker_elapsed_seconds": 5.234,
+        "error_type": "URLError",
+        "transport_error_type": "SSLEOFError",
+        "errno": 8,
+        "http_timing": {
+          "send_to_completion_seconds": 5.047,
+          "send_to_headers_seconds": null,
+          "headers_to_completion_seconds": null,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        }
+      },
+      "usage": null
+    },
+    "8223316f295acccc871e5b2b2db9331d279764cc39d8793aeacc2e0ec1502ad0": {
+      "action_id": "8223316f295acccc871e5b2b2db9331d279764cc39d8793aeacc2e0ec1502ad0",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.92,
+        "reason": "视野中仅见绿黄色至棕褐色的团块状色素组织及散碎颗粒，未观察到靛蓝结晶特有的蓝色颗粒状或片状聚集物。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+          "feature_id": "indigo_crystal",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "8223316f295acccc871e5b2b2db9331d279764cc39d8793aeacc2e0ec1502ad0",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          1,
+          "indigo_crystal",
+          "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2525,
+        "completion_tokens": 301,
+        "total_tokens": 2826
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 13.062,
+        "worker_elapsed_seconds": 13.235,
+        "http_timing": {
+          "send_to_completion_seconds": 13.062,
+          "send_to_headers_seconds": 13.062,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+        "feature_id": "indigo_crystal",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d": {
+      "action_id": "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.85,
+        "reason": "视野中碎片多为黄色、橙棕色及暗橄榄绿色的组织块与颗粒，未见到特征性的蓝色颗粒状或片状靛蓝结晶聚集体。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "feature_id": "indigo_crystal",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          1,
+          "indigo_crystal",
+          "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1920,
+        "completion_tokens": 372,
+        "total_tokens": 2292
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 13.313,
+        "worker_elapsed_seconds": 13.546,
+        "http_timing": {
+          "send_to_completion_seconds": 13.391,
+          "send_to_headers_seconds": 13.313,
+          "headers_to_completion_seconds": 0.078,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "feature_id": "indigo_crystal",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "3f992b152758414d61bc75fe5514491a94b60b805b2fd62e1d58f2182a6d024c": {
+      "action_id": "3f992b152758414d61bc75fe5514491a94b60b805b2fd62e1d58f2182a6d024c",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.65,
+        "reason": "视野主体为黄绿色细颗粒聚集而成的弥散团块，边缘呈颗粒状渐变，未见平直或参差的块片边缘、解理面、光泽差异或层层剥落等矿物类特征。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+          "feature_id": "mineral_feature",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "3f992b152758414d61bc75fe5514491a94b60b805b2fd62e1d58f2182a6d024c",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          8,
+          "mineral_feature",
+          "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2544,
+        "completion_tokens": 959,
+        "total_tokens": 3503
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 28.703,
+        "worker_elapsed_seconds": 29.39,
+        "http_timing": {
+          "send_to_completion_seconds": 29.234,
+          "send_to_headers_seconds": 28.703,
+          "headers_to_completion_seconds": 0.531,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+        "feature_id": "mineral_feature",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "6253e7e9e9fa4338c9b05418bb73215dd31ffa6eb34cc270f8052cfe6a536d0f": {
+      "action_id": "6253e7e9e9fa4338c9b05418bb73215dd31ffa6eb34cc270f8052cfe6a536d0f",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.92,
+        "reason": "视野中仅见黄棕色、绿褐色碎屑及粉色组织团块，未见蓝色颗粒状或片状聚集的靛蓝结晶",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+          "feature_id": "indigo_crystal",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "6253e7e9e9fa4338c9b05418bb73215dd31ffa6eb34cc270f8052cfe6a536d0f",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          1,
+          "indigo_crystal",
+          "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2525,
+        "completion_tokens": 365,
+        "total_tokens": 2890
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 12.031,
+        "worker_elapsed_seconds": 13.25,
+        "http_timing": {
+          "send_to_completion_seconds": 13.078,
+          "send_to_headers_seconds": 12.031,
+          "headers_to_completion_seconds": 1.047,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+        "feature_id": "indigo_crystal",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07": {
+      "action_id": "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07",
+      "accepted": false,
+      "result": {
+        "ok": false,
+        "error_code": "UPSTREAM_REMOTE_DISCONNECTED"
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "feature_id": "mineral_feature",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          8,
+          "mineral_feature",
+          "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹"
+        ]
+      },
+      "status": "failed",
+      "cache_hit": false,
+      "new_requests": 1,
+      "error_type": "IntegrationError",
+      "error_code": "UPSTREAM_REMOTE_DISCONNECTED",
+      "diagnostics": {
+        "stage": "http_request",
+        "attempts": 1,
+        "worker_elapsed_seconds": 61.485,
+        "error_type": "RemoteDisconnected",
+        "transport_error_type": "RemoteDisconnected",
+        "http_timing": {
+          "send_to_completion_seconds": 61.328,
+          "send_to_headers_seconds": null,
+          "headers_to_completion_seconds": null,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        }
+      },
+      "usage": null
+    },
+    "27e2672d3a9210591163483eff318df173ea5591de44a9f3edaf2b22328a8030": {
+      "action_id": "27e2672d3a9210591163483eff318df173ea5591de44a9f3edaf2b22328a8030",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.65,
+        "reason": "视野中主要为带纵纹的棕色组织碎片（似导管/纤维）、含叶绿素的绿色细胞及散在碎屑，未见密集成群、细砂样的草酸钙砂晶特征",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "sand_crystal",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。草酸钙砂晶：极细小的颗粒状结晶，密集成群充满细胞腔，呈细砂样密集分布"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "27e2672d3a9210591163483eff318df173ea5591de44a9f3edaf2b22328a8030",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          0,
+          "sand_crystal",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。草酸钙砂晶：极细小的颗粒状结晶，密集成群充满细胞腔，呈细砂样密集分布"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1918,
+        "completion_tokens": 496,
+        "total_tokens": 2414
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 15.125,
+        "worker_elapsed_seconds": 15.296,
+        "http_timing": {
+          "send_to_completion_seconds": 15.141,
+          "send_to_headers_seconds": 15.125,
+          "headers_to_completion_seconds": 0.016,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+        "feature_id": "sand_crystal",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "8b41e9e407fb51e6b9484d14222e72aeb1dad91dccd2c312689ee5cba3cc8d0a": {
+      "action_id": "8b41e9e407fb51e6b9484d14222e72aeb1dad91dccd2c312689ee5cba3cc8d0a",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.75,
+        "reason": "视野中主要见不规则植物性组织碎块、纤维及油滴状圆环结构，边缘呈撕裂状且无平直解理面、结晶光泽或层状剥落等矿物特征。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+          "feature_id": "mineral_feature",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "8b41e9e407fb51e6b9484d14222e72aeb1dad91dccd2c312689ee5cba3cc8d0a",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          8,
+          "mineral_feature",
+          "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。矿物类特征：不规则块片状、针状或柱状颗粒，边缘平直或参差，具颜色、半透明度与光泽差异，可见解理面或层层剥落痕迹"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2544,
+        "completion_tokens": 442,
+        "total_tokens": 2986
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 13.969,
+        "worker_elapsed_seconds": 15.532,
+        "http_timing": {
+          "send_to_completion_seconds": 15.375,
+          "send_to_headers_seconds": 13.969,
+          "headers_to_completion_seconds": 1.406,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+        "feature_id": "mineral_feature",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723": {
+      "action_id": "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723",
+      "accepted": true,
+      "result": {
+        "present": true,
+        "conf": 0.6,
+        "reason": "视野中央可见一大块黄棕色组织碎片，呈紧密排列的类长方形/多角形细胞成片状，具纵向条带与横向分隔，符合表皮（种皮）表皮细胞表面观特征。",
+        "ok": true,
+        "localization_proposal": {
+          "bbox": [
+            515,
+            245,
+            1245,
+            748
+          ],
+          "coordinate_space": "model_input_pixels"
+        }
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "epidermis_cell",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。表皮细胞：表面观呈多角形或类长方形的细胞，排列紧密成片，壁平直、波状弯曲或连珠状增厚；种皮来源者多呈红棕色或黄棕色"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723",
+        "mandatory": false,
+        "priority": [
+          false,
+          false,
+          12,
+          "epidermis_cell",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。表皮细胞：表面观呈多角形或类长方形的细胞，排列紧密成片，壁平直、波状弯曲或连珠状增厚；种皮来源者多呈红棕色或黄棕色"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1952,
+        "completion_tokens": 1214,
+        "total_tokens": 3166
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 30.937,
+        "worker_elapsed_seconds": 31.437,
+        "http_timing": {
+          "send_to_completion_seconds": 31.297,
+          "send_to_headers_seconds": 30.937,
+          "headers_to_completion_seconds": 0.36,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+        "feature_id": "epidermis_cell",
+        "localization": "valid",
+        "quality": "low_detail",
+        "identity": "pending",
+        "verification_basis": [
+          {
+            "kind": "glm_localization_hypothesis",
+            "independent_support": false
+          }
+        ],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "present_pending",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        },
+        "source_tight_bbox": [
+          1287.5,
+          612.5,
+          3112.5,
+          1870.0
+        ],
+        "crop_bbox": [
+          1224,
+          549,
+          3175,
+          1932
+        ],
+        "transform": {
+          "kind": "full_image_resize",
+          "scale_xy": [
+            0.4,
+            0.4
+          ],
+          "padding_xy": [
+            0,
+            0
+          ],
+          "roi_xyxy": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        },
+        "model_input_size": [
+          1536,
+          864
+        ],
+        "spatial_agreement": [],
+        "artifacts": {
+          "target_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723\\target.png",
+          "context_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723\\context.png",
+          "target_sha256": "40c83b3faca73257ad63edde4d6b9c5b19f95029a568ef7611dba5470133afc5"
+        },
+        "quality_diagnostic": {
+          "status": "low_detail",
+          "score": 0.4318,
+          "flags": [
+            "low_detail"
+          ],
+          "metrics": {
+            "std": 0.0687,
+            "edge": 0.00971,
+            "width": 512,
+            "height": 353,
+            "area_ratio": 0.2767
+          },
+          "block_segment": false
+        }
+      }
+    },
+    "c24c6aac1bc1c8bde4524e90fd6897938efe2cd7a8b3eb783fbde50f6d89906b": {
+      "action_id": "c24c6aac1bc1c8bde4524e90fd6897938efe2cd7a8b3eb783fbde50f6d89906b",
+      "accepted": true,
+      "result": {
+        "present": true,
+        "conf": 0.65,
+        "reason": "视野中央可见一大团由极细小颗粒密集聚集形成的砂样团块，左侧透明区可见密集闪亮的细小结晶颗粒充满细胞腔样区域，符合草酸钙砂晶密集成群的形态特征，但部分区域呈黄棕色提示混杂细胞内容物，故置信度中等。",
+        "ok": true,
+        "localization_proposal": {
+          "bbox": [
+            470,
+            320,
+            1430,
+            1152
+          ],
+          "coordinate_space": "model_input_pixels"
+        }
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+          "feature_id": "sand_crystal",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。草酸钙砂晶：极细小的颗粒状结晶，密集成群充满细胞腔，呈细砂样密集分布"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "c24c6aac1bc1c8bde4524e90fd6897938efe2cd7a8b3eb783fbde50f6d89906b",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          0,
+          "sand_crystal",
+          "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。草酸钙砂晶：极细小的颗粒状结晶，密集成群充满细胞腔，呈细砂样密集分布"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2523,
+        "completion_tokens": 1386,
+        "total_tokens": 3909
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 36.765,
+        "worker_elapsed_seconds": 36.922,
+        "http_timing": {
+          "send_to_completion_seconds": 36.765,
+          "send_to_headers_seconds": 36.765,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+        "feature_id": "sand_crystal",
+        "localization": "valid",
+        "quality": "usable",
+        "identity": "pending",
+        "verification_basis": [
+          {
+            "kind": "glm_localization_hypothesis",
+            "independent_support": false
+          }
+        ],
+        "findings": [
+          "possible_border_truncation"
+        ],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "present_pending",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        },
+        "source_tight_bbox": [
+          626.6666666666666,
+          426.6666666666667,
+          1906.6666666666667,
+          1536.0
+        ],
+        "crop_bbox": [
+          571,
+          371,
+          1962,
+          1536
+        ],
+        "transform": {
+          "kind": "full_image_resize",
+          "scale_xy": [
+            0.75,
+            0.75
+          ],
+          "padding_xy": [
+            0,
+            0
+          ],
+          "roi_xyxy": [
+            0,
+            0,
+            2048,
+            1536
+          ]
+        },
+        "model_input_size": [
+          1536,
+          1152
+        ],
+        "spatial_agreement": [],
+        "artifacts": {
+          "target_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\c24c6aac1bc1c8bde4524e90fd6897938efe2cd7a8b3eb783fbde50f6d89906b\\target.png",
+          "context_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\c24c6aac1bc1c8bde4524e90fd6897938efe2cd7a8b3eb783fbde50f6d89906b\\context.png",
+          "target_sha256": "9599216ba13dcce49e1d2371c6d5357071fe7a7f3c9607d2edd4cda7f2239b52"
+        },
+        "quality_diagnostic": {
+          "status": "usable",
+          "score": 0.7402,
+          "flags": [],
+          "metrics": {
+            "std": 0.1365,
+            "edge": 0.01459,
+            "width": 512,
+            "height": 444,
+            "area_ratio": 0.4514
+          },
+          "block_segment": false
+        }
+      }
+    },
+    "74e7e776d47c1a583c2c4c3486c7351a3c3c8fd39585da5d95b3726648040dcc": {
+      "action_id": "74e7e776d47c1a583c2c4c3486c7351a3c3c8fd39585da5d95b3726648040dcc",
+      "accepted": true,
+      "result": {
+        "crystal_location": "free",
+        "crystal_location_raw": "free",
+        "cell_wall_visible": false,
+        "guarded": false,
+        "arrangement": "scattered",
+        "abundance": "few",
+        "conf": 0.6,
+        "reason": "画面仅见一团簇晶状黄绿色结晶团块，四周为均匀空白背景，无成片细胞腔或细胞壁网格可见。",
+        "ok": true
+      },
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984"
+        },
+        "skill": "scene_context",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "74e7e776d47c1a583c2c4c3486c7351a3c3c8fd39585da5d95b3726648040dcc",
+        "mandatory": true,
+        "priority": []
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2699,
+        "completion_tokens": 75,
+        "total_tokens": 2774
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 7.297,
+        "worker_elapsed_seconds": 7.468,
+        "http_timing": {
+          "send_to_completion_seconds": 7.297,
+          "send_to_headers_seconds": 7.297,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      }
+    },
+    "50ecf39ae881b6132b3eefc4405100eee7edfbae8ff1847ea7ca81bb4d7e77dc": {
+      "action_id": "50ecf39ae881b6132b3eefc4405100eee7edfbae8ff1847ea7ca81bb4d7e77dc",
+      "accepted": true,
+      "result": {
+        "crystal_location": "intracellular",
+        "crystal_location_raw": "intracellular",
+        "cell_wall_visible": true,
+        "guarded": false,
+        "arrangement": "unknown",
+        "abundance": "few",
+        "conf": 0.7,
+        "reason": "画面有成片不规则细胞壁轮廓的薄壁组织团块，一枚油滴状圆形颗粒位于其区域内，仅1-2枚散在，未见典型多角形结晶",
+        "ok": true
+      },
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad"
+        },
+        "skill": "scene_context",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "50ecf39ae881b6132b3eefc4405100eee7edfbae8ff1847ea7ca81bb4d7e77dc",
+        "mandatory": true,
+        "priority": []
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2699,
+        "completion_tokens": 83,
+        "total_tokens": 2782
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 6.296,
+        "worker_elapsed_seconds": 6.453,
+        "http_timing": {
+          "send_to_completion_seconds": 6.296,
+          "send_to_headers_seconds": 6.296,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      }
+    },
+    "32e1ca5a15bc85b9689546502a70d64f3b2061936b2fe72c01b89c1db83cd9a2": {
+      "action_id": "32e1ca5a15bc85b9689546502a70d64f3b2061936b2fe72c01b89c1db83cd9a2",
+      "accepted": true,
+      "result": {
+        "crystal_location": "free",
+        "crystal_location_raw": "free",
+        "cell_wall_visible": true,
+        "guarded": false,
+        "arrangement": "scattered",
+        "abundance": "few",
+        "conf": 0.6,
+        "reason": "中央大片组织可见成排细胞壁轮廓，而散在的小结晶颗粒位于无细胞结构的空白背景中。",
+        "ok": true
+      },
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2"
+        },
+        "skill": "scene_context",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "32e1ca5a15bc85b9689546502a70d64f3b2061936b2fe72c01b89c1db83cd9a2",
+        "mandatory": true,
+        "priority": []
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2094,
+        "completion_tokens": 69,
+        "total_tokens": 2163
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 10.312,
+        "worker_elapsed_seconds": 10.469,
+        "http_timing": {
+          "send_to_completion_seconds": 10.312,
+          "send_to_headers_seconds": 10.312,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      }
+    },
+    "9807fc81473e45131444ceb14a48a1dae649b94c94557113d2463e36a96d2104": {
+      "action_id": "9807fc81473e45131444ceb14a48a1dae649b94c94557113d2463e36a96d2104",
+      "accepted": true,
+      "result": {
+        "crystal_location": "free",
+        "crystal_location_raw": "free",
+        "cell_wall_visible": false,
+        "guarded": false,
+        "arrangement": "scattered",
+        "abundance": "few",
+        "conf": 0.5,
+        "reason": "画面只见散在碎片与颗粒，无成片细胞壁网格，亦无可辨认的簇晶明确位于细胞内",
+        "ok": true
+      },
+      "action": {
+        "tool": "scene_check",
+        "args": {
+          "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+        },
+        "skill": "scene_context",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "9807fc81473e45131444ceb14a48a1dae649b94c94557113d2463e36a96d2104",
+        "mandatory": true,
+        "priority": []
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2094,
+        "completion_tokens": 70,
+        "total_tokens": 2164
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 7.125,
+        "worker_elapsed_seconds": 7.625,
+        "http_timing": {
+          "send_to_completion_seconds": 7.484,
+          "send_to_headers_seconds": 7.125,
+          "headers_to_completion_seconds": 0.359,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      }
+    },
+    "a86064aa690ab2c8a8a5f9967468d2eab77a449184ddac76bef4f0ea8e7bcadd": {
+      "action_id": "a86064aa690ab2c8a8a5f9967468d2eab77a449184ddac76bef4f0ea8e7bcadd",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.85,
+        "reason": "视野中主要为棕黄色纤维/导管类长条状组织碎片、绿色叶绿体团块及无机结晶碎屑，未见由两个肾形或哑铃形保卫细胞围成孔缝并伴副卫细胞的典型气孔结构。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "stoma",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。气孔：由两个保卫细胞围成的通气结构，两保卫细胞相对呈肾形、半月形或哑铃形，中间为孔缝，周围有副卫细胞环绕"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "a86064aa690ab2c8a8a5f9967468d2eab77a449184ddac76bef4f0ea8e7bcadd",
+        "mandatory": false,
+        "priority": [
+          false,
+          false,
+          2,
+          "stoma",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。气孔：由两个保卫细胞围成的通气结构，两保卫细胞相对呈肾形、半月形或哑铃形，中间为孔缝，周围有副卫细胞环绕"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1932,
+        "completion_tokens": 319,
+        "total_tokens": 2251
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 12.672,
+        "worker_elapsed_seconds": 12.828,
+        "http_timing": {
+          "send_to_completion_seconds": 12.672,
+          "send_to_headers_seconds": 12.672,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+        "feature_id": "stoma",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "d84a4bcdb8cb27ad71e0fa06f5e102ee8d26c3a9abec504981b173b0a434db02": {
+      "action_id": "d84a4bcdb8cb27ad71e0fa06f5e102ee8d26c3a9abec504981b173b0a434db02",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.8,
+        "reason": "图中主体为具环纹/螺纹增厚的导管碎片及散在的晶状碎屑与叶绿体组织，未见细长尖顶、胞腔细缝状或T形的非腺毛结构。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "non_glandular_hair",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。非腺毛：由细胞构成的毛状附属物，无膨大腺头；细长、平直或弯曲，顶端尖，有的壁厚、胞腔呈细缝状，有的壁具疣状突起；两臂不等长的T形毛为其特殊形态"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "d84a4bcdb8cb27ad71e0fa06f5e102ee8d26c3a9abec504981b173b0a434db02",
+        "mandatory": false,
+        "priority": [
+          false,
+          false,
+          5,
+          "non_glandular_hair",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。非腺毛：由细胞构成的毛状附属物，无膨大腺头；细长、平直或弯曲，顶端尖，有的壁厚、胞腔呈细缝状，有的壁具疣状突起；两臂不等长的T形毛为其特殊形态"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1948,
+        "completion_tokens": 386,
+        "total_tokens": 2334
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 11.594,
+        "worker_elapsed_seconds": 11.766,
+        "http_timing": {
+          "send_to_completion_seconds": 11.594,
+          "send_to_headers_seconds": 11.594,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+        "feature_id": "non_glandular_hair",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734": {
+      "action_id": "be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734",
+      "accepted": true,
+      "result": {
+        "present": true,
+        "conf": 0.75,
+        "reason": "图像中部偏右可见一大型棕黄色长条状组织块，内部呈现多根平行排列的细长细胞，壁增厚、具纵向纹理，符合纤维成束的特征（局部伴螺旋状纹理，可能为伴存导管）。",
+        "ok": true,
+        "localization_proposal": {
+          "bbox": [
+            520,
+            250,
+            1270,
+            770
+          ],
+          "coordinate_space": "model_input_pixels"
+        }
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "fiber",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734",
+        "mandatory": false,
+        "priority": [
+          false,
+          false,
+          10,
+          "fiber",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1924,
+        "completion_tokens": 847,
+        "total_tokens": 2771
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 27.141,
+        "worker_elapsed_seconds": 27.343,
+        "http_timing": {
+          "send_to_completion_seconds": 27.188,
+          "send_to_headers_seconds": 27.141,
+          "headers_to_completion_seconds": 0.047,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+        "feature_id": "fiber",
+        "localization": "valid",
+        "quality": "low_detail",
+        "identity": "pending",
+        "verification_basis": [
+          {
+            "kind": "glm_localization_hypothesis",
+            "independent_support": false
+          }
+        ],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "present_pending",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        },
+        "source_tight_bbox": [
+          1300.0,
+          625.0,
+          3175.0,
+          1925.0
+        ],
+        "crop_bbox": [
+          1235,
+          560,
+          3240,
+          1990
+        ],
+        "transform": {
+          "kind": "full_image_resize",
+          "scale_xy": [
+            0.4,
+            0.4
+          ],
+          "padding_xy": [
+            0,
+            0
+          ],
+          "roi_xyxy": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        },
+        "model_input_size": [
+          1536,
+          864
+        ],
+        "spatial_agreement": [],
+        "artifacts": {
+          "target_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734\\target.png",
+          "context_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\be7ad16873cbf21da5423a9b7921fbb14289701a5d17bfdd526bb359fa807734\\context.png",
+          "target_sha256": "4abcfeead9f431fc25b3e3d26e2b76b2f2af8c54584e9bfeee4ccb92db17dbd8"
+        },
+        "quality_diagnostic": {
+          "status": "low_detail",
+          "score": 0.4284,
+          "flags": [
+            "low_detail"
+          ],
+          "metrics": {
+            "std": 0.0685,
+            "edge": 0.0096,
+            "width": 512,
+            "height": 355,
+            "area_ratio": 0.2939
+          },
+          "block_segment": false
+        }
+      }
+    },
+    "af246474debf4aff818c85f469d3b3a2cf49aa2341778e6e7c919debfdcfecfe": {
+      "action_id": "af246474debf4aff818c85f469d3b3a2cf49aa2341778e6e7c919debfdcfecfe",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.55,
+        "reason": "中央棕色团块中的平行线条呈波浪状串珠样增厚，更符合导管或纤维的纹孔特征，未见紧密排列的长柱状厚壁栅状细胞及折光强的光辉带。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "palisade_cell",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。栅状细胞：种皮表层的长柱状厚壁细胞，成片紧密排列，外列细胞较内列短，可见一条折光较强的光辉带；表面观呈多角形或长多角形"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "af246474debf4aff818c85f469d3b3a2cf49aa2341778e6e7c919debfdcfecfe",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          9,
+          "palisade_cell",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。栅状细胞：种皮表层的长柱状厚壁细胞，成片紧密排列，外列细胞较内列短，可见一条折光较强的光辉带；表面观呈多角形或长多角形"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1943,
+        "completion_tokens": 1422,
+        "total_tokens": 3365
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 38.485,
+        "worker_elapsed_seconds": 38.859,
+        "http_timing": {
+          "send_to_completion_seconds": 38.703,
+          "send_to_headers_seconds": 38.485,
+          "headers_to_completion_seconds": 0.218,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+        "feature_id": "palisade_cell",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "2d396bbe35497fea6f6b8e622ecb4e305e355e615187271b739d37ab83e92252": {
+      "action_id": "2d396bbe35497fea6f6b8e622ecb4e305e355e615187271b739d37ab83e92252",
+      "accepted": true,
+      "result": {
+        "present": true,
+        "conf": 0.92,
+        "reason": "图中中央有一棕黄色大块细胞组织，表面可见明显的斜向交错的细纹理及横向排列的纹孔/纹孔群，且边缘略显皱缩，符合薄壁细胞的显微鉴别特征。",
+        "ok": true,
+        "localization_proposal": {
+          "bbox": [
+            520,
+            250,
+            1250,
+            780
+          ],
+          "coordinate_space": "model_input_pixels"
+        }
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "feature_id": "parenchyma_cell",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。薄壁细胞：薄壁细胞或细胞碎片，表面可见斜向交错的细纹理、纹孔或纹孔群，细胞多皱缩"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "2d396bbe35497fea6f6b8e622ecb4e305e355e615187271b739d37ab83e92252",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          11,
+          "parenchyma_cell",
+          "img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。薄壁细胞：薄壁细胞或细胞碎片，表面可见斜向交错的细纹理、纹孔或纹孔群，细胞多皱缩"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1930,
+        "completion_tokens": 1877,
+        "total_tokens": 3807
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 44.484,
+        "worker_elapsed_seconds": 45.016,
+        "http_timing": {
+          "send_to_completion_seconds": 44.859,
+          "send_to_headers_seconds": 44.484,
+          "headers_to_completion_seconds": 0.375,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+        "feature_id": "parenchyma_cell",
+        "localization": "valid",
+        "quality": "low_detail",
+        "identity": "pending",
+        "verification_basis": [
+          {
+            "kind": "glm_localization_hypothesis",
+            "independent_support": false
+          }
+        ],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "present_pending",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        },
+        "source_tight_bbox": [
+          1300.0,
+          625.0,
+          3125.0,
+          1950.0
+        ],
+        "crop_bbox": [
+          1233,
+          558,
+          3191,
+          2016
+        ],
+        "transform": {
+          "kind": "full_image_resize",
+          "scale_xy": [
+            0.4,
+            0.4
+          ],
+          "padding_xy": [
+            0,
+            0
+          ],
+          "roi_xyxy": [
+            0,
+            0,
+            3840,
+            2160
+          ]
+        },
+        "model_input_size": [
+          1536,
+          864
+        ],
+        "spatial_agreement": [],
+        "artifacts": {
+          "target_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\2d396bbe35497fea6f6b8e622ecb4e305e355e615187271b739d37ab83e92252\\target.png",
+          "context_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\2d396bbe35497fea6f6b8e622ecb4e305e355e615187271b739d37ab83e92252\\context.png",
+          "target_sha256": "2320dbc5b462a3e4e32e6ec96efd6e211fd9ccbfa851ddf62fabdb0c2872c71a"
+        },
+        "quality_diagnostic": {
+          "status": "low_detail",
+          "score": 0.4259,
+          "flags": [
+            "low_detail"
+          ],
+          "metrics": {
+            "std": 0.0687,
+            "edge": 0.00948,
+            "width": 512,
+            "height": 372,
+            "area_ratio": 0.2915
+          },
+          "block_segment": false
+        }
+      }
+    },
+    "fa9b238ae2a801fffc0f97a98c74411af8baf9e02bb5fe66f4ddd84772dbd1fa": {
+      "action_id": "fa9b238ae2a801fffc0f97a98c74411af8baf9e02bb5fe66f4ddd84772dbd1fa",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.9,
+        "reason": "视野中仅见一团无定形的黄绿色细颗粒状内含物，未见紧密排列的长柱状厚壁细胞、多角形表面观细胞及折光光辉带等种皮栅状组织特征。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+          "feature_id": "palisade_cell",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。栅状细胞：种皮表层的长柱状厚壁细胞，成片紧密排列，外列细胞较内列短，可见一条折光较强的光辉带；表面观呈多角形或长多角形"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "fa9b238ae2a801fffc0f97a98c74411af8baf9e02bb5fe66f4ddd84772dbd1fa",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          9,
+          "palisade_cell",
+          "img_6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。栅状细胞：种皮表层的长柱状厚壁细胞，成片紧密排列，外列细胞较内列短，可见一条折光较强的光辉带；表面观呈多角形或长多角形"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2548,
+        "completion_tokens": 383,
+        "total_tokens": 2931
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 12.828,
+        "worker_elapsed_seconds": 12.984,
+        "http_timing": {
+          "send_to_completion_seconds": 12.828,
+          "send_to_headers_seconds": 12.828,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+        "feature_id": "palisade_cell",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "c8b678c471f5dd776c46b263d9dece854892cc8ddcce19fd7ba04bfc465b78b8": {
+      "action_id": "c8b678c471f5dd776c46b263d9dece854892cc8ddcce19fd7ba04bfc465b78b8",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.62,
+        "reason": "视野中可见多角形色素块、导管状纤维及不规则薄壁碎片，但未见成片紧密排列的长柱状厚壁细胞及折光光辉带，不符合种皮栅状组织特征。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "feature_id": "palisade_cell",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。栅状细胞：种皮表层的长柱状厚壁细胞，成片紧密排列，外列细胞较内列短，可见一条折光较强的光辉带；表面观呈多角形或长多角形"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "c8b678c471f5dd776c46b263d9dece854892cc8ddcce19fd7ba04bfc465b78b8",
+        "mandatory": false,
+        "priority": [
+          true,
+          false,
+          9,
+          "palisade_cell",
+          "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。栅状细胞：种皮表层的长柱状厚壁细胞，成片紧密排列，外列细胞较内列短，可见一条折光较强的光辉带；表面观呈多角形或长多角形"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 1943,
+        "completion_tokens": 451,
+        "total_tokens": 2394
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 15.813,
+        "worker_elapsed_seconds": 15.954,
+        "http_timing": {
+          "send_to_completion_seconds": 15.813,
+          "send_to_headers_seconds": 15.813,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "feature_id": "palisade_cell",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    },
+    "f19cf3644a8780b36579fd4bb6b029de13d6ee22a36bd44e66d0a6752a6991d5": {
+      "action_id": "f19cf3644a8780b36579fd4bb6b029de13d6ee22a36bd44e66d0a6752a6991d5",
+      "accepted": false,
+      "result": {
+        "ok": false,
+        "error_code": "UPSTREAM_REMOTE_DISCONNECTED"
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+          "feature_id": "glandular_hair",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。腺毛/腺鳞：具膨大腺头的毛茸，腺头由数个至数十个细胞组成，顶面观呈鞋底形、类圆形或倒圆锥形，下方连单细胞或多细胞短柄"
+        },
+        "skill": "differential_presence",
+        "config_identity": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272",
+        "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+        "action_id": "f19cf3644a8780b36579fd4bb6b029de13d6ee22a36bd44e66d0a6752a6991d5",
+        "mandatory": false,
+        "priority": [
+          false,
+          false,
+          2,
+          "glandular_hair",
+          "img_de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。腺毛/腺鳞：具膨大腺头的毛茸，腺头由数个至数十个细胞组成，顶面观呈鞋底形、类圆形或倒圆锥形，下方连单细胞或多细胞短柄"
+        ]
+      },
+      "status": "failed",
+      "cache_hit": false,
+      "new_requests": 1,
+      "error_type": "IntegrationError",
+      "error_code": "UPSTREAM_REMOTE_DISCONNECTED",
+      "diagnostics": {
+        "stage": "http_request",
+        "attempts": 1,
+        "worker_elapsed_seconds": 61.297,
+        "error_type": "RemoteDisconnected",
+        "transport_error_type": "RemoteDisconnected",
+        "http_timing": {
+          "send_to_completion_seconds": 61.141,
+          "send_to_headers_seconds": null,
+          "headers_to_completion_seconds": null,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        }
+      },
+      "usage": null
+    }
+  }
+}

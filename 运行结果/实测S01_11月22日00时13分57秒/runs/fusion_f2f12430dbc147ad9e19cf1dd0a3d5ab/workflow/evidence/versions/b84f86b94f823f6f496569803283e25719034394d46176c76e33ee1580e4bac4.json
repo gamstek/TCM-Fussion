@@ -1,0 +1,32 @@
+{
+  "identity": "bc84c8109df66f225323e56ae83bb4b9d6cbfcadba95f0c080a80798f07c177e",
+  "parent": "07bc996865523631bd68dd703f53d0ffd2d05b0de6273c0c4f4434a680008432",
+  "artifacts": {
+    "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\view_01.tif",
+      "sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "parents": [],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "detected:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "detected:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "detection",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\32635207063d548d\\detection\\crops.json",
+      "sha256": "f3cb68aaa5fbb1b2da0b900b37839f3967be2ad3abc32edd2ec2ae1d32ca7bbf",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "b84f86b94f823f6f496569803283e25719034394d46176c76e33ee1580e4bac4"
+}

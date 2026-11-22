@@ -9,6 +9,7 @@
 | [test_evaluation.py](test_evaluation.py) | 离线评估与报告回归，不属于线上五视图链路。 |
 | [test_prompt_optimization.py](test_prompt_optimization.py) | 真实 LangMem 优化、提示消费、封闭回放/发布隔离与共享账本回归。 |
 | [test_reflection.py](test_reflection.py) | 反思发布的有效性、数据隔离与回放反例回归；不调用真实模型。 |
+| [test_langsmith_trace.py](test_langsmith_trace.py) | 纯 JSON 工件与 SDK 替身，覆盖目录后建、持续更新、并行回执、正式实测及归档重复上传。 |
 | [test_routing.py](test_routing.py) | 路由真实编排分支、候选权限与零 API 只读验证；不把替身当识别效果。 |
 | [test_stage_replay.py](test_stage_replay.py) | 批量分类与示例审计往返、摘要校验、历史录制缺件。 |
 | [test_schedule_replay.py](test_schedule_replay.py) | 调度回放的源目录保护、版本篡改、越界读取与不支持的快照替换。 |

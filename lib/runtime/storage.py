@@ -16,7 +16,7 @@
 - finite_number: 判断是否为范围内有限数值（排除布尔与 NaN/Inf）。
 
 关联：
-- 调用方 「cli/classify_worker.py」、「cli/cnn_classifier_worker.py」、「cli/image_audit_worker.py」、「cli/main.py」、「cli/offline.py」、「cli/workflow_worker.py」。
+- 调用方 「cli/classify_worker.py」、「cli/cnn_classifier_worker.py」、「cli/main.py」、「cli/offline.py」、「cli/workflow_worker.py」。
 """
 from __future__ import annotations
 

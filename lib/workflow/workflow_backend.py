@@ -13,13 +13,95 @@ from pathlib import Path
 import contracts
 import paths
 from TCM_Fusion.lib.runtime.controlled_process import run
-from TCM_Fusion.lib.vision.image_tiling import uniform_tiles
+from TCM_Fusion.lib.vision.image_tiling import scan_tiles
 from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json, write_json, file_hash, digest, project_path
 
 
 def _timeout(session):
     fn = getattr(session, 'call_timeout', None)
     return fn() if callable(fn) else session.remaining_seconds()
+
+
+def _run_cnn_batch(session, work, context, signature, crops):
+    from TCM_Fusion.lib.vision.stage2_classifier import cache_matches
+    output = work/'cnn_predictions.json'
+    profile = signature['profile']
+    config = work/'cnn_context.json'
+    write_json(config, {'crops': crops, 'weights': profile['weights'], 'meta': profile['meta'],
+                        'signature': signature, 'output': str(output),
+                        'batch_size': int(session.config.get('cnn_batch_size', 16))})
+    run([str(session.yolo_python), '-X', 'utf8', '-m', 'TCM_Fusion.cli.cnn_classifier_worker',
+         '--context', str(config)], context_path=context, timeout=_timeout(session),
+        log_path=work/'cnn.log', cancel_event=session.cancel_event)
+    if not output.is_file():
+        raise IntegrationError('CNN_INCOMPLETE', 'CNN 未返回预测文件')
+    doc = read_json(output)
+    if not cache_matches(doc, signature):
+        raise IntegrationError('CNN_OUTPUT_INVALID', 'CNN 返回与本次输入/模型不匹配')
+    return doc
+
+
+def _cnn_predictions(session, work, context, signature, crops):
+    from contextlib import ExitStack
+    from TCM_Fusion.lib.runtime.ledger_lock import acquire, release
+    from TCM_Fusion.lib.vision.stage2_classifier import cache_matches
+
+    def cached(path, expected):
+        try:
+            value = read_json(path)
+        except (OSError, ValueError):
+            return None
+        return value if cache_matches(value, expected) else None
+
+    if session.cancel_event is not None and session.cancel_event.is_set():
+        raise IntegrationError('WORKFLOW_CANCELLED', '分类已取消')
+    folder = session.root/'cnn'
+    full_cache = folder/(digest(signature) + '.json')
+    exact = cached(full_cache, signature)
+    if exact is not None:
+        return exact
+    predictions = {}
+    missing = {}
+    metadata = {}
+    def assemble(expected, rows):
+        value = {**metadata, 'signature': expected, 'rows': rows}
+        if 'cache_key' in value:
+            value['cache_key'] = digest(expected)
+        return value
+    with ExitStack() as locks:
+        # 全序取锁。不同批次共享的 crop 只由一个分支推理，互不相交的批次独立运行。
+        for item in sorted(signature['crops'], key=lambda entry: entry['id']):
+            key = item['id']
+            single = {**signature, 'crops': [item]}
+            path = folder/'rows'/(digest(single) + '.json')
+            doc = cached(path, single)
+            if doc is None:
+                locks.callback(release, acquire(path, timeout=_timeout(session), cancel_event=session.cancel_event))
+                doc = cached(path, single)
+            if doc is None:
+                missing[key] = (path, single)
+            else:
+                predictions[key] = doc['rows'][0]
+                if not metadata:
+                    metadata = {k: v for k, v in doc.items() if k not in {'rows', 'signature'}}
+        if missing:
+            legacy = cached(folder/'predictions.json', signature)
+            if legacy is None:
+                subset = {**signature, 'crops': [item for item in signature['crops'] if item['id'] in missing]}
+                doc = _run_cnn_batch(session, work, context, subset,
+                                     [crop for crop in crops if crop['id'] in missing])
+            else:
+                doc = legacy
+            metadata = {k: v for k, v in doc.items() if k not in {'rows', 'signature'}}
+            for row in doc['rows']:
+                key = row['id']
+                if key in missing:
+                    path, single = missing[key]
+                    write_json(path, assemble(single, [row]))
+                    predictions[key] = row
+        result = assemble(signature, [predictions[crop['id']] for crop in crops])
+        write_json(full_cache, result)
+        return result
 
 
 class WorkflowBackend:
@@ -67,7 +149,10 @@ class WorkflowBackend:
             with Image.open(source) as handle:
                 width, height = handle.size
             requested_tiles = int(target.get('max_tiles') or session.config.get(prefix + '_max_tiles', 4))
-            boxes = uniform_tiles(width, height, max_tiles=max(1, requested_tiles))
+            boxes = scan_tiles(width, height, requested_tiles)
+            if not boxes:
+                raise IntegrationError('ROI_INVALID', '源图无法划分为局部 ROI')
+            partial = sum((c-a)*(d-b) for a,b,c,d in boxes) < width*height
             policy = str(session.config.get(prefix + '_tile_policy', 'prescreen'))
             if policy == 'prescreen' and len(boxes) > 1:
                 def score(box):
@@ -96,6 +181,7 @@ class WorkflowBackend:
                                  'locate_expand': session.config.get('locate_expand', 1.5),
                                  'locate_min_box_side': session.config.get('locate_min_box_side', 90),
                                  'locate_min_roi_side': session.config.get('locate_min_roi_side', 256),
+                                 'feature_crop_policy': session.config.get('feature_crop_policy', 'legacy'),
                                  'feature_hint': feature_hint(feature_id),
                                  'existing_boxes': []})
                 run([str(session.python), '-X', 'utf8', '-m', 'TCM_Fusion.cli.workflow_worker',
@@ -113,14 +199,15 @@ class WorkflowBackend:
                 except Exception as exc:
                     errors.append({'tile': 0, 'error': str(exc)[:200]})
                 if not has_crops(out / 'tile_00' / 'detection'):
+                    (out/'crops').mkdir(exist_ok=True)
                     completion = out / 'scan_result.json'
                     write_json(completion, {'engine': 'glm_full_scan', 'count': 0,
                                             'tiles': boxes[:1], 'feature_id': feature_id,
                                             'pilot': True, 'stopped': 'pilot_failed' if errors else 'pilot_empty',
-                                            'planned_tiles': boxes, 'partial': bool(errors) or len(boxes) > 1,
+                                            'planned_tiles': boxes, 'partial': partial or bool(errors) or len(boxes) > 1,
                                             'errors': errors, 'coordinate_system': 'original_pixels'})
                     return {'crops_dir': str(out / 'crops'), 'completion': str(completion),
-                            'tiles': boxes[:1], 'partial': bool(errors) or len(boxes) > 1, 'errors': errors}
+                            'tiles': boxes[:1], 'partial': partial or bool(errors) or len(boxes) > 1, 'errors': errors}
                 remaining = list(enumerate(boxes))[1:]
             else:
                 remaining = list(enumerate(boxes))
@@ -148,11 +235,11 @@ class WorkflowBackend:
             completion = out / 'scan_result.json'
             write_json(completion, {'engine': 'glm_full_scan', 'count': count,
                                     'tiles': boxes, 'planned_tiles': boxes, 'roi': None, 'feature_id': feature_id,
-                                    'partial': bool(errors), 'errors': errors,
+                                    'partial': partial or bool(errors), 'errors': errors,
                                     'tile_policy': policy,
                                     'coordinate_system': 'original_pixels'})
             return {'crops_dir': str(crops), 'completion': str(completion), 'tiles': boxes,
-                    'partial': bool(errors), 'errors': errors}
+                    'partial': partial or bool(errors), 'errors': errors}
         if tool == 'hybrid_scan':
             from concurrent.futures import ThreadPoolExecutor, as_completed
             features = [str(x) for x in (target.get('features') or []) if str(x)]
@@ -230,6 +317,7 @@ class WorkflowBackend:
                         locate_expand=session.config.get('locate_expand', 1.5),
                         locate_min_box_side=session.config.get('locate_min_box_side', 90),
                         locate_min_roi_side=session.config.get('locate_min_roi_side', 256),
+                        feature_crop_policy=session.config.get('feature_crop_policy', 'legacy'),
                         feature_hint=feature_hint(target['feature_id']),
                         existing_boxes=session.existing_boxes(target['image_id']))
             write_json(ctx, data)
@@ -251,7 +339,8 @@ class WorkflowBackend:
                              'signature': session.yolo_signature})
             command(['-m', 'TCM_Fusion.cli.yolo_worker', '--context', ctx], session.yolo_python, 'yolo.log')
             crop_context = {'tool': tool, 'source': source, 'output': str(out),
-                            'boxes': str(work / 'boxes.json'), **roi}
+                            'boxes': str(work / 'boxes.json'),
+                            'feature_crop_policy': session.config.get('feature_crop_policy', 'legacy'), **roi}
             if not initial:
                 crop_context.update(px_per_um=target.get('px_per_um'),
                                     existing_boxes=session.existing_boxes(target['image_id']),
@@ -269,28 +358,6 @@ class WorkflowBackend:
             write_json(ctx, {'tool': tool, 'source': target['source'], 'output': str(out)})
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
             return {'scale': str(out / 'scale.json')}
-        if tool=='image_exemplar_audit':
-            meta=contracts.CropMeta.from_json(target['path'])
-            feature_id=meta.feature_id
-            bank_path=project_path(session.config.get('image_exemplar_bank') or
-                (Path(paths.PROJECT_ROOT)/'config/feature_exemplar_bank.json'))
-            bank=read_json(bank_path)
-            entry=(bank.get('targets') or {}).get(feature_id) or {}
-            positives=[x.get('crop') for x in (entry.get('positives') or []) if x.get('crop')]
-            negatives=[x.get('crop') for x in (entry.get('negatives') or []) if x.get('crop')]
-            if not positives or not negatives:
-                raise IntegrationError('AUDIT_EXEMPLAR_MISSING',f'示例库没有 {feature_id} 的正例或负例')
-            np=max(1,int(session.config.get('image_exemplar_positive',4)))
-            nn=max(1,int(session.config.get('image_exemplar_negative',4)))
-            out=work/'image_audit';ctx=work/'audit.json'
-            write_json(ctx,{'tool':tool,'target':str(meta.png),'target_id':meta.crop_id,
-                'target_label':feature_id,'feature_id':feature_id,
-                'positives':positives[:np],'negatives':negatives[:nn],'output':str(out)})
-            command(['-m','TCM_Fusion.cli.image_audit_worker','--context',ctx],
-                    seconds=session.config.get('image_exemplar_seconds'))
-            if not (out/'audit.json').is_file():
-                raise IntegrationError('AUDIT_INCOMPLETE','图片示例审计没有产出 audit.json')
-            return {'audit':str(out/'audit.json'),'contact_sheet':str(out/'contact.jpg')}
         if tool=='classify_crops_batch':
             results=[];failures=[]
             for index,crop in enumerate(target.get('crops') or []):
@@ -313,7 +380,7 @@ class WorkflowBackend:
             cnn_error=None
             if session.config.get('cnn_weights') or session.config.get('cnn_meta'):
                 try:
-                    from TCM_Fusion.lib.vision.stage2_classifier import model_profile, request_signature, cache_matches
+                    from TCM_Fusion.lib.vision.stage2_classifier import model_profile, request_signature
                     profile=model_profile(session.config)
                     if getattr(session,'cnn_signature',profile)!=profile:
                         raise IntegrationError('CNN_ASSET_CHANGED','任务启动后 stage2 模型或 meta 已变化')
@@ -321,29 +388,14 @@ class WorkflowBackend:
                     for tid,crop in session.targets().items():
                         if crop.get('kind')=='crop':
                             m=contracts.CropMeta.from_json(crop['path'])
-                            crops.append({'id':tid,'png':str(m.png)})
+                            entry = {'id': tid, 'png': str(m.png)}
+                            frame = getattr(m, 'raw', {}).get('feature_window') or {}
+                            if frame.get('classification_box_local') is not None:
+                                entry['box_local'] = frame['classification_box_local']
+                            crops.append(entry)
                     crops.sort(key=lambda row:row['id'])
                     signature=request_signature(profile,crops,session.yolo_python)
-                    cache=session.root/'cnn'/'predictions.json'
-                    try:
-                        cnn_doc=read_json(cache) if cache.is_file() else None
-                    except (OSError,ValueError):
-                        cnn_doc=None
-                    if not cache_matches(cnn_doc,signature):
-                        cnn_output=session.root/'cnn'/'predictions.json'
-                        cnn_context=work/'cnn_context.json'
-                        write_json(cnn_context,{'crops':crops,'weights':profile['weights'],'meta':profile['meta'],
-                            'signature':signature,
-                            'output':str(cnn_output),'batch_size':int(session.config.get('cnn_batch_size',16))})
-                        run([str(session.yolo_python),'-X','utf8','-m',
-                             'TCM_Fusion.cli.cnn_classifier_worker','--context',str(cnn_context)],
-                            context_path=context,timeout=_timeout(session),
-                            log_path=work/'cnn.log',cancel_event=session.cancel_event)
-                        if not cnn_output.is_file():
-                            raise IntegrationError('CNN_INCOMPLETE','CNN 没有产出 predictions.json')
-                        cnn_doc=read_json(cnn_output)
-                        if not cache_matches(cnn_doc,signature):
-                            raise IntegrationError('CNN_OUTPUT_INVALID','CNN 返回与本次输入/模型不匹配')
+                    cnn_doc = _cnn_predictions(session, work, context, signature, crops)
                     rows={str(row.get('id')):row for row in cnn_doc['rows']}
                     cnn_info=rows.get(target['id'])
                     threshold=float(session.config.get('cnn_threshold',.75))
@@ -374,6 +426,8 @@ class WorkflowBackend:
                             write_json(out/'classification.json',doc)
                             return {'classification':str(out)}
                 except Exception as exc:
+                    if getattr(exc, 'code', None) in {'LEDGER_BUSY', 'WORKFLOW_CANCELLED', 'WORKFLOW_CLOSED'}:
+                        raise
                     cnn_error={'code':getattr(exc,'code','CNN_FAILED'),'detail':str(exc)[:240]}
             if target.get('batch_cnn_only'):
                 if cnn_error:
@@ -394,10 +448,20 @@ class WorkflowBackend:
                 return {'classification':str(out)}
             ctx={'tool':tool,'crop_id':meta.crop_id,'crop_json':str(target['path']),
                  'crop_png':str(meta.png),'source':meta.source_image_path,
-                 'tight_box':meta.tight_box,'output':str(work/'classification'),
-                 'feature_hint':feature_hint(meta.feature_id)}
+                 'tight_box':meta.tight_box,'output':str(work/'classification')}
+            if session.config.get('identity_review_bank'):
+                from TCM_Fusion.lib.vision.identity_review import review_plan
+                sources = {row.get('sha256') for row in session.runtime.images.values()}
+                ctx['identity_review'] = review_plan(
+                    session.identity_review_bank, cnn_info, meta.feature_id, target.get('box_source'), sources,
+                    margin_limit=session.config.get('identity_review_cnn_margin', .15))
+            else:
+                ctx['feature_hint'] = feature_hint(meta.feature_id)
+            frame = getattr(meta, 'raw', {}).get('feature_window') or {}
             if target.get('identity_required'):
-                ctx['tight_box_local'] = meta.tight_box_local
+                ctx['tight_box_local'] = frame.get('identity_box_local', meta.tight_box_local)
+            elif frame.get('classification_box_local') is not None:
+                ctx['tight_box_local'] = frame['classification_box_local']
             f=work/'worker.json';write_json(f,ctx)
             out=work/'classification'
             command(['-m','TCM_Fusion.cli.classify_worker','--context',f])
@@ -428,9 +492,11 @@ class WorkflowBackend:
                     doc['yolo_confidence']=yscore
                     doc['yolo_checked']=True
                     if yscore is not None:
-                        conflict=bool(doc.get('label') and doc.get('label')!=target_label)
+                        recognized = bool(doc.get('label') and doc.get('feature_id')
+                                          and not doc.get('reject') and not doc.get('error'))
+                        conflict = recognized and (doc['label'] != target_label or doc['feature_id'] != meta.feature_id)
                         doc['yolo_conflict']=conflict
-                        if not conflict:
+                        if recognized and not conflict:
                             fused=0.7*yscore+0.3*glm_score
                             doc['label']=target_label
                             doc['feature_id']=meta.feature_id
@@ -460,7 +526,10 @@ class WorkflowBackend:
         if tool=='segment_instance':
             src=Path(target['path']);meta=contracts.CropMeta.from_json(str(src))
             contracts.check_crops([meta]);inp=work/'crops';inp.mkdir()
-            shutil.copy2(src,inp/src.name);shutil.copy2(meta.png,inp/Path(meta.png).name)
+            grain = session.crop_granularity(target, meta) if 'id' in target else meta.granularity
+            side = {**meta.raw, 'granularity': grain}
+            write_json(inp/src.name, side)
+            shutil.copy2(meta.png,inp/Path(meta.png).name)
             out=work/'segmentation'
             command([Path(paths.SEGMENTATION_CLI_DIR)/'igm_segment_batch.py','--crops',inp,'--out-dir',out,
                      '--box-association', session.config.get('box_association','region_component'),
@@ -520,6 +589,7 @@ class WorkflowBackend:
                             src=Path(assessment['path']).parent/'associated_mask.png'
                             if file_hash(src)!=qa['bindings']['mask']:raise IntegrationError('QUALITY_SCOPE','关联mask变化')
                             if rows:raise IntegrationError('QUALITY_MULTIPLE_INSTANCES','单目标资格不能用于多实例重复测量')
+                            raw['igm_associated_clipped_px'] = ''
                         iid=offset+row.instance_id;name=f"{Path(row.source_image_path).stem}__{row.feature_id}__inst{iid}.png"
                         if not diagnostic:
                             shutil.copy2(src,delivery/name)

@@ -38,7 +38,7 @@ PRESENCE-002 补充：观察须在请求前、定位发布前及账本提交时�
 ## 3. 当前工作流约束
 
 - `fast` 是唯一标准路径（不再提供 false 开关）：每图显微特征出框先用YOLO，CNN batch为可选合法动作，原图存在性观察可独立选择；标准路径不创建 `propose_regions` / `roi_screen` / 普通 `hybrid_scan`，只在缺 required 时按 `fast_recovery_selection` 生成 `feature_scan`（或旧配置的 `legacy_bundle` hybrid）。`fast_yolo_stage2` 仅为历史配置兼容保留，schema 只接受 `true`，缺失时按 `true` 补齐。
-- 旧配置 `fast_recovery_selection=legacy_bundle`（字段缺省同义）保留 required 合并补扫、每图一次；新模板显式使用 `per_feature`，把活动候选的 required/supporting 逐类开放为 feature_scan，模型选择目标，预算内每图最多 fast_fallback_max_features 类、共 fast_fallback_max_locate_calls 个请求 tile。候选角色只作来源解释，不创造证据、不强制扫描、不满足 required；已尝试同视野同类不重复。旧参数：`fast_fallback_max_features=2`、`fast_fallback_max_locate_calls=6`、`feature_scan_tile_policy=full`。`full` 为 4 tile 全并发，全空即弃，不重试。
+- 旧配置 `fast_recovery_selection=legacy_bundle`（字段缺省同义）保留 required 合并补扫、每图一次；新模板显式使用 `per_feature`，把活动候选的 required/supporting 逐类开放为 feature_scan，模型选择目标，预算内每图最多 fast_fallback_max_features 类、共 fast_fallback_max_locate_calls 个请求 tile。候选角色只作来源解释，不创造证据、不强制扫描、不满足 required；已尝试同视野同类不重复。旧参数：`fast_fallback_max_features=2`、`fast_fallback_max_locate_calls=6`、`feature_scan_tile_policy=full`。`full` 执行已分配的局部 tile，模板最多 4 块、并发上限 2。仅余 1 块按局部覆盖记账，全空不重试。显式 `hybrid_scan_enabled=false` 关闭旧合并补扫。
 - YOLO 框全部保留；CNN stage2 先分类，低置信/other 才回退 GLM classify；required crop 的 YOLO crop 复核只是辅助。调查顺序与对象由模型从合法菜单选择。选定 segment 对象后仍可在资格满足时自动 measure。auto_prepare_stage 和 auto_required_measurement 仅供历史配置读取。
 - `adaptive_v2` 的 P0 缺口只能作为建议，不得按假设名称或 P0 等级强制调查路线；模型可以提出、调查、暂停、撤销或恢复假设，状态不是证据。新模板 `candidate_group_verification=true`：top required 满足后，竞争候选 required 只做一次核验；每个候选最多一次，阴性/未知后不再扩散；阳性交给 React 决定是否改变研究对象。候选组缺口只作建议，不再以candidate_group_incomplete否决结束调查。
 - 身份完整性门是数据完整性约束，不是 P0 路线：identity_required crop未确认时禁止该对象segment/measure；不因此禁止其他合法调查或review。

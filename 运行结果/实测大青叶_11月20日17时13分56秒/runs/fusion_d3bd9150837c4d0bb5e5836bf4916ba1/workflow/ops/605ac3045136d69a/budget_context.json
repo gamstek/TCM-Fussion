@@ -1,0 +1,14 @@
+{
+  "operation_key": "605ac3045136d69af342edc3484e5ba7ac420fb0754a081622d33ac060e3190d",
+  "budget_path": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\resources.json",
+  "limits": {
+    "initialization": 5,
+    "recompute": 30,
+    "network": 200,
+    "planning": 60,
+    "observation": 40,
+    "total": 400,
+    "finalization": 1
+  },
+  "identity": "d8bb3a30a36a09874fa1634e1a641881cac0713295c9e9ad767534bc69fa4d2d"
+}

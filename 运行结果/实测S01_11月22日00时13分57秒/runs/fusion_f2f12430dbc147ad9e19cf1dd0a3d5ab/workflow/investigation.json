@@ -1,0 +1,202 @@
+{
+  "identity": "bc84c8109df66f225323e56ae83bb4b9d6cbfcadba95f0c080a80798f07c177e",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "滑石",
+    "大青叶",
+    "雄黄",
+    "秦皮",
+    "穿心莲",
+    "乌梅"
+  ],
+  "hypotheses": {
+    "滑石": {
+      "status": "paused",
+      "reason": "required mineral_feature在唯一视野局部阴性，先验领先不构成证据；待其他视野或证据变化再评估",
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "decision_source": "model"
+    },
+    "大青叶": {
+      "status": "investigating",
+      "reason": "下一轮应优先核验两个required的MORPHOLOGY_UNVERIFIED形态（砂晶薄壁细胞充填特征、果皮表皮细胞壁与毛茸脱落痕），并解决大青叶indigo_crystal的观察前置；滑石/雄黄共用矿物判据，待新视野或证据变化再评估。",
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "decision_source": "model"
+    },
+    "雄黄": {
+      "status": "investigating",
+      "reason": "滑石为逐折先验领先者且mineral_feature为唯一required缺口；大青叶多折稳定进入前三，indigo_crystal为required缺口；雄黄与滑石共用矿物判据但颜色/光泽不同，A2结果可同时推进或区分二者。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "秦皮": {
+      "status": "investigating",
+      "reason": "下一轮应优先核验两个required的MORPHOLOGY_UNVERIFIED形态（砂晶薄壁细胞充填特征、果皮表皮细胞壁与毛茸脱落痕），并解决大青叶indigo_crystal的观察前置；滑石/雄黄共用矿物判据，待新视野或证据变化再评估。",
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "decision_source": "model"
+    },
+    "穿心莲": {
+      "status": "investigating",
+      "reason": "本轮Q2/Q3核验其三个supporting缺口中的气孔与非腺毛；required钟乳体本视野阴性，不排除标本",
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "decision_source": "model"
+    },
+    "乌梅": {
+      "status": "investigating",
+      "reason": "下一轮应优先核验两个required的MORPHOLOGY_UNVERIFIED形态（砂晶薄壁细胞充填特征、果皮表皮细胞壁与毛茸脱落痕），并解决大青叶indigo_crystal的观察前置；滑石/雄黄共用矿物判据，待新视野或证据变化再评估。",
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "滑石",
+          "status": "investigating",
+          "reason": "滑石为逐折先验领先者且mineral_feature为唯一required缺口；大青叶多折稳定进入前三，indigo_crystal为required缺口；雄黄与滑石共用矿物判据但颜色/光泽不同，A2结果可同时推进或区分二者。"
+        },
+        {
+          "candidate_id": "大青叶",
+          "status": "investigating",
+          "reason": "滑石为逐折先验领先者且mineral_feature为唯一required缺口；大青叶多折稳定进入前三，indigo_crystal为required缺口；雄黄与滑石共用矿物判据但颜色/光泽不同，A2结果可同时推进或区分二者。"
+        },
+        {
+          "candidate_id": "雄黄",
+          "status": "investigating",
+          "reason": "滑石为逐折先验领先者且mineral_feature为唯一required缺口；大青叶多折稳定进入前三，indigo_crystal为required缺口；雄黄与滑石共用矿物判据但颜色/光泽不同，A2结果可同时推进或区分二者。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "fold1先验第一，required sand_crystal尚未核验，本轮Q1直接核验该判据"
+        },
+        {
+          "candidate_id": "大青叶",
+          "status": "investigating",
+          "reason": "多折稳定前三，required indigo_crystal尚未核验，本轮Q2直接核验该判据"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "穿心莲",
+          "status": "investigating",
+          "reason": "本轮Q5核验其required钙钟乳体，从proposed提升为investigating"
+        },
+        {
+          "candidate_id": "乌梅",
+          "status": "investigating",
+          "reason": "本轮Q1核验其required表皮细胞，从proposed提升为investigating"
+        }
+      ],
+      "evidence_digest": "62cbb0971b87d32d4dff24cbefc06e7c459938f389a53a8a1de4241d979337a9",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "穿心莲",
+          "status": "investigating",
+          "reason": "本轮Q2/Q3核验其三个supporting缺口中的气孔与非腺毛；required钟乳体本视野阴性，不排除标本"
+        }
+      ],
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "乌梅",
+          "status": "investigating",
+          "reason": "epidermis_cell present但MORPHOLOGY_UNVERIFIED，A1核验其required形态"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "sand_crystal presence阳性但形态待核验，provisional领先，保持调查"
+        },
+        {
+          "candidate_id": "滑石",
+          "status": "paused",
+          "reason": "required mineral_feature在唯一视野局部阴性，先验领先不构成证据；待其他视野或证据变化再评估"
+        }
+      ],
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "乌梅",
+          "status": "investigating",
+          "reason": "epidermis_cell为本候选唯一required缺口，本轮A1直接核验其身份/形态"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "sand_crystal present待形态核验，本轮未覆盖，保持调查"
+        },
+        {
+          "candidate_id": "大青叶",
+          "status": "investigating",
+          "reason": "indigo_crystal缺观察前置；epidermis_cell为supporting，A1可顺带核验"
+        }
+      ],
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "下一轮应优先核验两个required的MORPHOLOGY_UNVERIFIED形态（砂晶薄壁细胞充填特征、果皮表皮细胞壁与毛茸脱落痕），并解决大青叶indigo_crystal的观察前置；滑石/雄黄共用矿物判据，待新视野或证据变化再评估。"
+        },
+        {
+          "candidate_id": "乌梅",
+          "status": "investigating",
+          "reason": "下一轮应优先核验两个required的MORPHOLOGY_UNVERIFIED形态（砂晶薄壁细胞充填特征、果皮表皮细胞壁与毛茸脱落痕），并解决大青叶indigo_crystal的观察前置；滑石/雄黄共用矿物判据，待新视野或证据变化再评估。"
+        },
+        {
+          "candidate_id": "大青叶",
+          "status": "investigating",
+          "reason": "下一轮应优先核验两个required的MORPHOLOGY_UNVERIFIED形态（砂晶薄壁细胞充填特征、果皮表皮细胞壁与毛茸脱落痕），并解决大青叶indigo_crystal的观察前置；滑石/雄黄共用矿物判据，待新视野或证据变化再评估。"
+        }
+      ],
+      "evidence_digest": "9e6c9a774b317e25364a170180030c3e8acc44aa063f5141bb8bc61f1e8eb327",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

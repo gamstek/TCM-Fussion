@@ -1,0 +1,1572 @@
+{
+  "baseline": {
+    "case": "实测S01_11月22日00时13分57秒",
+    "run": "fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab",
+    "sha": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+    "a_cache_reused": false,
+    "signature": [
+      "8ce712b41cb5dcd212a737951ceac2218ab1d6df987b58f9cf7d572c40971e83",
+      "8ce712b41cb5dcd212a737951ceac2218ab1d6df987b58f9cf7d572c40971e83"
+    ],
+    "observation_group": true,
+    "duration": 360.132,
+    "planning": 9,
+    "planning_s": 129.281,
+    "steps": [
+      {
+        "round": 1,
+        "observations": [
+          "mineral_feature"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 8,
+        "offered_questions": [
+          "sand_crystal",
+          "mineral_feature",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "indigo_crystal",
+          "calcium_carbonate",
+          "epidermis_cell"
+        ],
+        "planning_s": 14.937,
+        "tool": "presence_check",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "execution_s": 28.5,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "sand_crystal",
+            "shared_consumers": [
+              "秦皮"
+            ],
+            "action_id": "A1"
+          },
+          "Q2": {
+            "feature_id": "mineral_feature",
+            "shared_consumers": [
+              "滑石",
+              "雄黄"
+            ],
+            "action_id": "A2"
+          },
+          "Q3": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A4"
+          },
+          "Q4": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          },
+          "Q5": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A6"
+          },
+          "Q6": {
+            "feature_id": "indigo_crystal",
+            "shared_consumers": [
+              "大青叶"
+            ],
+            "action_id": "A7"
+          },
+          "Q7": {
+            "feature_id": "calcium_carbonate",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A8"
+          },
+          "Q8": {
+            "feature_id": "epidermis_cell",
+            "shared_consumers": [
+              "乌梅",
+              "大青叶"
+            ],
+            "action_id": "A9"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "rejections": [
+          {
+            "phase": "parallel_observation_rejected",
+            "reason": "not_offered_for_initial_view"
+          }
+        ],
+        "reply": "首轮无任何已核验观察，6个候选required均为unchecked。选择A2矿物类特征核验：同时服务先验领先者滑石（5折中3折fold-top1）与雄黄的required判据mineral_feature，区分性最高（有/无矿物块片即可区分两个先验领先者与叶类候选）。并行观察O5（indigo_crystal，经A7同参数）核验大青叶的required判据，覆盖叶类最可能候选的C级缺口。二者互相独立，阳性结果分别在下一轮决定矿物形态细化或叶类佐证（epidermis_cel",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A2"
+          }
+        }
+      },
+      {
+        "round": 2,
+        "observations": [
+          "indigo_crystal",
+          "sand_crystal"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 7,
+        "offered_questions": [
+          "sand_crystal",
+          "indigo_crystal",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "calcium_carbonate",
+          "epidermis_cell"
+        ],
+        "planning_s": 13.141,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "source": "model",
+        "selected_questions": [
+          "indigo_crystal",
+          "sand_crystal"
+        ],
+        "execution_s": 33.328,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "sand_crystal",
+            "shared_consumers": [
+              "秦皮"
+            ],
+            "action_id": "A1"
+          },
+          "Q2": {
+            "feature_id": "indigo_crystal",
+            "shared_consumers": [
+              "大青叶"
+            ],
+            "action_id": "A2"
+          },
+          "Q3": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A4"
+          },
+          "Q4": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          },
+          "Q5": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A6"
+          },
+          "Q6": {
+            "feature_id": "calcium_carbonate",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A7"
+          },
+          "Q7": {
+            "feature_id": "epidermis_cell",
+            "shared_consumers": [
+              "乌梅",
+              "大青叶"
+            ],
+            "action_id": "A8"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "滑石与雄黄的required(mineral_feature)在本视野已为局部未见，复查无增量。当前最有区分度的是两个未查required存在性判据：大青叶的靛蓝结晶（Q2）和秦皮的草酸钙砂晶（Q1），两者均为候选间独立required缺口，一次观察即可各自推进或削弱一个候选。穿心莲的钟乳体（Q6）及各supporting缺口留待下一轮，视本轮结果再定；阴性结果仅限本视野，不排除候选。",
+        "decision": {
+          "kind": "observe_questions",
+          "requested": {
+            "kind": "observe_questions",
+            "question_ids": [
+              "Q2",
+              "Q1"
+            ]
+          }
+        }
+      },
+      {
+        "round": 3,
+        "observations": [
+          "epidermis_cell",
+          "calcium_carbonate"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 5,
+        "offered_questions": [
+          "epidermis_cell",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "calcium_carbonate"
+        ],
+        "planning_s": 13.0,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "source": "model",
+        "selected_questions": [
+          "epidermis_cell",
+          "calcium_carbonate"
+        ],
+        "execution_s": 16.313,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "epidermis_cell",
+            "shared_consumers": [
+              "乌梅",
+              "大青叶"
+            ],
+            "action_id": "A1"
+          },
+          "Q2": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A3"
+          },
+          "Q3": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A4"
+          },
+          "Q4": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          },
+          "Q5": {
+            "feature_id": "calcium_carbonate",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A6"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "秦皮sand_crystal阳性待形态核验，大青叶靛蓝结晶与滑石/雄黄mineral_feature在本视野局部阴性（仅限该视野，不排除标本）。当前最有区分性的缺口是未查的required判据：Q1表皮细胞同时覆盖乌梅required与大青叶supporting（N4：共同存在性不区分两者形态），Q5钟乳体直接核验穿心莲唯一required。两项相互独立、各扣一次观察预算；阳性结果将推进对应候选required，阴性仅记本视野未见。秦皮MORPHOLOGY_UNVERIFIE",
+        "decision": {
+          "kind": "observe_questions",
+          "requested": {
+            "kind": "observe_questions",
+            "question_ids": [
+              "Q1",
+              "Q5"
+            ]
+          }
+        }
+      },
+      {
+        "round": 4,
+        "observations": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 3,
+        "offered_questions": [
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "planning_s": 11.938,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "source": "model",
+        "selected_questions": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "execution_s": 16.891,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A2"
+          },
+          "Q2": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A3"
+          },
+          "Q3": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A4"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "本轮选择两个独立存在性观察：Q2气孔同时服务大青叶（supporting缺口，其required靛蓝结晶已在本视野阴性）与穿心莲（supporting缺口）；Q3非腺毛同时服务乌梅与穿心莲的supporting缺口。两者均为共用问题，一次观察可推进两个候选的不同佐证；若阳性仍需结合各候选形态判据（大青叶不等式气孔、穿心莲直轴式气孔、乌梅毛茸脱落痕迹多见）分别解释，存在性本身不区分消费者。已完成的presence结果（砂晶/表皮细胞阳性待形态核验，矿物/靛蓝/钟乳体本视野阴性）",
+        "decision": {
+          "kind": "observe_questions",
+          "requested": {
+            "kind": "observe_questions",
+            "question_ids": [
+              "Q2",
+              "Q3"
+            ]
+          }
+        }
+      },
+      {
+        "round": 5,
+        "observations": [
+          "glandular_hair"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 1,
+        "offered_questions": [
+          "glandular_hair"
+        ],
+        "planning_s": 14.109,
+        "tool": "presence_check",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "execution_s": 62.641,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A2"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "本轮唯一剩余未核验判据是穿心莲的supporting缺口glandular_hair（Q1，存在性问题）。其required钟乳体在当前视野已阴性，supporting结果不能替代required，但完成它可闭合该候选本视野全部判据记录，且不排除标本其他视野。滑石/雄黄的mineral_feature与大青叶的indigo_crystal均为当前视野局部阴性，若要推进需新视野初检（A1），但当前仅此单视野，先完成低成本存在性核验，再看结果决定是否扩展。A2为存在性检查，不判药",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A2"
+          }
+        }
+      },
+      {
+        "round": 6,
+        "observations": [],
+        "stages": [
+          "detect_fov_initial"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 10.906,
+        "tool": "detect_fov_initial",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "execution_s": 7.641,
+        "visible_questions": {},
+        "wave_size": null,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "选择A1（detect_fov_initial img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c）：上一轮presence_check因服务中断失败（glandular_hair），反思建议换问题/工具路线。A1是当前唯一能发现可核验实例的合法观察入口，可能产出秦皮sand_crystal与乌梅epidermis_cell（均MORPHOLOGY_UNVERIFIED）等可分割/复检实例，",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A1"
+          }
+        }
+      },
+      {
+        "round": 7,
+        "observations": [],
+        "stages": [
+          "feature_scan"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 16.969,
+        "tool": "feature_scan",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "execution_s": 15.5,
+        "visible_questions": {},
+        "wave_size": null,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "当前最有区分度的合法观察是A1（img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c表皮细胞feature_scan）：它同时服务乌梅的required（epidermis_cell present_pending，MORPHOLOGY_UNVERIFIED，形态待核验）和大青叶的supporting。现有表皮细胞存在性观察（previous_observations[1]）只记录了黄棕色多角",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A1"
+          }
+        }
+      },
+      {
+        "round": 8,
+        "observations": [],
+        "stages": [
+          "classify_target"
+        ],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 15.172,
+        "tool": "classify_target",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "execution_s": 18.313,
+        "visible_questions": {},
+        "wave_size": null,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "当前最有区分度且前置齐备的检查是A1：对已有epidermis_cell裁图做身份核验。该实例同时是乌梅的required判据（present但MORPHOLOGY_UNVERIFIED）和大青叶的supporting判据（present待核验），一次核验可同时推进两个候选的pending状态。A2/A3的气孔与非腺毛在本视野已经presence_check记为局部阴性，重复feature_scan价值低；indigo_crystal和mineral_feature的观察入口",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A1"
+          }
+        }
+      },
+      {
+        "round": 9,
+        "observations": [],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 19.109,
+        "tool": "request_review",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "visible_questions": {},
+        "wave_size": null,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "选择复核而非继续观察：本轮菜单中无任何动作能核验当前required缺口——秦皮sand_crystal与乌梅epidermis_cell均为MORPHOLOGY_UNVERIFIED（已观察到实例但形态待核验，epidermis_cell分类裁图因身份未定/低细节暂不具备分割资格），大青叶indigo_crystal与滑石/雄黄mineral_feature、穿心莲calcium_carbonate在唯一视野img_a25caad98206aa1cf1880e543b6bc",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A21"
+          }
+        }
+      }
+    ],
+    "op_counts": {
+      "detect_fov_initial": 1,
+      "feature_scan": 1,
+      "classify_target": 1
+    },
+    "read_counts": {},
+    "operations_status": {
+      "done": 3
+    },
+    "tool_calls": 11,
+    "observation_plans": 5,
+    "execution_s": 199.127,
+    "observations": [
+      {
+        "tool": "presence_check",
+        "feature": "mineral_feature",
+        "accepted": true,
+        "present": false,
+        "conf": 0.65,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "indigo_crystal",
+        "accepted": true,
+        "present": false,
+        "conf": 0.85,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "sand_crystal",
+        "accepted": true,
+        "present": true,
+        "conf": 0.62,
+        "state": "present_pending",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "epidermis_cell",
+        "accepted": true,
+        "present": true,
+        "conf": 0.6,
+        "state": "present_pending",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "calcium_carbonate",
+        "accepted": true,
+        "present": false,
+        "conf": 0.78,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "stoma",
+        "accepted": true,
+        "present": false,
+        "conf": 0.65,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "non_glandular_hair",
+        "accepted": true,
+        "present": false,
+        "conf": 0.75,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "glandular_hair",
+        "accepted": false,
+        "present": null,
+        "conf": null,
+        "state": null,
+        "error_code": "UPSTREAM_REMOTE_DISCONNECTED"
+      }
+    ],
+    "resources": {
+      "planning": 9,
+      "network": 25,
+      "observation": 9,
+      "initialization": 1,
+      "recompute": 1,
+      "finalization": 1
+    },
+    "candidate": "大青叶",
+    "status": "tentative",
+    "review": true,
+    "verdict": "insufficient_evidence",
+    "stop": "planner_request_review",
+    "review_reasons": [
+      "FORMAL_REQUIRES_REVIEW",
+      "CANDIDATE_AUDIT_INCOMPLETE",
+      "INSUFFICIENT_FEATURE_TYPES",
+      "CANDIDATE_NOT_FORMAL_CONCLUSION",
+      "FORMAL_VERDICT_NOT_AUTHORIZED"
+    ],
+    "score": "大青叶：B规则排序分=0.0；融合排序分=0.17782；已验证独立特征类数=0；B规则计分特征类数=0；B规则最低计分类数=2。上述分数不是校准正确率；交付复核要求见 review_reasons。",
+    "primary_fov_rank": [
+      {
+        "rank": 1,
+        "label": "滑石",
+        "probability": 0.4301
+      },
+      {
+        "rank": 2,
+        "label": "大青叶",
+        "probability": 0.3556
+      },
+      {
+        "rank": 3,
+        "label": "秦皮",
+        "probability": 0.1107
+      }
+    ],
+    "full_fold_digest": "567d17e55bd1d31a26a9a228b2b801611c3b7fecc5e0c49d2cb153dabfe6cabf",
+    "crop_count": 1,
+    "classifications": [
+      {
+        "feature_id": "",
+        "reject": "unreadable",
+        "confidence": "low",
+        "identity_verified": false
+      }
+    ],
+    "scan": [
+      {
+        "feature_id": "epidermis_cell",
+        "status": "shareable",
+        "crop_count": 1,
+        "successful_tile_count": 4
+      }
+    ],
+    "artifact_counts": {
+      "image": 1,
+      "detection": 2,
+      "crop_pixels": 1,
+      "crop": 1,
+      "classification": 1
+    },
+    "audited": [
+      {
+        "candidate_id": "秦皮",
+        "hypothesis_status": "investigating",
+        "required": {
+          "sand_crystal": "present_pending"
+        },
+        "supporting": {},
+        "review_complete": false
+      },
+      {
+        "candidate_id": "大青叶",
+        "hypothesis_status": "investigating",
+        "required": {
+          "indigo_crystal": "local_absent"
+        },
+        "supporting": {
+          "epidermis_cell": "present_pending",
+          "stoma": "local_absent"
+        },
+        "review_complete": false
+      },
+      {
+        "candidate_id": "穿心莲",
+        "hypothesis_status": "investigating",
+        "required": {
+          "calcium_carbonate": "local_absent"
+        },
+        "supporting": {
+          "non_glandular_hair": "local_absent",
+          "glandular_hair": "failed_or_unknown",
+          "stoma": "local_absent"
+        },
+        "review_complete": false
+      },
+      {
+        "candidate_id": "滑石",
+        "hypothesis_status": "paused",
+        "required": {
+          "mineral_feature": "local_absent"
+        },
+        "supporting": {},
+        "review_complete": true
+      },
+      {
+        "candidate_id": "雄黄",
+        "hypothesis_status": "investigating",
+        "required": {
+          "mineral_feature": "local_absent"
+        },
+        "supporting": {},
+        "review_complete": true
+      },
+      {
+        "candidate_id": "乌梅",
+        "hypothesis_status": "investigating",
+        "required": {
+          "epidermis_cell": "present_pending"
+        },
+        "supporting": {
+          "non_glandular_hair": "local_absent"
+        },
+        "review_complete": false
+      }
+    ],
+    "incomplete": [
+      "秦皮",
+      "大青叶",
+      "穿心莲",
+      "乌梅"
+    ],
+    "planning_usage": 160123,
+    "observation_usage": 18505,
+    "final_usage": 25151,
+    "question_sets": [
+      {
+        "round": 2,
+        "selected": [
+          "indigo_crystal",
+          "sand_crystal"
+        ],
+        "waves": [],
+        "return": null
+      },
+      {
+        "round": 3,
+        "selected": [
+          "epidermis_cell",
+          "calcium_carbonate"
+        ],
+        "waves": [],
+        "return": null
+      },
+      {
+        "round": 4,
+        "selected": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "waves": [],
+        "return": null
+      }
+    ],
+    "presence_states": {
+      "local_absent": 5,
+      "present": 2,
+      "unknown": 1
+    },
+    "top": {
+      "id": "大青叶",
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "rule_score": 0.0,
+      "fused_score": 0.17782,
+      "required_attainment": null
+    },
+    "eligible_support": [],
+    "timing_by_tool": {
+      "raw_observations": 157.673,
+      "detect_fov_initial": 7.641,
+      "feature_scan": 15.5,
+      "classify_target": 18.313
+    }
+  },
+  "current": {
+    "case": "实测S01_11月22日10时32分02秒",
+    "run": "fusion_10b350f52c24466e8c885db64d8d49ac",
+    "sha": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+    "a_cache_reused": false,
+    "signature": [
+      "725377e3f356dabd2487e20a842e1b23c7d2a48a823faed816388bfae087574e",
+      "725377e3f356dabd2487e20a842e1b23c7d2a48a823faed816388bfae087574e"
+    ],
+    "observation_group": true,
+    "duration": 357.322,
+    "planning": 9,
+    "planning_s": 108.846,
+    "steps": [
+      {
+        "round": 1,
+        "observations": [
+          "mineral_feature",
+          "indigo_crystal"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 8,
+        "offered_questions": [
+          "sand_crystal",
+          "mineral_feature",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "indigo_crystal",
+          "calcium_carbonate",
+          "epidermis_cell"
+        ],
+        "planning_s": 12.266,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "source": "model",
+        "selected_questions": [
+          "mineral_feature",
+          "indigo_crystal"
+        ],
+        "execution_s": 62.609,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "sand_crystal",
+            "shared_consumers": [
+              "秦皮"
+            ],
+            "action_id": "A1"
+          },
+          "Q2": {
+            "feature_id": "mineral_feature",
+            "shared_consumers": [
+              "滑石",
+              "雄黄"
+            ],
+            "action_id": "A2"
+          },
+          "Q3": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A4"
+          },
+          "Q4": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          },
+          "Q5": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A6"
+          },
+          "Q6": {
+            "feature_id": "indigo_crystal",
+            "shared_consumers": [
+              "大青叶"
+            ],
+            "action_id": "A7"
+          },
+          "Q7": {
+            "feature_id": "calcium_carbonate",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A8"
+          },
+          "Q8": {
+            "feature_id": "epidermis_cell",
+            "shared_consumers": [
+              "乌梅",
+              "大青叶"
+            ],
+            "action_id": "A9"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "本轮可一次授权1至8题，每批最多执行2题；可跨批选择、只选部分或直接复核。",
+        "reply": "暂缓其余存在性观察，待本批结果后再定方向。首轮选择区分度最高的两个required存在性观察：Q2（mineral_feature）同时服务滑石与雄黄的required缺口，两者判据在颜色/形态上可直接区分（无色层层剥落 vs 金黄/橙黄光泽）；Q6（indigo_crystal）核验大青叶的required（蓝色结晶聚集成堆），且折先验中大青叶多折居前。两者独立、同视野不同特征类。剩余观察（Q1砂晶、Q7钟乳体、Q8表皮细胞、Q4气孔、Q5非腺毛、Q3腺毛）价值依赖本批结果",
+        "decision": {
+          "kind": "observe_questions",
+          "requested": {
+            "kind": "observe_questions",
+            "question_ids": [
+              "Q2",
+              "Q6"
+            ]
+          }
+        }
+      },
+      {
+        "round": 2,
+        "observations": [
+          "epidermis_cell"
+        ],
+        "stages": [
+          "detect_fov_initial"
+        ],
+        "waves": [],
+        "max_questions": 6,
+        "offered_questions": [
+          "sand_crystal",
+          "epidermis_cell",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "calcium_carbonate"
+        ],
+        "planning_s": 9.453,
+        "tool": "detect_fov_initial",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "execution_s": 49.828,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "sand_crystal",
+            "shared_consumers": [
+              "秦皮"
+            ],
+            "action_id": "A1"
+          },
+          "Q2": {
+            "feature_id": "epidermis_cell",
+            "shared_consumers": [
+              "乌梅",
+              "大青叶"
+            ],
+            "action_id": "A2"
+          },
+          "Q3": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A4"
+          },
+          "Q4": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          },
+          "Q5": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A6"
+          },
+          "Q6": {
+            "feature_id": "calcium_carbonate",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A7"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "本轮可一次授权1至6题，每批最多执行2题；可跨批选择、只选部分或直接复核。",
+        "reply": "暂缓重复indigo_crystal核验：上一轮该presence_check因UPSTREAM_REMOTE_DISCONNECTED失败且反思建议switch_question，本轮改路。当前最有区分度的是mineral_feature：滑石与雄黄required同为present_pending、判据仅在颜色/形态（无色剥落块片 vs 金黄/橙黄光泽碎块），A3 detect_fov_initial是消解该分歧的发现前置入口。并行搭配同视野独立观察O6（epidermi",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A3"
+          }
+        }
+      },
+      {
+        "round": 3,
+        "observations": [
+          "calcium_carbonate",
+          "sand_crystal"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 5,
+        "offered_questions": [
+          "sand_crystal",
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair",
+          "calcium_carbonate"
+        ],
+        "planning_s": 10.0,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "source": "model",
+        "selected_questions": [
+          "calcium_carbonate",
+          "sand_crystal"
+        ],
+        "execution_s": 39.406,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "sand_crystal",
+            "shared_consumers": [
+              "秦皮"
+            ],
+            "action_id": "A1"
+          },
+          "Q2": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A6"
+          },
+          "Q3": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A7"
+          },
+          "Q4": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A8"
+          },
+          "Q5": {
+            "feature_id": "calcium_carbonate",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A9"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "本轮可一次授权1至5题，每批最多执行2题；可跨批选择、只选部分或直接复核。",
+        "reply": "暂缓气孔/毛茸类supporting观察：滑石与雄黄共用mineral_feature阳性但形态待核，尚无直接入口；indigo_crystal上轮网络失败且本轮菜单无该入口，保持unknown非阴性。优先两项required差异特征：Q5钙质钟乳体（穿心莲required，阳性可同时给尺寸入口）与Q1草酸钙砂晶（秦皮required）。乌梅required表皮细胞本视野local_absent仅限该视野；mineral_feature区分滑石/雄黄仍待形态核验路径。",
+        "decision": {
+          "kind": "observe_questions",
+          "requested": {
+            "kind": "observe_questions",
+            "question_ids": [
+              "Q5",
+              "Q1"
+            ]
+          }
+        }
+      },
+      {
+        "round": 4,
+        "observations": [],
+        "stages": [],
+        "waves": [],
+        "planning_error": "PLANNER_QUESTIONS_INVALID",
+        "max_questions": 3,
+        "offered_questions": [
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "planning_s": 15.672,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          },
+          "Q2": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A6"
+          },
+          "Q3": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A7"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "本轮可一次授权1至3题，每批最多执行2题；可跨批选择、只选部分或直接复核。"
+      },
+      {
+        "round": 5,
+        "observations": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 3,
+        "offered_questions": [
+          "glandular_hair",
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "planning_s": 11.516,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "source": "model",
+        "selected_questions": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "execution_s": 15.0,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          },
+          "Q2": {
+            "feature_id": "stoma",
+            "shared_consumers": [
+              "大青叶",
+              "穿心莲"
+            ],
+            "action_id": "A6"
+          },
+          "Q3": {
+            "feature_id": "non_glandular_hair",
+            "shared_consumers": [
+              "乌梅",
+              "穿心莲"
+            ],
+            "action_id": "A7"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "本轮可一次授权1至3题，每批最多执行2题；可跨批选择、只选部分或直接复核。",
+        "reply": "本轮有区分价值的检查集中在矿物形态上（滑石/雄黄共用mineral_feature，且其观察问题缺前置无合法动作），秦皮砂晶与靛蓝结晶同样暂无可选动作；indigo_crystal上次因服务断连仅记unknown。可用观察中选气孔Q2（大青叶与穿心莲共同消费者）与非腺毛Q3（乌梅与穿心莲共同消费者）两项，均为独立存在性观察，可推进穿心莲三项supporting与乌梅/大青叶的佐证缺口；Q1腺毛仅服务穿心莲单一佐证，价值较低暂缓。注意存在性阳性不能区分各消费者形态差异，结果仅限",
+        "decision": {
+          "kind": "observe_questions",
+          "requested": {
+            "kind": "observe_questions",
+            "question_ids": [
+              "Q2",
+              "Q3"
+            ]
+          }
+        }
+      },
+      {
+        "round": 6,
+        "observations": [],
+        "stages": [
+          "feature_scan"
+        ],
+        "waves": [],
+        "max_questions": 1,
+        "offered_questions": [
+          "glandular_hair"
+        ],
+        "planning_s": 12.25,
+        "tool": "feature_scan",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "execution_s": 12.046,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "当前核心缺口是三项required的形态核验：滑石/雄黄共用mineral_feature、秦皮sand_crystal均处MORPHOLOGY_UNVERIFIED，但本轮菜单没有针对它们的形态核验入口，暂记pending。可执行的合法区分项中，A1(epidermis_cell)同时是乌梅的required(本视野local_absent后补扫)和大青叶的supporting，优先级最高；若检出可推进乌梅required，未检出仍只限本视野。A5(glandular_ha",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A1"
+          }
+        }
+      },
+      {
+        "round": 7,
+        "observations": [],
+        "stages": [
+          "classify_target"
+        ],
+        "waves": [],
+        "max_questions": 1,
+        "offered_questions": [
+          "glandular_hair"
+        ],
+        "planning_s": 13.594,
+        "tool": "classify_target",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "execution_s": 16.422,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A5"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "当前最有区分性的缺口是滑石/雄黄共用的mineral_feature形态核验（均为MORPHOLOGY_UNVERIFIED），但本轮菜单中没有针对mineral_feature的合法观察/核验动作（该问题legal_action_ids为空），无法直接推进。次优选择是A1：对identity_pending的epidermis_cell裁图（det 0.65）做身份核验，这是乌梅的required判据（当前NOT_DETECTED为局部阴性，非标本排除），若身份核验通过可改",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A1"
+          }
+        }
+      },
+      {
+        "round": 8,
+        "observations": [
+          "glandular_hair"
+        ],
+        "stages": [],
+        "waves": [],
+        "max_questions": 1,
+        "offered_questions": [
+          "glandular_hair"
+        ],
+        "planning_s": 11.563,
+        "tool": "presence_check",
+        "kind": "observe_questions",
+        "source": "model",
+        "selected_questions": [
+          "glandular_hair"
+        ],
+        "execution_s": 19.875,
+        "visible_questions": {
+          "Q1": {
+            "feature_id": "glandular_hair",
+            "shared_consumers": [
+              "穿心莲"
+            ],
+            "action_id": "A4"
+          }
+        },
+        "wave_size": 2,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "矿物类候选（滑石/雄黄）的mineral_feature形态核验当前无合法入口（missing_prerequisite），大青叶indigo_crystal同样不可达；本轮唯一可推进的差异观察是Q1：img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c视野内glandular_hair存在性，消费者为穿心莲（supporting，尚unchecked，也是P0建议缺口）。该观察为仅存在性核验",
+        "decision": {
+          "kind": "observe_questions",
+          "requested": {
+            "kind": "observe_questions",
+            "question_ids": [
+              "Q1"
+            ]
+          }
+        }
+      },
+      {
+        "round": 9,
+        "observations": [],
+        "stages": [],
+        "waves": [],
+        "max_questions": 2,
+        "offered_questions": [],
+        "planning_s": 12.532,
+        "tool": "request_review",
+        "kind": "action",
+        "source": "model",
+        "selected_questions": [],
+        "visible_questions": {},
+        "wave_size": null,
+        "choice_note": "仅从本轮菜单选择；观察结果会改变下一问题时选单步；review仍可选",
+        "reply": "选择request_review（A21）。三个required待核验（滑石/雄黄mineral_feature、秦皮sand_crystal）均为low_detail定位影子、MORPHOLOGY_UNVERIFIED，comparison_problems中相应问题capability=missing_prerequisite且legal_action_ids为空，当前菜单无可执行路径推进形态核验；indigo_crystal核验失败仅记unknown，无新入口。大青叶/",
+        "decision": {
+          "kind": "action",
+          "requested": {
+            "kind": "action",
+            "action_id": "A21"
+          }
+        }
+      }
+    ],
+    "op_counts": {
+      "detect_fov_initial": 1,
+      "feature_scan": 1,
+      "classify_target": 1
+    },
+    "read_counts": {},
+    "operations_status": {
+      "done": 3
+    },
+    "tool_calls": 11,
+    "observation_plans": 5,
+    "execution_s": 215.186,
+    "observations": [
+      {
+        "tool": "presence_check",
+        "feature": "mineral_feature",
+        "accepted": true,
+        "present": true,
+        "conf": 0.62,
+        "state": "present_pending",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "indigo_crystal",
+        "accepted": false,
+        "present": null,
+        "conf": null,
+        "state": null,
+        "error_code": "UPSTREAM_REMOTE_DISCONNECTED"
+      },
+      {
+        "tool": "presence_check",
+        "feature": "epidermis_cell",
+        "accepted": true,
+        "present": false,
+        "conf": 0.6,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "calcium_carbonate",
+        "accepted": true,
+        "present": false,
+        "conf": 0.78,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "sand_crystal",
+        "accepted": true,
+        "present": true,
+        "conf": 0.55,
+        "state": "present_pending",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "stoma",
+        "accepted": true,
+        "present": false,
+        "conf": 0.68,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "non_glandular_hair",
+        "accepted": true,
+        "present": false,
+        "conf": 0.55,
+        "state": "not_observed_local",
+        "error_code": null
+      },
+      {
+        "tool": "presence_check",
+        "feature": "glandular_hair",
+        "accepted": true,
+        "present": false,
+        "conf": 0.6,
+        "state": "not_observed_local",
+        "error_code": null
+      }
+    ],
+    "resources": {
+      "planning": 9,
+      "network": 25,
+      "observation": 9,
+      "initialization": 1,
+      "recompute": 1,
+      "finalization": 1
+    },
+    "candidate": "滑石",
+    "status": "tentative",
+    "review": true,
+    "verdict": "insufficient_evidence",
+    "stop": "planner_request_review",
+    "review_reasons": [
+      "FORMAL_REQUIRES_REVIEW",
+      "CANDIDATE_AUDIT_INCOMPLETE",
+      "INSUFFICIENT_FEATURE_TYPES",
+      "CANDIDATE_NOT_FORMAL_CONCLUSION",
+      "FORMAL_VERDICT_NOT_AUTHORIZED"
+    ],
+    "score": "滑石：B规则排序分=0.0；融合排序分=0.215058；已验证独立特征类数=0；B规则计分特征类数=0；B规则最低计分类数=2。上述分数不是校准正确率；交付复核要求见 review_reasons。",
+    "primary_fov_rank": [
+      {
+        "rank": 1,
+        "label": "滑石",
+        "probability": 0.4301
+      },
+      {
+        "rank": 2,
+        "label": "大青叶",
+        "probability": 0.3556
+      },
+      {
+        "rank": 3,
+        "label": "秦皮",
+        "probability": 0.1107
+      }
+    ],
+    "full_fold_digest": "567d17e55bd1d31a26a9a228b2b801611c3b7fecc5e0c49d2cb153dabfe6cabf",
+    "crop_count": 1,
+    "classifications": [
+      {
+        "feature_id": "",
+        "reject": "unreadable",
+        "confidence": "low",
+        "identity_verified": false
+      }
+    ],
+    "scan": [
+      {
+        "feature_id": "epidermis_cell",
+        "status": "shareable",
+        "crop_count": 1,
+        "successful_tile_count": 4
+      }
+    ],
+    "artifact_counts": {
+      "image": 1,
+      "detection": 2,
+      "crop_pixels": 1,
+      "crop": 1,
+      "classification": 1
+    },
+    "audited": [
+      {
+        "candidate_id": "秦皮",
+        "hypothesis_status": "proposed",
+        "required": {
+          "sand_crystal": "present_pending"
+        },
+        "supporting": {},
+        "review_complete": false
+      },
+      {
+        "candidate_id": "大青叶",
+        "hypothesis_status": "investigating",
+        "required": {
+          "indigo_crystal": "failed_or_unknown"
+        },
+        "supporting": {
+          "epidermis_cell": "local_absent",
+          "stoma": "local_absent"
+        },
+        "review_complete": false
+      },
+      {
+        "candidate_id": "穿心莲",
+        "hypothesis_status": "proposed",
+        "required": {
+          "calcium_carbonate": "local_absent"
+        },
+        "supporting": {
+          "non_glandular_hair": "local_absent",
+          "glandular_hair": "local_absent",
+          "stoma": "local_absent"
+        },
+        "review_complete": true
+      },
+      {
+        "candidate_id": "滑石",
+        "hypothesis_status": "investigating",
+        "required": {
+          "mineral_feature": "present_pending"
+        },
+        "supporting": {},
+        "review_complete": false
+      },
+      {
+        "candidate_id": "雄黄",
+        "hypothesis_status": "investigating",
+        "required": {
+          "mineral_feature": "present_pending"
+        },
+        "supporting": {},
+        "review_complete": false
+      },
+      {
+        "candidate_id": "乌梅",
+        "hypothesis_status": "proposed",
+        "required": {
+          "epidermis_cell": "local_absent"
+        },
+        "supporting": {
+          "non_glandular_hair": "local_absent"
+        },
+        "review_complete": true
+      }
+    ],
+    "incomplete": [
+      "秦皮",
+      "大青叶",
+      "滑石",
+      "雄黄"
+    ],
+    "planning_usage": 144099,
+    "observation_usage": 22682,
+    "final_usage": 25144,
+    "question_sets": [
+      {
+        "round": 1,
+        "selected": [
+          "mineral_feature",
+          "indigo_crystal"
+        ],
+        "waves": [],
+        "return": null
+      },
+      {
+        "round": 3,
+        "selected": [
+          "calcium_carbonate",
+          "sand_crystal"
+        ],
+        "waves": [],
+        "return": null
+      },
+      {
+        "round": 5,
+        "selected": [
+          "stoma",
+          "non_glandular_hair"
+        ],
+        "waves": [],
+        "return": null
+      },
+      {
+        "round": 8,
+        "selected": [
+          "glandular_hair"
+        ],
+        "waves": [],
+        "return": null
+      }
+    ],
+    "presence_states": {
+      "present": 2,
+      "unknown": 1,
+      "local_absent": 5
+    },
+    "top": {
+      "id": "滑石",
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "rule_score": 0.0,
+      "fused_score": 0.215058,
+      "required_attainment": null
+    },
+    "eligible_support": [],
+    "timing_by_tool": {
+      "raw_observations": 186.718,
+      "feature_scan": 12.046,
+      "classify_target": 16.422
+    }
+  }
+}

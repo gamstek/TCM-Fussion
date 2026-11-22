@@ -1,0 +1,34 @@
+{
+  "dets": [
+    {
+      "label": "草酸钙簇晶",
+      "tight_bbox": [
+        941,
+        592,
+        1248,
+        837
+      ],
+      "confidence": "medium",
+      "score": 0.65,
+      "morphology": "棕黄色多角形簇状团块，外缘可见多个短钝棱角，半透明",
+      "source_tight_bbox": [
+        941,
+        592,
+        1248,
+        837
+      ],
+      "locate_expand": 1.5
+    }
+  ],
+  "roi": [
+    0,
+    0,
+    1920,
+    1080
+  ],
+  "feature_id": "cluster_crystal",
+  "engine": "glm_targeted",
+  "count": 1,
+  "replacements": {},
+  "coordinate_system": "original_pixels"
+}

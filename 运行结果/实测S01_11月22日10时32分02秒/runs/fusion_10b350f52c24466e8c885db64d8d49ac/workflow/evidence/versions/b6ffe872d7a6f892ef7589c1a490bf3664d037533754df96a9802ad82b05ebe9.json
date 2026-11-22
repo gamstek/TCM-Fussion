@@ -1,0 +1,17 @@
+{
+  "identity": "fa82c3812ce5d3b8e8cc66cc5be04c71b405a29e734bdb3549a99015e2539deb",
+  "parent": "da4d6ca6c6fac091f3b8242c17035f51a8da3042860672791d6bd082840f6d1e",
+  "artifacts": {
+    "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\view_01.tif",
+      "sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "parents": [],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "b6ffe872d7a6f892ef7589c1a490bf3664d037533754df96a9802ad82b05ebe9"
+}

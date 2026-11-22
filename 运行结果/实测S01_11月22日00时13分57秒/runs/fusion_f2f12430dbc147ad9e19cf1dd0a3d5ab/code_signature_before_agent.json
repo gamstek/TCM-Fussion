@@ -1,0 +1,7 @@
+{
+  "schema": "code-signature/v1",
+  "stage": "before_agent",
+  "code_signature": "8ce712b41cb5dcd212a737951ceac2218ab1d6df987b58f9cf7d572c40971e83",
+  "baseline": "8ce712b41cb5dcd212a737951ceac2218ab1d6df987b58f9cf7d572c40971e83",
+  "at": "2026-11-22T00:14:08+0800"
+}

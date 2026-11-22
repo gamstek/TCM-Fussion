@@ -113,6 +113,7 @@ def _json_list(v) -> Optional[List]:
 # 默认 `instance`：无 stage-2（单阶段检测）时行为与改动前**逐字一致**。
 GRANULARITY_LEVELS = ("instance", "bundle", "sheet", "clump")
 GRANULARITY_DEFAULT = "instance"
+FEATURE_WINDOW_SCHEMA = "feature-window/v1"
 
 
 # ──────────────────────────────────────────────────────────────
@@ -213,6 +214,13 @@ def crop_sidecar(crop_id, png, source_image_path, stem, feature_id, object_label
     }
 
 
+def effective_granularity(crop_granularity, classification_granularity=None):
+    """原框及身份复核都支持单实例时才可作单值量测。旧记录缺复核粒度时沿用原框。"""
+    if crop_granularity and crop_granularity != GRANULARITY_DEFAULT:
+        return crop_granularity
+    return classification_granularity or GRANULARITY_DEFAULT
+
+
 def check_crops(metas: Iterable[CropMeta]) -> None:
     """入口聚合校验：feature_id / stem / px_per_um 缺一不可，**一次列全**（便于批量补）。"""
     metas = list(metas)
@@ -236,7 +244,8 @@ def check_crops(metas: Iterable[CropMeta]) -> None:
 MANIFEST_SUFFIX = "__measure_manifest.csv"
 MANIFEST_COLUMNS = ["instance_id", "inst_mask", "crop_id", "source_image_path", "feature_id",
                     "object_label", "herb", "tight_bbox", "px_per_um",
-                    "igm_status", "igm_area_ratio", "granularity"]
+                    "igm_status", "igm_area_ratio", "granularity",
+                    "feature_window_schema", "igm_associated_clipped_px"]
 
 
 @dataclass
@@ -288,11 +297,10 @@ class MeasureManifestRow:
         return self.px_per_um
 
 
-def load_manifest_rows(masks_dir: str) -> Dict[str, MeasureManifestRow]:
-    """`masks_dir` 下的清单 → {源图 stem: 首个出现的行}。
+def load_manifest_rows(masks_dir: str, *, by_mask=False) -> Dict[str, MeasureManifestRow]:
+    """加载分割交付清单，可按实际 mask 文件名精确索引。
 
-    兼容两种命名：`<stem>__measure_manifest.csv` 与 `<stem>__<feature>__measure_manifest.csv`；
-    键取 `inst_mask` 里 `__` 之前的部分（回退到文件名前缀）——与历史行为逐字一致。
+    默认保留原图 stem 首行的历史口径，供原图级 mask 或旧清单使用。
     """
     out: Dict[str, MeasureManifestRow] = {}
     if not masks_dir or not os.path.isdir(masks_dir):
@@ -302,9 +310,12 @@ def load_manifest_rows(masks_dir: str) -> Dict[str, MeasureManifestRow]:
             continue
         with open(os.path.join(masks_dir, fn), encoding="utf-8-sig") as f:
             for row in csv.DictReader(f):
-                stem = (row.get("inst_mask") or "").split("__")[0] or fn.split("__")[0]
-                if stem:
-                    out.setdefault(stem, MeasureManifestRow.from_row(row))
+                mask_name = (row.get("inst_mask") or "").strip()
+                key = mask_name if by_mask else mask_name.split("__")[0] or fn.split("__")[0]
+                if by_mask and key in out and out[key].raw != row:
+                    raise ContractError(f"mask 对应多条不一致的交付清单记录：{key}")
+                if key:
+                    out.setdefault(key, MeasureManifestRow.from_row(row))
     return out
 
 

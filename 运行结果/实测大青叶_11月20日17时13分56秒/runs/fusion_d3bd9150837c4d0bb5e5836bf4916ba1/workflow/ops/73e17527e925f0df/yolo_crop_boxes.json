@@ -1,0 +1,44 @@
+{
+  "source_sha256": "19297f170a4ed1874ad0aa8ac180e9805eba0b3f62ffa53cd9f8e8047ed30d02",
+  "image_size": [
+    920,
+    1013
+  ],
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272"
+  },
+  "confidence": 0.25,
+  "roi": null,
+  "dets": [
+    {
+      "label": "其他",
+      "tight_bbox": [
+        194.4,
+        153.2,
+        833.4,
+        775.4
+      ],
+      "confidence": "high",
+      "score": 0.8765,
+      "morphology": "",
+      "granularity": "instance"
+    },
+    {
+      "label": "草酸钙针晶",
+      "tight_bbox": [
+        799.6,
+        900.3,
+        917.5,
+        1013.0
+      ],
+      "confidence": "medium",
+      "score": 0.4962,
+      "morphology": "",
+      "granularity": "instance"
+    }
+  ]
+}

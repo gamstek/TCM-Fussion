@@ -1,0 +1,29 @@
+{
+  "identity": "3f6da9bd5d0773d544046d513bb33c22293f04d7afe3007c7a5611033173a6f0",
+  "deadline": 1795317503.529509,
+  "used": {
+    "planning": 1,
+    "network": 2,
+    "finalization": 1
+  },
+  "entries": {
+    "planning:0:0": {
+      "pool": "planning",
+      "status": "pending"
+    },
+    "api:planning:0:0": {
+      "pool": "network",
+      "status": "pending"
+    },
+    "final:84ab736b050114cfce0b38515fb306e93c7434f9af611e15faf6ce73eab65acd": {
+      "pool": "finalization",
+      "status": "pending"
+    },
+    "api:final:84ab736b050114cfce0b38515fb306e93c7434f9af611e15faf6ce73eab65acd": {
+      "pool": "network",
+      "status": "pending"
+    }
+  },
+  "closed": true,
+  "stop_reason": "runtime_request_review"
+}

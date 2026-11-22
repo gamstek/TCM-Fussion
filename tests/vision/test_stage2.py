@@ -24,7 +24,7 @@ from unittest.mock import patch
 
 import paths
 from TCM_Fusion.lib.vision.stage2_classifier import cache_matches, infer, model_profile, request_signature
-from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json, write_json
+from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, read_json, write_json
 from TCM_Fusion.lib.workflow.workflow_backend import WorkflowBackend
 
 
@@ -55,6 +55,8 @@ class Stage2Tests(unittest.TestCase):
         self.assertEqual(cfg['a']['checkpoint_dir'],'MICROSCOPE-main/v3_resnet50_full')
         self.assertEqual(cfg['agent']['candidate_policy']['top_k'],3)
         self.assertTrue(cfg['agent']['workflow']['cnn_weights'].startswith('分类器设计权重与CNN权重/'))
+        self.assertNotIn('image_exemplar_audit', cfg['agent']['workflow'])
+        self.assertTrue(cfg['agent']['workflow']['identity_review_bank'])
 
     def test_missing_assets_and_unpaired_config_fail_explicitly(self):
         with self.assertRaises(IntegrationError) as result:model_profile({'cnn_weights':str(self.weights)})
@@ -76,6 +78,10 @@ class Stage2Tests(unittest.TestCase):
         before=self.signature();write_json(self.meta,{**self.metadata,'imgsz':64})
         self.assertNotEqual(before,self.signature())
         before=self.signature();self.image.write_bytes(b'replaced-image')
+        self.assertNotEqual(before,self.signature())
+        before=self.signature();self.crops[0]['box_local']=[1,2,8,9]
+        self.assertNotEqual(before,self.signature())
+        before=self.signature();self.crops[0]['box_local']=[1,2,8,10]
         self.assertNotEqual(before,self.signature())
 
     def test_cache_requires_matching_input_and_probability_contract(self):
@@ -101,6 +107,9 @@ class Stage2Tests(unittest.TestCase):
 
     def test_backend_reuses_valid_cache_and_accepts_zero_entropy(self):
         session,target,meta=self.backend_session()
+        target.update(batch_cnn_only=False, box_source='yolo')
+        meta.feature_id = 'vessel'
+        session.config['identity_review_bank'] = 'config/identity_review_bank.json'
         write_json(self.root/'cnn/predictions.json',self.cached())
         work=self.root/'op';work.mkdir()
         with patch('TCM_Fusion.lib.workflow.workflow_backend.contracts.CropMeta.from_json',return_value=meta),\
@@ -110,8 +119,65 @@ class Stage2Tests(unittest.TestCase):
         doc=read_json(Path(out['classification'])/'classification.json')
         self.assertEqual(doc['feature_id'],'fiber');self.assertEqual(doc['cnn_entropy'],0.)
 
+    def test_growing_batch_only_runs_new_or_changed_crops(self):
+        from TCM_Fusion.lib.workflow.workflow_backend import _cnn_predictions
+        session, _, _ = self.backend_session()
+        template = self.cached()['rows'][0]
+        crops = []
+        for number in range(7):
+            path = self.root / f'view-{number}.png'
+            path.write_bytes(bytes([number]))
+            crops.append({'id': str(number), 'png': str(path)})
+        seen = []
+        def worker(argv, **kwargs):
+            ctx = read_json(argv[-1])
+            ids = [crop['id'] for crop in ctx['crops']]
+            seen.append(ids)
+            write_json(ctx['output'], {'schema': 'cnn-classifier/v2', 'signature': ctx['signature'],
+                                       'cache_key': digest(ctx['signature']),
+                                       'rows': [{**template, 'id': key} for key in ids]})
+        with patch('TCM_Fusion.lib.workflow.workflow_backend.run', side_effect=worker):
+            for turn, size in enumerate([3, 5, 7, 7]):
+                if turn == 3:
+                    Path(crops[1]['png']).write_bytes(b'new input')
+                chosen = crops[:size]
+                sig = request_signature(model_profile(self.cfg), chosen, sys.executable)
+                doc = _cnn_predictions(session, self.root / str(turn), None, sig, chosen)
+                self.assertTrue(cache_matches(doc, sig))
+                self.assertEqual(doc['schema'], 'cnn-classifier/v2')
+                self.assertEqual(doc['cache_key'], digest(sig))
+                self.assertEqual(doc['rows'], [{**template, 'id': c['id']} for c in chosen])
+        self.assertEqual(seen, [['0', '1', '2'], ['3', '4'], ['5', '6'], ['1']])
+
+    def test_cold_concurrent_batches_share_one_producer(self):
+        from concurrent.futures import ThreadPoolExecutor
+        import threading
+        session, target, meta = self.backend_session()
+        outputs = [self.root/'branch1', self.root/'branch2']
+        for folder in outputs:
+            folder.mkdir()
+        start = threading.Barrier(2, timeout=10)
+        signature = self.signature()
+        cached = self.cached()
+        def sign(*args):
+            start.wait()
+            return signature
+        def worker(argv, **kwargs):
+            ctx = read_json(argv[-1])
+            write_json(ctx['output'], cached)
+        with patch('TCM_Fusion.lib.workflow.workflow_backend.contracts.CropMeta.from_json', return_value=meta), \
+             patch('TCM_Fusion.lib.vision.stage2_classifier.request_signature', side_effect=sign), \
+             patch('TCM_Fusion.lib.workflow.workflow_backend.run', side_effect=worker) as run, \
+             ThreadPoolExecutor(2) as pool:
+            futures = [pool.submit(WorkflowBackend().execute,session,'classify_target',target,folder,None)
+                       for folder in outputs]
+            for future in futures:
+                self.assertEqual(read_json(Path(future.result()['classification'])/'classification.json')['feature_id'], 'fiber')
+        self.assertEqual(run.call_count, 1)
+
     def test_low_confidence_batch_preserves_candidate_details_without_glm(self):
         session,target,meta=self.backend_session()
+        session.config['identity_review_bank'] = 'config/identity_review_bank.json'
         cached=self.cached();cached['rows'][0]['top1_prob']=.6;cached['rows'][0]['topk'][0]['prob']=.6
         write_json(self.root/'cnn/predictions.json',cached)
         work=self.root/'op';work.mkdir()
@@ -123,12 +189,71 @@ class Stage2Tests(unittest.TestCase):
         self.assertEqual(doc['reject'],'pending_review');self.assertEqual(doc['cnn_score'],.6)
         self.assertEqual(len(doc['cnn_topk']),2)
 
+    def test_cancelled_cnn_wait_does_not_start_a_worker_or_fallback(self):
+        import threading
+        session,target,meta = self.backend_session()
+        session.cancel_event = threading.Event()
+        session.cancel_event.set()
+        target['batch_cnn_only'] = False
+        with patch('TCM_Fusion.lib.workflow.workflow_backend.contracts.CropMeta.from_json',return_value=meta), \
+             patch('TCM_Fusion.lib.workflow.workflow_backend.run') as run:
+            with self.assertRaises(IntegrationError) as caught:
+                WorkflowBackend().execute(session,'classify_target',target,self.root,None)
+        self.assertEqual(caught.exception.code, 'WORKFLOW_CANCELLED')
+        run.assert_not_called()
+
     def test_load_failure_is_not_low_confidence(self):
         session,target,meta=self.backend_session();self.weights.unlink()
         with patch('TCM_Fusion.lib.workflow.workflow_backend.contracts.CropMeta.from_json',return_value=meta):
             with self.assertRaises(IntegrationError) as result:
                 WorkflowBackend().execute(session,'classify_target',target,self.root,None)
         self.assertEqual(result.exception.code,'CNN_ASSET_MISSING')
+
+    def test_existing_glm_fallback_uses_detection_conflict_and_keeps_unreadable(self):
+        from TCM_Fusion.lib.vision.identity_review import load_review_bank
+        session, target, meta = self.backend_session()
+        target.update(batch_cnn_only=False, identity_required=True, box_source='yolo')
+        meta.feature_id = 'vessel'
+        meta.object_label = '导管'
+        meta.source_image_path = str(self.image)
+        meta.tight_box = meta.tight_box_local = [0, 0, 4, 4]
+        bank = Path(paths.PROJECT_ROOT) / 'config/identity_review_bank.json'
+        session.config.update(identity_review_bank=str(bank), yolo={
+            key: str(self.root / key) for key in ('weights', 'class_map', 'detector_config')})
+        session.identity_review_bank = load_review_bank(bank)
+        session.runtime = SimpleNamespace(images={'view': {'sha256': 'source-image-hash'}})
+        session.yolo_signature = {}
+        cached = self.cached()
+        cached['rows'][0]['top1_prob'] = cached['rows'][0]['topk'][0]['prob'] = .6
+        write_json(self.root / 'cnn/predictions.json', cached)
+        work = self.root / 'op'
+        work.mkdir()
+        calls = []
+
+        def run(argv, **kwargs):
+            worker = argv[argv.index('-m') + 1]
+            ctx = read_json(argv[-1])
+            calls.append(worker)
+            if worker.endswith('classify_worker'):
+                plan = ctx['identity_review']
+                self.assertTrue(plan['detector_conflict'])
+                self.assertEqual(plan['pair_id'], '01')
+                self.assertEqual([r['feature_id'] for r in plan['references']], ['vessel', 'fiber'])
+                self.assertEqual([r['id'] for r in plan['references']], ['pair_01_n', 'pair_01_p'])
+                write_json(Path(ctx['output']) / 'classification.json', {
+                    'label': '身份待定', 'reject': 'unreadable', 'feature_id': '', 'confidence': 'low',
+                    'visual_identity': {'status': 'pending'}})
+            else:
+                self.assertTrue(worker.endswith('yolo_worker'))
+                write_json(ctx['output'], {'dets': [{'label': '导管', 'score': .99}]})
+
+        with patch('TCM_Fusion.lib.workflow.workflow_backend.contracts.CropMeta.from_json', return_value=meta), \
+             patch('TCM_Fusion.lib.workflow.workflow_backend.run', side_effect=run):
+            result = WorkflowBackend().execute(session, 'classify_target', target, work, None)
+        self.assertEqual(calls, ['TCM_Fusion.cli.classify_worker', 'TCM_Fusion.cli.yolo_worker'])
+        doc = read_json(Path(result['classification']) / 'classification.json')
+        self.assertTrue(doc['yolo_checked'])
+        self.assertEqual((doc['label'], doc['reject'], doc['feature_id']), ('身份待定', 'unreadable', ''))
 
     def test_worker_reuses_training_transform_and_class_order(self):
         if not importlib.util.find_spec('torch') or not importlib.util.find_spec('torchvision'):
@@ -152,3 +277,32 @@ class Stage2Tests(unittest.TestCase):
             with self.assertRaises(IntegrationError) as result:
                 infer({'weights':str(self.weights),'meta':str(self.meta),'crops':self.crops})
         self.assertEqual(result.exception.code,'CNN_META_MISMATCH')
+
+    def test_worker_crops_native_classification_window_before_training_transform(self):
+        if not importlib.util.find_spec('torch') or not importlib.util.find_spec('torchvision'):
+            self.skipTest('真实 worker 在 YOLO 环境运行')
+        import torch
+        from PIL import Image
+        from 目标检测.lib.cls_net import build_transforms
+
+        image = Image.new('RGB', (22, 20), (200, 32, 38))
+        window = [3, 5, 16, 12]
+        classification_pixels = Image.new('RGB', (13, 7), (80, 120, 180))
+        image.paste(classification_pixels, (3, 5))
+        image.save(self.image)
+        self.crops[0]['box_local'] = window
+        expected = build_transforms(32, 'letterbox')[1](classification_pixels)
+
+        def model(batch):
+            self.assertTrue(torch.equal(batch[0], expected))
+            return torch.tensor([[5., 0.]])
+
+        context = {'weights': str(self.weights), 'meta': str(self.meta), 'crops': self.crops}
+        loaded = {**self.metadata, 'names': {}}
+        with patch('目标检测.lib.cls_net.load_model', return_value=(model, loaded, torch.device('cpu'))):
+            value = infer(context)
+            self.assertTrue(cache_matches(value, self.signature()))
+            self.crops[0]['box_local'] = [3, 5, 23, 12]
+            with self.assertRaises(IntegrationError) as result:
+                infer(context)
+        self.assertEqual(result.exception.code, 'CNN_INPUT_INVALID')

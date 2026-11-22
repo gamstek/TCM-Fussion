@@ -9,6 +9,22 @@
 from __future__ import annotations
 
 
+def local_roi(box, width, height):
+    x1, y1, x2, y2 = box
+    return 0 <= x1 < x2 <= width and 0 <= y1 < y2 <= height and (x2-x1)*(y2-y1) < width*height
+
+
+def scan_tiles(width, height, limit):
+    boxes = uniform_tiles(width, height, max_tiles=max(2, limit))
+    local = [box for box in boxes if local_roi(box, width, height)]
+    if not local and width > 0 and height > 0 and max(width, height) > 1:
+        if width >= height:
+            local = [[0, 0, width//2, height], [width//2, 0, width, height]]
+        else:
+            local = [[0, 0, width, height//2], [0, height//2, width, height]]
+    return local[:limit]
+
+
 def uniform_tiles(width, height, *, tile=1024, overlap=0.15, max_tiles=4):
     """把全图切成不超过 max_tiles 个、覆盖整图的均匀区块。
 

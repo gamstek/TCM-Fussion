@@ -666,7 +666,7 @@ def apply_box_prior(mask, box, margin=BOX_MARGIN_RATIO, keep_overlap=BOX_KEEP_OV
             # 只有 dominant 会重画 mask；unique/multipart/ambiguous 保持原有 keep&roi 像素。
             out = np.where(np.isin(lab, selected_ids) & roi, 255, 0).astype(np.uint8)
         selected = selected_ids[0] if len(selected_ids) == 1 else None
-        extent, component_ratio, touches = 0.0, 0.0, False
+        extent, component_ratio, touches, associated_clipped = 0.0, 0.0, False, None
         if selected is not None:
             x, y, cw, ch, count = stats[selected]
             iw, ih = max(0, min(x + cw, x2) - max(x, x1)), max(0, min(y + ch, y2) - max(y, y1))
@@ -675,6 +675,7 @@ def apply_box_prior(mask, box, margin=BOX_MARGIN_RATIO, keep_overlap=BOX_KEEP_OV
             selected_mask = (lab == selected) & keep
             touches = bool(selected_mask[0].any() or selected_mask[-1].any()
                            or selected_mask[:, 0].any() or selected_mask[:, -1].any())
+            associated_clipped = int((selected_mask & ~roi).sum())
         info.update(
             box_association=association, association_version=decision.policy_version,
             center_region_box=[sx1, sy1, sx2, sy2], center_region_hit=bool(regional),
@@ -686,6 +687,7 @@ def apply_box_prior(mask, box, margin=BOX_MARGIN_RATIO, keep_overlap=BOX_KEEP_OV
             dominance=dict(decision.metrics), width_only=bool(decision.metrics.get("width_only", False)),
             associated_bbox_ratio=round(extent, 6), associated_comp_ratio=round(component_ratio, 6),
             associated_touches_border=touches,
+            associated_clipped_px=associated_clipped,
             association_valid=bool(decision.status == "ok" and selected is not None
                                    and component_ratio >= MIN_TARGET_AREA_RATIO
                                    and not touches_border))

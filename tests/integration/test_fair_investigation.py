@@ -150,6 +150,91 @@ class FairInvestigationTests(fixtures.FairInvestigationFixture, unittest.TestCas
         self.assertTrue(all(p['action_id'] in ids for p in card['entry_paths']))
         self.assertEqual(view['evidence']['workflow']['investigation_focus']['a_leads'],['白芍'])
 
+    def test_criterion_impact_keeps_measurement_beneficiaries_and_same_question_feedback(self):
+        from TCM_Fusion.lib.agent.planning_choices import with_criterion_impact
+        from TCM_Fusion.lib.agent.planning_context import compact as compact_context
+
+        actions = [{'action_id': aid, 'tool': tool, 'args': {}} for aid, tool in (
+            ('locate-one', 'feature_scan'), ('locate-two', 'locate_feature'),
+            ('measure', 'measure_instances'), ('identity', 'classify_target'))]
+        context = {'actions': actions, 'action_state': {'measure': {'measurement_group': 'width'}},
+                   'measurement_groups': {'width': {'dimensions': {'mean_width': {'consumers': [
+                       {'candidate_id': '厚朴', 'role': 'supporting', 'reasons': []},
+                       {'candidate_id': '柴胡', 'role': 'required', 'reasons': ['resolve_split_instances']},
+                   ]}}}}, 'action_objectives': {'locate-one': {'question_id': 'same-view-feature'}}}
+        comparison = {'questions': [{'feature_id': 'secretory_tissue', 'dimension': 'mean_width',
+            'legal_action_ids': [a['action_id'] for a in actions] + ['hidden'],
+            'consumers': [{'candidate_id': '厚朴', 'role': 'supporting', 'state': 'MORPHOLOGY_UNVERIFIED',
+                           'quant': {'min': 50, 'max': 85}},
+                          {'candidate_id': '柴胡', 'role': 'required', 'state': 'IN_RANGE',
+                           'criterion_assessed': True, 'quant': {'min': 8, 'max': 25}}],
+        }]}
+        original = copy.deepcopy(context)
+        projected = with_criterion_impact(context, comparison, feedback=[
+            {'question_id': 'different-view', 'accepted': False, 'progress': False, 'tool': 'feature_scan'},
+            {'question_id': 'same-view-feature', 'accepted': True, 'progress': False, 'tool': 'presence_check'},
+        ])
+        wire, lookup = model_view(compact_context(projected)[0])
+        self.assertEqual(context, original)
+        self.assertEqual(list(lookup.values()), [a['action_id'] for a in actions])
+        self.assertEqual(len(wire['criterion_index']), 2)
+        objectives = wire['action_objectives']
+        self.assertEqual(objectives['A1']['criterion_refs'], objectives['A2']['criterion_refs'])
+        self.assertEqual(objectives['A1']['last_question_result'], ['presence_check', 'no_gain'])
+        self.assertNotIn('last_question_result', objectives['A2'])
+        self.assertEqual(objectives['A1']['evidence_step'], 'discover')
+        self.assertEqual(objectives['A4']['evidence_step'], 'identity')
+        measure_ref, = objectives['A3']['criterion_refs']
+        self.assertEqual(wire['criterion_index'][measure_ref][:3], ['柴胡', 'required', 'secretory_tissue'])
+
+    def test_opt_in_real_planner_view_exposes_required_and_supporting_without_extra_calls(self):
+        r = self.prepare()
+        r.workflow.config.update(criterion_impact_menu=True, context_compact=True)
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.client = SimpleNamespace(model='fixture', timeout_s=1)
+        planner.config = {}
+        sent = []
+
+        def respond(payload, timeout):
+            context = json.loads(payload['messages'][1]['content'])
+            sent.append(context)
+            actions = context['actions']
+            if len(sent) == 1:
+                yolo = next(a for a in actions if a['tool'] == 'detect_fov_initial')
+                objective = context['action_objectives'][yolo['action_id']]
+                self.assertEqual(objective['evidence_step'], 'discover')
+                questions = context['evidence']['workflow']['comparison_problems']['questions']
+                linked = set()
+                for index in objective['criterion_refs']:
+                    row = context['criterion_index'][index]
+                    if len(row) == 2:
+                        question = questions[row[0]]
+                        consumer = question['consumers'][row[1]]
+                        linked.add((consumer['candidate_id'], consumer['role'], question['feature_id']))
+                    else:
+                        linked.add(tuple(row[:3]))
+                self.assertTrue(any(len(row) == 2 for row in context['criterion_index']))
+                self.assertIn(('白芍', 'required', 'cluster_crystal'), linked)
+                self.assertIn(('白芍', 'supporting', 'vessel'), linked)
+                choice = next(a for a in actions if a['tool'] == 'presence_check'
+                              and a['args']['feature_id'] == 'gelatinized_starch')
+                self.assertEqual(context['action_objectives'][choice['action_id']]['evidence_step'], 'presence')
+            else:
+                choice = next(a for a in actions if a['tool'] == 'request_review')
+            response = {'decision': {'kind': 'action', 'action_id': choice['action_id']}}
+            return {'choices': [{'message': {'content': json.dumps(response)}}]}
+
+        with patch('TCM_Fusion.lib.runtime.hard_calls.post', side_effect=respond) as post:
+            trace = self.run_agent(r, planner)
+        self.assertEqual(post.call_count, 2)
+        self.assertEqual(trace['planning_requests'], 2)
+        self.assertEqual(trace['observation_requests'], 1)
+        self.assertEqual([event['tool'] for event in trace['events'] if event['phase'] == 'thought'],
+                         ['presence_check', 'request_review'])
+        first_offer = next(event['menu'] for event in trace['events'] if event['phase'] == 'planner_offer')
+        self.assertEqual(first_offer['criterion_index'], sent[0]['criterion_index'])
+
+
     def test_prior_fold_disagreement_survives_without_probability_averaging(self):
         r=self.prepare();prior=prior_summary(r.candidate_interest())
         self.assertEqual(prior['fold_top1_counts'],{'白芍':4})

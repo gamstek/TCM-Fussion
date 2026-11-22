@@ -1,0 +1,114 @@
+{
+  "identity": "fa82c3812ce5d3b8e8cc66cc5be04c71b405a29e734bdb3549a99015e2539deb",
+  "parent": "8030ee13ec6feac04ff5423ea8ed7269c43b812f3dc64bd98446a9c1a3da687d",
+  "artifacts": {
+    "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\view_01.tif",
+      "sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "parents": [],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "detected:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "detected:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "detection",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\runs\\fusion_10b350f52c24466e8c885db64d8d49ac\\workflow\\ops\\a4c9c339cd29f06c\\detection\\crops.json",
+      "sha256": "f3cb68aaa5fbb1b2da0b900b37839f3967be2ad3abc32edd2ec2ae1d32ca7bbf",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01:pixels": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01:pixels",
+      "kind": "crop_pixels",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\runs\\fusion_10b350f52c24466e8c885db64d8d49ac\\workflow\\ops\\eb57afb887001d03\\scan\\crops\\epidermis_cell_view_01_glm220f18619613_01.png",
+      "sha256": "f0db3c7b1303f3d9fcd60ef66c043b4d4f07ecd690f5c016dc784b74c568648a",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+      "kind": "crop",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\runs\\fusion_10b350f52c24466e8c885db64d8d49ac\\workflow\\ops\\eb57afb887001d03\\scan\\crops\\epidermis_cell_view_01_glm220f18619613_01.json",
+      "sha256": "89f7153d2d5ab0cbb5b18612c4630a9f5b94c01d078fd59c9fbcca44dc7c24ce",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01:pixels"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "identity_required": true,
+      "box_source": "glm",
+      "box_quality": "low_detail",
+      "box_quality_score": 0.2714,
+      "box_quality_flags": [
+        "low_detail"
+      ],
+      "box_quality_metrics": {
+        "std": 0.0332,
+        "edge": 0.0072,
+        "width": 434,
+        "height": 202,
+        "area_ratio": 0.0072
+      },
+      "box_quality_retry": false,
+      "det_score": 0.65,
+      "det_confidence": "medium",
+      "detection_tool": "feature_scan",
+      "valid": true
+    },
+    "scanned:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell": {
+      "id": "scanned:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell",
+      "kind": "detection",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\runs\\fusion_10b350f52c24466e8c885db64d8d49ac\\workflow\\ops\\eb57afb887001d03\\scan\\scan_result.json",
+      "sha256": "c6eaf71065e7cef9831815f66b7e0ced99d0dd70a156192c440922745e868bbb",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01": {
+      "id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+      "kind": "classification",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\runs\\fusion_10b350f52c24466e8c885db64d8d49ac\\workflow\\ops\\2e85234afd9aeea8\\classification\\classification.json",
+      "sha256": "1cc0af248b2a1228b13ce7e843b13fab263c3e2bd7f80bd9a43cb44dc595b03c",
+      "parents": [
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+      "feature_id": "",
+      "label": "身份待定",
+      "classification_tool": "classify_target",
+      "requested_feature_id": "epidermis_cell",
+      "granularity": "instance",
+      "reject": "unreadable",
+      "glm_confidence": "low",
+      "yolo_confidence": null,
+      "confidence_source": "glm",
+      "confidence_score": 0.3,
+      "review_required": false,
+      "review_reason": "身份待定，目标图未报告可定位的鉴别结构",
+      "visual_identity_status": "pending",
+      "identity_confidence": "low",
+      "glm_confidence_score": 0.3,
+      "identity_verified": false,
+      "identity_basis": "classifier_confidence",
+      "identity_review": false,
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "afb46b8d6dca506df226dac2f527c01eeed24803c11e8087da9ea3db2c7b66b5"
+}

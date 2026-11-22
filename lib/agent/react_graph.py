@@ -44,6 +44,10 @@ class AgentState(TypedDict, total=False):
     selected: dict | None
     parallel_observation: dict | None
     physical_partners: list
+    identity_sequence: list
+    observation_sequence: list
+    last_observation_group: dict
+    last_identity_group: dict
     events: list
     requests: int
     planning_requests: int
@@ -92,6 +96,9 @@ class LLMPlanner:
         instruction = context.get('planning_instruction', DEFAULT_INSTRUCTION)
         # 发布的策略完整保留在 system，调用方上下文和动作绑定保持可复用。
         context = {k:v for k,v in context.items() if k != 'planning_instruction'}
+        shorten_views = context.pop('compact_view_ids', False)
+        view_refs = {}
+        wire_context = context
         option_ids = {}
         selection_instruction = ''
         if adaptive:
@@ -104,7 +111,11 @@ class LLMPlanner:
                     'identity_conflicts列出冲突对方的工件、类别和IoU，仅供核验，不授予身份或测量资格。')
             if any(a.get('args_from_action') for a in context.get('parallel_observations', [])):
                 selection_instruction += ' 伴随观察的args_from_action引用本轮A的同一参数。'
-            self.last_request_menu = audit(context)
+            from TCM_Fusion.lib.agent.planning_choices import compact_view_references
+            wire_context, view_refs = compact_view_references(context) if shorten_views else (context, {})
+            if view_refs:
+                selection_instruction += ' view_id_map 是本轮视野短编号与原 ID 对照表。'
+            self.last_request_menu = audit(wire_context)
         reflection = (context.get('task_reflection') or {}).get('pending') if adaptive else None
         reflection_instruction = ''
         if reflection:
@@ -139,7 +150,7 @@ class LLMPlanner:
                         "竞争候选一次阳性不自动成为其他药材的反证，也不使主解释未查项消失。"
                         "comparison_problems的问题卡同时列出直接入口和discovery_prerequisite；"
                         "无实例时YOLO初检仍可推进定量特征，尚不能选分割不等于无路可查。"
-                        "以actions和action_state为准：编号已经出现即本轮可选，scene_check不会解锁已列出的动作。"
+                        "以actions和action_state为准：编号已经出现即本轮可选。scene_check是可选观察；按scene_criteria判断结果是否值得查。"
                         "菜单是可执行入口，不是执行回执。candidate_audit的unchecked保持未查；"
                         "presence_states只说明该视野该类已有的存在性观察，空数组表示无此类记录。"
                         "补扫若带existing_crop_actions，先比较复用同视野同类已有裁图的价值与max_scan_tiles成本；"
@@ -169,7 +180,7 @@ class LLMPlanner:
                         "偏离stop_advisory时，将override_reason填为具体理由；也可在decision_summary中说明该理由。")
                         + reflection_instruction +
                        "\n调度建议：" + instruction},
-                       {"role": "user", "content": json.dumps(context, ensure_ascii=False, separators=(',', ':'))}]}
+                       {"role": "user", "content": json.dumps(wire_context, ensure_ascii=False, separators=(',', ':'))}]}
         if adaptive:
             payload["response_format"] = {"type": "json_object"}
         if self.config.get("reasoning_effort"):
@@ -189,8 +200,11 @@ class LLMPlanner:
             exc.usage = body.get('usage')
             raise
         if adaptive and isinstance(reply, dict):
-            from TCM_Fusion.lib.agent.planning_choices import decode, diagnose
+            from TCM_Fusion.lib.agent.planning_choices import decode, diagnose, restore_view_references
+            reply = restore_view_references(reply, view_refs)
             try:
+                if 'identity_tail' in reply or 'observation_ids' in reply:
+                    raise IntegrationError('PLANNER_CHOICE_INVALID', '组内动作须由本轮 decision 明确选择')
                 reply = decode(reply, context)
             except IntegrationError as exc:
                 exc.usage = body.get('usage')
@@ -200,6 +214,10 @@ class LLMPlanner:
             problem = reply.get('problem_goal_id')
             if isinstance(problem, str):
                 reply['problem_goal_id'] = option_ids.get(problem, problem)
+            if 'identity_tail' in reply:
+                reply['identity_tail'] = [option_ids[p] for p in reply['identity_tail']]
+            if 'observation_ids' in reply:
+                reply['observation_ids'] = [option_ids[p] for p in reply['observation_ids']]
             if isinstance(reply.get('physical_partner_ids'),list):
                 reply['physical_partner_ids'] = [option_ids.get(p,p) if isinstance(p,str) else p
                                                  for p in reply['physical_partner_ids']]
@@ -288,7 +306,10 @@ def compact_evidence(evidence):
         'failed':[{'tool':row.get('tool'),'error_code':row.get('error_code')}
                   for row in operations if row.get('status')=='failed'][-4:]}
     active_features={row.get('feature_id') for row in (workflow.get('required_states') or [])}
-    active_features |= {row.get('feature_id') for row in (workflow.get('supporting_states') or [])}
+    for candidate in workflow.get('required_states') or []:
+        active_features.update(row.get('feature_id') for row in candidate.get('required_states') or [])
+    active_features.update(row.get('feature_id') for row in workflow.get('supporting_states') or [])
+    active_features.discard(None)
     workflow['classification_summary']={
         'count':len(classifications),
         'by_feature':dict(Counter((row.get('feature_id') or 'unclassified') for row in classifications)),
@@ -297,10 +318,12 @@ def compact_evidence(evidence):
                         if 'segmentation_admission' in row else {})}
                     for row in classifications if row.get('identity_verified')][-8:],
         'active_unverified':[{'crop_id':row.get('crop_id'),'feature_id':row.get('feature_id'),
-                              'label':row.get('label'),
+                              'label':row.get('label'), 'reject':row.get('reject'),
+                              'requested_feature_id':row.get('requested_feature_id'),
                               **({'segmentation_admission': row['segmentation_admission']}
                                  if 'segmentation_admission' in row else {})} for row in classifications
-                             if row.get('feature_id') in active_features
+                             if (row.get('feature_id') in active_features or row.get('requested_feature_id') in active_features
+                                 or not row.get('feature_id') and not row.get('requested_feature_id'))
                              and not row.get('identity_verified')][:12]}
     workflow['quality_summary']={
         'count':len(quality),
@@ -402,8 +425,8 @@ def compact_round_context(context, workflow):
         recent_ops = max(1, int(config.get('context_recent_operations', 8)))
         if len(operations) > recent_ops:
             wf['operations'] = operations[-recent_ops:]
-        wf['operations_total'] = len(operations)
-        wf['operations_omitted'] = max(0, len(operations) - len(wf.get('operations') or []))
+        wf['operations_total'] = (wf.get('operation_summary') or {}).get('count', len(operations))
+        wf['operations_omitted'] = max(0, wf['operations_total'] - len(wf.get('operations') or []))
         evidence['workflow'] = wf
         context['evidence'] = evidence
     rejected = list(context.get('rejected_proposals') or [])
@@ -451,10 +474,30 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         if trace_path and not state.get('_parallel_child'):
             write_json(trace_path, state)
 
+    static_fields = {'query_criteria': 'criteria', 'list_fovs': 'fovs'}
+
+    def static_receipts(state):
+        return {row['static_query_id']: row for row in state.get('read_results', [])
+                if 'static_query_id' in row} if autonomous else {}
+
+    def read_action_id(query, revision, receipts, state):
+        binding = {'query': query, 'evidence': revision}
+        if query in receipts:
+            # 旧页移出可见窗口后，显式调阅获得新动作 ID，复用同任务固定内容。
+            binding['read_cursor'] = len(state['read_results'])
+        return digest(binding)
+
     def read_context(state):
         revision=runtime.read_revision(state)
-        return [{**row,'stale':row.get('read_revision')!=revision}
-                for row in state.get('read_results',[])]
+        visible = []
+        for row in state.get('read_results', [])[-4:]:
+            if row.get('static_query_id'):
+                field = static_fields[row['tool']]
+                # 跨版只传绑定 KB/清单的字段，历史回执中的规则摘要仍归原版本。
+                visible.append({'tool': row['tool'], 'result': {field: row['result'][field]}, 'stale': False})
+            else:
+                visible.append({**row, 'stale': row.get('read_revision') != revision})
+        return visible
 
     @reusable_reads()
     def assess(state):
@@ -486,8 +529,9 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                      'pending_legacy_nomination':False,'pending_hypothesis_basis':''}
         actions = runtime.legal_actions(state)
         mandatory = any(a["mandatory"] for a in actions)
-        failed_scene = any(o["action"]["tool"] == "scene_check" and not o["accepted"]
-                           for o in state.get("observations", []))
+        failed_scene = not autonomous and any(
+            o["action"]["tool"] == "scene_check" and not o["accepted"]
+            for o in state.get("observations", []))
         record_stems = {r.get("image_stem") for r in runtime.records if r.get("image_stem")}
         image_stems = {s for image in runtime.images.values() for s in image["stems"]}
         missing_fov = bool(record_stems-image_stems)
@@ -793,6 +837,20 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             if workflow.remaining_seconds() <= closing_reserve + 0.1:
                 fallback_reason = 'finalization_time_reserve' if closing_reserve else 'workflow_deadline'
                 break
+            # 建菜单按扣除本轮规划后的额度估算。只剩复核时，保留收尾预算。
+            after_plan = {**budget, 'total': budget['total']-2, 'network': budget['network']-1}
+            if (state['finish_veto'] and not (physical_runner and physical_runner.tasks)
+                    and not any(affordable(a, after_plan) for a in eligible)
+                    and not (workflow.config.get('problem_goal_execution') and workflow.store.current()['records'])):
+                reason = 'only_review_affordable'
+                controller.finalize(reason)
+                events.append({'phase': 'stop', 'decision_source': 'runtime', 'reason': reason,
+                               'remaining_budget': budget, 'usage': None})
+                update = {'events': events, 'requests': requests, 'planning_requests': planning,
+                          'done': True, 'stop_reason': 'runtime_request_review', 'termination_reason': reason,
+                          'needs_review': True, 'reflection_controller': controller.compact()}
+                persist({**state, **update})
+                return update
             try:
                 workflow.charge("planning", f"planning:{planning}:{state['steps']}")
             except IntegrationError as exc:
@@ -821,11 +879,14 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 choices, measurement_groups, measurement_actions = measurement_menu(
                     runtime, choices, scored, targets)
                 opportunities_for_menu = []
-                if split_enabled(runtime):
+                show_criterion_impact = workflow.config.get('criterion_impact_menu', False)
+                split_budgets = split_enabled(runtime)
+                decision_view = runtime.decision_view(state, scored=scored) if split_budgets or show_criterion_impact else None
+                if split_budgets:
                     from TCM_Fusion.lib.decision.candidate_audit import (
                         investigation_opportunities, protect_investigation_budget)
                     opportunities_for_menu = investigation_opportunities(runtime,
-                        runtime.decision_view(state, scored=scored)['candidate_audit'], state['investigation_focus'],
+                        decision_view['candidate_audit'], state['investigation_focus'],
                         choices, current_budget)
                     choices, deferred = protect_investigation_budget(
                         runtime, choices, opportunities_for_menu, current_budget)
@@ -838,10 +899,11 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     runtime, choices, int(workflow.config.get('context_max_actions', 20)),
                     priority_ids=[row['action_id'] for row in opportunities_for_menu])
                 context = {
+                    "compact_view_ids": workflow.config.get("compact_view_ids", False),
                     "actions": model_actions, "evidence": compact_evidence(runtime.summary(state, scored=scored)),
                     "parallel_observations": parallel,
                     "planning_instruction": planning_instruction,
-                    "previous_observations": state["observations"], "read_results": read_context(state)[-4:],
+                    "previous_observations": state["observations"], "read_results": read_context(state),
                     "action_objectives": {a["action_id"]: objective(a) for a in model_actions if "args" in a},
                     "stop_advisory": state["stop_advisory"], "finish_veto": state["finish_veto"],
                     "stop_decision": state.get("stop_decision") or {},
@@ -955,12 +1017,34 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                             receipt = {**receipt, 'facts': receipt['facts'][:3], 'fact_count': len(receipt['facts']),
                                        'detail_access': 'read_evidence_detail(kind=instances)'}
                         context['last_problem_result'] = receipt
+                observation_limit = min(max_steps-state['steps'], current_budget['observation'],
+                                        current_budget['network'], current_budget['total']//2)
+                multi_observe = (workflow.config.get('observation_group_execution') and observation_limit >= 2
+                                 and not (physical_runner and physical_runner.tasks))
                 context = attach(runtime, context, targets=targets, measurement_actions=measurement_actions,
                     previous_problems=previous_problems,
                     allow_problem=not (physical_runner and physical_runner.tasks), can_pair=bool(
-                    workflow.config.get('max_parallel',2)>=2 and state['steps']+2<=max_steps
-                    and current_budget['observation']>=2 and current_budget['network']>=2
-                    and current_budget['total']>=4))
+                    multi_observe or workflow.config.get('max_parallel',2)>=2 and observation_limit>=2))
+                question_menu = context['execution_options']
+                if multi_observe and question_menu['questions']:
+                    question_menu.update(max_questions=min(observation_limit, len(question_menu['questions'])),
+                                         observation_wave_size=min(2, workflow.config.get('max_parallel', 2)))
+                if any(e['phase'] == 'observation_group_return' for e in state['events'][offset:]):
+                    context['last_observation_group'] = state['last_observation_group']
+                identity_bindings = {}
+                if workflow.config.get('identity_group_execution') and not (physical_runner and physical_runner.tasks):
+                    from TCM_Fusion.lib.agent.identity_group import offer
+                    limit = min(max_steps-state['steps'], current_budget['observation'],
+                                current_budget['network'], current_budget['total']//2)
+                    identity_menu, identity_bindings = offer(workflow, context['actions'], targets, limit)
+                    if identity_menu:
+                        context['execution_options']['identity_group'] = identity_menu
+                if any(e.get('phase') == 'identity_group_return' for e in state['events'][offset:]):
+                    context['last_identity_group'] = state['last_identity_group']
+                if show_criterion_impact:
+                    from TCM_Fusion.lib.agent.planning_choices import with_criterion_impact
+                    context = with_criterion_impact(context, decision_view['comparison'],
+                                                    targets=targets, feedback=controller.rows)
                 if physical_runner and not physical_runner.tasks and state['steps']+2 <= max_steps:
                     context['execution_options'].update(physical_runner.options(
                         context['actions'],targets,current_budget,max_steps-state['steps']))
@@ -1061,6 +1145,33 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     'qualification_blockers':state['finish_veto'], 'new_planning_requests':0})
             error = None
             partners = []
+            sequence = []
+            observation_sequence = []
+            choice_meta = reply.get('execution_choice') if isinstance(reply, dict) else None
+            if isinstance(reply, dict) and 'observation_ids' in reply:
+                ids = reply['observation_ids']
+                visible = {q['action_id']: q['question_id'] for q in question_menu['questions']}
+                if (not multi_observe or (choice_meta or {}).get('kind') != 'observe_questions'
+                        or not isinstance(ids, list) or not 2 <= len(ids) <= question_menu['max_questions']
+                        or any(not isinstance(i, str) or i not in visible for i in ids)
+                        or len({visible[i] for i in ids}) != len(ids) or ids[0] != reply.get('action_id')
+                        or any(k in reply for k in ('semantic_goal','parallel_question_id','parallel_observation_id',
+                                                    'physical_partner_ids','physical_partner_id','identity_tail','proposal'))):
+                    error = 'observation_group_unavailable'
+                else:
+                    observation_sequence = list(ids)
+            grouped_identity = isinstance(choice_meta, dict) and choice_meta.get('kind') == 'identity_group'
+            if isinstance(reply, dict) and ('identity_tail' in reply or grouped_identity):
+                from TCM_Fusion.lib.agent.identity_group import allowed
+                tail = reply.get('identity_tail')
+                ids = [reply.get('action_id'), *tail] if isinstance(tail, list) else []
+                if (not grouped_identity
+                        or any(k in reply for k in ('proposal', 'problem_goal_id', 'semantic_goal',
+                               'parallel_question_id', 'parallel_observation_id', 'physical_partner_id', 'physical_partner_ids'))
+                        or not allowed(ids, context['execution_options'].get('identity_group', {}))):
+                    error = 'identity_group_unavailable'
+                else:
+                    sequence = [identity_bindings[i] for i in ids]
             if isinstance(reply,dict) and ('physical_partner_ids' in reply or 'physical_partner_id' in reply):
                 from TCM_Fusion.lib.agent.planning_choices import physical_allowed
                 rest = reply.get('physical_partner_ids',[reply.get('physical_partner_id')])
@@ -1116,9 +1227,19 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                "reason": error, "usage": usage, "decision_source": planner_source,
                                "rejection_detail": detail, "remaining_budget": current_budget})
                 continue
-            parallel_id = reply.get("parallel_observation_id")
-            companion = next((a for a in parallel if chosen and a["action_id"] == parallel_id
-                              and a["args"]["image_id"] == chosen.get("args", {}).get("target_id")), None)
+            companion = None
+            if "parallel_observation_id" in reply:
+                parallel_id = reply["parallel_observation_id"]
+                if chosen and isinstance(parallel_id, str) and chosen["tool"] == "detect_fov_initial":
+                    companion = next(
+                        (a for a in parallel if a["action_id"] == parallel_id
+                         and a["args"]["image_id"] == chosen["args"]["target_id"] and controller.guard(a)),
+                        None,
+                    )
+                if companion is None:
+                    events.append({'phase': 'parallel_observation_rejected',
+                                   'reason': 'not_offered_for_initial_view',
+                                   'selected_action_preserved': True, 'new_planning_requests': 0})
             question_id = reply.get('parallel_question_id')
             if question_id is not None:
                 additional = parallel_questions.get(question_id) if isinstance(question_id, str) else None
@@ -1212,7 +1333,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                'updates':updates,'is_evidence':False,'applies':'after_current_action'})
             update = {"selected": chosen, "events": events, "requests": requests, "planning_requests": planning,
                       "context_cursor": context_cursor or {},
-                      "physical_partners": partners,
+                      "physical_partners": partners, "identity_sequence": sequence,
+                      "observation_sequence": observation_sequence,
                       "semantic_plan": semantic_plan,
                       "parallel_observation": companion,
                       "pending_hypothesis_updates": updates or [],
@@ -1287,9 +1409,13 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 interest = runtime.candidate_interest()
                 queries += [("query_criteria", {"candidate_id": cid}) for cid in interest["ids"]]
                 revision = runtime.read_revision(state)
+                receipts = static_receipts(state)
+                visible_static = {row.get('static_query_id') for row in state.get('read_results', [])[-4:]}
                 for name, args in queries:
                     action = runtime.action(name, args, "evidence_inspection")
-                    action["action_id"] = digest({"query": action["action_id"], "evidence": revision})
+                    if autonomous and action["action_id"] in visible_static:
+                        continue
+                    action["action_id"] = read_action_id(action["action_id"], revision, receipts, state)
                     if action["action_id"] not in state.get("attempted", []):
                         eligible.append(action)
         stop = [{"action_id": "finish", "tool": "finish"},
@@ -1326,7 +1452,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                "skills": compact_skills(runtime),
                                "action_menu_meta": menu_meta,
                                "previous_observations": state["observations"],
-                               "read_results": read_context(state)[-4:],
+                               "read_results": read_context(state),
                                "remaining_requests_after_plan": max_requests-requests}
                     context['task_reflection']=state.get('reflection')
                     context['recent_action_feedback']=compact_feedback(state['events'])
@@ -1460,11 +1586,17 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             runtime.tools.validate(action, runtime)
             canonical = runtime.action(action["tool"], action["args"], action["skill"])
             revision=runtime.read_revision(state)
-            expected = digest({"query": canonical["action_id"], "evidence": revision})
+            receipts = static_receipts(state)
+            query_id = canonical['action_id']
+            expected = read_action_id(query_id, revision, receipts, state)
             if action["action_id"] != expected or action["action_id"] in state.get("attempted", []):
                 raise IntegrationError("ACTION_STALE", "只读动作已失效或重复")
             try:
-                result = await bounded_tool(toolbox.read(action["tool"], action["args"], state))
+                if query_id in receipts:
+                    field = static_fields[action['tool']]
+                    result = {field: receipts[query_id]['result'][field]}
+                else:
+                    result = await bounded_tool(toolbox.read(action["tool"], action["args"], state))
             except Exception as exc:
                 if not autonomous:
                     raise
@@ -1476,11 +1608,19 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                              "accepted": False, "feedback": feedback}]}
                 persist(state)
                 return state
+            receipt = {'tool': action['tool'], 'result': result, 'read_revision': revision}
+            if autonomous and isinstance(result, dict):
+                criteria = result.get('criteria')
+                if action['tool'] == 'query_criteria' and isinstance(criteria, dict):
+                    if criteria.get('id') == action['args']['candidate_id']:
+                        receipt['static_query_id'] = canonical['action_id']
+                elif action['tool'] == 'list_fovs' and isinstance(result.get('fovs'), list):
+                    receipt['static_query_id'] = canonical['action_id']
             state = {**state, "steps": state["steps"]+1,
                      "attempted": state["attempted"]+[action["action_id"]],
-                     "read_results": state.get("read_results", [])+[
-                         {"tool": action["tool"], "result": result,'read_revision':revision}],
-                     "events": state["events"]+[{"phase": "read", "tool": action["tool"], "new_requests": 0}]}
+                     "read_results": state.get("read_results", [])+[receipt],
+                     "events": state["events"]+[{"phase": "read", "tool": action["tool"], "new_requests": 0,
+                                                 "source": "static_receipt" if query_id in receipts else "tool"}]}
             persist(state)
             return state
         current = {a["action_id"]: a for a in runtime.legal_actions(state)}
@@ -1515,7 +1655,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                           elapsed_ms=(time.monotonic()-started)*1000)
         if adaptive:gain=feedback['useful']
         if autonomous:
-            gain = feedback["useful"] or (accepted and action["tool"] == "scene_check")
+            gain = feedback["useful"] or bool(accepted and action["tool"] == "scene_check"
+                                                 and feedback["criterion_or_ranking_changed"])
             if gain:
                 state["override_streak"] = 0
         state.update(observations=state["observations"]+[observation],
@@ -1578,7 +1719,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                                (e.get('phase') == 'recompute' and e.get('tool') == actual['tool']))), {})
                 child_feedback = event.get('feedback') or {'accepted': False, 'problem_id': actual['tool']}
                 child_progress = bool(child_feedback.get('useful') or
-                    event.get('accepted') and actual['tool'] in {'detect_fov_initial', 'scene_check'})
+                    event.get('accepted') and actual['tool'] == 'detect_fov_initial')
                 controller.record(actual, progress=child_progress, feedback=child_feedback,
                     evidence_version=workflow.store.current()['version'], action_key=key,
                     candidate_state=scored_after['decision'], binding=binding)
@@ -1669,7 +1810,167 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         persist(state)
         return state
 
+    async def run_observation_group(state):
+        from TCM_Fusion.lib.runtime.probe_budget import parallel_probe_blocker, split_enabled
+        from TCM_Fusion.lib.decision.candidate_audit import investigation_opportunities, protect_investigation_budget
+
+        selected = state['observation_sequence']
+        updated = {**state, 'observation_sequence': [], 'events': list(state['events'])}
+        issued = []
+        reason = 'completed'
+        reserve = (min(workflow.config.get('final_assessment_seconds', 30), workflow.config.get('max_seconds', 600)*.2)
+                   if workflow.limits.get('finalization') else 0)
+        while len(issued) < len(selected):
+            if workflow.cancel_event.is_set() or read_json(workflow.budget_path).get('closed'):
+                reason = 'workflow_closed'
+                updated.update(done=True, stop_reason=reason, needs_review=True)
+                break
+            if workflow.remaining_seconds() <= reserve + .1:
+                reason = 'deadline_reserve'
+                updated.update(done=True, stop_reason='finalization_time_reserve' if reserve else 'workflow_deadline',
+                               needs_review=True)
+                break
+            budget = remaining_budget()
+            width = min(2, workflow.config.get('max_parallel', 2), max_steps-updated['steps'],
+                        budget['observation'], budget['network'], budget['total']//2)
+            if width < 1:
+                reason = 'budget_blocked'
+                break
+            with reusable_reads():
+                legal = runtime.legal_actions(updated)
+                if split_enabled(runtime) and workflow.config.get('protect_investigation_budget', True):
+                    audit = runtime.decision_view({**updated, 'actions':legal})['candidate_audit']
+                    opportunities = investigation_opportunities(runtime, audit, updated['investigation_focus'], legal, budget)
+                    legal, _ = protect_investigation_budget(runtime, legal, opportunities, budget)
+                available = {a['action_id']: a for a in legal if a['tool'] in {'presence_check','scene_check'}
+                             and controller.guard(a)}
+                wave = []
+                for aid in selected[len(issued):len(issued)+width]:
+                    action = available.get(aid)
+                    if action is None:
+                        reason = 'action_unavailable'
+                        break
+                    if wave:
+                        blocker = parallel_probe_blocker(runtime, wave[0], action)
+                        if blocker:
+                            reason = blocker
+                            break
+                    wave.append(action)
+            if not wave:
+                break
+            offset = len(updated['events'])
+            before = len(updated['observations'])
+            ids = [a['action_id'] for a in wave]
+            updated['events'].append({'phase':'observation_group_wave', 'action_ids':ids})
+            persist(updated)
+            updated = await act_once({**updated, 'selected':wave[0],
+                                      'parallel_observation':wave[1] if len(wave)==2 else None})
+            issued.extend(ids)
+            receipts = updated['observations'][before:]
+            if len(receipts) != len(wave) or any(not o.get('accepted') for o in receipts):
+                reason = 'observation_failed'
+                break
+            if any(o['action']['tool'] != 'presence_check' or o['result'].get('present') is not False
+                   or o['result']['conf'] < .5 for o in receipts):
+                reason = 'new_or_uncertain_observation'
+                break
+            if reason != 'completed' or len(issued) == len(selected):
+                break
+            old_advice = updated['stop_advisory']
+            old_veto = updated['finish_veto']
+            old_focus = updated['investigation_focus']
+            updated = assess(updated)
+            if updated.get('done'):
+                reason = updated['stop_reason']
+                break
+            if (any(e.get('scope_changed') or e['phase'] == 'hypothesis_update_rejected'
+                    or (e.get('feedback') or {}).get('criterion_or_ranking_changed') for e in updated['events'][offset:])
+                    or any(updated['stop_advisory'][k] != old_advice[k] for k in ('recommend','why'))
+                    or updated['investigation_focus'] != old_focus
+                    or updated['finish_veto'] != old_veto):
+                reason = 'investigation_changed'
+                break
+            updated['continuation_pending'] = old_advice['recommend'] != 'continue'
+        summary = {'selected': selected, 'issued': issued, 'unissued': selected[len(issued):], 'reason': reason}
+        updated['last_observation_group'] = summary
+        updated['events'].append({'phase':'observation_group_return', **summary})
+        persist(updated)
+        return updated
+
+    async def run_identity_group(state):
+        from TCM_Fusion.lib.agent.identity_group import binding, return_reason
+        sequence = state['identity_sequence']
+        updated = {**state, 'identity_sequence': [], 'events': list(state['events'])}
+        selected = [item['target_id'] for item in sequence]
+        attempted = []
+        reason = 'completed'
+        updated['events'].append({'phase': 'identity_group_selected', 'targets': selected})
+        persist(updated)
+        for index, item in enumerate(sequence):
+            if workflow.cancel_event.is_set() or read_json(workflow.budget_path).get('closed'):
+                reason = 'workflow_closed'
+                break
+            reserve = (min(workflow.config.get('final_assessment_seconds', 30),
+                           workflow.config.get('max_seconds', 600)*.2) if workflow.limits.get('finalization') else 0)
+            if workflow.remaining_seconds() <= reserve + .1:
+                reason = 'deadline_reserve'
+                break
+            try:
+                action = next((a for a in runtime.legal_actions(updated) if a['tool'] == 'classify_target'
+                               and a['args']['target_id'] == item['target_id']), None)
+                if not action or not controller.guard(action):
+                    reason = 'action_unavailable'
+                    break
+                if not affordable(action, remaining_budget()):
+                    reason = 'budget_blocked'
+                    break
+                snapshot = workflow.store.current()
+                target = workflow.targets().get(item['target_id'])
+                matched = target and binding(workflow, target, snapshot) == item
+            except (OSError, ValueError, IntegrationError):
+                matched = False
+            if (not matched or (not index and action['action_id'] != state['selected']['action_id'])):
+                reason = 'identity_input_changed'
+                break
+            offset = len(updated['events'])
+            updated = await act_once({**updated, 'selected': action, 'parallel_observation': None})
+            event = next((e for e in updated['events'][offset:] if e['phase'] == 'recompute'), {})
+            result = event.get('result') or {}
+            attempted.append(item['target_id'])
+            outcome = return_reason(event, workflow.store.current(), item)
+            updated['events'].append({'phase': 'identity_group_item', 'target_id': item['target_id'],
+                'action_id': action['action_id'], 'operation_key': result.get('operation_key'),
+                'accepted': event.get('accepted', False), 'outcome': outcome or 'unreadable',
+                'evidence_version': result.get('evidence_version')})
+            persist(updated)
+            if outcome:
+                reason = outcome
+                break
+            if index + 1 < len(sequence):
+                prior_exit = updated['stop_advisory']['recommend']
+                control_offset = len(updated['events'])
+                updated = assess(updated)
+                scope_changed = any(e.get('scope_changed') or e['phase'] == 'hypothesis_update_rejected'
+                                    for e in updated['events'][control_offset:])
+                if updated.get('done'):
+                    reason = updated['stop_reason']
+                    break
+                if (scope_changed or updated['stop_advisory']['recommend'] != prior_exit
+                        or updated['finish_veto'] != state['finish_veto']):
+                    reason = 'investigation_changed'
+                    break
+                updated['continuation_pending'] = prior_exit != 'continue'
+        summary = {'selected': selected, 'attempted': attempted, 'unissued': selected[len(attempted):], 'reason': reason}
+        updated['last_identity_group'] = summary
+        updated['events'].append({'phase': 'identity_group_return', **summary})
+        persist(updated)
+        return updated
+
     async def act(state):
+        if state.get('observation_sequence'):
+            return await run_observation_group(state)
+        if state.get('identity_sequence'):
+            return await run_identity_group(state)
         if (state.get('semantic_plan') or {}).get('authorization'):
             # 问题授权的第一步也要经过晚绑定，已有物理证据时可以零工具返回。
             return await semantic_tail(state, state)
@@ -1848,6 +2149,9 @@ async def run_react(runtime, toolbox, *, max_requests=6, max_steps=6, planner=No
                   observations_executed=len(result["observations"]),
                   budget_scope="workflow_independent_pools" if split_budget else "agent_planning_plus_observation_attempts",
                   reason=result["stop_reason"], choice=result["stop_reason"])
+    if runner:
+        from TCM_Fusion.lib.workflow.physical_schedule import epoch_timings
+        result['physical_epoch_timing'] = epoch_timings(read_json(workflow.operations)['entries'])
     if digest(runtime.original) != runtime.original_sha256:
         raise IntegrationError("BASELINE_MUTATED", "原B快照被改写")
     if trace_path:

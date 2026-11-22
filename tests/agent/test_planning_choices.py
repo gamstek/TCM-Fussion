@@ -21,6 +21,7 @@ from TCM_Fusion.lib.tools.agent_tools import LocalToolbox, FixtureBackend
 from TCM_Fusion.lib.agent.planning_choices import attach, model_view, decode
 from TCM_Fusion.lib.agent.react_graph import LLMPlanner, run_react
 from TCM_Fusion.lib.agent.semantic_execution import compile_goal
+from TCM_Fusion.lib.workflow.workflow_runtime import WorkflowRuntime
 from TCM_Fusion.lib.runtime.storage import IntegrationError, read_json
 from TCM_Fusion.lib.runtime.storage import write_json
 
@@ -64,13 +65,15 @@ class PlanningChoicesTests(unittest.TestCase):
         planner = LLMPlanner.__new__(LLMPlanner)
         planner.client = SimpleNamespace(model='fixture',timeout_s=2)
         planner.config = {}
+        initial = {'tool': 'detect_fov_initial', 'action_id': 'initial', 'args': {'target_id': 'x'}}
         action = {'tool':'presence_check','action_id':'bound','args':{'feature_id':'f','image_id':'x'}}
         unique = dict(action,action_id='distinct')
-        context = {'actions':[action], 'parallel_observations':[action,unique],
+        context = {'actions':[initial,action], 'parallel_observations':[action,unique],
                    'stop_advisory':{}, 'planning_instruction':'仅此一份发布策略'}
         original = copy.deepcopy(context)
+        response = {'decision': {'kind': 'action', 'action_id': 'A1', 'parallel_observation_id': 'O2'}}
         with patch('TCM_Fusion.lib.runtime.hard_calls.post',return_value={'choices':[{'message':{
-                'content':json.dumps({'action_id':'A1','parallel_observation_id':'O2'})}}]}) as post:
+                'content':json.dumps(response)}}]}) as post:
             reply,_ = planner.choose(context)
         messages = post.call_args.args[0]['messages']
         user = json.loads(messages[1]['content'])
@@ -78,14 +81,80 @@ class PlanningChoicesTests(unittest.TestCase):
         self.assertIn(context['planning_instruction'],messages[0]['content'])
         self.assertEqual(messages[1]['content'],json.dumps(user,ensure_ascii=False,separators=(',',':')))
         companion,distinct = user['parallel_observations']
-        self.assertEqual(companion['args_from_action'],user['actions'][0]['action_id'])
+        self.assertEqual(companion['args_from_action'],user['actions'][1]['action_id'])
         self.assertNotIn('args',companion)
         self.assertEqual(distinct['args'],unique['args'])
+        self.assertIn('parallel_observation_id在顶层', messages[0]['content'])
+        self.assertEqual(reply['action_id'], 'initial')
         self.assertEqual(reply['parallel_observation_id'],'distinct')
+        self.assertEqual(reply['choice_normalization']['relocated_fields'], ['parallel_observation_id'])
+        self.assertEqual(post.call_count, 1)
         self.assertEqual(planner.last_request_menu['parallel_observations'],user['parallel_observations'])
         self.assertEqual(planner.last_request_profile['message_text_utf8_bytes'],
                          {m['role']:len(m['content'].encode('utf-8')) for m in messages})
         self.assertEqual(original,context)
+
+    def test_view_ids_round_trip_on_the_planner_wire(self):
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.client = SimpleNamespace(model='fixture', timeout_s=1)
+        planner.config = {}
+        view = 'img_' + 'a'*64
+        context = {'stop_advisory': {}, 'compact_view_ids': True,
+                   'actions': [{'action_id':'canonical', 'tool':'presence_check', 'args':{'image_id':view}}],
+                   'evidence': {'references': {view: ['crop:' + view, view]}}}
+        def post(payload, timeout):
+            user = json.loads(payload['messages'][1]['content'])
+            alias, = user['view_id_map']
+            self.assertEqual(user['view_id_map'][alias], view)
+            self.assertEqual(user['evidence']['references'][alias], ['crop:'+alias, alias])
+            return {'choices':[{'message':{'content':json.dumps({'action_id':'A1','decision_summary':alias})}}]}
+        with patch('TCM_Fusion.lib.runtime.hard_calls.post', side_effect=post):
+            reply, _ = planner.choose(context)
+        self.assertEqual((reply['action_id'],reply['decision_summary']), ('canonical',view))
+
+    def test_conflicting_optional_observations_are_dropped_without_replacing_main_action(self):
+        reply = {'decision': {'kind': 'action', 'action_id': 'A1', 'parallel_observation_id': 'O1'},
+                 'parallel_observation_id': 'O2'}
+        original = copy.deepcopy(reply)
+        decoded = decode(reply, {'actions': [{'action_id': 'A1', 'tool': 'detect_fov_initial'}]})
+        self.assertEqual(reply, original)
+        self.assertEqual(decoded['action_id'], 'A1')
+        self.assertNotIn('parallel_observation_id', decoded)
+        self.assertEqual(decoded['choice_normalization']['discarded_optional_fields'],
+                         {'parallel_observation_id': 'conflicting_values'})
+        self.assertEqual(decoded['choice_normalization']['new_planning_requests'], 0)
+
+    def test_react_dispatches_initial_detection_when_nested_observation_is_unavailable(self):
+        runtime = self.runtime(agent_policy='adaptive_v2', max_planning=4)
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.client = SimpleNamespace(model='fixture', timeout_s=1)
+        planner.config = {}
+        sent = []
+
+        def respond(payload, timeout):
+            context = json.loads(payload['messages'][1]['content'])
+            tool = 'detect_fov_initial' if not sent else 'request_review'
+            sent.append(tool)
+            action_id = next(a['action_id'] for a in context['actions'] if a['tool'] == tool)
+            decision = {'kind': 'action', 'action_id': action_id}
+            if tool == 'detect_fov_initial':
+                # 重现白芍实测的错层字段。归档未保留原始观察编号。
+                decision['parallel_observation_id'] = 'O999'
+            return {'choices': [{'message': {'content': json.dumps({'decision': decision})}}]}
+
+        with patch('TCM_Fusion.lib.runtime.hard_calls.post', side_effect=respond) as post:
+            trace = self.run_agent(runtime, planner)
+        self.assertEqual(post.call_count, 2)
+        self.assertEqual(trace['planning_requests'], 2)
+        self.assertEqual(runtime.workflow.backend.calls, ['detect_fov_initial'])
+        self.assertEqual(trace['observation_requests'], 0)
+        self.assertFalse(any(e['phase'] in {'planning_retry', 'planning_error'} for e in trace['events']))
+        rejection = next(e for e in trace['events'] if e['phase'] == 'parallel_observation_rejected')
+        self.assertTrue(rejection['selected_action_preserved'])
+        self.assertEqual(rejection['new_planning_requests'], 0)
+        first = next(e for e in trace['events'] if e['phase'] == 'thought')
+        self.assertEqual(first['tool'], 'detect_fov_initial')
+        self.assertEqual(first['choice_normalization']['relocated_fields'], ['parallel_observation_id'])
 
     def test_actual_llm_payload_uses_primary_goal_selector_and_maps_back(self):
         c=self.context(self.detected(),semantic_options=[{'old':'duplicate'}],semantic_goal_contract={})
@@ -117,7 +186,7 @@ class PlanningChoicesTests(unittest.TestCase):
         def post(payload,timeout):
             ctx=json.loads(payload['messages'][1]['content'])
             yolo=next(a for a in ctx['actions'] if a['tool']=='detect_fov_initial')
-            self.assertIn('scene_check',{a['tool'] for a in ctx['actions']})
+            self.assertNotIn('scene_check',{a['tool'] for a in ctx['actions']})
             self.assertEqual(ctx['action_state'][yolo['action_id']],
                              {'image_id':image,'entry_kind':'discovery'})
             self.assertEqual(ctx['evidence']['workflow']['candidate_audit'],audit)
@@ -195,13 +264,45 @@ class PlanningChoicesTests(unittest.TestCase):
         t=self.run_agent(r,Planner());self.assertEqual(t['planning_requests'],1)
         self.assertEqual(r.workflow.backend.calls,before)
 
+    def test_scene_is_optional_and_limited_to_evidence_view_and_consumer(self):
+        other = self.root / 'second.png'
+        other.write_bytes(b'second-fov')
+        r = WorkflowRuntime([self.image, other], root=self.root/'task', sample_id='sample',
+            a={'status':'ok', 'fold_rankings':[[{'label':'猪苓','probability':.9}]] * 5},
+            workflow_config={'agent_policy':'adaptive_v2'}, simulation=True, backend=fixtures.StageFixture())
+        image = next(iter(r.images))
+        for tool in ('detect_fov_initial', 'classify_target', 'segment_instance', 'measure_instances'):
+            r.workflow.execute(next(a for a in r.workflow.propose() if a['tool'] == tool
+                and (tool != 'detect_fov_initial' or a['args']['target_id'] == image)))
+        menu = self.context(r)
+        action, = (a for a in menu['actions'] if a['tool'] == 'scene_check')
+        self.assertFalse(action['mandatory'])
+        self.assertEqual(action['args']['image_id'], image)
+        expected = [{'candidate_id':'猪苓', 'feature_id':'single_crystal', 'attributes':['abundance']}]
+        self.assertEqual(menu['action_state'][action['action_id']]['scene_criteria'], expected)
+        wire, ids = model_view(menu)
+        short = next(key for key, value in ids.items() if value == action['action_id'])
+        self.assertEqual(wire['action_state'][short]['scene_criteria'], expected)
+        self.assertNotIn('scene_criteria', next(a for a in wire['actions'] if a['action_id'] == short))
+
+        seen = []
+        class Planner:
+            def choose(inner, context):
+                seen.append(context)
+                return {'action_id':action['action_id'] if len(seen) == 1 else 'review'}, None
+        trace = self.run_agent(r, Planner(), FixtureBackend({'scene_check': TimeoutError('offline')}))
+        self.assertEqual(trace['stop_reason'], 'planner_request_review')
+        self.assertTrue(trace['mandatory_complete'])
+        self.assertNotIn('mandatory_context_incomplete', trace['finish_veto'])
+        self.assertEqual(len(trace['observations']), 1)
+
     def test_explicit_scene_presence_set_overlaps_and_preserves_partial_failure(self):
         r=self.detected(max_parallel=2,max_observations=4,max_api_calls=30)
         r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='classify_target'))
         r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='segment_instance'))
         r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='measure_instances'))
         r.a={'status':'ok','fold_rankings':[[{'label':'白芍','probability':.4},
-            {'label':'秦皮','probability':.3},{'label':'茯苓','probability':.3}]]*5}
+            {'label':'秦皮','probability':.3},{'label':'猪苓','probability':.3}]]*5}
         seen=[];barrier=threading.Barrier(2);called=[]
         class Backend:
             def call(inner,runtime,a,path):
@@ -232,11 +333,58 @@ class PlanningChoicesTests(unittest.TestCase):
                 return {'decision':{'kind':'action','action_id':'review'}},None
         t=self.run_agent(r,Planner());self.assertEqual(t['observation_requests'],0)
 
+    def test_group_rechecks_feedback_before_dispatching_next_wave(self):
+        for outcome, expected in [('absent', 3), ('positive', 2), ('failed', 2), ('uncertain', 2)]:
+            with self.subTest(outcome=outcome):
+                root = self.root/outcome
+                r = WorkflowRuntime([self.image], root=root/'flow', sample_id='sample',
+                    a={'fold_rankings':[[{'label':'大青叶','probability':.5},
+                                         {'label':'秦皮','probability':.4}]]*5, 'status':'ok'},
+                    workflow_config={'agent_policy':'adaptive_v2','observation_group_execution':True,
+                                     'max_parallel':4, 'max_observations':4}, simulation=True)
+                pair = threading.Barrier(2)
+                first_wave = []
+                contexts = []
+                class Planner:
+                    def choose(inner, context):
+                        contexts.append(context)
+                        if len(contexts)>1:
+                            return {'action_id':'review'}, None
+                        menu = context['execution_options']
+                        self.assertEqual(menu['observation_wave_size'], 2)
+                        by_feature = {q['feature_id']:q for q in menu['questions'] if q['tool']=='presence_check'}
+                        qs = [by_feature[f] for f in ('stoma','epidermis_cell','indigo_crystal')]
+                        self.assertEqual(len(qs), 3)
+                        first_wave.extend(q['action_id'] for q in qs[:2])
+                        return {'decision':{'kind':'observe_questions',
+                                            'question_ids':[q['question_id'] for q in qs]}}, None
+                class Backend:
+                    def call(inner, runtime, action, path):
+                        if action['action_id'] in first_wave:
+                            pair.wait(timeout=5)
+                        first = action['action_id'] == first_wave[0]
+                        if first and outcome=='failed':
+                            raise TimeoutError()
+                        return {'ok':True, 'present':first and outcome=='positive',
+                                'conf':.3 if first and outcome=='uncertain' else .9, 'reason':'offline'}, None
+                ledger = root/'obs.json'
+                box = LocalToolbox(r, ledger_path=ledger, backend=Backend())
+                trace = asyncio.run(run_react(r,box,planner=Planner(),planner_mode='scripted',max_steps=8))
+                summary = trace['last_observation_group']
+                self.assertEqual(contexts[1]['last_observation_group'], summary)
+                self.assertEqual(summary['issued']+summary['unissued'], summary['selected'])
+                self.assertEqual(len(summary['issued']), expected)
+                self.assertEqual(trace['planning_requests'], 2)
+                self.assertEqual(set(read_json(ledger)['entries']), set(summary['issued']))
+                self.assertEqual(read_json(r.workflow.budget_path)['used']['observation'], expected)
+                self.assertEqual(sum(o['accepted'] for o in trace['observations']), expected-int(outcome=='failed'))
+
     def test_unknown_duplicate_or_mixed_selector_never_guesses_first(self):
         c={'actions':[],'execution_options':{'questions':[{'question_id':'q','action_id':'a'}],'max_questions':2}}
         values=[{'decision':{'kind':'instance_goal','goal_id':'missing'}},
                 {'decision':{'kind':'observe_questions','question_ids':['q','q']}},
                 {'decision':{'kind':'observe_questions','question_ids':['future']}},
+                {'decision':{'kind':'observe_questions','question_ids':['q']}, 'observation_ids':['a','forged']},
                 {'decision':{'kind':'action','action_id':'a'},'action_id':'different'}]
         for v in values:
             with self.subTest(v=v),self.assertRaises(IntegrationError):decode(v,c)
@@ -354,10 +502,41 @@ class PlanningChoicesTests(unittest.TestCase):
         with self.assertRaises(IntegrationError) as caught:
             decode(reply, ctx)
         self.assertEqual(caught.exception.code, 'PLANNER_QUESTION_UNAVAILABLE')
+
         decoded = decode({'decision': {'kind': 'action', 'action_id': 'A1'}}, ctx)
         self.assertEqual(decoded['action_id'], 'A1')
         self.assertNotIn('physical_partner_ids', decoded)
 
+    def test_wire_distinguishes_authorization_limit_from_wave_width(self):
+        actions = [{'action_id':str(i),'tool':'presence_check'} for i in range(3)]
+        questions = [{'question_id':f'physical-{i}','action_id':str(i)} for i in range(3)]
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.client = SimpleNamespace(model='fixture', timeout_s=1)
+        planner.config = {}
+        for width, limit, reply_ids in [(2,3,['Q2','Q3','Q1']), (2,3,['Q2','Q3']),
+                                        (1,2,['Q2','Q1']), (2,2,['Q2']), (None,2,['Q2'])]:
+            with self.subTest(width=width, limit=limit, ids=reply_ids):
+                opts = {'goals':[], 'questions':questions, 'max_questions':limit}
+                if width:
+                    opts['observation_wave_size'] = width
+                ctx = {'actions':actions,'execution_options':opts,'stop_advisory':{}}
+                decision = {'kind':'observe_questions','question_ids':reply_ids}
+                body = {'choices':[{'message':{'content':json.dumps({'decision':decision})}}]}
+                with patch('TCM_Fusion.lib.runtime.hard_calls.post', return_value=body) as post:
+                    decoded, _ = planner.choose(ctx)
+                self.assertEqual(post.call_count, 1)
+                system,user = post.call_args.args[0]['messages']
+                menu = json.loads(user['content'])['execution_options']
+                if width and limit>width:
+                    self.assertIn(f'一次授权1至{limit}题，每批最多执行{width}题', menu['choice_note'])
+                    self.assertIn('只选部分或直接复核',menu['choice_note'])
+                    self.assertIn('Q乙',system['content'])
+                else:
+                    self.assertNotIn('Q乙',system['content'])
+                self.assertEqual(decoded['execution_choice']['requested']['question_ids'],reply_ids)
+                self.assertEqual(decoded['action_id'],'1')
+                if width and len(reply_ids)>width:
+                    self.assertEqual(decoded['observation_ids'],[str(int(q[1:])-1) for q in reply_ids])
     def test_invalid_llm_choice_retains_real_usage_and_safe_diagnostic(self):
         c=self.context(self.detected());p=LLMPlanner.__new__(LLMPlanner)
         p.client=SimpleNamespace(model='fixture',timeout_s=1);p.config={}

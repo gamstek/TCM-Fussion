@@ -473,6 +473,7 @@ class WorkflowRuntime(EvidenceRuntime):
                 continue
             crop = artifacts.get((value.get('parents') or [''])[0], {})
             alias = crop.get('reclassified_from') or value.get('identity_basis') == 'reclassified_crop'
+            visual = doc.get('visual_identity')
             rows.append({'crop_id': value.get('crop_id') if alias else (doc.get('crop_id') or value.get('crop_id')),
                          'classification_id': value['id'], 'image_id': value.get('image_id'),
                          'tool': value.get('classification_tool'),
@@ -484,7 +485,8 @@ class WorkflowRuntime(EvidenceRuntime):
                          'yolo_confidence': doc.get('yolo_confidence'),
                          'reason': str(doc.get('reason') or ''),
                          'confidence_score': doc.get('confidence_score'),
-                         'identity_verified': bool(value.get('identity_verified'))})
+                         'identity_verified': bool(value.get('identity_verified')),
+                         **({'visual_identity': visual} if visual else {})})
         return rows
 
     def provisional_state(self, decision):
@@ -678,7 +680,8 @@ class WorkflowRuntime(EvidenceRuntime):
             result['workflow']['identity_pending']=None
         # 类别复核结论单独列出：规划器据此决定是否重分割/重检，规则分不受其直接改写。
         result['workflow']['classifications']=[{'crop_id':v.get('crop_id'),'feature_id':v.get('feature_id'),
-                                                 'label':v.get('label'),
+                                                 'label':v.get('label'), 'reject':v.get('reject'),
+                                                 'requested_feature_id':v.get('requested_feature_id'),
                                                  'identity_verified':v.get('identity_verified')}
             for v in self.workflow.store.current()['artifacts'].values()
             if v['valid'] and v['kind']=='classification']

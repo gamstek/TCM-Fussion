@@ -22,6 +22,31 @@ from TCM_Fusion.lib.workflow.workflow_backend import WorkflowBackend
 POOLS = {'detect_fov_initial': 'initialization', 'classify_target': 'observation'}
 
 
+def epoch_timings(operations):
+    """按物理组汇总准备阶段的实测区间。缺时间的分支单独计数。"""
+    groups = {}
+    for row in operations.values():
+        if row.get('epoch'):
+            groups.setdefault(row['epoch'], []).append(row)
+    summaries = []
+    for epoch, rows in groups.items():
+        intervals = sorted((r['started_at'], r['returned_at']) for r in rows
+                           if isinstance(r.get('started_at'), (int, float))
+                           and isinstance(r.get('returned_at'), (int, float))
+                           and r['returned_at'] >= r['started_at'])
+        union = total = 0.0
+        until = None
+        for start, end in intervals:
+            total += end - start
+            union += max(0, end - max(start, until)) if until is not None else end - start
+            until = end if until is None else max(until, end)
+        summaries.append({'epoch': epoch, 'branches': len(rows), 'timed_branches': len(intervals),
+                          'accepted': sum(r.get('accepted') is True for r in rows),
+                          'branch_seconds': round(total, 6), 'union_seconds': round(union, 6),
+                          'overlapping_branch_seconds': round(total - union, 6)})
+    return summaries
+
+
 @contextmanager
 def locked(session):
     handle = acquire(session.operations)

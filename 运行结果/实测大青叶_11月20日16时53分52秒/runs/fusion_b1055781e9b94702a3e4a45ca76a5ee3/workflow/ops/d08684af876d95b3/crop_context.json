@@ -1,0 +1,7 @@
+{
+  "tool": "detect_fov_initial",
+  "source": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\view_01.tif",
+  "output": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\runs\\fusion_b1055781e9b94702a3e4a45ca76a5ee3\\workflow\\ops\\d08684af876d95b3\\detection",
+  "boxes": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日16时53分52秒\\runs\\fusion_b1055781e9b94702a3e4a45ca76a5ee3\\workflow\\ops\\d08684af876d95b3\\boxes.json",
+  "feature_crop_policy": "structure_v1"
+}

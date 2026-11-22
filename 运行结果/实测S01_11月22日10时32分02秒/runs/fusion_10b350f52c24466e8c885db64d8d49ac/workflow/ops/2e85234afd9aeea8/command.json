@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "D:\\TCM_Fusion\\.venv\\yolo\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "-m",
+    "TCM_Fusion.cli.yolo_worker",
+    "--context",
+    "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日10时32分02秒\\runs\\fusion_10b350f52c24466e8c885db64d8d49ac\\workflow\\ops\\2e85234afd9aeea8\\yolo_crop.json"
+  ],
+  "timeout_seconds": 180.0
+}

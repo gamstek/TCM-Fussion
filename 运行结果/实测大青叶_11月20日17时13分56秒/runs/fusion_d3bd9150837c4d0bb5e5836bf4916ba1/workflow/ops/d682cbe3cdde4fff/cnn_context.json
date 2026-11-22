@@ -1,0 +1,178 @@
+{
+  "crops": [
+    {
+      "id": "crop:img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2:cluster_crystal_view_02_glmbe5031e14d98_01",
+      "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e955bc84bb928ec9\\scan\\crops\\cluster_crystal_view_02_glmbe5031e14d98_01.png",
+      "box_local": [
+        0,
+        0,
+        466,
+        534
+      ]
+    },
+    {
+      "id": "crop:img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2:cluster_crystal_view_02_glmbe5031e14d98_02",
+      "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e955bc84bb928ec9\\scan\\crops\\cluster_crystal_view_02_glmbe5031e14d98_02.png",
+      "box_local": [
+        0,
+        0,
+        336,
+        372
+      ]
+    },
+    {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm220f18619613_01",
+      "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e35466df7c38b3a1\\scan\\crops\\cluster_crystal_view_01_glm220f18619613_01.png",
+      "box_local": [
+        0,
+        0,
+        508,
+        416
+      ]
+    },
+    {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm53e654d2ac88_01",
+      "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e35466df7c38b3a1\\scan\\crops\\cluster_crystal_view_01_glm53e654d2ac88_01.png",
+      "box_local": [
+        0,
+        0,
+        596,
+        308
+      ]
+    },
+    {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm53e654d2ac88_02",
+      "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e35466df7c38b3a1\\scan\\crops\\cluster_crystal_view_01_glm53e654d2ac88_02.png",
+      "box_local": [
+        0,
+        0,
+        572,
+        345
+      ]
+    },
+    {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3b0dbe5d21c0_01",
+      "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\87500bb17ffede33\\scan\\crops\\epidermis_cell_view_01_glm3b0dbe5d21c0_01.png"
+    },
+    {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glmbe5031e14d98_01",
+      "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\87500bb17ffede33\\scan\\crops\\epidermis_cell_view_01_glmbe5031e14d98_01.png"
+    }
+  ],
+  "weights": "D:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+  "meta": "D:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+  "signature": {
+    "schema": "stage2-request/v2",
+    "profile": {
+      "weights": "D:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+      "meta": "D:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+      "metadata": {
+        "arch": "resnet18",
+        "imgsz": 320,
+        "input_mode": "letterbox",
+        "classes": [
+          "00_cluster_crystal",
+          "01_single_crystal",
+          "02_needle_crystal",
+          "03_vessel",
+          "04_stone_cell",
+          "05_starch_grain",
+          "06_non_glandular_hair",
+          "07_secretory_tissue",
+          "08_stoma",
+          "09_epidermis_cell",
+          "10_hypha",
+          "11_fiber",
+          "12_pollen_grain",
+          "13_other"
+        ],
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ],
+        "checkpoint": "best.pt"
+      },
+      "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+      "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+      "preprocessor_sha256": "5c878d3bd6458542e7509849e4695cfbc89f090a63871cd06563f30bb9978d71",
+      "adapter_sha256": "24c47e9e6f2a53abe0de60f4d1745964848429deda00e00e74599caafaab0dd4"
+    },
+    "crops": [
+      {
+        "id": "crop:img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2:cluster_crystal_view_02_glmbe5031e14d98_01",
+        "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e955bc84bb928ec9\\scan\\crops\\cluster_crystal_view_02_glmbe5031e14d98_01.png",
+        "sha256": "04514a624c4c88659a456edc1f488b80dbfe1aa9f15e23f99b0c78db7f5e75ae",
+        "box_local": [
+          0,
+          0,
+          466,
+          534
+        ]
+      },
+      {
+        "id": "crop:img_0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2:cluster_crystal_view_02_glmbe5031e14d98_02",
+        "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e955bc84bb928ec9\\scan\\crops\\cluster_crystal_view_02_glmbe5031e14d98_02.png",
+        "sha256": "50418265ad1a9e8df07d79cbb1162ba1825836d530e1beebe188d31e45fd41f8",
+        "box_local": [
+          0,
+          0,
+          336,
+          372
+        ]
+      },
+      {
+        "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm220f18619613_01",
+        "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e35466df7c38b3a1\\scan\\crops\\cluster_crystal_view_01_glm220f18619613_01.png",
+        "sha256": "3dd5c220a891e547fac9744c61a2f0e56c0676cd6124201394e6f96fdcc480eb",
+        "box_local": [
+          0,
+          0,
+          508,
+          416
+        ]
+      },
+      {
+        "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm53e654d2ac88_01",
+        "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e35466df7c38b3a1\\scan\\crops\\cluster_crystal_view_01_glm53e654d2ac88_01.png",
+        "sha256": "054ccdadc55d7f1eb9764871dc075bf0b6c40d6857010491033740f458bacee2",
+        "box_local": [
+          0,
+          0,
+          596,
+          308
+        ]
+      },
+      {
+        "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:cluster_crystal_view_01_glm53e654d2ac88_02",
+        "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e35466df7c38b3a1\\scan\\crops\\cluster_crystal_view_01_glm53e654d2ac88_02.png",
+        "sha256": "054354d2b32da8898d7f9ec29f3c65eebdf66918979727a1f707fc38a0243168",
+        "box_local": [
+          0,
+          0,
+          572,
+          345
+        ]
+      },
+      {
+        "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3b0dbe5d21c0_01",
+        "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\87500bb17ffede33\\scan\\crops\\epidermis_cell_view_01_glm3b0dbe5d21c0_01.png",
+        "sha256": "19297f170a4ed1874ad0aa8ac180e9805eba0b3f62ffa53cd9f8e8047ed30d02"
+      },
+      {
+        "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glmbe5031e14d98_01",
+        "png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\87500bb17ffede33\\scan\\crops\\epidermis_cell_view_01_glmbe5031e14d98_01.png",
+        "sha256": "066c40b2581941196ec28e13600622fa7eeaabe5657865b8904ca742dca0628f"
+      }
+    ],
+    "python": "D:\\TCM_Fusion\\.venv\\yolo\\Scripts\\python.exe",
+    "python_sha256": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702"
+  },
+  "output": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\cnn\\predictions.json",
+  "batch_size": 16
+}

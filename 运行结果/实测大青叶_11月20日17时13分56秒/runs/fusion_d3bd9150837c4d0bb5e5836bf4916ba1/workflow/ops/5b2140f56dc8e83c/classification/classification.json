@@ -1,0 +1,126 @@
+{
+  "label": "身份待定",
+  "reject": "unreadable",
+  "raw_label": "图像不可判",
+  "feature_id": "",
+  "second": "",
+  "confidence": "low",
+  "reason": "身份待定，目标图未报告可定位的鉴别结构",
+  "source": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_01.tif",
+  "focus": 151.1,
+  "sent_hw": [
+    364,
+    768
+  ],
+  "granularity": "clump",
+  "visual_input": {
+    "cnn_top2": [
+      {
+        "feature_id": "other",
+        "prob": 0.746138334274292
+      },
+      {
+        "feature_id": "vessel",
+        "prob": 0.05700097605586052
+      }
+    ],
+    "cnn_margin": 0.6891373582184315,
+    "margin_limit": 0.15,
+    "box_source": "glm",
+    "crop_feature": "cluster_crystal",
+    "detector_conflict": null,
+    "positive_feature": "cluster_crystal",
+    "negative_feature": null,
+    "selection_basis": "no_close_alternative",
+    "bank_sha256": "2db0f56b85ebf212e726c2eb3626a0273559f3f68633ac41e0cecf7c5b0aa6f1",
+    "references": [],
+    "fallback": "no_close_alternative",
+    "mode": "target_only",
+    "baseline_hw": [
+      364,
+      768
+    ],
+    "native_hw": [
+      260,
+      548
+    ],
+    "target_box_px": [
+      0,
+      0,
+      768,
+      364
+    ]
+  },
+  "visual_identity": {
+    "status": "pending",
+    "reported_reason": "结构模糊，未见放射晶棱等鉴别特征"
+  },
+  "confidence_score": 0.3,
+  "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+  "crop_id": "cluster_crystal_view_01_glm53e654d2ac88_01",
+  "crop_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e35466df7c38b3a1\\scan\\crops\\cluster_crystal_view_01_glm53e654d2ac88_01.png",
+  "glm_confidence": "low",
+  "yolo_confidence": null,
+  "yolo_checked": true,
+  "confidence_source": "glm",
+  "cnn_score": 0.746138334274292,
+  "cnn_entropy": 0.432530285572557,
+  "cnn_topk": [
+    {
+      "class": "13_other",
+      "feature_id": "other",
+      "prob": 0.746138334274292
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.05700097605586052
+    },
+    {
+      "class": "10_hypha",
+      "feature_id": "hypha",
+      "prob": 0.04408334195613861
+    }
+  ],
+  "cnn_model_signature": {
+    "weights": "D:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+    "meta": "D:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+    "metadata": {
+      "arch": "resnet18",
+      "imgsz": 320,
+      "input_mode": "letterbox",
+      "classes": [
+        "00_cluster_crystal",
+        "01_single_crystal",
+        "02_needle_crystal",
+        "03_vessel",
+        "04_stone_cell",
+        "05_starch_grain",
+        "06_non_glandular_hair",
+        "07_secretory_tissue",
+        "08_stoma",
+        "09_epidermis_cell",
+        "10_hypha",
+        "11_fiber",
+        "12_pollen_grain",
+        "13_other"
+      ],
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "checkpoint": "best.pt"
+    },
+    "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+    "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+    "preprocessor_sha256": "5c878d3bd6458542e7509849e4695cfbc89f090a63871cd06563f30bb9978d71",
+    "adapter_sha256": "24c47e9e6f2a53abe0de60f4d1745964848429deda00e00e74599caafaab0dd4"
+  },
+  "cnn_fallback_reason": "low_confidence_or_other"
+}

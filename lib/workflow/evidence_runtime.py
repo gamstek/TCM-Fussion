@@ -18,8 +18,11 @@ from pathlib import Path
 
 import paths
 import scene_attributes
-from TCM_Fusion.lib.evidence.evidence_projection import recent_localizations
-from rule_engine import EvidenceCard, KnowledgeBase, pool_evidence
+from TCM_Fusion.lib.evidence.evidence_projection import recent_localizations, supports_criterion
+from rule_engine import (
+    EvidenceCard, KnowledgeBase, pool_evidence,
+    SCENE_INTRA_KEYWORDS, SCENE_FREE_KEYWORDS, SCENE_ROW_KEYWORDS, SCENE_SCATTER_KEYWORDS,
+)
 from TCM_Fusion.lib.decision.rule_scoring import decide
 
 from TCM_Fusion.lib.tools.tool_registry import ToolRegistry
@@ -90,12 +93,13 @@ class EvidenceRuntime:
             mutable=True,
         )
 
-    def _score_rules(self, observations, threshold):
+    def _score_rules(self, observations, threshold, *, records=None):
         from TCM_Fusion.lib.evidence.evidence_projection import presence_state
 
-        cards = pool_evidence(self.records)
+        records = self.records if records is None else records
+        cards = pool_evidence(records)
         instance_features = {fid for fid, card in cards.items() if card.present}
-        scene = scene_attributes.build_scene(self.records)
+        scene = scene_attributes.build_scene(records)
         answers = []
         injected = set()
         presence_questions = {}
@@ -151,20 +155,64 @@ class EvidenceRuntime:
         """Legacy evidence-only reads; workflow adds physical and control revisions."""
         return state['evidence_digest']
 
+    def _scene_choices(self, scored, candidates, attempted):
+        """Offer one observation per implicated view when a supported criterion can use it."""
+        checks = {(row["id"], check["feature_id"])
+                  for row in scored["decision"]["ranking"]
+                  for check in row["checks"]
+                  if check["role"] == "required" and supports_criterion(check)}
+        image_by_stem = {stem: identifier for identifier, image in self.images.items()
+                         for stem in image["stems"]}
+        consumers = {}
+        for candidate in candidates:
+            for criterion in candidate["criteria"]:
+                feature = criterion["feature"]
+                # The existing visual tool describes calcium crystal context. Its
+                # capability alone cannot authorize an observation or count as support.
+                if (criterion["role"] != "required" or feature not in scene_attributes.CRYSTAL_FEATURES
+                        or (candidate["id"], feature) not in checks):
+                    continue
+                morph = criterion.get("morph") or ""
+                attributes = []
+                if any(key in morph for key in (*SCENE_INTRA_KEYWORDS, *SCENE_FREE_KEYWORDS)):
+                    attributes.append("crystal_location")
+                if any(key in morph for key in (*SCENE_ROW_KEYWORDS, *SCENE_SCATTER_KEYWORDS)):
+                    attributes.append("arrangement")
+                if criterion.get("abundance"):
+                    attributes.append("abundance")
+                if not attributes:
+                    continue
+                card = scored["cards"][feature]
+                related = {stem.removeprefix("agent:") if stem.startswith("agent:")
+                           else image_by_stem.get(stem)
+                           for stem, _ in (*card.instance_refs, *card.uncal_refs) if isinstance(stem, str)}
+                for identifier in sorted(related.intersection(self.images)):
+                    consumers.setdefault(identifier, []).append({
+                        "candidate_id": candidate["id"], "feature_id": feature,
+                        "attributes": attributes,
+                    })
+        actions = []
+        for identifier, criteria in consumers.items():
+            action = self.action("scene_check", {"image_id": identifier}, "scene_context")
+            if action["action_id"] not in attempted:
+                actions.append({**action, "scene_criteria": criteria})
+        return actions
+
     def _legacy_proposals(self, state):
         scored = self.score(state.get("observations", []))
         cards, decision = scored["cards"], scored["decision"]
         attempted = set(state.get("attempted", []))
         actions = []
-        crystal = any(fid in scene_attributes.CRYSTAL_FEATURES and c.present for fid,c in cards.items())
-        if crystal:
+        workflow = getattr(self, "workflow", None)
+        adaptive = workflow is not None and workflow.config.get("agent_policy") == "adaptive_v2"
+        if not adaptive and any(fid in scene_attributes.CRYSTAL_FEATURES and c.present
+                                for fid, c in cards.items()):
             for identifier in sorted(self.images):
                 action = self.action("scene_check", {"image_id": identifier}, "scene_context", mandatory=True)
                 if action["action_id"] not in attempted:
                     actions.append(action)
-            workflow = getattr(self, "workflow", None)
-            if actions and not (workflow and workflow.config.get("agent_policy") == "adaptive_v2"):
-                return actions  # 场景必查先行，不让LLM绕开
+            if actions:
+                return actions  # 原模式的历史回放保留原动作。
         candidates = {c["id"]: c for c in self.kb.candidates()}
         # 原排名含大量零支持候选；它们不能仅凭并列占位触发无关补查。
         selected_ids = [r["id"] for r in decision.get("ranking", [])
@@ -176,6 +224,8 @@ class EvidenceRuntime:
             if aid in candidates and aid not in selected_ids:
                 selected_ids.append(aid)
         selected = [candidates[x] for x in selected_ids if x in candidates]
+        if adaptive:
+            actions.extend(self._scene_choices(scored, selected, attempted))
         required_sets = [{c["feature"] for c in row["criteria"] if c["role"] == "required"} for row in selected]
         common = set.intersection(*required_sets) if required_sets else set()
         workflow = getattr(self, 'workflow', None)

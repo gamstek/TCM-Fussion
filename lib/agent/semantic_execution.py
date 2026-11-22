@@ -20,7 +20,7 @@ import contracts
 
 from TCM_Fusion.lib.evidence.instance_ledger import describe
 from TCM_Fusion.lib.evidence.search_ledger import scan_coverage
-from TCM_Fusion.lib.agent.problem_goals import candidates, qualified_facts, single_granularity
+from TCM_Fusion.lib.agent.problem_goals import candidates, qualified_facts
 from TCM_Fusion.lib.evidence.purpose_evidence import dimension_use
 from TCM_Fusion.lib.runtime.storage import digest, file_hash, IntegrationError, read_json, finite_number, reusable_reads
 from TCM_Fusion.lib.tools.tool_registry import validate_arguments
@@ -275,7 +275,7 @@ def next_action(runtime, plan, state):
         return None, 'dimension_not_qualified'
     identity_ok = bool(identity.get('valid') and identity.get('identity_verified')
                        and identity.get('feature_id') == meta.feature_id)
-    if scope and identity_ok and not single_granularity(identity):
+    if (scope or plan.get('dimension')) and identity_ok and workflow.crop_granularity(crop, meta) != 'instance':
         return None, 'granularity_not_qualified'
     seg = arts.get('seg:'+crop['id'], {})
     measure = arts.get('measurement:seg:'+crop['id'], {})

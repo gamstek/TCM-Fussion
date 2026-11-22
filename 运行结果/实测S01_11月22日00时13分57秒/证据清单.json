@@ -1,0 +1,22 @@
+{
+  "baseline_trace_sha256": "a6e9d08172c28452c6e19fff5b657ec2bdbf9d76853ad8ea7afb1e4ade36b606",
+  "sha256": {
+    "input_proof.json": "47c9b0007b2b422cd6e4e7d648a5375a9bee719653533a85979274b3705506e1",
+    "config.json": "0aa6b82429101c9a04277863cea0567e95baa85f3c26d61bbc0275ea4f9e574a",
+    "doctor.json": "843ae0c82973002bebbec251e6ecac58760511a2f176710a4d95c2dea0721a95",
+    "interface_status.json": "6325ca556368a221a973b59eb0cc4c0f4688853557ef19a1afc70be09a779bdf",
+    "运行摘要.md": "cd6c73d950dd5094e141f4e898f502474a9f3618b0358521f531e4d5899e486c",
+    "同图对照.json": "95d57981d13103c148a9fbcf9bdfb3b1d5aa93a46c713e6095cb02b50ba49944",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/a_prediction.json": "18c0dd4b71ac996d6ec3159d716b0aadce11a9f29fc71d8977d53181cd0e7c3f",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/agent_trace.json": "709acdd5b5d7d42773df0b3091c1e93793a0064b66f42159952adcd92e8e1e64",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/agent_tool_ledger.json": "f3cb667b55fc9240a26effc2f2d3ac0c7d591eb7bbd623949f21fca74cc9ee3e",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/workflow/operations.json": "aa27e69e5dffe391abe9e998e91c4ed9c1be5aa658f92819aab813ca2f09e73e",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/workflow/resources.json": "bf40cfcb14f3819fbe96faf8087c297b05f34775179646b54a002cf0c1b545d3",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/final_evidence.json": "2d6e5636705decf8fdd66d7863f452624e294e0ef5b02fdb2f27b5ccabda1225",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/final_assessment.json": "e87a140d933329b3f503b362235ef33b24ae6ceeb1b1ae8d6037ce9e327235a1",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/output.json": "52ede5e03edfa61f926fd6aa362ab76b443fe4d44bebe111297a120afdc0e3fd",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/report.md": "db7ae7700bb46a79adf6b81485b80f573b296e682f19beeb21ceed736c4e2f6d",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/code_signature_start.json": "c2c6daa531215d6eb48719fd720a56b9d50125de8c57a56baf9bea85aa9cf548",
+    "runs/fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab/code_signature_end.json": "2397059870836005fbb9bb22c589daff53033272d7ec386a107762a5c243c5ff"
+  }
+}

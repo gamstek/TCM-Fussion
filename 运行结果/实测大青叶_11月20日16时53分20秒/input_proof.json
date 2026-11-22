@@ -1,0 +1,28 @@
+{
+  "views": [
+    {
+      "source": "D:\\TCM_Fusion\\dataset\\大青叶四图(压力测试)\\20240328.tif",
+      "sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "view": "view_01.tif"
+    },
+    {
+      "source": "D:\\TCM_Fusion\\dataset\\大青叶四图(压力测试)\\20240364.tif",
+      "sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+      "view": "view_02.tif"
+    },
+    {
+      "source": "D:\\TCM_Fusion\\dataset\\大青叶四图(压力测试)\\9.jpg",
+      "sha256": "6cf5fd50fc221556b4aecfa665711a10ab394d338f7ed00688467e79b5fb6984",
+      "view": "view_03.jpg"
+    },
+    {
+      "source": "D:\\TCM_Fusion\\dataset\\大青叶四图(压力测试)\\D20200712.jpg",
+      "sha256": "de7f4c5fee4f585476d7b316e1674cb1fe73e14b5a424c86db7623d4bca439ad",
+      "view": "view_04.jpg"
+    }
+  ],
+  "reference_excluded_from_agent": true,
+  "previous_visual_artifacts_reused": false,
+  "a_cache_reused": false,
+  "same_physical_specimen_verified": false
+}

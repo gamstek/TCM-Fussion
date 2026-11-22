@@ -1,0 +1,13 @@
+{
+  "schema": "multi-view-interface/v1",
+  "dry_run": false,
+  "kind": "实测",
+  "subject": "S01",
+  "purpose": "同图新版原图观察分组对照",
+  "view_count": 1,
+  "started_at": "2026-11-22T00:13:57.394136+08:00",
+  "base": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒",
+  "stage": "done",
+  "status": "completed",
+  "directory": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab"
+}

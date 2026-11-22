@@ -2,12 +2,15 @@
 
 离线数据划分、回放、评估、优化与发布。由 cli.offline 进入。
 
+顺序身份组按实际派发的子动作归属于同一次规划。回合收益计入已执行成员，提前交回的未派发项没有工具执行记录。离线 trace 投影使用晚绑定后的动作 ID 关联规划回合。
+
 | 文件 | 阅读指引 |
 | --- | --- |
 | [ablation_evaluation.py](ablation_evaluation.py) | B0—B3 既有报告的配对评估与用途资格误拦/误放统计，不生成观察、不泄漏答案。 |
 | [paired_schedule.py](paired_schedule.py) | `schedule-compare` 按同序原图摘要、配置和代码签名配对 D4 关闭与开启的冷启动实跑，逐项记录判据、决策、停止和已知 token。可另附一个历史运行。 |
 | [confidence_gate.py](confidence_gate.py) | 离线温度缩放与冻结策略的风险验证：真实放行只消费通过复验的版本，不自动造真值。 |
 | [dataset_split.py](dataset_split.py) | 按 group_key 做确定性的训练/开发/测试划分，只产出数据清单，不推断标签。 |
+| [langsmith_trace.py](langsmith_trace.py) | 只读投影规划、视野回执和正式交付证据，向 LangSmith 提交实时调用或完整历史回放。 |
 | [outcome_evaluation.py](outcome_evaluation.py) | 运行后的独立真值评估：把轨迹结论与外部参考标签配对，不用模型自评充当真值。 |
 | [prompt_optimization.py](prompt_optimization.py) | LangMem 离线提示优化与封闭工具回放：发布显式版本，在线只加载提示。 |
 | [recorded_tools.py](recorded_tools.py) | 提示验证共享的观察回放接口，校验动作身份与录制冲突。 |

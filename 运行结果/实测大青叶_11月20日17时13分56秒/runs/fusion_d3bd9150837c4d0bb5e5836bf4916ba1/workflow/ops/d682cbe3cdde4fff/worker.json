@@ -1,0 +1,43 @@
+{
+  "tool": "classify_target",
+  "crop_id": "cluster_crystal_view_02_glmbe5031e14d98_02",
+  "crop_json": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e955bc84bb928ec9\\scan\\crops\\cluster_crystal_view_02_glmbe5031e14d98_02.json",
+  "crop_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\e955bc84bb928ec9\\scan\\crops\\cluster_crystal_view_02_glmbe5031e14d98_02.png",
+  "source": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\view_02.tif",
+  "tight_box": [
+    922,
+    821,
+    1114,
+    1037
+  ],
+  "output": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\d682cbe3cdde4fff\\classification",
+  "identity_review": {
+    "cnn_top2": [
+      {
+        "feature_id": "other",
+        "prob": 0.6885132789611816
+      },
+      {
+        "feature_id": "secretory_tissue",
+        "prob": 0.043056000024080276
+      }
+    ],
+    "cnn_margin": 0.6454572789371014,
+    "margin_limit": 0.15,
+    "box_source": "glm",
+    "crop_feature": "cluster_crystal",
+    "detector_conflict": null,
+    "positive_feature": "cluster_crystal",
+    "negative_feature": null,
+    "selection_basis": "no_close_alternative",
+    "bank_sha256": "2db0f56b85ebf212e726c2eb3626a0273559f3f68633ac41e0cecf7c5b0aa6f1",
+    "references": [],
+    "fallback": "no_close_alternative"
+  },
+  "tight_box_local": [
+    24,
+    24,
+    312,
+    348
+  ]
+}

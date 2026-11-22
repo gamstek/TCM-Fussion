@@ -1,0 +1,164 @@
+{
+  "identity": "b99113f0248784ea42adb8be057ebf69ad90e75bfdcbd20c61cf34d10d34a32a",
+  "kb_sha256": "471f1e53ae0a8c1b2eb265e5450fe06ed608d95499bc41044c4f9ab9cc318df3",
+  "ids": [
+    "滑石",
+    "雄黄",
+    "大青叶",
+    "穿心莲",
+    "乌梅",
+    "秦皮"
+  ],
+  "hypotheses": {
+    "滑石": {
+      "status": "investigating",
+      "reason": "折先验领先者滑石/雄黄的required缺口由A2覆盖；大青叶为多折共同次高候选，其required靛蓝结晶是下一优先核验点。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "雄黄": {
+      "status": "investigating",
+      "reason": "折先验领先者滑石/雄黄的required缺口由A2覆盖；大青叶为多折共同次高候选，其required靛蓝结晶是下一优先核验点。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "大青叶": {
+      "status": "investigating",
+      "reason": "required indigo_crystal本视野局部阴性，其他视野未查，保持investigating",
+      "evidence_digest": "9bea20c9c5e2a6f3db652126ce938b1bdc2256f4e179bae19173f6a4489af10c",
+      "decision_source": "model"
+    },
+    "穿心莲": {
+      "status": "investigating",
+      "reason": "腺毛为其P1佐证缺口，本轮A2核验存在性；required钟乳体本视野阴性仍需其他视野确认",
+      "evidence_digest": "9bea20c9c5e2a6f3db652126ce938b1bdc2256f4e179bae19173f6a4489af10c",
+      "decision_source": "model"
+    },
+    "乌梅": {
+      "status": "paused",
+      "reason": "required epidermis_cell presence阳性但形态未核验且分类身份待定（secretory_tissue冲突仅作线索），转复核",
+      "evidence_digest": "9bea20c9c5e2a6f3db652126ce938b1bdc2256f4e179bae19173f6a4489af10c",
+      "decision_source": "model"
+    },
+    "秦皮": {
+      "status": "paused",
+      "reason": "required sand_crystal presence阳性待形态核验，本轮无核验入口，转复核",
+      "evidence_digest": "9bea20c9c5e2a6f3db652126ce938b1bdc2256f4e179bae19173f6a4489af10c",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "滑石",
+          "status": "investigating",
+          "reason": "折先验领先者滑石/雄黄的required缺口由A2覆盖；大青叶为多折共同次高候选，其required靛蓝结晶是下一优先核验点。"
+        },
+        {
+          "candidate_id": "雄黄",
+          "status": "investigating",
+          "reason": "折先验领先者滑石/雄黄的required缺口由A2覆盖；大青叶为多折共同次高候选，其required靛蓝结晶是下一优先核验点。"
+        },
+        {
+          "candidate_id": "大青叶",
+          "status": "investigating",
+          "reason": "折先验领先者滑石/雄黄的required缺口由A2覆盖；大青叶为多折共同次高候选，其required靛蓝结晶是下一优先核验点。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "穿心莲",
+          "status": "investigating",
+          "reason": "腺毛为其P1佐证缺口，本轮A2核验存在性；required钟乳体本视野阴性仍需其他视野确认"
+        }
+      ],
+      "evidence_digest": "9bea20c9c5e2a6f3db652126ce938b1bdc2256f4e179bae19173f6a4489af10c",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "乌梅",
+          "status": "investigating",
+          "reason": "A1的形态核验结果将直接推进乌梅required与大青叶supporting的判据；秦皮sand_crystal形态待核验但本轮无入口，保留为下一优先。"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "A1的形态核验结果将直接推进乌梅required与大青叶supporting的判据；秦皮sand_crystal形态待核验但本轮无入口，保留为下一优先。"
+        },
+        {
+          "candidate_id": "大青叶",
+          "status": "investigating",
+          "reason": "A1的形态核验结果将直接推进乌梅required与大青叶supporting的判据；秦皮sand_crystal形态待核验但本轮无入口，保留为下一优先。"
+        }
+      ],
+      "evidence_digest": "9bea20c9c5e2a6f3db652126ce938b1bdc2256f4e179bae19173f6a4489af10c",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "乌梅",
+          "status": "investigating",
+          "reason": "required epidermis_cell已present但形态未核验，本轮A1/A2身份核验直接推进该判据。"
+        },
+        {
+          "candidate_id": "大青叶",
+          "status": "investigating",
+          "reason": "required indigo_crystal本视野阴性仍待其他视野；supporting epidermis_cell形态待核验，A1/A2结果可核对。"
+        },
+        {
+          "candidate_id": "秦皮",
+          "status": "investigating",
+          "reason": "required sand_crystal present但形态MORPHOLOGY_UNVERIFIED，本轮无核验入口，保留下一优先。"
+        }
+      ],
+      "evidence_digest": "9bea20c9c5e2a6f3db652126ce938b1bdc2256f4e179bae19173f6a4489af10c",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "秦皮",
+          "status": "paused",
+          "reason": "required sand_crystal presence阳性待形态核验，本轮无核验入口，转复核"
+        },
+        {
+          "candidate_id": "乌梅",
+          "status": "paused",
+          "reason": "required epidermis_cell presence阳性但形态未核验且分类身份待定（secretory_tissue冲突仅作线索），转复核"
+        },
+        {
+          "candidate_id": "大青叶",
+          "status": "investigating",
+          "reason": "required indigo_crystal本视野局部阴性，其他视野未查，保持investigating"
+        }
+      ],
+      "evidence_digest": "9bea20c9c5e2a6f3db652126ce938b1bdc2256f4e179bae19173f6a4489af10c",
+      "scope_changed": true,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

@@ -54,8 +54,17 @@ def model_profile(config):
 
 
 def request_signature(profile, crops, python):
-    """同任务缓存绑定模型/变换/解释器及每个 crop 的实际内容。"""
-    items = [{'id': r['id'], 'png': str(project_path(r['png'])), 'sha256': file_hash(r['png'])} for r in crops]
+    """同任务缓存绑定模型、解释器、crop 内容与分类子窗。"""
+    items = []
+    for row in crops:
+        item = {'id': row['id'], 'png': str(project_path(row['png'])), 'sha256': file_hash(row['png'])}
+        box = row.get('box_local')
+        if box is not None:
+            if (not isinstance(box, list) or len(box) != 4 or any(type(v) is not int for v in box)
+                    or not (0 <= box[0] < box[2] and 0 <= box[1] < box[3])):
+                raise IntegrationError('CNN_INPUT_INVALID', 'stage2 分类子窗坐标非法')
+            item['box_local'] = list(box)
+        items.append(item)
     if not items or len({r['id'] for r in items}) != len(items):
         raise IntegrationError('CNN_INPUT_INVALID', 'stage2 crop 不能为空或重复')
     return {'schema': 'stage2-request/v2', 'profile': profile, 'crops': items,
@@ -122,6 +131,11 @@ def infer(context):
             tensors = []
             for item in chunk:
                 with Image.open(item['png']) as image:
+                    box = item.get('box_local')
+                    if box is not None:
+                        if box[2] > image.width or box[3] > image.height:
+                            raise IntegrationError('CNN_INPUT_INVALID', 'stage2 分类子窗越出裁图')
+                        image = image.crop(box)
                     tensors.append(transform(image.convert('RGB')))
             probs = torch.softmax(model(torch.stack(tensors).to(device)).float(), dim=1).cpu()
             if not torch.isfinite(probs).all():

@@ -1,0 +1,297 @@
+{
+  "identity": "b99113f0248784ea42adb8be057ebf69ad90e75bfdcbd20c61cf34d10d34a32a",
+  "parent": "7e3b846cf9c7728f53f2f46be7698288904b91d5eaf15900c2c6b61d240d839f",
+  "artifacts": {
+    "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "image",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\view_01.tif",
+      "sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "parents": [],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "detected:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c": {
+      "id": "detected:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "kind": "detection",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\921646c7cc74f6ef\\detection\\crops.json",
+      "sha256": "f3cb68aaa5fbb1b2da0b900b37839f3967be2ad3abc32edd2ec2ae1d32ca7bbf",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "source_size_wh": [
+        3840,
+        2160
+      ],
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01:pixels": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01:pixels",
+      "kind": "crop_pixels",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm220f18619613_01.png",
+      "sha256": "c7e6fc467da3a02c19c4e5a753489a471b0b983c650a2c2105c55ac846868518",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+      "kind": "crop",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm220f18619613_01.json",
+      "sha256": "0d5da4f6a3dbcc236166094e1a4ce7d79f99ff42647f3e412f49602e80273d67",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01:pixels"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "identity_required": true,
+      "box_source": "glm",
+      "box_quality": "low_detail",
+      "box_quality_score": 0.3956,
+      "box_quality_flags": [
+        "low_detail"
+      ],
+      "box_quality_metrics": {
+        "std": 0.074,
+        "edge": 0.00768,
+        "width": 506,
+        "height": 444,
+        "area_ratio": 0.0218
+      },
+      "box_quality_retry": false,
+      "det_score": 0.65,
+      "det_confidence": "medium",
+      "detection_tool": "feature_scan",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01:pixels": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01:pixels",
+      "kind": "crop_pixels",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm3df6d852daf1_01.png",
+      "sha256": "f4d092ef4a27943c60fcdd5b0c3d5780523c7cd05c71ea99511443e68b968b09",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "kind": "crop",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm3df6d852daf1_01.json",
+      "sha256": "e41b03a319867310f9eccec52666db03ff256421b83f701ce41a105a5ce6f7c1",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01:pixels"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "identity_required": true,
+      "box_source": "glm",
+      "box_quality": "low_detail",
+      "box_quality_score": 0.296,
+      "box_quality_flags": [
+        "low_detail"
+      ],
+      "box_quality_metrics": {
+        "std": 0.0528,
+        "edge": 0.00603,
+        "width": 488,
+        "height": 512,
+        "area_ratio": 0.0534
+      },
+      "box_quality_retry": false,
+      "det_score": 0.65,
+      "det_confidence": "medium",
+      "detection_tool": "feature_scan",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01:pixels": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01:pixels",
+      "kind": "crop_pixels",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm53e654d2ac88_01.png",
+      "sha256": "f322507acc050bc9667fa183ccf59917f3fd39fecdc154534593bf610aac2d08",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+      "kind": "crop",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm53e654d2ac88_01.json",
+      "sha256": "00ecfa938a9e0b5a02b3c9515a07d0ccba20faf6dc186774c1f5a9579ba3e670",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01:pixels"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "identity_required": true,
+      "box_source": "glm",
+      "box_quality": "low_detail",
+      "box_quality_score": 0.3034,
+      "box_quality_flags": [
+        "low_detail"
+      ],
+      "box_quality_metrics": {
+        "std": 0.0587,
+        "edge": 0.00567,
+        "width": 512,
+        "height": 432,
+        "area_ratio": 0.0366
+      },
+      "box_quality_retry": false,
+      "det_score": 0.65,
+      "det_confidence": "medium",
+      "detection_tool": "feature_scan",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02:pixels": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02:pixels",
+      "kind": "crop_pixels",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm53e654d2ac88_02.png",
+      "sha256": "faaf8fd5239e176003e27b27c37e5bfb74ba92e45c28987845ad58baef55477c",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02": {
+      "id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02",
+      "kind": "crop",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm53e654d2ac88_02.json",
+      "sha256": "a4c69e0343b9fd246444ad3ead678413d2a09611308ab252e7262d09beccf191",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_02:pixels"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "identity_required": true,
+      "box_source": "glm",
+      "box_quality": "low_detail",
+      "box_quality_score": 0.3178,
+      "box_quality_flags": [
+        "low_detail"
+      ],
+      "box_quality_metrics": {
+        "std": 0.0604,
+        "edge": 0.00607,
+        "width": 512,
+        "height": 381,
+        "area_ratio": 0.0303
+      },
+      "box_quality_retry": false,
+      "det_score": 0.65,
+      "det_confidence": "medium",
+      "detection_tool": "feature_scan",
+      "valid": true
+    },
+    "scanned:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell": {
+      "id": "scanned:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell",
+      "kind": "detection",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\scan_result.json",
+      "sha256": "1e050d4e764f0be2e07845474dd60dcbf2f5e7472472e73394004a622395a1ee",
+      "parents": [
+        "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "valid": true
+    },
+    "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01": {
+      "id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+      "kind": "classification",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\0cf90c76250eefaf\\classification\\classification.json",
+      "sha256": "fbbb886c31d2ff871de6ec027558b23eb42447d72baf3d386f5af5b7a91a8a58",
+      "parents": [
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm220f18619613_01",
+      "feature_id": "",
+      "label": "身份待定",
+      "classification_tool": "classify_target",
+      "requested_feature_id": "epidermis_cell",
+      "granularity": "clump",
+      "reject": "unreadable",
+      "glm_confidence": "low",
+      "yolo_confidence": 0.4216,
+      "confidence_source": "glm",
+      "confidence_score": 0.3,
+      "review_required": false,
+      "review_reason": "身份待定，目标图未报告可定位的鉴别结构",
+      "visual_identity_status": "pending",
+      "identity_confidence": "low",
+      "glm_confidence_score": 0.3,
+      "identity_verified": false,
+      "identity_basis": "classifier_confidence",
+      "identity_review": false,
+      "valid": true
+    },
+    "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01": {
+      "id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "kind": "classification",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\7013401fd10ca80d\\classification\\classification.json",
+      "sha256": "74f87073cf4b149e36a3f0901e90a6c2189f830bc6529b88090065fed8aa9930",
+      "parents": [
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "feature_id": "",
+      "label": "身份待定",
+      "classification_tool": "classify_target",
+      "requested_feature_id": "epidermis_cell",
+      "granularity": "instance",
+      "reject": "unreadable",
+      "glm_confidence": "low",
+      "yolo_confidence": null,
+      "confidence_source": "glm",
+      "confidence_score": 0.3,
+      "review_required": false,
+      "review_reason": "身份待定，目标图未报告可定位的鉴别结构",
+      "visual_identity_status": "pending",
+      "identity_confidence": "low",
+      "glm_confidence_score": 0.3,
+      "identity_verified": false,
+      "identity_basis": "classifier_confidence",
+      "identity_review": false,
+      "valid": true
+    },
+    "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01": {
+      "id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+      "kind": "classification",
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\8a549acb39d23e0f\\classification\\classification.json",
+      "sha256": "eaacccc2de3d8e7f5f520975319efcd330227c012e45a4031f7283cd85e44a80",
+      "parents": [
+        "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01"
+      ],
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm53e654d2ac88_01",
+      "feature_id": "",
+      "label": "身份待定",
+      "classification_tool": "classify_target",
+      "requested_feature_id": "epidermis_cell",
+      "granularity": "clump",
+      "reject": "unreadable",
+      "glm_confidence": "low",
+      "yolo_confidence": null,
+      "confidence_source": "glm",
+      "confidence_score": 0.3,
+      "review_required": false,
+      "review_reason": "身份待定，目标图未报告可定位的鉴别结构",
+      "visual_identity_status": "pending",
+      "identity_confidence": "low",
+      "glm_confidence_score": 0.3,
+      "identity_verified": false,
+      "identity_basis": "classifier_confidence",
+      "identity_review": false,
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "b33c31b1806c09c2cb68c81928ec1aa0607076333e45db4055104ff8ad9c1a82"
+}

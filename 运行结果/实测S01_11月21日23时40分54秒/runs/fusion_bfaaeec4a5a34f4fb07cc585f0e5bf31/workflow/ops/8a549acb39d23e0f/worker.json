@@ -1,0 +1,43 @@
+{
+  "tool": "classify_target",
+  "crop_id": "epidermis_cell_view_01_glm53e654d2ac88_01",
+  "crop_json": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm53e654d2ac88_01.json",
+  "crop_png": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\092edc3b9c4015c4\\scan\\crops\\epidermis_cell_view_01_glm53e654d2ac88_01.png",
+  "source": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\view_01.tif",
+  "tight_box": [
+    1934.25,
+    1633.25,
+    2538.75,
+    2135.75
+  ],
+  "output": "D:\\TCM_Fusion\\运行结果\\实测S01_11月21日23时40分54秒\\runs\\fusion_bfaaeec4a5a34f4fb07cc585f0e5bf31\\workflow\\ops\\8a549acb39d23e0f\\classification",
+  "identity_review": {
+    "cnn_top2": [
+      {
+        "feature_id": "other",
+        "prob": 0.6629182696342468
+      },
+      {
+        "feature_id": "vessel",
+        "prob": 0.05833149328827858
+      }
+    ],
+    "cnn_margin": 0.6045867763459682,
+    "margin_limit": 0.15,
+    "box_source": "glm",
+    "crop_feature": "epidermis_cell",
+    "detector_conflict": null,
+    "positive_feature": "epidermis_cell",
+    "negative_feature": null,
+    "selection_basis": "no_close_alternative",
+    "bank_sha256": "2db0f56b85ebf212e726c2eb3626a0273559f3f68633ac41e0cecf7c5b0aa6f1",
+    "references": [],
+    "fallback": "no_close_alternative"
+  },
+  "tight_box_local": [
+    25.25,
+    25.25,
+    629.75,
+    527.75
+  ]
+}

@@ -76,7 +76,7 @@ def focus_score(crop_bgr):
 
 def classify_crop(crop_bgr, cfg_vlm, api_key, ctx="", impl="vlm",
                   target_side=CLASSIFY_TARGET_SIDE, focus_gate=False,
-                  weights=None, device="auto"):
+                  weights=None, device="auto", review_input=None):
     """单张 crop → dict；失败时返回 `{"error": ...}`（不抛，便于批量继续）。
 
     返回键：
@@ -124,14 +124,23 @@ def classify_crop(crop_bgr, cfg_vlm, api_key, ctx="", impl="vlm",
             "granularity": GRANULARITY_DEFAULT,
         }
     img = _prep(crop_bgr, target_side)
+    audit = {}
+    if review_input is None:
+        prompt = build_classify_prompt(ctx)
+    else:
+        base_shape = img.shape
+        img, prompt, metadata = review_input(crop_bgr, img)
+        if img.shape != base_shape:
+            raise ValueError("身份复核图幅必须匹配原分类请求")
+        audit["visual_input"] = metadata
     b64, _ = encode_jpeg_b64(img, max_side=None, quality=CLASSIFY_QUALITY)
-    text, err = call_vlm(cfg_vlm, api_key, b64, build_classify_prompt(ctx))
+    text, err = call_vlm(cfg_vlm, api_key, b64, prompt)
     if text is None:
-        return {"error": err, "focus": round(focus, 1), "granularity": GRANULARITY_DEFAULT}
+        return {"error": err, "focus": round(focus, 1), "granularity": GRANULARITY_DEFAULT, **audit}
     try:
         parsed = parse_vlm_json(text)
     except Exception as e:
-        return {"error": f"解析: {e}", "focus": round(focus, 1), "granularity": GRANULARITY_DEFAULT}
+        return {"error": f"解析: {e}", "focus": round(focus, 1), "granularity": GRANULARITY_DEFAULT, **audit}
     raw = str(parsed.get("label") or "").strip()
     known = raw in VALID_LABELS or raw in REFUSE_LABELS
     label = raw if known else None
@@ -153,4 +162,6 @@ def classify_crop(crop_bgr, cfg_vlm, api_key, ctx="", impl="vlm",
         "focus": None if focus is None else round(focus, 1),
         "sent_hw": [img.shape[0], img.shape[1]],
         "granularity": gran,
+        **audit,
+        **({key: parsed.get(key) for key in ("target_part", "visible_cue")} if review_input is not None else {}),
     }

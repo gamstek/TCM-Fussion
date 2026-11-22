@@ -1,0 +1,17 @@
+{
+  "result": {
+    "crops_dir": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\3b5733b4941bab2d\\detection\\crops",
+    "completion": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\3b5733b4941bab2d\\detection\\crops.json"
+  },
+  "bundle": {
+    "root": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\workflow\\ops\\3b5733b4941bab2d",
+    "paths": {
+      "crops_dir": "detection/crops",
+      "completion": "detection/crops.json"
+    },
+    "files": {
+      "detection/crops.json": "f3cb68aaa5fbb1b2da0b900b37839f3967be2ad3abc32edd2ec2ae1d32ca7bbf"
+    },
+    "quality": null
+  }
+}

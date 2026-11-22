@@ -1,0 +1,2679 @@
+{
+  "schema": "diagnosis-output/v2",
+  "rule_score_version": "b-rule/4",
+  "sample_id": "case_cf5ec20e",
+  "status": "tentative",
+  "top_candidate": {
+    "id": "大青叶",
+    "display": "大青叶",
+    "kind": "herb",
+    "score": 0.17782,
+    "confidence": 0.0,
+    "support_count": 0,
+    "verified_feature_count": 0,
+    "a_probability": 0.355639,
+    "b_confidence": 0.0,
+    "rule_score": 0.0,
+    "raw_score": 0.2205,
+    "score_components": {
+      "version": "b-rule/4",
+      "support_weight": 0.2,
+      "required_total": 1,
+      "required_matched": 0,
+      "required_complete": false,
+      "required_attainment": 0,
+      "missing_required_penalty": 0.009,
+      "required_base": 0.0,
+      "supporting_contributions": {},
+      "supporting_strength": 0,
+      "supporting_bonus": 0,
+      "disjoint_counter_strength": 0,
+      "disjoint_counter_penalty": 0.0,
+      "disjoint_counterevidence": []
+    },
+    "fused_score": 0.17782,
+    "selection": "final_assessment",
+    "formal_score": 0.17782,
+    "provisional_score": 0.290306,
+    "admission": "verify"
+  },
+  "candidate_admission": {
+    "available": false,
+    "decision": "verify",
+    "fallback": true,
+    "reason": "rule evidence requires review; no model admission requested",
+    "decision_source": "runtime_precondition"
+  },
+  "provisional": {
+    "schema": "provisional-ranking/v1",
+    "policy": "temporary only; formal verdict and formal support count unchanged",
+    "source": "classification artifacts, one best class per crop",
+    "ranking": [
+      {
+        "candidate_id": "大青叶",
+        "display": "大青叶",
+        "provisional_score": 0.290306,
+        "provisional_delta": 0.112486,
+        "formal_score": 0.17782,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "indigo_crystal",
+            "role": "required",
+            "tier": "C",
+            "state": "NOT_DETECTED",
+            "weight": 0.3,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "epidermis_cell",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "DETECTED_PENDING",
+            "weight": 0.5,
+            "provisional_contribution": 0.25,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          },
+          {
+            "feature_id": "stoma",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "epidermis_cell",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "DETECTED_PENDING",
+            "weight": 0.5,
+            "provisional_contribution": 0.25,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "秦皮",
+        "display": "秦皮",
+        "provisional_score": 0.266433,
+        "provisional_delta": 0.211072,
+        "formal_score": 0.055361,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "sand_crystal",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "sand_crystal",
+            "role": "required",
+            "tier": "C",
+            "state": "DETECTED_PENDING",
+            "weight": 0.3,
+            "provisional_contribution": 0.15,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "滑石",
+        "display": "滑石",
+        "provisional_score": 0.25807,
+        "provisional_delta": 0.043012,
+        "formal_score": 0.215058,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "mineral_feature",
+            "role": "required",
+            "tier": "C",
+            "state": "NOT_DETECTED",
+            "weight": 0.3,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "乌梅",
+        "display": "乌梅",
+        "provisional_score": 0.110138,
+        "provisional_delta": 0.10169,
+        "formal_score": 0.008448,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "epidermis_cell",
+            "role": "required",
+            "tier": "P1",
+            "state": "DETECTED_PENDING",
+            "weight": 0.5,
+            "provisional_contribution": 0.25,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          },
+          {
+            "feature_id": "non_glandular_hair",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": [
+          {
+            "feature_id": "epidermis_cell",
+            "role": "required",
+            "tier": "P1",
+            "state": "DETECTED_PENDING",
+            "weight": 0.5,
+            "provisional_contribution": 0.25,
+            "formal_contribution": 0,
+            "instance_ids": [],
+            "formal_state": "MORPHOLOGY_UNVERIFIED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": true
+          }
+        ]
+      },
+      {
+        "candidate_id": "穿心莲",
+        "display": "穿心莲",
+        "provisional_score": 0.011696,
+        "provisional_delta": 0.00195,
+        "formal_score": 0.009746,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "calcium_carbonate",
+            "role": "required",
+            "tier": "C",
+            "state": "NOT_DETECTED",
+            "weight": 0.3,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "non_glandular_hair",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "glandular_hair",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          },
+          {
+            "feature_id": "stoma",
+            "role": "supporting",
+            "tier": "P1",
+            "state": "NOT_DETECTED",
+            "weight": 0.5,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      },
+      {
+        "candidate_id": "雄黄",
+        "display": "雄黄",
+        "provisional_score": 0.006005,
+        "provisional_delta": 0.001001,
+        "formal_score": 0.005004,
+        "formal_support_count": 0,
+        "criterion_states": [
+          {
+            "feature_id": "mineral_feature",
+            "role": "required",
+            "tier": "C",
+            "state": "NOT_DETECTED",
+            "weight": 0.3,
+            "provisional_contribution": 0.0,
+            "formal_contribution": 0.0,
+            "instance_ids": [],
+            "formal_state": "NOT_DETECTED",
+            "quant_note": null,
+            "n_measured": null,
+            "pending": false
+          }
+        ],
+        "pending_verification": []
+      }
+    ],
+    "top_candidate": "大青叶",
+    "formal_top_candidate": "滑石",
+    "selection": "final_assessment",
+    "selected_candidate": "大青叶"
+  },
+  "alternatives": [
+    {
+      "id": "滑石",
+      "display": "滑石",
+      "score": 0.215058,
+      "confidence": 0.0,
+      "rule_score": 0.0,
+      "fused_score": 0.215058
+    },
+    {
+      "id": "秦皮",
+      "display": "秦皮",
+      "score": 0.055361,
+      "confidence": 0.0,
+      "rule_score": 0.0,
+      "fused_score": 0.055361
+    },
+    {
+      "id": "穿心莲",
+      "display": "穿心莲",
+      "score": 0.009746,
+      "confidence": 0.0,
+      "rule_score": 0.0,
+      "fused_score": 0.009746
+    },
+    {
+      "id": "乌梅",
+      "display": "乌梅",
+      "score": 0.008448,
+      "confidence": 0.0,
+      "rule_score": 0.0,
+      "fused_score": 0.008448
+    }
+  ],
+  "ambiguous_with": [],
+  "tie_break": {
+    "applied": false,
+    "a_majority": "滑石",
+    "a_fold_top1": 3,
+    "total_folds": 5
+  },
+  "strong_observations": [
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "mineral_feature",
+      "present": false,
+      "scope": "observed_fov_only",
+      "qualification": "presence_only",
+      "confidence": 0.65,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "indigo_crystal",
+      "present": false,
+      "scope": "observed_fov_only",
+      "qualification": "presence_only",
+      "confidence": 0.85,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "sand_crystal",
+      "present": true,
+      "scope": "observed_fov_only",
+      "qualification": "presence_only",
+      "confidence": 0.62,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "epidermis_cell",
+      "present": true,
+      "scope": "observed_fov_only",
+      "qualification": "presence_only",
+      "confidence": 0.6,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "calcium_carbonate",
+      "present": false,
+      "scope": "observed_fov_only",
+      "qualification": "presence_only",
+      "confidence": 0.78,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "stoma",
+      "present": false,
+      "scope": "observed_fov_only",
+      "qualification": "presence_only",
+      "confidence": 0.65,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    },
+    {
+      "view": "view_01",
+      "tool": "presence_check",
+      "feature_id": "non_glandular_hair",
+      "present": false,
+      "scope": "observed_fov_only",
+      "qualification": "presence_only",
+      "confidence": 0.75,
+      "source": "glm_presence",
+      "supporting_candidates": []
+    }
+  ],
+  "detections": [
+    {
+      "tool": "feature_scan",
+      "label": "表皮细胞",
+      "feature_id": "epidermis_cell",
+      "crop_id": "epidermis_cell_view_01_glm3df6d852daf1_01",
+      "artifact_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "score": 0.65,
+      "box": [
+        1356.75,
+        1518.0,
+        1844.25,
+        2160.0
+      ],
+      "source_sha256": "a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "box_quality": "low_detail"
+    }
+  ],
+  "classifications": [
+    {
+      "crop_id": "epidermis_cell_view_01_glm3df6d852daf1_01",
+      "classification_id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "tool": "classify_target",
+      "feature_id": "",
+      "label": "身份待定",
+      "reject": "unreadable",
+      "confidence": "low",
+      "confidence_source": "glm",
+      "glm_confidence": "low",
+      "yolo_confidence": null,
+      "reason": "身份待定，目标图未报告可定位的鉴别结构",
+      "confidence_score": 0.3,
+      "identity_verified": false,
+      "visual_identity": {
+        "status": "pending",
+        "reported_reason": "轮廓模糊，未见明确鉴别结构"
+      }
+    }
+  ],
+  "feature_scans": [
+    {
+      "target_id": "feature_scan:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell",
+      "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+      "feature_id": "epidermis_cell",
+      "status": "shareable",
+      "crop_count": 1,
+      "successful_tiles": [
+        [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        [
+          1920,
+          0,
+          3840,
+          1080
+        ],
+        [
+          0,
+          1080,
+          1920,
+          2160
+        ],
+        [
+          1920,
+          1080,
+          3840,
+          2160
+        ]
+      ],
+      "failed_tiles": [],
+      "unsearched_tiles": []
+    }
+  ],
+  "missing_required": [
+    {
+      "feature_id": "indigo_crystal",
+      "state": "NOT_DETECTED"
+    }
+  ],
+  "review_required": true,
+  "final_assessment": {
+    "schema": "final-assessment/v1",
+    "method": "model",
+    "simulation": false,
+    "stop_reason": "planner_request_review",
+    "candidate_id": "大青叶",
+    "candidate_display": "大青叶",
+    "termination": {
+      "reason": "planner_request_review",
+      "route": "planner_request_review",
+      "category": "model",
+      "decision_source": null,
+      "planner_degraded": false
+    },
+    "selection": "provisional",
+    "decision_layers": {
+      "formal": {
+        "verdict": "insufficient_evidence",
+        "conclusion": null,
+        "authorized": false,
+        "needs_review": true
+      },
+      "fusion_leader": {
+        "id": "滑石",
+        "display": "滑石",
+        "score": 0.215058,
+        "support": [],
+        "counter": []
+      },
+      "b_leader": {
+        "id": "G1",
+        "display": "赤芍 / 牡丹皮",
+        "score": 0.0,
+        "support": [],
+        "counter": []
+      }
+    },
+    "status": "tentative",
+    "judgement": "暂定排序倾向：大青叶；尚不能确认，需要复核。",
+    "explanation": "依据全部已收集证据及原规则综合排序给出当前倾向。判据状态：indigo_crystal=NOT_DETECTED；epidermis_cell=MORPHOLOGY_UNVERIFIED；stoma=NOT_DETECTED。原规则说明：必需判据未全部核验或 B 规则分未达倾向门槛。。正式判据未满足不等于原图中不存在该目标；已检测或分类但缺少合格尺寸的实例仍待核验。",
+    "explanation_source": "deterministic_selection_guard",
+    "narrative_warnings": [
+      "ASSESSMENT_SELECTION_REBOUND"
+    ],
+    "score_summary": "大青叶：B规则排序分=0.0；融合排序分=0.17782；已验证独立特征类数=0；B规则计分特征类数=0；B规则最低计分类数=2。上述分数不是校准正确率；交付复核要求见 review_reasons。",
+    "supporting_evidence": [],
+    "presence_observations": [
+      {
+        "id": "observation:7dc360fa5fa97fd3ce153ad9",
+        "kind": "observation",
+        "data": {
+          "accepted": true,
+          "action": {
+            "tool": "presence_check",
+            "args": {
+              "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+              "feature_id": "epidermis_cell",
+              "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。表皮细胞：表面观呈多角形或类长方形的细胞，排列紧密成片，壁平直、波状弯曲或连珠状增厚；种皮来源者多呈红棕色或黄棕色"
+            },
+            "action_id": "93686ff266770c3b709b00e839275c69b750ac9a2c7f843b439b5ccbb0d0e869"
+          },
+          "result": {
+            "present": true,
+            "conf": 0.6,
+            "reason": "视野下方中部及右上可见成片排列的黄棕色多角形细胞碎片，壁略显增厚，符合表皮细胞表面观特征。",
+            "ok": true,
+            "localization_proposal": {
+              "bbox": [
+                795,
+                655,
+                1010,
+                820
+              ],
+              "coordinate_space": "model_input_pixels"
+            }
+          },
+          "observation_state": "present",
+          "dimension_eligible": false,
+          "claim_scope": "feature_presence",
+          "related_candidate_ids": [
+            "乌梅",
+            "使君子",
+            "大青叶",
+            "淡竹叶",
+            "王不留行",
+            "苦杏仁",
+            "荆芥",
+            "荜茇",
+            "葶苈子",
+            "麦芽",
+            "龙胆"
+          ],
+          "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+        },
+        "supports_candidate_ids": [
+          "乌梅",
+          "使君子",
+          "大青叶",
+          "淡竹叶",
+          "王不留行",
+          "苦杏仁",
+          "荆芥",
+          "荜茇",
+          "葶苈子",
+          "麦芽",
+          "龙胆"
+        ],
+        "counters_candidate_ids": []
+      }
+    ],
+    "local_absence_observations": [
+      {
+        "id": "observation:f06899da65823d1c5dd1d9a5",
+        "kind": "observation",
+        "data": {
+          "accepted": true,
+          "action": {
+            "tool": "presence_check",
+            "args": {
+              "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+              "feature_id": "indigo_crystal",
+              "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。靛蓝结晶：蓝色颗粒状或片状的结晶，常聚集成堆，存在于叶肉组织中"
+            },
+            "action_id": "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d"
+          },
+          "result": {
+            "present": false,
+            "conf": 0.85,
+            "reason": "视野中仅见棕黄、黄褐色及暗绿褐色碎片与团块，未发现特征性的蓝色颗粒状或片状靛蓝结晶聚集体。",
+            "ok": true
+          },
+          "observation_state": "absent",
+          "dimension_eligible": false,
+          "claim_scope": "feature_presence",
+          "related_candidate_ids": [
+            "大青叶",
+            "青黛"
+          ],
+          "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "observation:0dcd60575c087506070d9394",
+        "kind": "observation",
+        "data": {
+          "accepted": true,
+          "action": {
+            "tool": "presence_check",
+            "args": {
+              "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+              "feature_id": "stoma",
+              "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。气孔：由两个保卫细胞围成的通气结构，两保卫细胞相对呈肾形、半月形或哑铃形，中间为孔缝，周围有副卫细胞环绕"
+            },
+            "action_id": "f14cc5e59232f856872a96640a3cbb9de8a8b91f71bac73dcefa10bbcd0feb96"
+          },
+          "result": {
+            "present": false,
+            "conf": 0.65,
+            "reason": "视野中可见多种组织碎片（绿色叶肉样碎片、黄棕色色素块、纤维状碎片等），但未观察到由两个肾形或哑铃形保卫细胞围成孔缝的典型气孔结构。",
+            "ok": true
+          },
+          "observation_state": "absent",
+          "dimension_eligible": false,
+          "claim_scope": "feature_presence",
+          "related_candidate_ids": [
+            "G3",
+            "大青叶",
+            "淡竹叶",
+            "淫羊藿",
+            "穿心莲",
+            "薄荷",
+            "麻黄"
+          ],
+          "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      }
+    ],
+    "counterevidence": [],
+    "unresolved": [
+      {
+        "id": "criterion:20e681ac7548a70fda01e76c",
+        "kind": "criterion",
+        "data": {
+          "candidate_id": "大青叶",
+          "feature_id": "indigo_crystal",
+          "role": "required",
+          "tier": "C",
+          "present": false,
+          "state": "NOT_DETECTED",
+          "quant_note": null,
+          "morph_plausibility": null,
+          "reliability": 0.0,
+          "weight": 0.3,
+          "q_state": 0.0,
+          "abundance": null,
+          "m_abundance": 1.0,
+          "score_contribution": 0.0,
+          "penalty": 0.0,
+          "n_instances": 0,
+          "stats": null,
+          "morph_text": "靛蓝结晶蓝色，存在于叶肉组织和表皮细胞中，细小颗粒状或片状，常聚集成堆",
+          "quant_bounds": null,
+          "scene_factor": null,
+          "instance_refs": [],
+          "claim_scope": "qualitative_rule",
+          "dimension_eligible": false
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "observation:47a377ed77bd78766251b490",
+        "kind": "observation",
+        "data": {
+          "accepted": false,
+          "action": {
+            "tool": "presence_check",
+            "args": {
+              "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+              "feature_id": "glandular_hair",
+              "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。腺毛/腺鳞：具膨大腺头的毛茸，腺头由数个至数十个细胞组成，顶面观呈鞋底形、类圆形或倒圆锥形，下方连单细胞或多细胞短柄"
+            },
+            "action_id": "a5e20b6ca13a6d916f03b9b77f2eeaaba2db2fe011ed3d1bd8d4bc1ec4136025"
+          },
+          "result": {
+            "ok": false,
+            "error_code": "UPSTREAM_REMOTE_DISCONNECTED"
+          },
+          "observation_state": "unknown",
+          "dimension_eligible": false,
+          "claim_scope": "feature_presence",
+          "related_candidate_ids": [
+            "穿心莲",
+            "艾叶",
+            "薄荷",
+            "金银花"
+          ],
+          "scope": "bound field of view only; failure is unknown, absence does not exclude a sample"
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      },
+      {
+        "id": "classification:04d41d80d24a070a37e67d8a",
+        "kind": "classification",
+        "data": {
+          "artifact_id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+          "identity_verified": false,
+          "result": {
+            "label": "身份待定",
+            "reject": "unreadable",
+            "raw_label": "图像不可判",
+            "feature_id": "",
+            "second": "",
+            "confidence": "low",
+            "reason": "身份待定，目标图未报告可定位的鉴别结构",
+            "source": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\view_01.tif",
+            "focus": 428.5,
+            "sent_hw": [
+              768,
+              584
+            ],
+            "granularity": "clump",
+            "visual_input": {
+              "cnn_top2": [
+                {
+                  "feature_id": "other",
+                  "prob": 0.6366658210754395
+                },
+                {
+                  "feature_id": "vessel",
+                  "prob": 0.12392636388540268
+                }
+              ],
+              "cnn_margin": 0.5127394571900368,
+              "margin_limit": 0.15,
+              "box_source": "glm",
+              "crop_feature": "epidermis_cell",
+              "detector_conflict": null,
+              "positive_feature": "epidermis_cell",
+              "negative_feature": null,
+              "selection_basis": "no_close_alternative",
+              "bank_sha256": "2db0f56b85ebf212e726c2eb3626a0273559f3f68633ac41e0cecf7c5b0aa6f1",
+              "references": [],
+              "fallback": "no_close_alternative",
+              "mode": "target_only",
+              "baseline_hw": [
+                768,
+                584
+              ],
+              "native_hw": [
+                642,
+                488
+              ],
+              "target_box_px": [
+                0,
+                0,
+                584,
+                768
+              ]
+            },
+            "visual_identity": {
+              "status": "pending",
+              "reported_reason": "轮廓模糊，未见明确鉴别结构"
+            },
+            "confidence_score": 0.3,
+            "confidence_scale": "glm_high_0.90_medium_0.65_low_0.30",
+            "crop_id": "epidermis_cell_view_01_glm3df6d852daf1_01",
+            "crop_png": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\17a0596add6a107b\\scan\\crops\\epidermis_cell_view_01_glm3df6d852daf1_01.png",
+            "glm_confidence": "low",
+            "yolo_confidence": null,
+            "yolo_checked": true,
+            "confidence_source": "glm",
+            "cnn_score": 0.6366658210754395,
+            "cnn_entropy": 0.5451510298711804,
+            "cnn_topk": [
+              {
+                "class": "13_other",
+                "feature_id": "other",
+                "prob": 0.6366658210754395
+              },
+              {
+                "class": "03_vessel",
+                "feature_id": "vessel",
+                "prob": 0.12392636388540268
+              },
+              {
+                "class": "08_stoma",
+                "feature_id": "stoma",
+                "prob": 0.04065103083848953
+              }
+            ],
+            "cnn_model_signature": {
+              "weights": "D:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+              "meta": "D:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+              "metadata": {
+                "arch": "resnet18",
+                "imgsz": 320,
+                "input_mode": "letterbox",
+                "classes": [
+                  "00_cluster_crystal",
+                  "01_single_crystal",
+                  "02_needle_crystal",
+                  "03_vessel",
+                  "04_stone_cell",
+                  "05_starch_grain",
+                  "06_non_glandular_hair",
+                  "07_secretory_tissue",
+                  "08_stoma",
+                  "09_epidermis_cell",
+                  "10_hypha",
+                  "11_fiber",
+                  "12_pollen_grain",
+                  "13_other"
+                ],
+                "mean": [
+                  0.485,
+                  0.456,
+                  0.406
+                ],
+                "std": [
+                  0.229,
+                  0.224,
+                  0.225
+                ],
+                "checkpoint": "best.pt"
+              },
+              "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+              "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+              "preprocessor_sha256": "5c878d3bd6458542e7509849e4695cfbc89f090a63871cd06563f30bb9978d71",
+              "adapter_sha256": "24c47e9e6f2a53abe0de60f4d1745964848429deda00e00e74599caafaab0dd4"
+            },
+            "cnn_fallback_reason": "low_confidence_or_other"
+          }
+        },
+        "supports_candidate_ids": [],
+        "counters_candidate_ids": []
+      }
+    ],
+    "unresolved_scope": "selected candidate and execution facts; full cohort gaps in candidate_audit",
+    "candidate_audit": {
+      "schema": "candidate-audit/v1",
+      "candidates": [
+        {
+          "candidate_id": "秦皮",
+          "display": "秦皮",
+          "hypothesis_status": "investigating",
+          "required": [
+            {
+              "feature_id": "sand_crystal",
+              "state": "present_pending",
+              "rule_state": "MORPHOLOGY_UNVERIFIED",
+              "assessed": false,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "no_current_legal_action",
+              "action_ids": [],
+              "entry_paths": [],
+              "fact_ref": "criterion:c7e3259953d1d9813dd4e64e"
+            }
+          ],
+          "supporting": [],
+          "review_complete": false,
+          "unassessed_features": [
+            "sand_crystal"
+          ],
+          "paused_is_excluded": false
+        },
+        {
+          "candidate_id": "大青叶",
+          "display": "大青叶",
+          "hypothesis_status": "investigating",
+          "required": [
+            {
+              "feature_id": "indigo_crystal",
+              "state": "local_absent",
+              "rule_state": "NOT_DETECTED",
+              "assessed": true,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "available",
+              "action_ids": [
+                "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d"
+              ],
+              "entry_paths": [
+                {
+                  "action_id": "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d",
+                  "tool": "presence_check",
+                  "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                  "kind": "feature_step",
+                  "budget_class": "observation",
+                  "is_evidence": false,
+                  "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+                }
+              ],
+              "fact_ref": "criterion:20e681ac7548a70fda01e76c"
+            }
+          ],
+          "supporting": [
+            {
+              "feature_id": "epidermis_cell",
+              "state": "present_pending",
+              "rule_state": "MORPHOLOGY_UNVERIFIED",
+              "assessed": false,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "no_current_legal_action",
+              "action_ids": [],
+              "entry_paths": [],
+              "fact_ref": "criterion:14b0394e3b972b7ca0b35eb9"
+            },
+            {
+              "feature_id": "stoma",
+              "state": "local_absent",
+              "rule_state": "NOT_DETECTED",
+              "assessed": true,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "available",
+              "action_ids": [
+                "90e0813d8b76c55a0995d0bbb7b771abfd75125ca3b89a52d4f145b16831ebef"
+              ],
+              "entry_paths": [
+                {
+                  "action_id": "90e0813d8b76c55a0995d0bbb7b771abfd75125ca3b89a52d4f145b16831ebef",
+                  "tool": "feature_scan",
+                  "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                  "kind": "feature_step",
+                  "budget_class": "recompute",
+                  "is_evidence": false,
+                  "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+                }
+              ],
+              "fact_ref": "criterion:295915648929745251114f2a"
+            }
+          ],
+          "review_complete": false,
+          "unassessed_features": [
+            "epidermis_cell"
+          ],
+          "paused_is_excluded": false
+        },
+        {
+          "candidate_id": "穿心莲",
+          "display": "穿心莲",
+          "hypothesis_status": "investigating",
+          "required": [
+            {
+              "feature_id": "calcium_carbonate",
+              "state": "local_absent",
+              "rule_state": "NOT_DETECTED",
+              "assessed": true,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "available",
+              "action_ids": [
+                "c98f76209d06e4d6570b4d6a9746a7d3bf177005ce2db277c122a051291646b3"
+              ],
+              "entry_paths": [
+                {
+                  "action_id": "c98f76209d06e4d6570b4d6a9746a7d3bf177005ce2db277c122a051291646b3",
+                  "tool": "presence_check",
+                  "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                  "kind": "feature_step",
+                  "budget_class": "observation",
+                  "is_evidence": false,
+                  "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+                }
+              ],
+              "fact_ref": "criterion:5b16c6a8306e0ab04f8e8b01"
+            }
+          ],
+          "supporting": [
+            {
+              "feature_id": "non_glandular_hair",
+              "state": "local_absent",
+              "rule_state": "NOT_DETECTED",
+              "assessed": true,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "available",
+              "action_ids": [
+                "eb3bf4b53046fce904a7dddff273136b13fddd2066d960150f7f9789e80795eb"
+              ],
+              "entry_paths": [
+                {
+                  "action_id": "eb3bf4b53046fce904a7dddff273136b13fddd2066d960150f7f9789e80795eb",
+                  "tool": "feature_scan",
+                  "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                  "kind": "feature_step",
+                  "budget_class": "recompute",
+                  "is_evidence": false,
+                  "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+                }
+              ],
+              "fact_ref": "criterion:9b2354f1ee52baea79fe3e5a"
+            },
+            {
+              "feature_id": "glandular_hair",
+              "state": "failed_or_unknown",
+              "rule_state": "NOT_DETECTED",
+              "assessed": false,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "no_current_legal_action",
+              "action_ids": [],
+              "entry_paths": [],
+              "fact_ref": "criterion:83b0a2565561caf35b4dd116"
+            },
+            {
+              "feature_id": "stoma",
+              "state": "local_absent",
+              "rule_state": "NOT_DETECTED",
+              "assessed": true,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "available",
+              "action_ids": [
+                "90e0813d8b76c55a0995d0bbb7b771abfd75125ca3b89a52d4f145b16831ebef"
+              ],
+              "entry_paths": [
+                {
+                  "action_id": "90e0813d8b76c55a0995d0bbb7b771abfd75125ca3b89a52d4f145b16831ebef",
+                  "tool": "feature_scan",
+                  "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                  "kind": "feature_step",
+                  "budget_class": "recompute",
+                  "is_evidence": false,
+                  "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+                }
+              ],
+              "fact_ref": "criterion:c10d5aed844e81c8a0ba9388"
+            }
+          ],
+          "review_complete": false,
+          "unassessed_features": [
+            "glandular_hair"
+          ],
+          "paused_is_excluded": false
+        },
+        {
+          "candidate_id": "滑石",
+          "display": "滑石",
+          "hypothesis_status": "paused",
+          "required": [
+            {
+              "feature_id": "mineral_feature",
+              "state": "local_absent",
+              "rule_state": "NOT_DETECTED",
+              "assessed": true,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "available",
+              "action_ids": [
+                "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07"
+              ],
+              "entry_paths": [
+                {
+                  "action_id": "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07",
+                  "tool": "presence_check",
+                  "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                  "kind": "feature_step",
+                  "budget_class": "observation",
+                  "is_evidence": false,
+                  "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+                }
+              ],
+              "fact_ref": "criterion:809e33214f0061122436d585"
+            }
+          ],
+          "supporting": [],
+          "review_complete": true,
+          "unassessed_features": [],
+          "paused_is_excluded": false
+        },
+        {
+          "candidate_id": "雄黄",
+          "display": "雄黄",
+          "hypothesis_status": "investigating",
+          "required": [
+            {
+              "feature_id": "mineral_feature",
+              "state": "local_absent",
+              "rule_state": "NOT_DETECTED",
+              "assessed": true,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "available",
+              "action_ids": [
+                "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07"
+              ],
+              "entry_paths": [
+                {
+                  "action_id": "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07",
+                  "tool": "presence_check",
+                  "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                  "kind": "feature_step",
+                  "budget_class": "observation",
+                  "is_evidence": false,
+                  "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+                }
+              ],
+              "fact_ref": "criterion:8de2befe3fee797235e11bc2"
+            }
+          ],
+          "supporting": [],
+          "review_complete": true,
+          "unassessed_features": [],
+          "paused_is_excluded": false
+        },
+        {
+          "candidate_id": "乌梅",
+          "display": "乌梅",
+          "hypothesis_status": "investigating",
+          "required": [
+            {
+              "feature_id": "epidermis_cell",
+              "state": "present_pending",
+              "rule_state": "MORPHOLOGY_UNVERIFIED",
+              "assessed": false,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "no_current_legal_action",
+              "action_ids": [],
+              "entry_paths": [],
+              "fact_ref": "criterion:9116aa42215de187e3d614a9"
+            }
+          ],
+          "supporting": [
+            {
+              "feature_id": "non_glandular_hair",
+              "state": "local_absent",
+              "rule_state": "NOT_DETECTED",
+              "assessed": true,
+              "satisfies_criterion": false,
+              "observed_fov_count": 1,
+              "provided_fov_count": 1,
+              "availability_reason": "available",
+              "action_ids": [
+                "eb3bf4b53046fce904a7dddff273136b13fddd2066d960150f7f9789e80795eb"
+              ],
+              "entry_paths": [
+                {
+                  "action_id": "eb3bf4b53046fce904a7dddff273136b13fddd2066d960150f7f9789e80795eb",
+                  "tool": "feature_scan",
+                  "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                  "kind": "feature_step",
+                  "budget_class": "recompute",
+                  "is_evidence": false,
+                  "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+                }
+              ],
+              "fact_ref": "criterion:fded183135234534711dff7c"
+            }
+          ],
+          "review_complete": false,
+          "unassessed_features": [
+            "epidermis_cell"
+          ],
+          "paused_is_excluded": false
+        }
+      ],
+      "unmapped": [],
+      "candidate_ids": [
+        "秦皮",
+        "大青叶",
+        "穿心莲",
+        "滑石",
+        "雄黄",
+        "乌梅"
+      ],
+      "complete": false,
+      "incomplete_candidate_ids": [
+        "秦皮",
+        "大青叶",
+        "穿心莲",
+        "乌梅"
+      ],
+      "actionable_gaps": false,
+      "comparison_required": true,
+      "scope": "current provided fields of view; local absence never excludes a specimen",
+      "policy": "review is always allowed; incomplete audit cannot authorize a complete differential conclusion"
+    },
+    "candidate_review_complete": false,
+    "decision_readiness_shadow": {
+      "schema": "decision-readiness/shadow-v1",
+      "mode": "shadow",
+      "selected_candidate_id": "滑石",
+      "audit_complete": false,
+      "formal_authorized": false,
+      "selected_required_gaps": [],
+      "competing_required_gaps": {
+        "秦皮": [
+          "sand_crystal"
+        ],
+        "乌梅": [
+          "epidermis_cell"
+        ]
+      },
+      "supporting_gaps": {
+        "大青叶": [
+          "epidermis_cell"
+        ],
+        "穿心莲": [
+          "glandular_hair"
+        ]
+      },
+      "unmapped": [],
+      "would_be_ready": false,
+      "production_authorization_changed": false,
+      "limit": "未查supporting不单独判否；required观察完成不等于排除竞争候选，仍需独立风险验证"
+    },
+    "formal_verdict": "insufficient_evidence",
+    "formal_conclusion_id": null,
+    "candidate_comparison": [
+      {
+        "candidate_id": "滑石",
+        "display": "滑石",
+        "rule_score": 0.0,
+        "rule_confidence": 0.0,
+        "fused_score": 0.215058,
+        "score_components": {
+          "version": "b-rule/4",
+          "support_weight": 0.2,
+          "required_total": 1,
+          "required_matched": 0,
+          "required_complete": false,
+          "required_attainment": 0,
+          "missing_required_penalty": 0.009,
+          "required_base": 0.0,
+          "supporting_contributions": {},
+          "supporting_strength": 0,
+          "supporting_bonus": 0,
+          "disjoint_counter_strength": 0,
+          "disjoint_counter_penalty": 0.0,
+          "disjoint_counterevidence": []
+        },
+        "support_count": 0,
+        "verified_feature_count": 0,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:809e33214f0061122436d585"
+        ]
+      },
+      {
+        "candidate_id": "大青叶",
+        "display": "大青叶",
+        "rule_score": 0.0,
+        "rule_confidence": 0.0,
+        "fused_score": 0.17782,
+        "score_components": {
+          "version": "b-rule/4",
+          "support_weight": 0.2,
+          "required_total": 1,
+          "required_matched": 0,
+          "required_complete": false,
+          "required_attainment": 0,
+          "missing_required_penalty": 0.009,
+          "required_base": 0.0,
+          "supporting_contributions": {},
+          "supporting_strength": 0,
+          "supporting_bonus": 0,
+          "disjoint_counter_strength": 0,
+          "disjoint_counter_penalty": 0.0,
+          "disjoint_counterevidence": []
+        },
+        "support_count": 0,
+        "verified_feature_count": 0,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:20e681ac7548a70fda01e76c"
+        ]
+      },
+      {
+        "candidate_id": "秦皮",
+        "display": "秦皮",
+        "rule_score": 0.0,
+        "rule_confidence": 0.0,
+        "fused_score": 0.055361,
+        "score_components": {
+          "version": "b-rule/4",
+          "support_weight": 0.2,
+          "required_total": 1,
+          "required_matched": 0,
+          "required_complete": false,
+          "required_attainment": 0,
+          "missing_required_penalty": 0,
+          "required_base": 0.0,
+          "supporting_contributions": {},
+          "supporting_strength": 0,
+          "supporting_bonus": 0,
+          "disjoint_counter_strength": 0,
+          "disjoint_counter_penalty": 0.0,
+          "disjoint_counterevidence": []
+        },
+        "support_count": 0,
+        "verified_feature_count": 0,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:c7e3259953d1d9813dd4e64e"
+        ]
+      },
+      {
+        "candidate_id": "穿心莲",
+        "display": "穿心莲",
+        "rule_score": 0.0,
+        "rule_confidence": 0.0,
+        "fused_score": 0.009746,
+        "score_components": {
+          "version": "b-rule/4",
+          "support_weight": 0.2,
+          "required_total": 1,
+          "required_matched": 0,
+          "required_complete": false,
+          "required_attainment": 0,
+          "missing_required_penalty": 0.009,
+          "required_base": 0.0,
+          "supporting_contributions": {},
+          "supporting_strength": 0,
+          "supporting_bonus": 0,
+          "disjoint_counter_strength": 0,
+          "disjoint_counter_penalty": 0.0,
+          "disjoint_counterevidence": []
+        },
+        "support_count": 0,
+        "verified_feature_count": 0,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:5b16c6a8306e0ab04f8e8b01"
+        ]
+      },
+      {
+        "candidate_id": "乌梅",
+        "display": "乌梅",
+        "rule_score": 0.0,
+        "rule_confidence": 0.0,
+        "fused_score": 0.008448,
+        "score_components": {
+          "version": "b-rule/4",
+          "support_weight": 0.2,
+          "required_total": 1,
+          "required_matched": 0,
+          "required_complete": false,
+          "required_attainment": 0,
+          "missing_required_penalty": 0,
+          "required_base": 0.0,
+          "supporting_contributions": {},
+          "supporting_strength": 0,
+          "supporting_bonus": 0,
+          "disjoint_counter_strength": 0,
+          "disjoint_counter_penalty": 0.0,
+          "disjoint_counterevidence": []
+        },
+        "support_count": 0,
+        "verified_feature_count": 0,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:9116aa42215de187e3d614a9"
+        ]
+      },
+      {
+        "candidate_id": "雄黄",
+        "display": "雄黄",
+        "rule_score": 0.0,
+        "rule_confidence": 0.0,
+        "fused_score": 0.005004,
+        "score_components": {
+          "version": "b-rule/4",
+          "support_weight": 0.2,
+          "required_total": 1,
+          "required_matched": 0,
+          "required_complete": false,
+          "required_attainment": 0,
+          "missing_required_penalty": 0.009,
+          "required_base": 0.0,
+          "supporting_contributions": {},
+          "supporting_strength": 0,
+          "supporting_bonus": 0,
+          "disjoint_counter_strength": 0,
+          "disjoint_counter_penalty": 0.0,
+          "disjoint_counterevidence": []
+        },
+        "support_count": 0,
+        "verified_feature_count": 0,
+        "supported_criteria": [],
+        "required_gaps": [
+          "criterion:8de2befe3fee797235e11bc2"
+        ]
+      }
+    ],
+    "rule_notes": [
+      "必需判据未全部核验或 B 规则分未达倾向门槛。"
+    ],
+    "provisional": {
+      "schema": "provisional-ranking/v1",
+      "policy": "temporary only; formal verdict and formal support count unchanged",
+      "source": "classification artifacts, one best class per crop",
+      "ranking": [
+        {
+          "candidate_id": "大青叶",
+          "display": "大青叶",
+          "provisional_score": 0.290306,
+          "provisional_delta": 0.112486,
+          "formal_score": 0.17782,
+          "formal_support_count": 0,
+          "criterion_states": [
+            {
+              "feature_id": "indigo_crystal",
+              "role": "required",
+              "tier": "C",
+              "state": "NOT_DETECTED",
+              "weight": 0.3,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            },
+            {
+              "feature_id": "epidermis_cell",
+              "role": "supporting",
+              "tier": "P1",
+              "state": "DETECTED_PENDING",
+              "weight": 0.5,
+              "provisional_contribution": 0.25,
+              "formal_contribution": 0,
+              "instance_ids": [],
+              "formal_state": "MORPHOLOGY_UNVERIFIED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": true
+            },
+            {
+              "feature_id": "stoma",
+              "role": "supporting",
+              "tier": "P1",
+              "state": "NOT_DETECTED",
+              "weight": 0.5,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            }
+          ],
+          "pending_verification": [
+            {
+              "feature_id": "epidermis_cell",
+              "role": "supporting",
+              "tier": "P1",
+              "state": "DETECTED_PENDING",
+              "weight": 0.5,
+              "provisional_contribution": 0.25,
+              "formal_contribution": 0,
+              "instance_ids": [],
+              "formal_state": "MORPHOLOGY_UNVERIFIED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": true
+            }
+          ]
+        },
+        {
+          "candidate_id": "秦皮",
+          "display": "秦皮",
+          "provisional_score": 0.266433,
+          "provisional_delta": 0.211072,
+          "formal_score": 0.055361,
+          "formal_support_count": 0,
+          "criterion_states": [
+            {
+              "feature_id": "sand_crystal",
+              "role": "required",
+              "tier": "C",
+              "state": "DETECTED_PENDING",
+              "weight": 0.3,
+              "provisional_contribution": 0.15,
+              "formal_contribution": 0,
+              "instance_ids": [],
+              "formal_state": "MORPHOLOGY_UNVERIFIED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": true
+            }
+          ],
+          "pending_verification": [
+            {
+              "feature_id": "sand_crystal",
+              "role": "required",
+              "tier": "C",
+              "state": "DETECTED_PENDING",
+              "weight": 0.3,
+              "provisional_contribution": 0.15,
+              "formal_contribution": 0,
+              "instance_ids": [],
+              "formal_state": "MORPHOLOGY_UNVERIFIED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": true
+            }
+          ]
+        },
+        {
+          "candidate_id": "滑石",
+          "display": "滑石",
+          "provisional_score": 0.25807,
+          "provisional_delta": 0.043012,
+          "formal_score": 0.215058,
+          "formal_support_count": 0,
+          "criterion_states": [
+            {
+              "feature_id": "mineral_feature",
+              "role": "required",
+              "tier": "C",
+              "state": "NOT_DETECTED",
+              "weight": 0.3,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            }
+          ],
+          "pending_verification": []
+        },
+        {
+          "candidate_id": "乌梅",
+          "display": "乌梅",
+          "provisional_score": 0.110138,
+          "provisional_delta": 0.10169,
+          "formal_score": 0.008448,
+          "formal_support_count": 0,
+          "criterion_states": [
+            {
+              "feature_id": "epidermis_cell",
+              "role": "required",
+              "tier": "P1",
+              "state": "DETECTED_PENDING",
+              "weight": 0.5,
+              "provisional_contribution": 0.25,
+              "formal_contribution": 0,
+              "instance_ids": [],
+              "formal_state": "MORPHOLOGY_UNVERIFIED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": true
+            },
+            {
+              "feature_id": "non_glandular_hair",
+              "role": "supporting",
+              "tier": "P1",
+              "state": "NOT_DETECTED",
+              "weight": 0.5,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            }
+          ],
+          "pending_verification": [
+            {
+              "feature_id": "epidermis_cell",
+              "role": "required",
+              "tier": "P1",
+              "state": "DETECTED_PENDING",
+              "weight": 0.5,
+              "provisional_contribution": 0.25,
+              "formal_contribution": 0,
+              "instance_ids": [],
+              "formal_state": "MORPHOLOGY_UNVERIFIED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": true
+            }
+          ]
+        },
+        {
+          "candidate_id": "穿心莲",
+          "display": "穿心莲",
+          "provisional_score": 0.011696,
+          "provisional_delta": 0.00195,
+          "formal_score": 0.009746,
+          "formal_support_count": 0,
+          "criterion_states": [
+            {
+              "feature_id": "calcium_carbonate",
+              "role": "required",
+              "tier": "C",
+              "state": "NOT_DETECTED",
+              "weight": 0.3,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            },
+            {
+              "feature_id": "non_glandular_hair",
+              "role": "supporting",
+              "tier": "P1",
+              "state": "NOT_DETECTED",
+              "weight": 0.5,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            },
+            {
+              "feature_id": "glandular_hair",
+              "role": "supporting",
+              "tier": "P1",
+              "state": "NOT_DETECTED",
+              "weight": 0.5,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            },
+            {
+              "feature_id": "stoma",
+              "role": "supporting",
+              "tier": "P1",
+              "state": "NOT_DETECTED",
+              "weight": 0.5,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            }
+          ],
+          "pending_verification": []
+        },
+        {
+          "candidate_id": "雄黄",
+          "display": "雄黄",
+          "provisional_score": 0.006005,
+          "provisional_delta": 0.001001,
+          "formal_score": 0.005004,
+          "formal_support_count": 0,
+          "criterion_states": [
+            {
+              "feature_id": "mineral_feature",
+              "role": "required",
+              "tier": "C",
+              "state": "NOT_DETECTED",
+              "weight": 0.3,
+              "provisional_contribution": 0.0,
+              "formal_contribution": 0.0,
+              "instance_ids": [],
+              "formal_state": "NOT_DETECTED",
+              "quant_note": null,
+              "n_measured": null,
+              "pending": false
+            }
+          ],
+          "pending_verification": []
+        }
+      ],
+      "top_candidate": "大青叶",
+      "formal_top_candidate": "滑石"
+    },
+    "review_required": true,
+    "review_reasons": [
+      "FORMAL_REQUIRES_REVIEW",
+      "CANDIDATE_AUDIT_INCOMPLETE",
+      "INSUFFICIENT_FEATURE_TYPES",
+      "CANDIDATE_NOT_FORMAL_CONCLUSION",
+      "FORMAL_VERDICT_NOT_AUTHORIZED"
+    ],
+    "confidence_basis": {
+      "rule_score": 0.0,
+      "rule_confidence": 0.0,
+      "score_components": {
+        "version": "b-rule/4",
+        "support_weight": 0.2,
+        "required_total": 1,
+        "required_matched": 0,
+        "required_complete": false,
+        "required_attainment": 0,
+        "missing_required_penalty": 0.009,
+        "required_base": 0.0,
+        "supporting_contributions": {},
+        "supporting_strength": 0,
+        "supporting_bonus": 0,
+        "disjoint_counter_strength": 0,
+        "disjoint_counter_penalty": 0.0,
+        "disjoint_counterevidence": []
+      },
+      "calibrated_probability": null,
+      "fused_score": 0.17782,
+      "support_count": 0,
+      "verified_feature_count": 0,
+      "min_support_features": 2,
+      "level_meaning": "delivery_authorization_not_probability",
+      "level": "low",
+      "has_admitted_b_support": true
+    },
+    "evidence_packet": {
+      "path": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\final_evidence.json",
+      "sha256": "1465929b94f7e7573817ea6efd07cb8f493ee2565b811e68091a949c3d63a803",
+      "fact_count": 37,
+      "hash_method": "canonical_json_sha256",
+      "evidence_version": "e7955885a7a4796cb85f142dcd07e5c68f1e0fd61c51454c0b8ce92e7bd2db65"
+    },
+    "model_failure": null,
+    "model_validation_error": null,
+    "model_proposal": {
+      "candidate_id": "秦皮",
+      "explanation": "秦皮唯一required砂晶在本视野 presence_check 命中：右上大块组织碎片细胞腔内见大量极细小颗粒状内含物，呈细砂样密集充填，形态描述与判据（草酸钙砂晶常充满细胞）一致，一条合格支持即够。但该判据仍为 MORPHOLOGY_UNVERIFIED（present_pending，未经正式形态确认），只能说明本视野结构存在，不等于判据已满足；需按正式规则完成形态核验与复核。竞争候选方面：滑石/雄黄矿物判据、大青叶靛蓝结晶、穿心莲钟乳体均仅本视野局部阴性，不排除标本，乌梅果皮表皮细胞为多候选共用的非特异特征，且其required亦未确认；腺毛检查执行失败，状态未知。置信度仅0.62的观察与单一视野构成主要不确定性，A各折先验分歧（秦皮仅第1折领先）仅作归属比较，不构成证据。总体倾向秦皮但证据不足以正式确认。",
+      "support_refs": [
+        "observation:c3884d34d8546f1b0a1d13f1",
+        "criterion:c7e3259953d1d9813dd4e64e"
+      ],
+      "counter_refs": [],
+      "unresolved_refs": []
+    },
+    "model_citation_audit": {
+      "candidate_id": "秦皮",
+      "evidence_version": "e7955885a7a4796cb85f142dcd07e5c68f1e0fd61c51454c0b8ce92e7bd2db65",
+      "accepted": {
+        "support_refs": [
+          "observation:c3884d34d8546f1b0a1d13f1"
+        ],
+        "counter_refs": [],
+        "unresolved_refs": []
+      },
+      "rejected": [
+        {
+          "field": "support_refs",
+          "ref": "criterion:c7e3259953d1d9813dd4e64e",
+          "reason": "ineligible_support",
+          "fact_candidate_id": "秦皮",
+          "fact_state": "MORPHOLOGY_UNVERIFIED"
+        }
+      ]
+    },
+    "usage": {
+      "completion_tokens": 355,
+      "completion_tokens_details": {
+        "reasoning_tokens": 55
+      },
+      "prompt_tokens": 24796,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "total_tokens": 25151
+    },
+    "new_image_calls": 0,
+    "new_tool_calls": 0,
+    "timing": {
+      "elapsed_seconds": 12.063,
+      "model_call_seconds": 11.907,
+      "scope": "read-only evidence packet, optional model call/validation and local assessment"
+    }
+  },
+  "decision_layers": {
+    "formal": {
+      "verdict": "insufficient_evidence",
+      "conclusion": null,
+      "authorized": false,
+      "needs_review": true
+    },
+    "fusion_leader": {
+      "id": "滑石",
+      "display": "滑石",
+      "score": 0.215058,
+      "support": [],
+      "counter": []
+    },
+    "b_leader": {
+      "id": "G1",
+      "display": "赤芍 / 牡丹皮",
+      "score": 0.0,
+      "support": [],
+      "counter": []
+    }
+  },
+  "candidate_audit": {
+    "schema": "candidate-audit/v1",
+    "candidates": [
+      {
+        "candidate_id": "秦皮",
+        "display": "秦皮",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "sand_crystal",
+            "state": "present_pending",
+            "rule_state": "MORPHOLOGY_UNVERIFIED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:c7e3259953d1d9813dd4e64e"
+          }
+        ],
+        "supporting": [],
+        "review_complete": false,
+        "unassessed_features": [
+          "sand_crystal"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "大青叶",
+        "display": "大青叶",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "indigo_crystal",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "available",
+            "action_ids": [
+              "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "ca896a39a4b5c152c733b7af98557f8b62ebf28c57ef0047f77ad8074d54476d",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:20e681ac7548a70fda01e76c"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "epidermis_cell",
+            "state": "present_pending",
+            "rule_state": "MORPHOLOGY_UNVERIFIED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:14b0394e3b972b7ca0b35eb9"
+          },
+          {
+            "feature_id": "stoma",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "available",
+            "action_ids": [
+              "90e0813d8b76c55a0995d0bbb7b771abfd75125ca3b89a52d4f145b16831ebef"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "90e0813d8b76c55a0995d0bbb7b771abfd75125ca3b89a52d4f145b16831ebef",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:295915648929745251114f2a"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "epidermis_cell"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "穿心莲",
+        "display": "穿心莲",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "calcium_carbonate",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "available",
+            "action_ids": [
+              "c98f76209d06e4d6570b4d6a9746a7d3bf177005ce2db277c122a051291646b3"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "c98f76209d06e4d6570b4d6a9746a7d3bf177005ce2db277c122a051291646b3",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:5b16c6a8306e0ab04f8e8b01"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "non_glandular_hair",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "available",
+            "action_ids": [
+              "eb3bf4b53046fce904a7dddff273136b13fddd2066d960150f7f9789e80795eb"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "eb3bf4b53046fce904a7dddff273136b13fddd2066d960150f7f9789e80795eb",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:9b2354f1ee52baea79fe3e5a"
+          },
+          {
+            "feature_id": "glandular_hair",
+            "state": "failed_or_unknown",
+            "rule_state": "NOT_DETECTED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:83b0a2565561caf35b4dd116"
+          },
+          {
+            "feature_id": "stoma",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "available",
+            "action_ids": [
+              "90e0813d8b76c55a0995d0bbb7b771abfd75125ca3b89a52d4f145b16831ebef"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "90e0813d8b76c55a0995d0bbb7b771abfd75125ca3b89a52d4f145b16831ebef",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:c10d5aed844e81c8a0ba9388"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "glandular_hair"
+        ],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "滑石",
+        "display": "滑石",
+        "hypothesis_status": "paused",
+        "required": [
+          {
+            "feature_id": "mineral_feature",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "available",
+            "action_ids": [
+              "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:809e33214f0061122436d585"
+          }
+        ],
+        "supporting": [],
+        "review_complete": true,
+        "unassessed_features": [],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "雄黄",
+        "display": "雄黄",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "mineral_feature",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "available",
+            "action_ids": [
+              "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "4bb23e8cec4581f9a5e93671dfdc47a547c56ea8290761262d795ab2845c4d07",
+                "tool": "presence_check",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "observation",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:8de2befe3fee797235e11bc2"
+          }
+        ],
+        "supporting": [],
+        "review_complete": true,
+        "unassessed_features": [],
+        "paused_is_excluded": false
+      },
+      {
+        "candidate_id": "乌梅",
+        "display": "乌梅",
+        "hypothesis_status": "investigating",
+        "required": [
+          {
+            "feature_id": "epidermis_cell",
+            "state": "present_pending",
+            "rule_state": "MORPHOLOGY_UNVERIFIED",
+            "assessed": false,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "no_current_legal_action",
+            "action_ids": [],
+            "entry_paths": [],
+            "fact_ref": "criterion:9116aa42215de187e3d614a9"
+          }
+        ],
+        "supporting": [
+          {
+            "feature_id": "non_glandular_hair",
+            "state": "local_absent",
+            "rule_state": "NOT_DETECTED",
+            "assessed": true,
+            "satisfies_criterion": false,
+            "observed_fov_count": 1,
+            "provided_fov_count": 1,
+            "availability_reason": "available",
+            "action_ids": [
+              "eb3bf4b53046fce904a7dddff273136b13fddd2066d960150f7f9789e80795eb"
+            ],
+            "entry_paths": [
+              {
+                "action_id": "eb3bf4b53046fce904a7dddff273136b13fddd2066d960150f7f9789e80795eb",
+                "tool": "feature_scan",
+                "image_id": "img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c",
+                "kind": "feature_step",
+                "budget_class": "recompute",
+                "is_evidence": false,
+                "limit": "只授权本步骤；身份/形态/标定/量纲资格分别核验"
+              }
+            ],
+            "fact_ref": "criterion:fded183135234534711dff7c"
+          }
+        ],
+        "review_complete": false,
+        "unassessed_features": [
+          "epidermis_cell"
+        ],
+        "paused_is_excluded": false
+      }
+    ],
+    "unmapped": [],
+    "candidate_ids": [
+      "秦皮",
+      "大青叶",
+      "穿心莲",
+      "滑石",
+      "雄黄",
+      "乌梅"
+    ],
+    "complete": false,
+    "incomplete_candidate_ids": [
+      "秦皮",
+      "大青叶",
+      "穿心莲",
+      "乌梅"
+    ],
+    "actionable_gaps": false,
+    "comparison_required": true,
+    "scope": "current provided fields of view; local absence never excludes a specimen",
+    "policy": "review is always allowed; incomplete audit cannot authorize a complete differential conclusion"
+  },
+  "judgement": "暂定排序倾向：大青叶；尚不能确认，需要复核。",
+  "fusion_ranking": [
+    {
+      "id": "滑石",
+      "score": 0.215058
+    },
+    {
+      "id": "大青叶",
+      "score": 0.17782
+    },
+    {
+      "id": "秦皮",
+      "score": 0.055361
+    },
+    {
+      "id": "穿心莲",
+      "score": 0.009746
+    },
+    {
+      "id": "乌梅",
+      "score": 0.008448
+    },
+    {
+      "id": "雄黄",
+      "score": 0.005004
+    }
+  ],
+  "feature_audit": {
+    "schema": "feature-audit/v2",
+    "evidence_version": "e7955885a7a4796cb85f142dcd07e5c68f1e0fd61c51454c0b8ce92e7bd2db65",
+    "non_blocking": true,
+    "feature_ids": [
+      "cluster_crystal",
+      "epidermis_cell",
+      "fiber",
+      "hypha",
+      "needle_crystal",
+      "non_glandular_hair",
+      "other",
+      "pollen_grain",
+      "secretory_tissue",
+      "single_crystal",
+      "starch_grain",
+      "stoma",
+      "stone_cell",
+      "vessel"
+    ],
+    "summary": {
+      "feature_ids": [
+        "cluster_crystal",
+        "epidermis_cell",
+        "fiber",
+        "hypha",
+        "needle_crystal",
+        "non_glandular_hair",
+        "other",
+        "pollen_grain",
+        "secretory_tissue",
+        "single_crystal",
+        "starch_grain",
+        "stoma",
+        "stone_cell",
+        "vessel"
+      ],
+      "n_candidates": 1,
+      "n_input_views": 1,
+      "views_with_candidates": 1,
+      "n_target_only": 1,
+      "n_with_examples": 0,
+      "classified_target": 0,
+      "classified_non_target": 0,
+      "classification_unresolved": 1,
+      "high_score_unclassified": 0,
+      "low_score_unclassified": 0,
+      "n_masks": 0,
+      "n_instances": 0,
+      "merged_masks": 0
+    },
+    "candidates": [
+      {
+        "crop_id": "crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+        "crop_name": "epidermis_cell_view_01_glm3df6d852daf1_01",
+        "view": "view_01",
+        "source": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\view_01.tif",
+        "feature_id": "epidermis_cell",
+        "box_source": "glm",
+        "det_score": 0.65,
+        "audit_label": "身份待定",
+        "classified_feature_id": null,
+        "confidence_source": "glm",
+        "classification_id": "classification:crop:img_a25caad98206aa1cf1880e543b6bc50f9d50f7277016e885b6384e2fc0ac505c:epidermis_cell_view_01_glm3df6d852daf1_01",
+        "target_score": null,
+        "negative_margin": null,
+        "status": "classification_unresolved",
+        "non_blocking": true,
+        "reject": "unreadable",
+        "review_input_mode": "target_only",
+        "review_fallback": "no_close_alternative"
+      }
+    ],
+    "instances": [],
+    "issues": []
+  },
+  "audit": {
+    "rule_verdict": "insufficient_evidence",
+    "internal_needs_review": true,
+    "status_note": null,
+    "candidate_scope": {
+      "scope": "open_strict",
+      "a_topk_ids": [
+        "秦皮",
+        "大青叶",
+        "穿心莲",
+        "滑石",
+        "雄黄",
+        "乌梅"
+      ],
+      "kept_ids": [
+        "乌梅",
+        "大青叶",
+        "滑石",
+        "秦皮",
+        "穿心莲",
+        "雄黄"
+      ],
+      "dropped": [
+        {
+          "id": "G1",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G2",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G3",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "G4",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "五味子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "使君子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "党参",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "厚朴",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "地黄",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "大腹皮",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "大黄",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "射干",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "山楂",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "川楝子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "广藿香",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "当归",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "木香",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "板蓝根",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "柴胡",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "栀子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "桂枝",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "桑白皮",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "桔梗",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "槟榔",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "水牛角",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "泽泻",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "淡竹叶",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "淫羊藿",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "牡蛎",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "牵牛子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "猪苓",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "玄参",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "王不留行",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "甘草",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "白头翁",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "白芍",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "益母草",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "知母",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "石膏",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "红花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "肉桂",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "艾叶",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "苦参",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "苦杏仁",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "茯苓",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "茵陈",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "荆芥",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "荜茇",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "莱菔子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "菊花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "菟丝子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "葶苈子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "薄荷",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "虎杖",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "蝉蜕",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "诃子",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "辣蓼",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "连翘",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "郁金",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "金银花",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "防风",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "青黛",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "香附",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "马齿苋",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "鱼腥草",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "麦冬",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "麦芽",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "麻黄",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄柏",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄芩",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄芪",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "黄连",
+          "reason": "not_in_a_topk"
+        },
+        {
+          "id": "龙胆",
+          "reason": "not_in_a_topk"
+        }
+      ],
+      "policy": "A Top-K 为 Plan B 重点；非 A 仅在 open_strict 且 required+supporting 全部符合时保留"
+    },
+    "fusion_weights": {
+      "a": 0.5,
+      "b": 0.5,
+      "a_folds": 5
+    },
+    "fusion_policy": "A 先验 + B 证据加权；B verdict/证据状态不由 A 改写",
+    "policy": "always_output_tentative",
+    "assessment_projection_error": null
+  },
+  "note": "tentative 是未确认候选；review_required 如实表示复核需要，不阻止报告交付。"
+}

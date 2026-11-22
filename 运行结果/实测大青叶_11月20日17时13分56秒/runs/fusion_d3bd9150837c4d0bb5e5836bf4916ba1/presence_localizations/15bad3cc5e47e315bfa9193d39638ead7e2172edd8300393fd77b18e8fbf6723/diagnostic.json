@@ -1,0 +1,83 @@
+{
+  "policy_version": "presence_localization_shadow_v1",
+  "mode": "shadow",
+  "source_image_sha256": "0322585557744e55a2081927681ea2cefc6a3e895d62708ea0be5c5a127cfaf2",
+  "feature_id": "epidermis_cell",
+  "localization": "valid",
+  "quality": "low_detail",
+  "identity": "pending",
+  "verification_basis": [
+    {
+      "kind": "glm_localization_hypothesis",
+      "independent_support": false
+    }
+  ],
+  "findings": [],
+  "usage_eligibility": {
+    "presence": false,
+    "morphology": false,
+    "length": false,
+    "width": false,
+    "area": false
+  },
+  "legacy_presence_unchanged": true,
+  "state": "present_pending",
+  "observation_scope": {
+    "kind": "sent_full_fov",
+    "exhaustive": false
+  },
+  "source_tight_bbox": [
+    1287.5,
+    612.5,
+    3112.5,
+    1870.0
+  ],
+  "crop_bbox": [
+    1224,
+    549,
+    3175,
+    1932
+  ],
+  "transform": {
+    "kind": "full_image_resize",
+    "scale_xy": [
+      0.4,
+      0.4
+    ],
+    "padding_xy": [
+      0,
+      0
+    ],
+    "roi_xyxy": [
+      0,
+      0,
+      3840,
+      2160
+    ]
+  },
+  "model_input_size": [
+    1536,
+    864
+  ],
+  "spatial_agreement": [],
+  "artifacts": {
+    "target_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723\\target.png",
+    "context_png": "D:\\TCM_Fusion\\运行结果\\实测大青叶_11月20日17时13分56秒\\runs\\fusion_d3bd9150837c4d0bb5e5836bf4916ba1\\presence_localizations\\15bad3cc5e47e315bfa9193d39638ead7e2172edd8300393fd77b18e8fbf6723\\context.png",
+    "target_sha256": "40c83b3faca73257ad63edde4d6b9c5b19f95029a568ef7611dba5470133afc5"
+  },
+  "quality_diagnostic": {
+    "status": "low_detail",
+    "score": 0.4318,
+    "flags": [
+      "low_detail"
+    ],
+    "metrics": {
+      "std": 0.0687,
+      "edge": 0.00971,
+      "width": 512,
+      "height": 353,
+      "area_ratio": 0.2767
+    },
+    "block_segment": false
+  }
+}

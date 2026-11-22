@@ -1,0 +1,14 @@
+{
+  "weights": "D:\\TCM_Fusion\\yolo-results\\detection\\yolo_runs\\v1_yolov10s_1024\\weights\\best.pt",
+  "class_map": "D:\\TCM_Fusion\\yolo-results\\detection\\yolo_runs\\data_local.yaml",
+  "detector_config": "D:\\TCM_Fusion\\config\\detector.json",
+  "source": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\view_01.tif",
+  "output": "D:\\TCM_Fusion\\运行结果\\实测S01_11月22日00时13分57秒\\runs\\fusion_f2f12430dbc147ad9e19cf1dd0a3d5ab\\workflow\\ops\\32635207063d548d\\boxes.json",
+  "signature": {
+    "weights": "55a913007c19691b59972b52aeb0075f6533be1c923279949ccc3538c99e3d8a",
+    "class_map": "3e25aa349c59290ec17517b31cfe78c501d4965bd3294860c55e64210dde8611",
+    "detector_config": "34c0ef9ceec6ea4d2d47fe5289abaccb414e19900a5337edc03ca8dfcd935aec",
+    "python": "1eaca0c6c6b306f084e46cd3ac96505cddae0004fb638ff0b69097f9e977d702",
+    "taxonomy_config": "e1598e6044f0253f852cfc7695dea900fbac178a9fe713c0817244107579b272"
+  }
+}

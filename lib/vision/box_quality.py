@@ -15,13 +15,19 @@ import numpy as np
 from PIL import Image
 
 
-def _load_gray(path, max_side=512):
-    image = Image.open(path).convert('L')
+def _load_gray(path, max_side=512, *, region=None):
+    with Image.open(path) as original:
+        if region is not None:
+            x0, y0, x1, y1 = region
+            if not (0 <= x0 < x1 <= original.width and 0 <= y0 < y1 <= original.height):
+                raise ValueError('质量评估子窗越界')
+            original = original.crop(region)
+        image = original.convert('L')
     image.thumbnail((max_side, max_side), Image.Resampling.BILINEAR)
     return np.asarray(image, dtype=np.float32) / 255.0
 
 
-def assess(path, *, box=None, source_size=None, touches_border=None):
+def assess(path, *, box=None, source_size=None, touches_border=None, region=None):
     """返回 dict；status 只有 usable / low_detail / blank / tiny / invalid。
 
     - blank：几乎无纹理，阻止继续分割；
@@ -31,7 +37,7 @@ def assess(path, *, box=None, source_size=None, touches_border=None):
     - 其余为 usable。
     """
     try:
-        image = _load_gray(path)
+        image = _load_gray(path, region=region)
     except Exception:
         return {'status': 'invalid', 'score': 0.0, 'flags': ['invalid_image'],
                 'metrics': {}, 'block_segment': False}
@@ -86,5 +92,7 @@ def assess_meta(meta):
             source_size = source.size
     except Exception:
         pass
+    frame = getattr(meta, 'raw', {}).get('feature_window') or {}
     return assess(meta.png, box=meta.tight_box, source_size=source_size,
+                  region=frame.get('classification_box_local'),
                   touches_border=bool(getattr(meta, 'touches_border', False)))
