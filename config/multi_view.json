@@ -5,9 +5,9 @@
     "required": true,
     "checkpoint_dir": "分类器设计权重与CNN权重/herb_cls_runs",
     "model_runs": [
-      "v2_resnet18_448_lb_e40_ls10_mix10_s20261111",
-      "v2_resnet18_448_lb_e40_ls10_mix10_s20261112",
-      "v2_resnet18_448_lb_e40_ls10_mix10_s20261113"
+      "v3_resnet50_448_lb_e60_ls10_mix10_s20261111",
+      "v3_resnet50_448_lb_e60_ls10_mix10_s20261112",
+      "v3_resnet50_448_lb_e60_ls10_mix10_s20261113"
     ],
     "timeout_seconds": 180
   },

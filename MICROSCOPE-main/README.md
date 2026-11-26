@@ -1,6 +1,6 @@
 # 植物显微图分类（ResNet50 全量微调）
 
-新任务由 `predict_herb_resnet18.py` 读取一个完整视野和三个配置中的权重子目录，严格核对 448 px letterbox、类别顺序和归一化参数后输出完整的逐模型 softmax。主进程用完整概率计算平均榜。单图调查候选取平均榜 Top 8，多图调查候选取各视野各模型 Top 5 的并集。历史五折任务使用 `predictv3_resnet50.py`。正式入口及环境见 [独立部署](../独立部署.md)。
+新任务由 `predict_herb_resnet18.py` 读取一个完整视野和三个 ResNet50 权重子目录。入口保留原文件名，按模型元信息选择受支持的网络，核对 448 px letterbox、类别顺序和归一化参数后输出完整的逐模型 softmax。主进程用完整概率计算平均榜。单图调查候选取平均榜 Top 8，多图调查候选取各视野各模型 Top 5 的并集。历史五折任务使用 `predictv3_resnet50.py`。正式入口及环境见 [独立部署](../独立部署.md)。
 
 下文保留原五折工程的训练、OOF 和评估说明。相关脚本在 `D:\TCM-Microscopic-Image-Recognition-main\MICROSCOPE-main` 使用。
 

@@ -40,7 +40,7 @@ flowchart TD
 | 环节 | 读入什么，产生什么 | 数据交给谁 |
 | --- | --- | --- |
 | 1. 绑定样品 | 入口按输入清单的 `views` 顺序逐图核对路径和 SHA256，排除重复图像，复制为 `case/view_01.jpg` 等中性名称，保留原扩展名。 | `case/input_proof.json` 对应原图与副本，`case/config.json` 绑定本次视野。预检结果写入 `case/doctor.json`，实跑通过后才启动 A。[输入准备](lib/application/multi_view.py) |
-| 2. 从整图提名药材 | A 的三个 448 px ResNet18 模型对每个视野分别输出完整 softmax。逐模型概率在 `run/a_prediction.json` 的 `view_predictions[].model_predictions`，按视野和模型等权所得样品平均榜在顶层 `ranking`。 | 单图取三模型平均榜 Top 8。多图每个视野的三个模型各取 Top 5，再跨模型、跨图取并集。标签映射为单味药或药材组 ID，合并重复组并保留未映射标签。完整平均榜用于计算 A 分。[A 预测适配](lib/workflow/adapters.py) · [候选映射](lib/decision/candidate_policy.py) |
+| 2. 从整图提名药材 | A 的三个 448 px ResNet50 模型对每个视野分别输出完整 softmax。逐模型概率在 `run/a_prediction.json` 的 `view_predictions[].model_predictions`，按视野和模型等权所得样品平均榜在顶层 `ranking`。 | 单图取三模型平均榜 Top 8。多图每个视野的三个模型各取 Top 5，再跨模型、跨图取并集。标签映射为单味药或药材组 ID，合并重复组并保留未映射标签。完整平均榜用于计算 A 分。[A 预测适配](lib/workflow/adapters.py) · [候选映射](lib/decision/candidate_policy.py) |
 | 3. 选择下一步调查 | ReAct 读取候选的必需项与辅助项、已取得的观察、可操作实例和剩余预算，形成当轮菜单。实际展示的选择及模型所选动作可在 `run/agent_trace.json` 的 `planner_offer` 和 `thought` 事件中对照。 | MCP 把选中的请求送入绑定本次样品的工具服务，工作流校验目标、依赖和额度。选 C 时跟进同一实例，选 D4 时可并发处理独立视野，选复核则转入收尾。[调查循环](lib/agent/react_graph.py) · [MCP 工具调用](lib/mcp/mcp_bridge.py) |
 | 4. 从视野发现特征 | 原图存在性观察回答“这个视野有没有某类结构”。需要具体实例时，YOLO 初检或按特征定向补扫产生原图坐标框和裁图（crop）。 | 观察结果带视野来源。裁图连同原图路径、坐标和初步类别交给身份核验。比例尺读取失败时仍可保留检测框，微米尺寸待标定。[工作流会话](lib/workflow/workflow_session.py) · [裁图数据契约](contracts.py) |
 | 5. 从实例取得尺寸 | Stage2 的 ResNet18 判断裁图中的显微特征类别。低置信或 `other` 的实例可交给 GLM 复核。需要尺寸时，对通过身份核验的实例分割得到掩码（mask），再用合格掩码和标定计算所需的长度、宽度或面积。 | 测量记录带视野名和实例号。某项尺寸缺少合格结果时，该判据继续留作缺口，Agent 可换实例、换视野或收尾。[身份分类](lib/vision/stage2_classifier.py) · [分割与测量调度](lib/workflow/workflow_backend.py) |
@@ -81,7 +81,7 @@ TCM_Fusion/
 │   ├── evidence/                  # evidence_store.py 存版本，evidence_projection.py 判断证据可用于哪些判据
 │   ├── decision/                  # rule_scoring.py 算 B 分，ab_fusion.py 排序，final_assessment.py 形成研判
 │   └── offline/                   # workflow_replay.py 等模块用录制工件回放、评估
-├── MICROSCOPE-main/               # 三个 ResNet18 的整图药材预测入口及历史五折入口
+├── MICROSCOPE-main/               # 三个 ResNet50 的整图药材预测入口及历史五折入口
 ├── 目标检测/                      # 视觉定位、裁图分类所需的底层接口和模型变换
 ├── yolo-results/                  # YOLO 初检权重与类别表的部署位置
 ├── 分类器设计权重与CNN权重/       # Plan A 整图药材模型和 Stage2 裁图特征模型

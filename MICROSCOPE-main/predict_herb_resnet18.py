@@ -1,7 +1,8 @@
 """Run the three Plan A herb classifiers on a full microscope image.
 
-Each checkpoint must match its metadata before strict loading. The worker emits
-one complete softmax vector per model. The fusion process ranks their mean.
+The filename is kept for existing callers. Each checkpoint must match its
+metadata before strict loading. The worker emits one complete softmax vector
+per model. The fusion process ranks their mean.
 """
 import argparse
 import json
@@ -10,9 +11,12 @@ from pathlib import Path
 import torch
 from PIL import Image
 from torch import nn
-from torchvision.models import resnet18
+from torchvision.models import resnet18, resnet50
 
 from 目标检测.lib.cls_net import build_transforms
+
+
+MODEL_FACTORIES = {"resnet18": resnet18, "resnet50": resnet50}
 
 
 def predict(image_path, model_dirs):
@@ -28,20 +32,26 @@ def predict(image_path, model_dirs):
             weight = directory / "best.pt"
             with (directory / "model_meta.json").open(encoding="utf-8-sig") as stream:
                 metadata = json.load(stream)
-            labels = metadata["classes"]
+            if not isinstance(metadata, dict):
+                raise ValueError(f"{directory.name}: invalid model metadata")
+            architecture = metadata.get("arch")
+            if not isinstance(architecture, str) or architecture not in MODEL_FACTORIES:
+                raise ValueError(f"{directory.name}: unsupported Plan A architecture: {architecture!r}")
+            labels = metadata.get("classes")
             if (not isinstance(labels, list) or len(labels) < 8
                     or any(not isinstance(label, str) or not label.strip() for label in labels)
                     or len(set(labels)) != len(labels) or (classes is not None and labels != classes)):
                 raise ValueError(f"{directory.name}: invalid or inconsistent class order")
             classes = labels
-            expected = {"arch": "resnet18", "imgsz": 448, "input_mode": "letterbox",
+            expected = {"arch": architecture, "imgsz": 448, "input_mode": "letterbox",
                         "classes": classes, "mean": mean, "std": std}
             checkpoint = torch.load(weight, map_location="cpu", weights_only=True)
             if (metadata.get("checkpoint") != weight.name
+                    or not isinstance(checkpoint, dict)
                     or any(metadata.get(key) != value or checkpoint.get(key) != value
                            for key, value in expected.items())):
                 raise ValueError(f"{directory.name}: checkpoint and metadata disagree with Plan A inputs")
-            model = resnet18(weights=None)
+            model = MODEL_FACTORIES[architecture](weights=None)
             model.fc = nn.Linear(model.fc.in_features, len(classes))
             model.load_state_dict(checkpoint["state_dict"], strict=True)
             model.to(device).eval()

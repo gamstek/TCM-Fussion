@@ -4,7 +4,7 @@ multi_view.json 用于构建新任务。detector.json 记录检测推理覆盖�
 
 ## 多视野模板与历史配置
 
-Plan A 用 `a.checkpoint_dir` 和 `a.model_runs` 固定三份 448 px 药材分类权重。模板的 `candidate_policy.top_k=8` 用于单图平均榜，`candidate_policy.multiview_per_model_top_k=5` 用于两张及以上视野的逐模型候选并集。历史三模型配置缺该字段时沿用样品平均榜 Top-K。完整类别概率逐模型、逐视野等权平均，用于计算 A 分。显式指向历史五折目录且省略 `model_runs` 时走原入口。
+Plan A 用 `a.checkpoint_dir` 和 `a.model_runs` 固定三份 448 px ResNet50 药材分类权重。模板的 `candidate_policy.top_k=8` 用于单图平均榜，`candidate_policy.multiview_per_model_top_k=5` 用于两张及以上视野的逐模型候选并集。历史三模型配置缺该字段时沿用样品平均榜 Top-K。完整类别概率逐模型、逐视野等权平均，用于计算 A 分。显式指向历史五折目录且省略 `model_runs` 时走原入口。
 
 `observation_group_execution=true` 允许 adaptive_v2 从当轮可见的 Q 菜单选择超过两个不同问题。可选数受步数和剩余观察、网络、总额度限制，执行时每批最多两项；`max_parallel=1` 时逐项执行。缺省或 false 保留原双问题菜单。
 
