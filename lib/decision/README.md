@@ -2,12 +2,14 @@
 
 概率分流、候选证据解释、A/B 融合和对外交付。
 
+候选审查按视野和特征登记已返回的定向观察与操作。`candidate_audit.receipts_by_feature` 保留来源编号及结果，共用同一特征的候选引用同一份记录。未发出、仅预留或属于其他视野的动作不给当前判据记进度。补扫有图块成功且返回零裁图时记已查仍未解决，失败或不可判的回执单列。裁图批量分类按各张实际回执登记。正式支持与反证继续取自逐判据的用途资格。
+
 | 文件 | 阅读指引 |
 | --- | --- |
 | [rule_scoring.py](rule_scoring.py) | 复用判药模块的逐条核验，以当前有效证据计算正式 B 分，按分差、必需判据和独立证据广度裁决。 |
-| [ab_fusion.py](ab_fusion.py) | 将 A 的逐折平均先验与同一候选的正式 B 分加权，生成融合排序。 |
+| [ab_fusion.py](ab_fusion.py) | 将 A 的样品平均先验与同一候选的正式 B 分加权，兼容历史逐折先验。 |
 | [candidate_audit.py](candidate_audit.py) | 逐项对照候选判据、当前用途资格、任务动作和观察账本。 |
-| [candidate_policy.py](candidate_policy.py) | 把 A 的逐折 Top-K 预测映射为 Agent 候选兴趣清单，仅作查证入口而非显微证据。 |
+| [candidate_policy.py](candidate_policy.py) | 映射单图平均榜 Top 8 或多图逐模型 Top 5 并集，兼容历史平均榜和逐折 Top-K。 |
 | [candidate_scope.py](candidate_scope.py) | 消费 A 候选、原裁决和融合配置，生成允许交付的候选范围。 |
 | [collaboration.py](collaboration.py) | A/B 只读协作与有界影子 Agent：融合两路结果并给出可选补查建议，不改写原工件。 |
 | [comparison_problems.py](comparison_problems.py) | D2 候选区分问题：共享物理查询，分别解释判据，不生成强制调查剧本。 |

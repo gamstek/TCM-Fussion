@@ -10,7 +10,8 @@ param(
     [Parameter(Position = 0)]
     [string] $Directory,
 
-    [switch] $Preview
+    [switch] $Preview,
+    [switch] $IncludeVisualObservations
 )
 
 $ErrorActionPreference = 'Stop'
@@ -28,6 +29,7 @@ $observerArgs = @('-B', '-X', 'utf8', '-m', 'TCM_Fusion.cli.langsmith_trace', $o
                   '--follow', '--include-decision-summary')
 
 if (-not $Preview) { $observerArgs += '--upload' }
+if ($IncludeVisualObservations) { $observerArgs += '--include-visual-observations' }
 Push-Location -LiteralPath $PSScriptRoot
 try {
     $PSNativeCommandUseErrorActionPreference = $false

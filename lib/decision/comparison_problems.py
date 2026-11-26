@@ -106,6 +106,7 @@ def action_question(runtime, action, *, targets=None):
     hint = str(args.get('morph_hint') or '').strip()
     variant = hint if hint and (not feature or hint != canonical_presence_hint(runtime, feature)) else 'canonical'
     purpose = ('geometry' if action.get('tool') == 'measure_instances' else
+               'morphology' if action.get('tool') == 'inspect_crop' else
                'identity' if feature else action.get('tool'))
     scope = {'source': runtime.images.get(image, {}).get('sha256'),
              'feature': feature, 'purpose': purpose, 'variant': variant}
@@ -144,30 +145,41 @@ def evidence_paths(runtime, actions, feature_ids):
         if affected and runtime.tools.get(tool).layer == 'read':
             continue
         for feature in affected:
-            pool = ('initialization' if discovery else 'observation' if tool == 'classify_target'
+            pool = ('initialization' if discovery else 'observation' if tool in {'classify_target', 'inspect_crop'}
                     else runtime.tools.get(tool).budget_class)
             paths[feature].append({'action_id': action['action_id'], 'tool': tool,
                 'image_id': image, 'kind': 'discovery_prerequisite' if discovery else 'feature_step',
                 'budget_class': pool, 'is_evidence': False,
                 'limit': '可能发现实例；空框不证明不存在；后继逐项校验' if discovery else
+                         '裁图所见只用于下一步调查' if tool == 'inspect_crop' else
                          '只授权本步骤；身份/形态/标定/量纲资格分别核验'})
     return paths
 
 
 def prior_summary(interest):
-    """逐视野逐折首选计数仅供解释先验分歧，不平均概率、不作为独立显微证据。"""
+    """展示平均榜首位，或逐视野的模型／折首选计数。"""
+    if interest.get('source') == 'ensemble_top_k':
+        row = interest['ensemble_top_k'][0]
+        cid = row['candidate_id']
+        return {'a_leads': [cid] if cid else [], 'ensemble_top1': row,
+                'meaning': '样品平均概率首位仅作调查先验，不强制调查顺序'}
     views = interest.get('views') or [{'image_stem':'single','fold_top_k':interest.get('fold_top_k',[])}]
+    per_model = interest.get('source') == 'multiview_model_top_k'
     counts = {}; unmapped = {}; total = 0
     for view in views:
-        for fold in view.get('fold_top_k', []):
-            rows = fold.get('ranking', [])
+        for entry in view.get('model_top_k' if per_model else 'fold_top_k', []):
+            rows = entry.get('ranking', [])
             if not rows:
                 continue
             total += 1; row = rows[0]; cid = row.get('candidate_id')
             table, key = (counts, cid) if cid else (unmapped, row.get('label'))
             table[key] = table.get(key, 0) + 1
     maximum = max(counts.values(), default=0)
-    return {'a_leads': [cid for cid,n in counts.items() if n == maximum],
+    leads = [cid for cid,n in counts.items() if n == maximum]
+    if per_model:
+        return {'a_leads': leads, 'model_top1_counts': counts, 'unmapped_model_top1': unmapped,
+                'model_observations': total, 'meaning': '逐视野逐模型首选计数，仅供调查参考'}
+    return {'a_leads': leads,
             'fold_top1_counts':counts, 'unmapped_fold_top1':unmapped, 'fold_observations':total,
             'meaning':'相关训练折的先验摘要，不是统计独立投票或证据，不强制调查顺序'}
 
@@ -195,7 +207,7 @@ def criterion_question(criterion):
     return {'problem_id': 'question:' + digest(signature)[:24], **signature}
 
 
-def build(runtime, scored, eligibility, actions):
+def build(runtime, scored, eligibility, actions, *, candidate_audit=None):
     """返回问题而非工具序列；预计收益只作定性说明，不另设未校准评分权重。"""
     interest = runtime.candidate_interest()
     active = list(interest.get('ids', []))
@@ -209,6 +221,9 @@ def build(runtime, scored, eligibility, actions):
     paths = evidence_paths(runtime, actions,
         {c['feature'] for cid in active if cid in kb for c in kb[cid]['criteria']})
     candidates = {r['id']: r for r in scored['decision'].get('ranking', [])}
+    investigation = {(row['candidate_id'], role, item['feature_id']): item['state']
+                     for row in (candidate_audit or {}).get('candidates', [])
+                     for role in ('required', 'supporting') for item in row[role]}
     groups = {}; boundaries = []; physical_facts = {}; references = {}
     for cid in active:
         candidate = kb.get(cid)
@@ -238,6 +253,8 @@ def build(runtime, scored, eligibility, actions):
             state = check.get('state', 'unknown')
             question['consumers'].append({'candidate_id': cid, 'role': criterion.get('role'),
                 'quant': criterion.get('quant'), 'state': state,
+                **({'investigation_state': investigation[(cid, criterion['role'], fid)]}
+                   if (cid, criterion['role'], fid) in investigation else {}),
                 'fact_ref': fact_ref, 'q_state': check.get('q_state'),
                 'reference_state': 'available' if quant else 'not_provided',
                 'criterion_assessed': supports_criterion(check) or counters_criterion(check),
@@ -251,7 +268,7 @@ def build(runtime, scored, eligibility, actions):
     book = read_json(runtime.workflow.budget_path)
     def affordable(action):
         tool=action['tool']; pool=runtime.tools.get(tool).budget_class
-        if tool=='classify_target':pool='observation'
+        if tool in {'classify_target', 'inspect_crop'}:pool='observation'
         if tool=='detect_fov_initial':pool='initialization'
         return (not book.get('closed') and
                 book.get('used',{}).get(pool,0)<runtime.workflow.limits.get(pool,0) and

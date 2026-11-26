@@ -105,7 +105,8 @@ def reserve_group(session, actions):
                 raise IntegrationError('PAIR_STALE', '动作已失效或参数不匹配')
             session.runtime.tools.validate(a, session.runtime)
             tool = a['tool']
-            target = targets[a['args']['target_id']]
+            brief_field = {'visual_brief': a['visual_brief']} if 'visual_brief' in a else {}
+            target = {**targets[a['args']['target_id']], **brief_field}
             image = target['image_id']
             key = session.operation_key(tool,target)
             rows.append({**(session.semantic_attempt(tool,target) or {}),
@@ -114,7 +115,7 @@ def reserve_group(session, actions):
                 'plan_revision':snap['version'], 'read_set':session._dependency_rows(tool,target),
                 'dependency_fingerprint':session.dependency_fingerprint(tool,target),
                 'status':'pending', 'phase':'reserved', 'accepted':False, 'repair_completed':False,
-                'selected_at':time.time(), 'target':target})
+                'selected_at':time.time(), 'target':target, **brief_field})
         instances = [row['semantic_key'] for row in rows if row.get('semantic_key')]
         if len({r['image_id'] for r in rows}) != len(rows) or len(set(instances)) != len(instances):
             raise IntegrationError('PAIR_OVERLAP', '组内动作触及同一视野或同一实例')
@@ -147,6 +148,7 @@ def _row(book, key, epoch):
 
 
 def _failed(row, code):
+    row.pop('visual_observation', None)
     row.update(status='failed', accepted=False, error_code=code, error_kind=stage_error_kind(code),
                ended_at=time.time())
 
@@ -243,6 +245,8 @@ def publish(session,key,epoch,*,transport_error=None):
                     raise IntegrationError('ARTIFACT_CHANGED','私有回执或文件发生变化')
                 before = session.progress_signature()
                 row.update(phase='publishing', bundle=recorded, progress_before=before)
+                if 'visual_observation_file' in result:
+                    row['visual_observation'] = read_json(result['visual_observation_file'])
                 write_json(session.operations,book)
                 version = session.accept(row['tool'],row['target'],result,parent,receipt=key)
                 row.update(status='done',phase='published',accepted=True,ended_at=time.time(),

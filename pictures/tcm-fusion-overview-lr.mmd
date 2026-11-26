@@ -1,0 +1,36 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","nodeSpacing":22,"rankSpacing":28,"htmlLabels":true},"themeVariables":{"fontFamily":"Microsoft YaHei, sans-serif","fontSize":"16px","lineColor":"#507175","clusterBkg":"#F1F8F6","clusterBorder":"#91BFB5","edgeLabelBackground":"#FFFFFF"}}}%%
+flowchart LR
+    accTitle: TCM Fusion 中药材显微鉴别流程
+    accDescr: 从左往右阅读。ReAct 调查框表示可重复的一轮，Agent 依据真实回执决定继续或收尾。A 提供药材先验，B 根据合格的显微证据计分，二者在收尾时融合。
+
+    I["<b>输入校验</b><br/>同一样品的一张或多张显微图<br/>清单、视野编号与 SHA256"]
+    A["<b>A · 药材候选</b><br/>整图 → 五折 ResNet50<br/>各折 Top-K 合并为候选集"]
+    subgraph R["ReAct 调查 · 每轮依据最新回执决定继续或收尾"]
+        direction LR
+        P["<b>Agent 选择调查动作</b><br/>智谱 GLM 对照候选、判据与缺口<br/>选择视野、实例及观察重点"]
+        T["<b>MCP 调度取证工具</b><br/>主机校验资格、预算与依赖<br/>YOLO 检测 · CNN 身份分类<br/>智谱 GLM 观察、定位与复核<br/>火山方舟分割 · 本地标定与测量"]
+        B["<b>登记回执与 B 计分</b><br/>按视野、实例登记实际工具结果<br/>合格证据对照药材判据库计分<br/>更新候选的支持、反证与缺口"]
+        P -->|动作与委托| T
+        T -->|回执与工件| B
+    end
+    F["<b>融合研判与交付</b><br/>冻结证据 · A 先验 + B 判据分<br/>只读终审后输出候选、依据与复核状态<br/>output.json · report.md"]
+    I -->|整图| A
+    A -->|候选集| R
+    R -->|调查结束| F
+
+    classDef io fill:#F1F4F8,stroke:#78909B,color:#1B343E,stroke-width:1.5px;
+    classDef plan fill:#E1F1EE,stroke:#458A7D,color:#153F3A,stroke-width:1.5px;
+    classDef evidence fill:#F9F1DA,stroke:#B3914D,color:#513C19,stroke-width:1.5px;
+    class I,A,F io;
+    class P,T plan;
+    class B evidence;
+
+%% 美化版使用内置生图工具，以本图的渲染稿为输入。生成提示如下。
+%% 将参考图美化成一张面向研发和产品的横版中文架构流程图。最高优先级是中文可辨识、逻辑与参考图一致。宽幅约 2.7:1，建议 3072x1152。米白背景，墨青文字，青绿色突出调查区，琥珀色只强调合格证据。平面矢量感，排版像技术出版物，标题左上排“TCM Fusion 中药材显微鉴别流程”。只用一行六个节点、五个细而明确的向右箭头。中间第 3、4、5 个节点放进一个浅青色分组，在分组顶部写“ReAct 调查”，并在分组底部清晰写“每轮根据真实回执，决定继续调查或收尾”。不要绘制任何向左箭头或长回路。各节点宽度可以不同，工具节点最宽。每个节点顶部用一个小且精细的线稿图标：显微图像、叠放候选卡、决策分支、工具、证据账本、报告；不要用脑形或机器人。每个节点标题与三至四行内容如下，保留以下文字含义，谨慎排中文，不重复标题，不再加入任何解释或装饰性文案。
+%% 1 输入校验：同一样品的一张或多张显微图 / 校验清单与 SHA256
+%% 2 A · 药材候选：五折 ResNet50 整图预测 / 合并各折 Top-K 候选
+%% 3 Agent 调查规划：智谱 GLM 对照判据与缺口 / 选择视野、实例与观察重点
+%% 4 MCP 工具执行：校验资格、依赖与预算 / YOLO 检测 · CNN 分类 / 智谱 GLM 观察、定位与复核 / 火山方舟分割 · 本地标定与测量
+%% 5 回执与 B 计分：按视野和实例登记回执 / 合格证据对照药材判据库 / 更新支持、反证与缺口
+%% 6 融合研判与交付：冻结证据，融合 A 先验与 B 分 / 只读终审，交付候选、依据与复核状态
+%% 箭头从左到右依次标“整图”“候选集”“动作与委托”“回执与工件”“调查结束”。出入调查区的箭头明确连接到分组边界。舒展、克制，文本优先于图标。勿添加别的可见文字、编号、角标、图例、插画背景或水印。

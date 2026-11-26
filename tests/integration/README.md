@@ -4,6 +4,7 @@
 
 | 文件 | 阅读指引 |
 | --- | --- |
+| [test_visual_observation.py](test_visual_observation.py) | 在真实 ReAct、内存 MCP 和视觉请求序列化边界验证开放观察、自拟追问、反馈回流、分块范围、CNN 分流和回放去重。规划器和视觉模型回复使用替身。 |
 | [test_adaptive_quality.py](test_adaptive_quality.py) | 分层 QA、按用途采信、真值反馈、并发与硬截止的离线回归；不伪造在线收益。 |
 | [test_agent_efficiency.py](test_agent_efficiency.py) | Agent效率回归：语义问题、分轴反馈、上下文/计时和模型授权并发；无真实API。 |
 | [test_association_policy.py](test_association_policy.py) | 连通域关联策略回归：规则表、主导连通域、粒度守卫与保守回退。 |

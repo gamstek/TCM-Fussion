@@ -1,0 +1,30 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","htmlLabels":true,"rankSpacing":40},"themeVariables":{"fontFamily":"Microsoft YaHei, sans-serif","fontSize":"16px","lineColor":"#446466"}}}%%
+flowchart LR
+    accTitle: 中药材显微鉴别流程
+    accDescr: 六个主环节由左至右。Agent 自主选单项调查、实例目标或多个独立视野。工具回执、受阻原因与未解判据回到同一 Agent 的下一轮规划。失败或停滞可产生反思建议。
+    input["输入校验<br/>核对图像与清单"] --> prior["药材候选提名<br/>五折整图预测"]
+    prior --> plan["Agent 调查规划<br/>选视野、实例和观察重点"]
+    plan -->|单项调查| tools["视觉工具执行<br/>检测、读图、分割与测量"]
+    tools -->|实际回执| facts["登记回执与判据计分<br/>核验依据，更新缺口"]
+    facts -->|调查收尾| finish["融合研判与交付<br/>给出候选、依据与复核状态"]
+
+    plan -->|选定实例目标| steps["按依赖拆解目标<br/>测量须先核验身份、掩码与标定"]
+    steps -->|逐步调用| tools
+    plan -->|选多个独立视野| views["并行调查多个视野<br/>各视野独立初检或核验身份"]
+    views -->|并发派发| tools
+
+    facts -->|结果、受阻原因与缺口| feedback((汇合))
+    facts -->|失败或停滞| reflect["生成反思建议<br/>建议换问题、视野或方法"]
+    reflect -->|随下轮规划提交| feedback
+    feedback -->|下一轮规划，可采纳或调整| plan
+
+    %% 并行分支逐项提交。已验收结果若解锁新动作或推进判据，可提前回交规划。
+    classDef main fill:#F3F5EF,stroke:#6D8986,color:#183F41;
+    classDef agent fill:#DCEFE5,stroke:#31786B,color:#153E38;
+    classDef branch fill:#ECF6F1,stroke:#78A390,color:#20493D;
+    classDef note fill:#FFF2D9,stroke:#AA8444,color:#664D28;
+    class input,prior,tools,facts,finish main;
+    class plan agent;
+    class steps,views branch;
+    class reflect note;
+    class feedback agent;

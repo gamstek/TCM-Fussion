@@ -34,6 +34,7 @@ from TCM_Fusion.lib.evidence.evidence_projection import COUNTER_GUIDANCE
 from TCM_Fusion.lib.decision.collaboration import fuse
 from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, read_json, reusable_reads, write_json
 from TCM_Fusion.lib.agent.prompt_defaults import DEFAULT_INSTRUCTION, GUARD
+from TCM_Fusion.lib.vision.visual_observation import binding_key, for_dispatch, resolve_guidance
 
 
 class AgentState(TypedDict, total=False):
@@ -46,6 +47,7 @@ class AgentState(TypedDict, total=False):
     physical_partners: list
     identity_sequence: list
     observation_sequence: list
+    visual_briefs: dict
     last_observation_group: dict
     last_identity_group: dict
     events: list
@@ -143,15 +145,17 @@ class LLMPlanner:
                         "也兼容旧顶层action_id，勿与decision混填。"
                         "工具参数由运行时绑定。"
                         "A的Top-K可能遗漏真类；不要把A的分数或一次阴性当成排他证据。"
-                        "evidence.workflow.candidate_audit保留全部逐折候选及required/supporting缺口。暂停只改变调查顺序，"
+                        "evidence.workflow.candidate_audit保留A提名候选及required/supporting缺口。暂停只改变调查顺序，"
                         "不删除阳性支持，也不把unchecked/未映射/工具受阻说成阴性。"
                         "候选组审查未完成时可review，但必须说明尚未解决的竞争解释；Top1 required完成不等于全部鉴别完成。"
-                        "investigation_focus分别列出逐折先验领先者、其required缺口和竞争支持；"
+                        "investigation_focus分别列出A先验领先者、其required缺口和竞争支持；"
                         "竞争候选一次阳性不自动成为其他药材的反证，也不使主解释未查项消失。"
                         "comparison_problems的问题卡同时列出直接入口和discovery_prerequisite；"
                         "无实例时YOLO初检仍可推进定量特征，尚不能选分割不等于无路可查。"
                         "以actions和action_state为准：编号已经出现即本轮可选。scene_check是可选观察；按scene_criteria判断结果是否值得查。"
-                        "菜单是可执行入口，不是执行回执。candidate_audit的unchecked保持未查；"
+                        "用比较卡的investigation_state判断各项查到哪一步，用candidate_audit.receipts_by_feature按特征核对实际回执。"
+                        "rule_state是B规则状态。NOT_DETECTED只表示尚无合格检出。unchecked表示未查，no_crop表示该次定向搜索未产出裁图。"
+                        "根据这些事实自主决定继续哪项调查或直接复核。"
                         "presence_states只说明该视野该类已有的存在性观察，空数组表示无此类记录。"
                         "补扫若带existing_crop_actions，先比较复用同视野同类已有裁图的价值与max_scan_tiles成本；"
                         "需要新位置或已有裁图不足时仍可选补扫。现有裁图本身不证明身份或合格量纲。"
@@ -211,6 +215,15 @@ class LLMPlanner:
                 exc.choice_diagnostic = diagnose(reply, context)
                 raise
             option = reply.get("action_id")
+            if isinstance(reply.get('visual_briefs'), dict):
+                ids = {**option_ids, **{q['question_id']: option_ids[q['action_id']]
+                                       for q in context.get('execution_options', {}).get('questions', [])}}
+                # A/O/Q 可指向同一动作，冲突的委托不发给工具。
+                mapped = {}
+                for alias, brief in reply['visual_briefs'].items():
+                    key = ids.get(alias, 'unoffered:' + alias)
+                    mapped[key] = brief if key not in mapped or mapped[key] == brief else None
+                reply['visual_briefs'] = mapped
             problem = reply.get('problem_goal_id')
             if isinstance(problem, str):
                 reply['problem_goal_id'] = option_ids.get(problem, problem)
@@ -370,7 +383,7 @@ def compact_action_menu(actions, limit=20, *, priority_ids=()):
     stops=[a for a in actions if a.get('tool') in {'finish','request_review'}]
     actionable=[a for a in actions if a not in stops]
     rank={'measure_instances':0,'segment_instance':1,'classify_crops_batch':2,'classify_target':2,'read_action_catalog':2,
-          'feature_scan':3,'locate_feature':4,'detect_region':4,'detect_fov_initial':5,
+          'inspect_crop':3,'feature_scan':3,'locate_feature':4,'detect_region':4,'detect_fov_initial':5,
           'calibrate_fov':6,'hybrid_scan':6}
     priority = set(priority_ids)
     actionable=sorted(enumerate(actionable),key=lambda pair:(
@@ -536,8 +549,9 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         image_stems = {s for image in runtime.images.values() for s in image["stems"]}
         missing_fov = bool(record_stems-image_stems)
         decision = scored["decision"]
-        # 逐折榜单只调度补查。Agent 的停止判断使用规则证据，避免平均榜首间接触发否决。
-        conflict = (not (runtime.a.get("fold_rankings") or runtime.a.get("view_predictions"))
+        # 结构化 A 榜单用于查证。停止判断继续使用规则证据。
+        conflict = (not (runtime.a.get("fold_rankings") or runtime.a.get("view_predictions")
+                         or runtime.a.get("ensemble_method") == "mean_softmax")
                     and fuse(runtime.a, decision, runtime.kb.raw, runtime.aliases)["agreement"] == "conflict")
         need = bool(decision.get("needs_review")) or conflict or decision["verdict"] in {"probable", "insufficient_evidence"}
         ranking = scored["decision"].get("ranking", [])
@@ -587,24 +601,21 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 missing_useful = bool(missing_features & action_features)
             except Exception:
                 missing_useful = False
+        audit = None
+        if autonomous:
+            from TCM_Fusion.lib.decision.candidate_audit import build as audit_candidates, compact as compact_audit
+            audit = audit_candidates(runtime, scored, state.get('observations', []), actions=actions)
         supporting_incomplete = False
         if workflow is not None:
             try:
-                provisional = runtime.provisional_state(scored['decision'])
-                observed = []
-                for observation in state.get('observations') or []:
-                    action = observation.get('action') or {}
-                    result = observation.get('result') or {}
-                    if action.get('tool') == 'presence_check':
-                        valid = (observation.get('accepted') and result.get('ok') is True
-                                 and result.get('conf', 0) >= 0.5)
-                        observed.append({'image_id': action.get('args', {}).get('image_id'),
-                                         'feature_id': action.get('args', {}).get('feature_id'),
-                                         'state': ('present' if result.get('present') else 'absent')
-                                                  if valid else 'unknown'})
-                support_rows = runtime.supporting_states(provisional, observed)
-                unchecked = {row['feature_id'] for row in support_rows
-                             if not row.get('present') and row.get('check_state') == 'unchecked'}
+                if audit is not None:
+                    unchecked = {item['feature_id'] for row in audit['candidates'] for item in row['supporting']
+                                 if item['state'] == 'unchecked'}
+                else:
+                    support_rows = runtime.supporting_states(runtime.provisional_state(scored['decision']),
+                                                             scored.get('observation_states', []))
+                    unchecked = {row['feature_id'] for row in support_rows
+                                 if not row.get('present') and row.get('check_state') == 'unchecked'}
                 support_actions = {a.get('args', {}).get('feature_id') for a in actions
                                    if a.get('tool') in {'feature_scan','presence_check','locate_feature'}}
                 supporting_incomplete = bool(unchecked & support_actions)
@@ -613,14 +624,12 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         candidate_group_incomplete = False
         if workflow is not None and workflow.config.get('candidate_group_verification', False):
             try:
-                attempted_features = set()
-                for observation in state.get('observations') or []:
-                    action = observation.get('action') or {}
-                    fid = (action.get('args') or {}).get('feature_id')
-                    if fid: attempted_features.add(fid)
-                for row in read_json(workflow.operations).get('entries', {}).values():
-                    fid = row.get('feature_id')
-                    if fid: attempted_features.add(fid)
+                if audit is None:
+                    from TCM_Fusion.lib.decision.candidate_audit import feature_receipts
+                    receipts = feature_receipts(runtime, state.get('observations', []), workflow.targets())
+                else:
+                    receipts = audit['receipts_by_feature']
+                attempted_features = {fid for fid, results in receipts.items() if results}
                 legal_features = {(a.get('args') or {}).get('feature_id') for a in actions}
                 ranking = scored['decision'].get('ranking') or []
                 candidates = {c['id']: c for c in runtime.kb.candidates()}
@@ -648,10 +657,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     if candidate_group_incomplete: break
             except Exception:
                 candidate_group_incomplete = False
-        audit=None
         if autonomous:
-            from TCM_Fusion.lib.decision.candidate_audit import build as audit_candidates, compact as compact_audit
-            audit=audit_candidates(runtime,scored,state.get('observations',[]),actions=actions)
             if not any(e['phase'] == 'first_qualified_contrast' for e in state['events']):
                 from TCM_Fusion.lib.decision.candidate_audit import first_contrast
                 contrast = first_contrast(audit)
@@ -801,7 +807,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             return remaining["observation"] > 0 and remaining["network"] > 0 and remaining["total"] >= 2
         if pool == "recompute":
             tool = action["tool"]
-            if tool == "classify_target":
+            if tool in {"classify_target", "inspect_crop"}:
                 # 类别复核按受控视觉观察计价：只占观察/网络额度，不挤占测量所需的重算名额。
                 return (remaining["observation"] > 0 and remaining["network"] > 0
                         and remaining["total"] >= 2)
@@ -1062,6 +1068,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     context_cursor = {}
                     context['round_delta'] = {'action_changes': changes}
                 context_cursor['event_offset'] = len(events)
+            audit_summary = context['evidence']['workflow']['candidate_audit']['required_investigation_summary']
             planning_started = time.monotonic()
             started_at = time.time()
             events.append({'phase':'planning_started','request_number':planning,'started_at':started_at})
@@ -1315,16 +1322,37 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 except IntegrationError as exc:
                     diagnosis = controller.reject(reply['reflection_patch'], exc)
                     events.append({'phase': 'reflection_patch_rejected', **diagnosis})
+            group_ids = set(observation_sequence) | set(reply.get('identity_tail', []))
+            selected_actions = [a for a in (chosen, companion, *partners) if a]
+            selected_actions.extend(a for a in [*choices, *parallel] if a['action_id'] in group_ids)
+            briefs, guidance, rejected_briefs = resolve_guidance(reply.get('visual_briefs'), selected_actions, runtime.kb)
+            aliases = {a['action_id']: f'O{i}' for i, a in enumerate(context.get('parallel_observations', []), 1)}
+            aliases.update({a['action_id']: f'A{i}' for i, a in enumerate(context['actions'], 1)})
+            guidance_choices = {aliases[aid]: {'mode': mode, 'action_id': aid}
+                                for aid, mode in guidance.items() if aid in aliases}
+            proposal = reply.get('decision_summary')
+            decision_text = {'decision_summary': proposal if isinstance(proposal, str) else ''}
+            capture = {'decision_summary_capture': 'complete'} if isinstance(proposal, str) else {}
+            override_reason = override_reason if override else None
+            if is_stop:
+                decision_text = {'decision_summary_source': 'candidate_audit', 'decision_summary': audit_summary,
+                                 'proposed_decision_summary': decision_text['decision_summary']}
+                if override:
+                    decision_text['proposed_override_reason'] = override_reason
+                    override_reason = audit_summary
             events.append({"phase": "thought", "decision_source": planner_source,
                            "action_id": chosen['action_id'] if chosen else None,
                            "tool": chosen['tool'] if chosen else None, "usage": usage,
                            "physical_partner_ids": [p['action_id'] for p in partners],
                            "execution_choice": reply.get('execution_choice',{'kind':'action','format':'legacy'}),
                            "choice_normalization": reply.get('choice_normalization'),
+                           **({'visual_guidance_choices': guidance_choices} if guidance_choices else {}),
+                           **({'visual_briefs': briefs} if briefs else {}),
+                           **({'rejected_visual_briefs': rejected_briefs} if rejected_briefs else {}),
                            "stop_advisory": state["stop_advisory"],
-                           "decision_summary": str(reply.get("decision_summary", ""))[:240],
+                           **decision_text, **capture,
                            "overrode_advisory": override,
-                           "override_reason": override_reason[:240] if override else None,
+                           "override_reason": override_reason,
                            "parallel_observation_id": companion["action_id"] if companion else None})
             if getattr(planner_box[0], 'last_request_profile', None):
                 events[-1]['request_profile'] = planner_box[0].last_request_profile
@@ -1332,6 +1360,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 events.append({'phase':'hypothesis_update_requested','decision_source':planner_source,
                                'updates':updates,'is_evidence':False,'applies':'after_current_action'})
             update = {"selected": chosen, "events": events, "requests": requests, "planning_requests": planning,
+                      "visual_briefs": {binding_key(a): briefs[a['action_id']] for a in selected_actions
+                                        if a['action_id'] in briefs},
                       "context_cursor": context_cursor or {},
                       "physical_partners": partners, "identity_sequence": sequence,
                       "observation_sequence": observation_sequence,
@@ -1346,7 +1376,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                 if chosen['tool'] == 'request_review' and context.get('investigation_opportunities'):
                     events.append({'phase': 'review_with_open_opportunities',
                                    'opportunities': context['investigation_opportunities'],
-                                   'decision_summary': str(reply.get('decision_summary', ''))[:240]})
+                                   'decision_summary': decision_text['decision_summary'],
+                                   'decision_summary_source': 'candidate_audit'})
                 controller.finalize('planner_' + chosen['tool'])
                 update['reflection_controller'] = controller.compact()
                 if updates:
@@ -1470,7 +1501,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                     reply, usage = await asyncio.to_thread(planner_box[0].choose, context)
                     legal = {a["action_id"]: a for a in eligible+stop}
                     chosen = legal[reply["action_id"]]
-                    reason = str(reply.get("decision_summary", "选择合法动作"))[:240]
+                    reason = str(reply.get("decision_summary", "选择合法动作"))
                 except Exception as exc:
                     from TCM_Fusion.lib.runtime.service_errors import service_error
                     planning_error,terminal_service_error=service_error(exc)
@@ -1552,7 +1583,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             progress_before = runtime.workflow.progress_signature()
             artifacts_before = runtime.workflow.store.current()['artifacts']
             try:
-                result = await bounded_tool(toolbox.recompute(action))
+                result = await bounded_tool(toolbox.recompute(for_dispatch(action, state.get('visual_briefs', {}))))
                 if not isinstance(result,dict):
                     raise IntegrationError('TOOL_OUTPUT_INVALID','重算返回值不是结构化对象')
             except Exception as exc:
@@ -1631,20 +1662,26 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
                  "steps": state["steps"]+1,
                  "attempted": state["attempted"]+[action["action_id"]]}
         persist(state)
+        dispatched = for_dispatch(action, state.get('visual_briefs', {}))
         try:
-            result = await bounded_tool(toolbox.observe(action))
+            result = await bounded_tool(toolbox.observe(dispatched))
             accepted = (result.get("action_id") == action["action_id"] and result.get("accepted") is True
                         and runtime.validate_observation(action, result.get("result")))
         except Exception as exc:
             result = {"result": {"ok": False, "error_code": getattr(exc, "code", "TOOL_TRANSPORT_FAILED")},
                       "error_type": type(exc).__name__}
             accepted = False
-        observation = {"action": action, "result": result.get("result", {"ok": False}),
+        observed_action = action if result.get('cache_hit') else dispatched
+        if result.get('cache_hit') and (result.get('visual_observation') or {}).get('brief'):
+            observed_action = {**action, 'visual_brief': result['visual_observation']['brief']}
+        observation = {"action": observed_action, "result": result.get("result", {"ok": False}),
                        "accepted": accepted, "usage": result.get("usage"),
                        "cache_hit": result.get("cache_hit", False),
                        "new_requests": result.get("new_requests")}
         if "diagnostics" in result:
             observation["diagnostics"] = result["diagnostics"]
+        if accepted and result.get('visual_observation'):
+            observation['visual_observation'] = result['visual_observation']
         if 'presence_localization' in result:
             observation['presence_localization'] = result['presence_localization']
         if accepted and getattr(runtime,'workflow',None) is not None and not state.get('_parallel_child'):
@@ -1653,6 +1690,8 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
         gain = after["evidence_digest"] != state["evidence_digest"]
         feedback=evaluate(before_feedback,snapshot(after),action,accepted=accepted,result=result.get('result',{}),
                           elapsed_ms=(time.monotonic()-started)*1000)
+        if 'visual_observation' in observation:
+            feedback['visual_observation'] = observation['visual_observation']
         if adaptive:gain=feedback['useful']
         if autonomous:
             gain = feedback["useful"] or bool(accepted and action["tool"] == "scene_check"
@@ -1980,7 +2019,7 @@ def build_graph(runtime, toolbox, *, max_requests=6, max_steps=6, planner=None,
             state = {**state,'physical_partners':[],'events':list(state['events'])}
             try:
                 physical_bindings.update({a['action_id']:(controller.key(a),controller.binding(a)) for a in actions})
-                physical_runner.start(actions)
+                physical_runner.start([for_dispatch(a, state.get('visual_briefs', {})) for a in actions])
             except IntegrationError as exc:
                 state['events'].append({'phase':'physical_pair_rejected','error_code':exc.code})
                 state['done'] = True

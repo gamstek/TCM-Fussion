@@ -28,7 +28,7 @@ from TCM_Fusion.lib.runtime.service_errors import stage_error_kind
 from TCM_Fusion.lib.evidence.instance_ledger import attempt as instance_attempt, project as project_instances
 
 
-TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','classify_crops_batch','measure_instances','detect_region',
+TOOLS=('detect_fov_initial','calibrate_fov','segment_instance','classify_target','inspect_crop','classify_crops_batch','measure_instances','detect_region',
        'locate_feature','feature_scan','hybrid_scan')
 
 
@@ -120,7 +120,8 @@ class WorkflowSession:
     def _timeline_key(self,action):
         tool=str(action.get('tool') or '')
         target=str(action.get('target_id') or (action.get('args') or {}).get('target_id') or '')
-        return tool+'|'+target
+        basis = action.get('observation_basis') or (action.get('args') or {}).get('observation_basis')
+        return tool+'|'+target+('|'+basis if basis else '')
 
     def _timeline_doc(self):
         if self.timeline_path.exists():
@@ -760,9 +761,11 @@ class WorkflowSession:
 
     def operation_key(self,tool,target):
         identity = {'tool': tool, 'identity': self.identity, 'target': target['id'],
-                    'roi': target.get('roi'), 'deps': self._dependency_rows(tool, target)}
+                    'roi': target.get('roi'), 'deps': self._dependency_rows(tool, target, semantic=tool == 'inspect_crop')}
         if tool == 'classify_target' and target.get('classification_recheck'):
             identity['classification_recheck'] = target['classification_recheck']
+        if tool == 'inspect_crop' and target.get('observation_basis'):
+            identity['observation_basis'] = target['observation_basis']
         return digest(identity)
 
     def semantic_attempt(self, tool, target):
@@ -770,6 +773,8 @@ class WorkflowSession:
         parameters = {}
         if tool == 'classify_target' and target.get('classification_recheck'):
             parameters['classification_recheck'] = target['classification_recheck']
+        if tool == 'inspect_crop' and target.get('observation_basis'):
+            parameters['observation_basis'] = target['observation_basis']
         if tool == 'measure_instances':
             plan = self.review_measure_plan(target) or {}
             parameters = {k: plan.get(k) for k in ('component_ids', 'component_policy')}
@@ -882,7 +887,10 @@ class WorkflowSession:
                                 for row in done.values()):
                 return
             if key not in done:
-                action = self.runtime.action(tool,{'target_id':t['id'],'evidence_version':snap['version']},
+                args = {'target_id': t['id'], 'evidence_version': snap['version']}
+                if t.get('observation_basis'):
+                    args['observation_basis'] = t['observation_basis']
+                action = self.runtime.action(tool,args,
                     'workflow_repair',priority=priority)
                 if not any(a['action_id'] == action['action_id'] for a in out):
                     out.append(action)
@@ -918,6 +926,15 @@ class WorkflowSession:
                     tool='classify_crops_batch'
             elif t['kind']=='crop':
                 crops.append(t)
+                if (self.config.get('agent_policy') == 'adaptive_v2'
+                        and 'inspect_crop' in self.config.get('enabled_tools', ())):
+                    first = done.get(self.operation_key('inspect_crop', t))
+                    if not first:
+                        offer('inspect_crop', t, (3, 'inspect_crop', tid))
+                    elif (first.get('accepted') and not first.get('visual_brief')
+                          and (first.get('visual_observation') or {}).get('readability') in {'clear', 'partial'}):
+                        offer('inspect_crop', {**t, 'observation_basis': first['operation_key']},
+                              (3, 'inspect_crop', tid))
                 classification=arts.get('classification:'+tid,{})
                 # 标定重写侧车后，历史分类仍保留身份字段。只有当前有效版本可以授权分割。
                 if not classification.get('valid'):
@@ -1222,7 +1239,13 @@ class WorkflowSession:
             raise IntegrationError('CODE_CHANGED','工具/原B源码运行期间变化，禁止混用缓存和阶段产物')
         args=action['args'];tool=action['tool'];targets=self.targets()
         if tool not in TOOLS or args['target_id'] not in targets:raise IntegrationError('ACTION_DENIED','阶段或对象非法')
-        target=targets[args['target_id']];key=self.operation_key(tool,target)
+        from TCM_Fusion.lib.vision.visual_observation import validate_brief
+        validate_brief(action, self.runtime.kb)
+        brief_field = {'visual_brief': action['visual_brief']} if 'visual_brief' in action else {}
+        basis = {k: args[k] for k in ('observation_basis',) if k in args and tool == 'inspect_crop'}
+        target={**targets[args['target_id']], **basis, **brief_field};key=self.operation_key(tool,target)
+        if tool == 'inspect_crop' and action['action_id'] != self.runtime.action(tool, args, action['skill'])['action_id']:
+            raise IntegrationError('ACTION_DENIED', '裁图观察的对象或回执绑定已改变')
         semantic = self.semantic_attempt(tool, target)
         h=acquire(self.operations)
         try:
@@ -1240,6 +1263,8 @@ class WorkflowSession:
                 raise IntegrationError('EVIDENCE_STALE','阶段父版本失效')
             if action['action_id'] not in {a['action_id'] for a in self.propose()}:
                 raise IntegrationError('ACTION_DENIED','阶段不在当前合法集合')
+            if basis and not brief_field:
+                return {**doc['entries'][basis['observation_basis']], 'cache_hit': True, 'new_requests': 0}
             pending_rows = [r for r in doc['entries'].values() if r['status']=='pending']
             if pending_rows:
                 from TCM_Fusion.lib.workflow.physical_schedule import allows_single
@@ -1250,12 +1275,12 @@ class WorkflowSession:
             # 类别复核是一次受控视觉观察：只占观察/网络预算，不挤占测量所需的重算额度；
             # 其网络请求由同一worker内的HTTP守卫按请求键记账，这里不重复预约。
             pool=('initialization' if tool=='detect_fov_initial' else
-                  'observation' if tool=='classify_target' else 'recompute')
+                  'observation' if tool in {'classify_target','inspect_crop'} else 'recompute')
             from TCM_Fusion.lib.runtime.probe_budget import describe
-            self.charge(pool,key,network=tool!='classify_target',
+            self.charge(pool,key,network=tool not in {'classify_target','inspect_crop'},
                         probe=describe(self.runtime,action,target))
             pending={'action_id':action['action_id'],'tool':tool,'target_id':target['id'],
-                     'status':'pending','accepted':False,'repair_completed':False,'operation_key':key}
+                     'status':'pending','accepted':False,'repair_completed':False,'operation_key':key, **basis, **brief_field}
             if semantic:
                 pending.update(semantic)
             if target.get('feature_id') and 'feature_id' not in pending:
@@ -1285,6 +1310,7 @@ class WorkflowSession:
         started = time.monotonic()
         exception = None
         result = None
+        batch_outcomes = {} if tool == 'classify_crops_batch' else None
         try:
             check_live(self)
             work.mkdir(parents=True, exist_ok=False)
@@ -1305,11 +1331,19 @@ class WorkflowSession:
                         if self.dependency_fingerprint(tool, target) != fingerprint:
                             raise IntegrationError('EVIDENCE_STALE', '执行期间相关依赖变化，结果只保留审计')
                         before = self.progress_signature()
+                        observation = ({'visual_observation': read_json(result['visual_observation_file'])}
+                                       if 'visual_observation_file' in result else {})
+                        if tool == 'inspect_crop':
+                            from TCM_Fusion.lib.vision.visual_observation import receipt as observation_receipt
+                            reading = observation_receipt(target.get('visual_brief'), observation)
+                            if reading['status'] != 'reported':
+                                raise IntegrationError('MODEL_FIELD_INVALID', '裁图观察缺少可用回执')
+                            observation['visual_observation'] = reading
                         version = self.accept(tool, target, result, parent or self.store.current()['version'],
-                                              auto_measure=False)
+                                              auto_measure=False, batch_outcomes=batch_outcomes)
                         record.update(status='done', accepted=True, evidence_version=version,
                                       repair_completed=self.progress_signature() != before and result.get('quality') != 'review',
-                                      dependency_fingerprint=fingerprint, bundle=recorded)
+                                      dependency_fingerprint=fingerprint, bundle=recorded, **observation)
                         if tool == 'feature_scan':
                             from TCM_Fusion.lib.evidence.search_ledger import scan_coverage
                             status, coverage = scan_coverage(record)
@@ -1322,6 +1356,8 @@ class WorkflowSession:
                     record.update(status='failed', error_code=code, error_kind=stage_error_kind(code))
                     if code == 'WORKFLOW_CANCELLED':
                         revoke_operation(self.budget_path, key)
+                if batch_outcomes:
+                    record['batch_outcomes'] = batch_outcomes
                 record['ended_at'] = time.time()
                 if row.get('automatic'):
                     record['latency_ms'] = round((time.monotonic() - started) * 1000, 3)
@@ -1335,8 +1371,14 @@ class WorkflowSession:
             raise exception
         return record, result
 
-    def accept(self,tool,target,result,parent,*,receipt=None,auto_measure=True,classification_source='classify_target'):
+    def accept(self,tool,target,result,parent,*,receipt=None,auto_measure=True,classification_source='classify_target',
+               batch_outcomes=None):
         image=target['image_id'];items=[];rows=[];replace=[]
+        if tool == 'inspect_crop':
+            # 观察回执归 operations；不产生分类、定位、量纲或证据版本。
+            if not result.get('visual_observation_file'):
+                raise IntegrationError('MODEL_FIELD_INVALID', '缺少裁图观察回执')
+            return parent
         if tool=='hybrid_scan':
             detections=result.get('detections') or {}
             feature_scan=result.get('feature_scan') or {}
@@ -1482,14 +1524,21 @@ class WorkflowSession:
         elif tool=='classify_crops_batch':
             parent=self.store.current()['version'];committed=0
             crops={c['id']:c for c in target.get('crops') or []}
+            if batch_outcomes is not None:
+                batch_outcomes.update({row['crop_id']: 'unknown' for row in result.get('failures', [])
+                                       if row.get('crop_id') in crops})
             for item in result.get('classifications') or []:
                 crop=crops.get(item.get('crop_id'))
                 if not crop:continue
+                if batch_outcomes is not None:
+                    batch_outcomes[crop['id']] = 'unknown'
                 try:
                     parent=self.accept('classify_target',crop,
                                        {'classification':item['classification']},parent,
                                        classification_source='classify_crops_batch')
                     committed+=1
+                    if batch_outcomes is not None:
+                        batch_outcomes[crop['id']] = 'completed'
                 except IntegrationError:
                     continue
             if not committed:

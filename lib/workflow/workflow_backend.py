@@ -122,6 +122,9 @@ class WorkflowBackend:
         return digest([(p.relative_to(root).as_posix(),file_hash(p)) for p in sorted(files)])
 
     def execute(self, session, tool, target, work, context):
+        from TCM_Fusion.lib.vision.visual_observation import record
+        brief = target.get('visual_brief')
+        brief_field = {'visual_brief': brief} if brief else {}
         def command(args, python=session.python, log='stage.log', seconds=None):
             timeout = _timeout(session)
             if seconds is not None:
@@ -183,6 +186,7 @@ class WorkflowBackend:
                                  'locate_min_roi_side': session.config.get('locate_min_roi_side', 256),
                                  'feature_crop_policy': session.config.get('feature_crop_policy', 'legacy'),
                                  'feature_hint': feature_hint(feature_id),
+                                 **brief_field,
                                  'existing_boxes': []})
                 run([str(session.python), '-X', 'utf8', '-m', 'TCM_Fusion.cli.workflow_worker',
                      '--context', str(ctx)], context_path=context,
@@ -191,6 +195,17 @@ class WorkflowBackend:
                 return sub / 'detection'
             def has_crops(folder):
                 return (folder / 'crops').is_dir() and any((folder / 'crops').glob('*.json'))
+            def tile_observations():
+                if not brief:
+                    return {}
+                reports = []
+                for index, box in enumerate(boxes):
+                    path = out / f'tile_{index:02d}' / 'detection' / 'visual_observation.json'
+                    if path.is_file():
+                        detail = read_json(path)
+                        reports.append({'tile': index, 'roi': box, **{k:v for k,v in detail.items() if k != 'brief'}})
+                return record(work, {'brief': brief, 'status': 'reported' if any(
+                    r['status'] == 'reported' for r in reports) else 'unreported', 'tiles': reports})
             errors = []
             if policy == 'prescreen' and boxes:
                 # 先试扫最有纹理的 tile；无结果就停止，不再盲扫剩余 tile。
@@ -206,7 +221,7 @@ class WorkflowBackend:
                                             'pilot': True, 'stopped': 'pilot_failed' if errors else 'pilot_empty',
                                             'planned_tiles': boxes, 'partial': partial or bool(errors) or len(boxes) > 1,
                                             'errors': errors, 'coordinate_system': 'original_pixels'})
-                    return {'crops_dir': str(out / 'crops'), 'completion': str(completion),
+                    return {'crops_dir': str(out / 'crops'), 'completion': str(completion), **tile_observations(),
                             'tiles': boxes[:1], 'partial': partial or bool(errors) or len(boxes) > 1, 'errors': errors}
                 remaining = list(enumerate(boxes))[1:]
             else:
@@ -238,7 +253,7 @@ class WorkflowBackend:
                                     'partial': partial or bool(errors), 'errors': errors,
                                     'tile_policy': policy,
                                     'coordinate_system': 'original_pixels'})
-            return {'crops_dir': str(crops), 'completion': str(completion), 'tiles': boxes,
+            return {'crops_dir': str(crops), 'completion': str(completion), 'tiles': boxes, **tile_observations(),
                     'partial': partial or bool(errors), 'errors': errors}
         if tool == 'hybrid_scan':
             from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -311,7 +326,7 @@ class WorkflowBackend:
         if tool == 'locate_feature':
             out = work / 'detection'
             ctx = work / 'recovery.json'
-            data = {'tool': tool, 'source': str(target['source']), 'output': str(out)}
+            data = {'tool': tool, 'source': str(target['source']), 'output': str(out), **brief_field}
             data.update(roi=target['roi'], feature_id=target['feature_id'],
                         px_per_um=target.get('px_per_um'),
                         locate_expand=session.config.get('locate_expand', 1.5),
@@ -322,7 +337,8 @@ class WorkflowBackend:
                         existing_boxes=session.existing_boxes(target['image_id']))
             write_json(ctx, data)
             command(['-m', 'TCM_Fusion.cli.workflow_worker', '--context', ctx])
-            return {'crops_dir': str(out / 'crops'), 'completion': str(out / 'region_result.json')}
+            return {'crops_dir': str(out / 'crops'), 'completion': str(out / 'region_result.json'),
+                    **({'visual_observation_file': str(out / 'visual_observation.json')} if brief else {})}
         if tool in {'detect_fov_initial', 'detect_region'}:
             initial = tool == 'detect_fov_initial'
             out = work / 'detection'
@@ -373,12 +389,12 @@ class WorkflowBackend:
             if not results and not failures:
                 raise IntegrationError('CLASSIFY_EMPTY','批量分类没有输入')
             return {'classifications':results,'failures':failures}
-        if tool=='classify_target':
+        if tool in {'classify_target', 'inspect_crop'}:
             # 单crop类别复核：CNN 批量初判，高置信直接落 classification；否则 GLM 兜底。
             meta=contracts.CropMeta.from_json(target['path'])
             cnn_info=None
             cnn_error=None
-            if session.config.get('cnn_weights') or session.config.get('cnn_meta'):
+            if tool == 'classify_target' and (session.config.get('cnn_weights') or session.config.get('cnn_meta')):
                 try:
                     from TCM_Fusion.lib.vision.stage2_classifier import model_profile, request_signature
                     profile=model_profile(session.config)
@@ -424,7 +440,8 @@ class WorkflowBackend:
                                 'cnn_entropy':round(entropy,6),'cnn_topk':cnn_info.get('topk') or [],
                                 'cnn_model_signature':profile}
                             write_json(out/'classification.json',doc)
-                            return {'classification':str(out)}
+                            observation = record(work, {'brief': brief, 'status': 'cnn_only'}) if brief else {}
+                            return {'classification':str(out), **observation}
                 except Exception as exc:
                     if getattr(exc, 'code', None) in {'LEDGER_BUSY', 'WORKFLOW_CANCELLED', 'WORKFLOW_CLOSED'}:
                         raise
@@ -448,7 +465,17 @@ class WorkflowBackend:
                 return {'classification':str(out)}
             ctx={'tool':tool,'crop_id':meta.crop_id,'crop_json':str(target['path']),
                  'crop_png':str(meta.png),'source':meta.source_image_path,
-                 'tight_box':meta.tight_box,'output':str(work/'classification')}
+                  'tight_box':meta.tight_box,'output':str(work/'classification'), **brief_field}
+            if tool == 'inspect_crop':
+                frame = meta.raw.get('feature_window') or {}
+                ctx['output'] = str(work)
+                local_box = frame.get('identity_box_local') or meta.tight_box_local
+                if local_box is not None:
+                    ctx['tight_box_local'] = local_box
+                f = work / 'worker.json'
+                write_json(f, ctx)
+                command(['-m', 'TCM_Fusion.cli.classify_worker', '--context', f])
+                return {'visual_observation_file': str(work / 'visual_observation.json')}
             if session.config.get('identity_review_bank'):
                 from TCM_Fusion.lib.vision.identity_review import review_plan
                 sources = {row.get('sha256') for row in session.runtime.images.values()}
@@ -521,8 +548,9 @@ class WorkflowBackend:
                 doc['cnn_fallback_reason']='low_confidence_or_other'
             elif cnn_error:
                 doc['cnn_error']=cnn_error
+            observation = record(work, doc.pop('visual_observation')) if brief else {}
             write_json(out/'classification.json',doc)
-            return {'classification':str(out)}
+            return {'classification':str(out), **observation}
         if tool=='segment_instance':
             src=Path(target['path']);meta=contracts.CropMeta.from_json(str(src))
             contracts.check_crops([meta]);inp=work/'crops';inp.mkdir()

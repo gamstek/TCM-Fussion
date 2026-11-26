@@ -23,7 +23,7 @@ import json
 from collections import Counter, defaultdict
 
 from TCM_Fusion.lib.decision.comparison_problems import _action_feature, action_question
-from TCM_Fusion.lib.runtime.storage import IntegrationError, digest
+from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, read_json
 
 
 def action_state(runtime, actions, evidence, targets):
@@ -33,6 +33,7 @@ def action_state(runtime, actions, evidence, targets):
         key = (row['image_id'], row['feature_id'])
         presence.setdefault(key, set()).add(row['state'])
     rows = {}
+    artifacts = runtime.workflow.store.current()['artifacts']
     for action in actions:
         tool = action['tool']
         args = action.get('args') or {}
@@ -45,6 +46,39 @@ def action_state(runtime, actions, evidence, targets):
                else 'current_step'}
         if fid:
             row.update(feature_id=fid, presence_states=sorted(presence.get((image, fid), ())))
+        if tool == 'feature_scan':
+            from TCM_Fusion.lib.vision.image_tiling import scan_tiles
+            limit = target.get('max_tiles') or runtime.workflow.config.get('feature_scan_max_tiles', 4)
+            row['tile_limit'] = limit
+            row['tile_policy'] = runtime.workflow.config.get('feature_scan_tile_policy', 'prescreen')
+            size = artifacts.get('detected:' + image, {}).get('source_size_wh')
+            if size and len(size) == 2:
+                row['candidate_regions_px'] = scan_tiles(*size, limit)
+        if tool == 'locate_feature' and target.get('roi'):
+            row['roi_source_px'] = target['roi']
+        if target.get('kind') == 'crop' and tool in {'inspect_crop', 'classify_target'}:
+            row.update({k: target[k] for k in ('box_source','box_quality','det_score') if k in target})
+            box = target.get('source_tight_bbox')
+            if not box and target.get('path'):
+                import contracts
+                try:
+                    box = contracts.CropMeta.from_json(target['path']).tight_box
+                except (OSError, ValueError, AttributeError):
+                    box = None
+            if box:
+                row['target_source_px'] = list(box)
+            if args.get('observation_basis'):
+                first = read_json(runtime.workflow.operations)['entries'][args['observation_basis']]
+                row['previous_visual_observation'] = first['visual_observation']
+            identity = artifacts.get('classification:' + target['id'], {})
+            if identity.get('valid'):
+                doc = read_json(identity['path'])
+                visual = doc.get('visual_identity') or {}
+                row['previous_reading'] = {
+                    'identity_verified': bool(identity.get('identity_verified')),
+                    'source': doc.get('confidence_source'), 'label': doc.get('label'),
+                    'reason': str(visual.get('reported_reason') or doc.get('reason') or '')[:160],
+                    **{k: visual[k] for k in ('target_part', 'visible_cue') if k in visual}}
         if action.get('scene_criteria'):
             row['scene_criteria'] = action['scene_criteria']
         rows[action['action_id']] = row
@@ -57,7 +91,7 @@ def add_crop_reuse_hints(rows, actions, targets):
     for action in actions:
         tool = action['tool']
         row = rows.get(action['action_id'])
-        if row is None or tool not in {'classify_target', 'classify_crops_batch',
+        if row is None or tool not in {'classify_target', 'inspect_crop', 'classify_crops_batch',
                                        'segment_instance', 'measure_instances'}:
             continue
         target = targets.get(action['args'].get('target_id'), {})
@@ -92,6 +126,13 @@ def attach(runtime, context, *, can_pair, targets=None, measurement_actions=None
     out['action_state'] = action_state(runtime, actions + context.get('parallel_observations', []),
                                        context.get('evidence') or {}, targets)
     add_crop_reuse_hints(out['action_state'], actions, targets)
+    scan_features = {out['action_state'][a['action_id']]['feature_id'] for a in actions
+                     if a['tool'] in {'feature_scan', 'locate_feature'}
+                     and out['action_state'].get(a['action_id'], {}).get('feature_id')}
+    if scan_features:
+        from TCM_Fusion.lib.vision.feature_profiles import build_profiles, hint_text
+        profiles = build_profiles(runtime.workflow.config.get('feature_profiles'))
+        out['scan_feature_hints'] = {fid: hint_text(profiles.get(fid)) for fid in sorted(scan_features)}
     for aid, state in out['action_state'].items():
         group_key = (measurement_actions or {}).get(aid)
         if group_key in (context.get('measurement_groups') or {}):
@@ -170,6 +211,7 @@ _CRITERION_STEPS = {
     'detect_fov_initial': 'discover', 'detect_region': 'discover',
     'feature_scan': 'discover', 'locate_feature': 'discover', 'hybrid_scan': 'discover',
     'presence_check': 'presence', 'classify_target': 'identity', 'classify_crops_batch': 'identity',
+    'inspect_crop': 'morphology_observation',
     'calibrate_fov': 'calibrate', 'segment_instance': 'mask', 'measure_instances': 'measure',
 }
 
@@ -279,13 +321,31 @@ def decision_instruction(context):
     modes = decision_fields(context)
     offers = context.get('execution_options') or {}
     lines = [
-        '只返回一个JSON对象。decision内只放该模式的选择字段，理由写在顶层decision_summary。',
+        '只返回一个JSON对象。decision给出当轮选择和相关的视觉委托，理由写在顶层decision_summary。',
         '单步 {"decision":{"kind":"action","action_id":"A编号"}} 从 actions 选择一个动作，补扫和局部重检也从这里选。',
     ]
+    from TCM_Fusion.lib.vision.visual_observation import VISUAL_TOOLS
+    offered_tools = {a['tool'] for a in (*context.get('actions', []), *context.get('parallel_observations', []))}
+    if offered_tools & VISUAL_TOOLS:
+        lines.append('选视觉动作时，在同一个decision里为选中的入口表达你的视觉委托。'
+                     '对照已有回执、当前取景和已有提示，决定本轮需要视觉模型帮助辨清什么。'
+                     '用 visual_briefs 把能直接发给阅图者的话绑定到相应编号，如 '
+                     '{"decision":{"kind":"action","action_id":"A编号","visual_briefs":{"A编号":"你决定让阅图者留意的部位或辨别细节"}}}。'
+                     '如果现有提示已足够，该编号填 {"use":"preset"}。具体查什么和是否沿用预设由你决定。'
+                     'scan_feature_hints 是补扫已有的特征提示，action_state 的 candidate_regions_px 是原图候选分块，'
+                     '同一补扫委托会送到该动作实际执行的各块。不要假定局部已经出现目标。'
+                     '组内可分别使用A，观察组也可用Q，伴随观察可用O，目标授权可用入口A。'
+                     '委托聚焦下发图像中的可见细节，避免药材名或预期答案。'
+                     'decision_summary给出供人阅读的选择依据，visual_observation记录视觉工具实际所见。')
+    if 'classify_target' in offered_tools:
+        lines.append('classify_target由CNN直接判读时不发GLM。')
+    if 'inspect_crop' in offered_tools:
+        lines.append('inspect_crop可单独查看当前裁图，包括已分类实例。开放观察后若有新疑点，可在关联'
+                     'previous_visual_observation的入口附委托追问；省略则复用原观察。')
     if context.get('criterion_index'):
         lines.append(
             'criterion_refs从0起查criterion_index。双项行是comparison_problems.questions和consumers下标，'
-            '五项行是候选、角色、特征、状态、量程（量纲/下限/上限/极值）。evidence_step提示可能推进的步骤。'
+            '五项行是候选、角色、特征、B规则状态、量程（量纲/下限/上限/极值）。调查进度见candidate_audit。evidence_step提示可能推进的步骤。'
             'last_question_result为同视野同问题反馈。量纲须合格实测。'
         )
     if 'instance_goal' in modes:
@@ -417,6 +477,15 @@ def model_view(context):
     if out.get('format_feedback'):
         out['format_feedback']['allowed_decision_keys'] = decision_fields(out)
     workflow = (out.get('evidence') or {}).get('workflow') or {}
+    candidates = {row['candidate_id']: row for row in (workflow.get('candidate_audit') or {}).get('candidates', [])}
+    for row in [*workflow.get('criterion_states', []), *workflow.get('supporting_states', [])]:
+        if 'check_state' in row:
+            row['presence_check_state'] = row.pop('check_state')
+        if 'state' in row:
+            role = row.get('role', 'supporting')
+            investigation = candidates.get(row.get('candidate_id'), {}).get(role, {})
+            if row.get('feature_id') in investigation:
+                row['investigation_state'] = investigation[row['feature_id']]
     comparison = workflow.get('comparison_problems') or {}
     if 'entry_path_details' in comparison:
         comparison['entry_path_details'] = [{**p, 'action_id':aliases[p['action_id']]}
@@ -424,6 +493,11 @@ def model_view(context):
     for query in comparison.get('shared_queries', []):
         query['legal_action_ids'] = [aliases[a] for a in query.get('legal_action_ids', []) if a in aliases]
     for problem in comparison.get('questions', []):
+        if 'current_states' in problem:
+            problem['current_rule_states'] = problem.pop('current_states')
+        for consumer in problem.get('consumers', []):
+            if 'state' in consumer:
+                consumer['rule_state'] = consumer.pop('state')
         problem['legal_action_ids'] = [aliases[a] for a in problem.get('legal_action_ids', []) if a in aliases]
         problem['entry_paths'] = [{**p, 'action_id': aliases[p['action_id']]}
             for p in problem.get('entry_paths', []) if p['action_id'] in aliases]
@@ -453,16 +527,25 @@ def decode(reply, context):
     value = {k:v for k,v in reply.items() if k != 'decision'}
     # 只归一已知的附加字段，主选择仍按各模式的结构严格解码。
     normalization = {}
+    if 'visual_briefs' in decision:
+        decision = dict(decision)
+        briefs = decision.pop('visual_briefs')
+        if 'visual_briefs' in value and value['visual_briefs'] != briefs:
+            value.pop('visual_briefs')
+            normalization['discarded_optional_fields'] = {'visual_briefs': 'conflicting_values'}
+        else:
+            value['visual_briefs'] = briefs
+            normalization['relocated_fields'] = ['visual_briefs']
     notes = {'decision_summary', 'override_reason', 'reason', 'rationale', 'explanation'}
     moved = sorted(set(decision) & notes)
     if any(not isinstance(decision[k], str) for k in moved):
         raise IntegrationError('PLANNER_CHOICE_INVALID','选择中的说明字段须为字符串')
     if moved:
         if not value.get('decision_summary'):
-            value['decision_summary'] = next((decision[k][:240] for k in
+            value['decision_summary'] = next((decision[k] for k in
                 ('decision_summary', 'reason', 'rationale', 'explanation') if decision.get(k)), '')
         if not value.get('override_reason') and decision.get('override_reason'):
-            value['override_reason'] = decision['override_reason'][:240]
+            value['override_reason'] = decision['override_reason']
         normalization['metadata_fields'] = moved
         decision = {k:v for k,v in decision.items() if k not in notes}
 
@@ -473,10 +556,10 @@ def decode(reply, context):
         observation_id = decision.pop(observation_field)
         if observation_field in value and value[observation_field] != observation_id:
             value.pop(observation_field)
-            normalization['discarded_optional_fields'] = {observation_field: 'conflicting_values'}
+            normalization.setdefault('discarded_optional_fields', {})[observation_field] = 'conflicting_values'
         else:
             value[observation_field] = observation_id
-            normalization['relocated_fields'] = [observation_field]
+            normalization.setdefault('relocated_fields', []).append(observation_field)
 
     selectors = {'action_id', 'proposal', 'semantic_goal', 'problem_goal_id', 'parallel_question_id',
                  'parallel_observation_id', 'physical_partner_id', 'physical_partner_ids'}
@@ -599,11 +682,15 @@ def restore_view_references(reply, reverse):
 
 def audit(context):
     """保存真实送模菜单而非全部合法集合；供下一次排查可见性。"""
+    readings = [row['visual_observation'] for row in context.get('recent_action_feedback', ())
+                if row.get('accepted') and isinstance(row.get('visual_observation'), dict)]
     return {'schema':'planner-offer/v1','actions':context['actions'],
+        **({'previous_visual_observations': readings} if readings else {}),
         **({'view_id_map':context['view_id_map']} if 'view_id_map' in context else {}),
         'execution_options':context.get('execution_options',{}),
         'parallel_observations':context.get('parallel_observations',[]),
         'action_state':context.get('action_state', {}),
+        **({'scan_feature_hints': context['scan_feature_hints']} if context.get('scan_feature_hints') else {}),
         **({key: context[key] for key in ('criterion_index', 'action_objectives')}
            if context.get('criterion_index') else {}),
         'measurement_groups':context.get('measurement_groups', {}),

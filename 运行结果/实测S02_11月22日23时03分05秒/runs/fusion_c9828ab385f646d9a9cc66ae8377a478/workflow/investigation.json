@@ -1,0 +1,81 @@
+{
+  "identity": "ca58cd994d9fcdd297d2874c27b43eaff0a235785d6ec5cab8effbb72fee7151",
+  "kb_sha256": "c969c4db9e17899d3ab0f8d53233868f1837295998c632b1ad8edbf48da3948c",
+  "ids": [
+    "白芍",
+    "G1",
+    "G4"
+  ],
+  "hypotheses": {
+    "白芍": {
+      "status": "investigating",
+      "reason": "白芍/G1共享簇晶required且实例待测量；若簇晶不合格需转向G4针晶判据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "G1": {
+      "status": "investigating",
+      "reason": "白芍/G1共享簇晶required且实例待测量；若簇晶不合格需转向G4针晶判据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    },
+    "G4": {
+      "status": "investigating",
+      "reason": "白芍/G1共享簇晶required且实例待测量；若簇晶不合格需转向G4针晶判据。",
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "decision_source": "model"
+    }
+  },
+  "history": [
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍为A折先验领先者且cluster_crystal判据可量化；G1共享同required但形态口径不同；G4针晶为竞争required，待簇晶结果后决定是否转向。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "白芍为A折先验领先者且cluster_crystal判据可量化；G1共享同required但形态口径不同；G4针晶为竞争required，待簇晶结果后决定是否转向。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "白芍为A折先验领先者且cluster_crystal判据可量化；G1共享同required但形态口径不同；G4针晶为竞争required，待簇晶结果后决定是否转向。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    },
+    {
+      "updates": [
+        {
+          "candidate_id": "白芍",
+          "status": "investigating",
+          "reason": "白芍/G1共享簇晶required且实例待测量；若簇晶不合格需转向G4针晶判据。"
+        },
+        {
+          "candidate_id": "G1",
+          "status": "investigating",
+          "reason": "白芍/G1共享簇晶required且实例待测量；若簇晶不合格需转向G4针晶判据。"
+        },
+        {
+          "candidate_id": "G4",
+          "status": "investigating",
+          "reason": "白芍/G1共享簇晶required且实例待测量；若簇晶不合格需转向G4针晶判据。"
+        }
+      ],
+      "evidence_digest": "c43e1a3b71a94037aa5dac737efe6e0ef3eb839622ce8e358bdfc4165a9f0dda",
+      "scope_changed": false,
+      "is_evidence": false,
+      "decision_source": "model",
+      "simulation": false
+    }
+  ],
+  "is_evidence": false,
+  "schema": "investigation/v2"
+}

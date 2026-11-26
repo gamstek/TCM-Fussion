@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""A/B 候选融合：把 A 的逐折概率与 B 的规则置信度按权重合并后重排候选。
+"""A/B 候选融合：把 A 的样品级概率与 B 的规则置信度按权重合并后重排候选。
 
 A 是候选先验（Plan A），B 是显微证据（Plan B）；这里只重排候选并记录分项，不改 B verdict、不把 A 概率当显微证据。
 
 主要定义：
-- a_probabilities: 按全部折/视野求 A 的平均概率，未进 Top-K 的候选记 0。
+- a_probabilities: 将完整样品平均榜按候选 ID 汇总；历史结果按全部折/视野求平均。
 - apply_ab_fusion: 计算 fused_score 并重排 ranking；若 top 改变则清空结论并要求复核。
 - _group_map / _candidate_id: 内部工具，把别名/药材标签映射到候选组 id。
 
@@ -37,9 +37,11 @@ def _candidate_id(label, kb, aliases):
 
 
 def a_probabilities(a, kb, aliases=None):
-    """按全部折/视野求平均概率；候选未出现在 Top-K 时记 0。"""
+    """按候选 ID 汇总完整 A 概率，包括同一药材组下的多个标签。"""
     sums, count = {}, 0
-    if a.get('view_predictions'):
+    if a.get('ensemble_method') == 'mean_softmax':
+        folds = [a['ranking']]
+    elif a.get('view_predictions'):
         folds = [fold for view in a['view_predictions']
                  for fold in (view.get('fold_rankings') or [])]
     else:
@@ -66,7 +68,7 @@ def apply_ab_fusion(verdict, a, kb, aliases=None, a_weight=0.5, b_weight=0.5):
         aw = bw = 0.5
         total = 1.0
     aw, bw = aw / total, bw / total
-    probs, fold_count = a_probabilities(a, kb, aliases)
+    probs, ranking_count = a_probabilities(a, kb, aliases)
     ranking = list(verdict.get('ranking') or [])
     original_top = ranking[0].get('id') if ranking else None
     for row in ranking:
@@ -91,6 +93,13 @@ def apply_ab_fusion(verdict, a, kb, aliases=None, a_weight=0.5, b_weight=0.5):
         verdict['conclusion'] = None
         verdict['verdict'] = 'insufficient_evidence'
         verdict['needs_review'] = True
-    verdict['fusion_weights'] = {'a': round(aw, 4), 'b': round(bw, 4), 'a_folds': fold_count}
+    weights = {'a': round(aw, 4), 'b': round(bw, 4)}
+    if a.get('ensemble_method') == 'mean_softmax':
+        views = a.get('view_predictions') or [a]
+        weights.update(a_aggregation='mean_softmax', a_views=len(views),
+                       a_models=len(views[0].get('model_predictions', [])))
+    else:
+        weights['a_folds'] = ranking_count
+    verdict['fusion_weights'] = weights
     verdict['fusion_policy'] = 'A 先验 + B 证据加权；B verdict/证据状态不由 A 改写'
     return verdict

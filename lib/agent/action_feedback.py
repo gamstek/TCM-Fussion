@@ -19,6 +19,7 @@ def objective(action):
             'objective':{'presence_check':'核验合法候选差异特征','scene_check':'核对已有结晶证据的组织语境',
                 'measure_instances':'获取具有用途资格的真实量化证据','segment_instance':'恢复可用目标掩码',
                 'detect_region':'局部 YOLO 重检',
+                'inspect_crop':'查看绑定裁图的实见结构、部位与可读性，供后续调查',
                 'feature_scan':'按 feature_id 做全视野分块的目标条件候选扫描',
                 'hybrid_scan':'并发执行 YOLO 初检与多特征 GLM 全视野扫描，并一次提交汇合结果',
                 'locate_feature':'用 GLM 核验选定局部并提出待验证框'}.get(tool,'读取或恢复有效证据'),
@@ -103,6 +104,8 @@ def evaluate(before,after,action,*,accepted,capability_changed=False,result=None
             'continue_reason':'有效证据或能力进展' if useful else '无已验证进展；换路线或停止'}
     if result.get('scan_coverage'):
         feedback['scan_coverage'] = result['scan_coverage']
+    if accepted and result.get('visual_observation'):
+        feedback['visual_observation'] = result['visual_observation']
     return feedback
 
 

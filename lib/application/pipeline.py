@@ -24,7 +24,8 @@ import paths
 
 from TCM_Fusion.lib.decision.routing_policy import validate_policy, route
 from TCM_Fusion.lib.decision.candidate_policy import validate_candidates
-from TCM_Fusion.lib.workflow.adapters import execute_b, predict_a
+from TCM_Fusion.lib.workflow.adapters import (a_interpreter, combine_a_views, execute_b, predict_a,
+                                             resolve_a_assets)
 from TCM_Fusion.lib.decision.collaboration import fuse, knowledge_base, select_shadow
 from TCM_Fusion.lib.runtime.storage import (IntegrationError, digest, output_root, project_path,
                       read_json, write_json)
@@ -54,7 +55,8 @@ def validate_config(config):
             not isinstance(k, str) or not isinstance(v, str) for k, v in config.get("aliases", {}).items()):
         raise IntegrationError("CONFIG_INVALID", "aliases须为字符串映射")
     fields = {
-        "a": {"mode", "required", "image", "images", "checkpoint_dir", "python", "record", "timeout_seconds"},
+        "a": {"mode", "required", "image", "images", "checkpoint_dir", "model_runs", "python", "record",
+              "timeout_seconds"},
         "b": {"mode", "input", "input_mode", "images", "manifest", "python", "enable_vlm", "record", "run_dir"},
         "agent": {"mode", "judgement_request_budget", "max_steps", "planner", "transport", "image_roots", "prompt_release", "candidate_policy", "workflow"},
     }
@@ -158,14 +160,15 @@ def run_pipeline(config, *, base=None):
                 settings = {k: v for k, v in a_cfg.items() if k != "images"}
                 views = [predict_a({**settings, "image": image}, base/"a_cache")
                          for image in a_cfg["images"]]
-                a = {"status": "ok", "ranking": [], "provenance": "live_multiview",
-                     "view_predictions": views}
+                a = combine_a_views(views)
             else:
                 a = predict_a(a_cfg, base/"a_cache")
         except IntegrationError as exc:
             if cfg.get("a", {}).get("required", True):
                 raise
             a = {"status": "unavailable", "ranking": [], "provenance": "unavailable", "error_code": exc.code}
+        if a.get("ensemble_method") == "mean_softmax":
+            a["candidate_policy"] = validate_candidates(cfg.get("agent", {}).get("candidate_policy"))
         write_json(directory/"a_prediction.json", a)
         routing = route(a, cfg.get("routing"), knowledge_base(), cfg.get("aliases"))
         write_json(directory/"routing.json", routing)
@@ -285,15 +288,22 @@ def doctor(config):
             check("MCP SDK", importlib.util.find_spec("mcp") is not None, "mcp 1.x stdio")
         for root in cfg["agent"]["image_roots"]:
             check("Agent样品原图", project_path(root).exists(), root)
-    check("A原脚本", Path(paths.A_PREDICT).is_file(), "只通过子进程执行")
     if a.get("mode", "cli") == "cli":
-        checkpoint = project_path(a.get("checkpoint_dir", paths.A_CHECKPOINT_DIR))
+        try:
+            script, weights, models = resolve_a_assets(a)
+            check("A推理脚本", script.is_file(), script)
+            check("A权重落点", bool(models) or len(weights) >= 5,
+                  [str(weight) for weight in (weights if models else weights[:5])])
+        except (IntegrationError, OSError, ValueError, TypeError) as exc:
+            check("A权重落点", False, exc)
         image = project_path(a.get("image") or (a.get("images") or ["MICROSCOPE-main/显微镜像/甘草/example.jpg"])[0])
-        check("A五折参考落点", all((checkpoint/f"fold{i}_best.pt").is_file() for i in range(1, 6)), checkpoint)
         check("A原图", image.is_file(), image)
-        py = project_path(a.get("python", paths.VENV_PY))
-        check("A解释器", py.is_file(), py)
-        if py.is_file():
+        try:
+            py = a_interpreter(a)
+        except IntegrationError as exc:
+            check("A解释器", False, exc)
+        else:
+            check("A解释器", True, py)
             code = "import importlib.util,json; print(json.dumps({m:importlib.util.find_spec(m) is not None for m in ['torch','torchvision','numpy','PIL']}))"
             cp = subprocess.run([str(py), "-X", "utf8", "-c", code], capture_output=True,
                                 text=True, encoding="utf-8", timeout=30)

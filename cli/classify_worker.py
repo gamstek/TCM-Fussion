@@ -1,12 +1,13 @@
 """单 crop 类别复核 worker：在受控子进程内复用检测侧 `classify_crop`，从项目根以 `-m` 启动。
 
-为什么存在：融合链路此前的工具集只有检测/分割/测量/重裁，无法在「已观察到的存在特征」与「crop 类别」相左时复核类别。本入口只做一件事：读入一个已绑定 crop，调一次 GLM 分类，写结构化结果。
+读取绑定裁图，对当前实例执行身份复核，或按规划器选择观察可见细节。两种请求各有自己的回执。
 
 独立进程而非进程内调用的理由与 detect_region 相同：图像读取/编码/HTTP 失败不会拖垮主循环；并且 `worker_bootstrap` 的 HTTP 守卫会把这次请求记进同一份资源账本（不另立第二套预算）。YOLO crop 复核只是辅助，不替代 GLM。
 
 主要定义：
 - main: 解析 `--context`，读取绑定 crop（可选 `tight_box_local` 二次裁剪），调用一次分类并写 `classification.json`。
 - 视觉身份复核：用已绑定的对照计划准备同图幅输入，校验模型报告的可见结构。
+- inspect_crop 使用目标区原有像素，只记录实见、位置和可读性。
 - geometry_context: 与 `detect_sample._geom_ctx` 同口径的纯几何提示文本（长宽比、尺寸、占画面比例），只影响提示词，不参与判定。
 - 模块级约束: 文字型 confidence 按 glm high=0.90 / medium=0.65 / low=0.30 折算为 `confidence_score`。
 
@@ -54,19 +55,39 @@ def main(argv=None):
         width, height = handle.size
     config = load_config()
     key = resolve_key(config)
+    brief = ctx.get('visual_brief')
+    if ctx.get('tool') == 'inspect_crop':
+        from vlm_api import call_vlm, encode_jpeg_b64, parse_vlm_json
+        from TCM_Fusion.lib.vision.visual_observation import prompt_suffix, receipt, record
+        prompt = '观察这张显微裁图。描述目标区内能辨认的结构及其位置。只返回JSON。'
+        prompt += prompt_suffix(brief, open_observation=True)
+        b64, _ = encode_jpeg_b64(crop, max_side=1024)
+        answer, error = call_vlm({**config['vlm'], 'max_retries': 1}, key, b64, prompt)
+        if error or answer is None:
+            raise IntegrationError('CROP_OBSERVATION_FAILED', 'GLM 裁图观察请求失败')
+        try:
+            report = receipt(brief, parse_vlm_json(answer))
+        except (ValueError, TypeError):
+            report = receipt(brief, {})
+        if report['status'] != 'reported':
+            raise IntegrationError('MODEL_FIELD_INVALID', '裁图观察缺少可用回执')
+        record(Path(ctx['output']), report)
+        return 0
     context = geometry_context(ctx['tight_box'], width, height) if ctx.get('tight_box') else ""
     review = ctx.get('identity_review')
     if review is None:
         hints = str(ctx.get('feature_hint') or '').strip()
         if hints:
             context = (context + "\n" + hints).strip()
-        value = classify_crop(crop, config['vlm'], key, ctx=context)
+        value = classify_crop(crop, config['vlm'], key, ctx=context, **({'visual_brief': brief} if brief else {}))
     else:
         from TCM_Fusion.lib.vision.identity_review import finish_review, prepare_review
-        value = classify_crop(crop, config['vlm'], key,
+        value = classify_crop(crop, config['vlm'], key, **({'visual_brief': brief} if brief else {}),
                               review_input=lambda native, baseline: prepare_review(native, baseline, review, context))
     if not isinstance(value, dict):
         raise IntegrationError('CLASSIFY_OUTPUT_INVALID', '分类返回不是结构化对象')
+    if brief and value.get('error'):
+        raise IntegrationError('CLASSIFY_FAILED', 'GLM 未返回有效的身份复核')
     if review is not None:
         value = finish_review(value)
     out = Path(ctx['output'])

@@ -1,0 +1,153 @@
+{
+  "ready": true,
+  "checks": [
+    {
+      "name": "LangGraph",
+      "ok": true,
+      "detail": "requirements-agent.txt"
+    },
+    {
+      "name": "JSON Schema",
+      "ok": true,
+      "detail": "受信注册表依赖jsonschema"
+    },
+    {
+      "name": "图像工具依赖",
+      "ok": true,
+      "detail": "真实VLM图像编码复用原B，需要OpenCV与NumPy；离线fixture不需要"
+    },
+    {
+      "name": "MCP SDK",
+      "ok": true,
+      "detail": "mcp 1.x stdio"
+    },
+    {
+      "name": "Agent样品原图",
+      "ok": true,
+      "detail": "E:\\TCM_Fusion\\运行结果\\实测龙胆_11月24日09时15分43秒\\view_01.jpg"
+    },
+    {
+      "name": "A推理脚本",
+      "ok": true,
+      "detail": "E:\\TCM_Fusion\\MICROSCOPE-main\\predict_herb_resnet18.py"
+    },
+    {
+      "name": "A权重落点",
+      "ok": true,
+      "detail": "['E:\\\\TCM_Fusion\\\\分类器设计权重与CNN权重\\\\herb_cls_runs\\\\v2_resnet18_448_lb_e40_ls10_mix10_s20261111\\\\best.pt', 'E:\\\\TCM_Fusion\\\\分类器设计权重与CNN权重\\\\herb_cls_runs\\\\v2_resnet18_448_lb_e40_ls10_mix10_s20261112\\\\best.pt', 'E:\\\\TCM_Fusion\\\\分类器设计权重与CNN权重\\\\herb_cls_runs\\\\v2_resnet18_448_lb_e40_ls10_mix10_s20261113\\\\best.pt']"
+    },
+    {
+      "name": "A原图",
+      "ok": true,
+      "detail": "E:\\TCM_Fusion\\运行结果\\实测龙胆_11月24日09时15分43秒\\view_01.jpg"
+    },
+    {
+      "name": "A解释器",
+      "ok": true,
+      "detail": "E:\\TCM_Fusion\\.venv\\vision\\Scripts\\python.exe"
+    },
+    {
+      "name": "A依赖可发现（非运行验证）",
+      "ok": true,
+      "detail": "{'torch': True, 'torchvision': True, 'numpy': True, 'PIL': True}"
+    },
+    {
+      "name": "vlm服务地址",
+      "ok": true,
+      "code": "OK",
+      "detail": "base_url须为兼容服务根地址，不在URL中携带凭据；此检查不证明服务可达"
+    },
+    {
+      "name": "vlm模型名称",
+      "ok": true,
+      "code": "OK",
+      "detail": "model须由账号实际开通的模型名称填写"
+    },
+    {
+      "name": "vlm凭据一致性",
+      "ok": true,
+      "code": "OK",
+      "detail": "原规划与检测客户端优先级不同；不要同时配置不同的文件密钥和环境密钥"
+    },
+    {
+      "name": "vlm凭据已提供",
+      "ok": true,
+      "code": "OK",
+      "detail": "请在实际启动进程中设置api_key_env指定的变量；不要把密钥写进报告"
+    },
+    {
+      "name": "stage2模型/元信息",
+      "ok": true,
+      "detail": "显微特征 resnet18；仅文件/元信息检查，未加载权重"
+    },
+    {
+      "name": "重算解释器实际导入",
+      "ok": true,
+      "detail": "opencv/numpy；不代表在线模型可用"
+    },
+    {
+      "name": "检测侧环境依赖",
+      "ok": true,
+      "detail": "Pillow/RapidOCR；未初始化OCR模型、未联网"
+    },
+    {
+      "name": "工作流视觉配置",
+      "ok": true,
+      "detail": "沿用原B配置"
+    },
+    {
+      "name": "工作流网络显式启用",
+      "ok": true,
+      "detail": "视觉阶段需要允许网络"
+    },
+    {
+      "name": "vlm服务地址",
+      "ok": true,
+      "code": "OK",
+      "detail": "base_url须为兼容服务根地址，不在URL中携带凭据；此检查不证明服务可达"
+    },
+    {
+      "name": "vlm模型名称",
+      "ok": true,
+      "code": "OK",
+      "detail": "model须由账号实际开通的模型名称填写"
+    },
+    {
+      "name": "vlm凭据一致性",
+      "ok": true,
+      "code": "OK",
+      "detail": "原规划与检测客户端优先级不同；不要同时配置不同的文件密钥和环境密钥"
+    },
+    {
+      "name": "vlm凭据已提供",
+      "ok": true,
+      "code": "OK",
+      "detail": "请在实际启动进程中设置api_key_env指定的变量；不要把密钥写进报告"
+    },
+    {
+      "name": "igm服务地址",
+      "ok": true,
+      "code": "OK",
+      "detail": "base_url须为兼容服务根地址，不在URL中携带凭据；此检查不证明服务可达"
+    },
+    {
+      "name": "igm模型名称",
+      "ok": true,
+      "code": "OK",
+      "detail": "model须由账号实际开通的模型名称填写"
+    },
+    {
+      "name": "igm凭据一致性",
+      "ok": true,
+      "code": "OK",
+      "detail": "原规划与检测客户端优先级不同；不要同时配置不同的文件密钥和环境密钥"
+    },
+    {
+      "name": "igm凭据已提供",
+      "ok": true,
+      "code": "OK",
+      "detail": "请在实际启动进程中设置api_key_env指定的变量；不要把密钥写进报告"
+    }
+  ],
+  "note": "doctor不构成模型/图像/网络运行验证；缓存和演示不替代真实联调"
+}

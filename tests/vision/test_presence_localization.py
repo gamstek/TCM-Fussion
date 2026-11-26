@@ -208,6 +208,32 @@ class PresenceLocalizationTests(unittest.TestCase):
         self.assertEqual(results[0]['decision'], results[1]['decision'])
         self.assertEqual(results[0]['evidence_digest'], results[1]['evidence_digest'])
 
+    def test_guided_raw_views_preserve_formal_fields_and_reset_between_requests(self):
+        runtime, backend, presence = self.runtime_and_backend()
+        scene = runtime.action('scene_check', {'image_id': presence['args']['image_id']}, 'scene_context')
+        toolbox = LocalToolbox(runtime, ledger_path=self.root/'ledger.json', backend=backend)
+        question = '画面中间有哪些能看清的结构？'
+        report = {'finding':'中间是散在的颗粒', 'location':'中央', 'readability':'clear'}
+        for action, original in ((presence, {'present':False}),
+                                 (scene, {'cell_wall_visible':False, 'crystal_location':'free',
+                                          'arrangement':'scattered', 'abundance':'few'})):
+            results = []
+            for extra in ({'visual_brief':question}, {}):
+                actual = {**action, **extra}
+                response = {'choices':[{'message':{'content':json.dumps(
+                    {**original, 'reason':'模拟判读', 'conf':.91, 'visual_observation':report})}}]}
+                with patch('TCM_Fusion.lib.runtime.hard_calls.encode_image', return_value=self.url), \
+                     patch('TCM_Fusion.lib.runtime.hard_calls.post', return_value=response) as post:
+                    row = asyncio.run(toolbox._run_observation(actual, {'action':actual, 'new_requests':1}))
+                self.assertTrue(row['accepted'], row.get('error_code'))
+                self.assertEqual(question in json.dumps(post.call_args.args[0], ensure_ascii=False), bool(extra))
+                self.assertEqual('visual_observation' in row, bool(extra))
+                if extra:
+                    self.assertEqual(row['visual_observation'], {**report, 'brief':question, 'status':'reported'})
+                self.assertNotIn('visual_observation', row['result'])
+                results.append(row['result'])
+            self.assertEqual(results[0], results[1])
+
     def test_invalid_observation_confidence_remains_unknown(self):
         for conf in (True, None, float('nan'), float('inf'), '0.9', -1, 2):
             with self.subTest(conf=conf):

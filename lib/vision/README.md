@@ -15,6 +15,7 @@
 | [image_tiling.py](image_tiling.py) | 生成均匀网格。定向定位只取合法局部 ROI，单块预算按部分覆盖返回。 |
 | [presence_localization.py](presence_localization.py) | 把 presence 观察的可选 box 投影为影子定位线索，供账本与规划器参考，不产生正式工件。 |
 | [stage2_classifier.py](stage2_classifier.py) | stage2 适配层：训练侧 cls_net → crop 显微特征身份概率 → workflow_backend。 |
+| [visual_observation.py](visual_observation.py) | 按当轮已选动作绑定规划器自拟的观察委托，组装实际视觉请求，校验实见、部位及可读性。自由观察回执供下一轮调查；正式身份与尺寸仍按各自的工具核验。 |
 
 直接依赖 runtime。
 

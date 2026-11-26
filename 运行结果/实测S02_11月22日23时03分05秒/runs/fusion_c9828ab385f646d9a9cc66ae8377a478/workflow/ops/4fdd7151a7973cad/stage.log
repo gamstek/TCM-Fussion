@@ -1,0 +1,10 @@
+[info] crop 1 个 | 源图 1 张 ['view_01'] | 药材 [''] | 输出 E:\TCM_Fusion\运行结果\实测S02_11月22日23时03分05秒\runs\fusion_c9828ab385f646d9a9cc66ae8377a478\workflow\ops\4fdd7151a7973cad\segmentation
+
+[1/1] cluster_crystal_view_01_01 | feature=cluster_crystal | px_per_um=11.65
+[结果] cluster_crystal_view_01_01: mask 496x484 | 占比 0.321 | 连通域 1 | 阈值 127.0 | invert=False | 状态 ok | 框先验: 丢邻粒 0 块, 裁 0px
+[输出] E:\TCM_Fusion\运行结果\实测S02_11月22日23时03分05秒\runs\fusion_c9828ab385f646d9a9cc66ae8377a478\workflow\ops\4fdd7151a7973cad\segmentation\igm\cluster_crystal_view_01_01
+
+[done] 实例 1 个 → E:\TCM_Fusion\运行结果\实测S02_11月22日23时03分05秒\runs\fusion_c9828ab385f646d9a9cc66ae8377a478\workflow\ops\4fdd7151a7973cad\segmentation\masks
+       IGM 原始产物 → E:\TCM_Fusion\运行结果\实测S02_11月22日23时03分05秒\runs\fusion_c9828ab385f646d9a9cc66ae8377a478\workflow\ops\4fdd7151a7973cad\segmentation\igm
+       实例清单 → E:\TCM_Fusion\运行结果\实测S02_11月22日23时03分05秒\runs\fusion_c9828ab385f646d9a9cc66ae8377a478\workflow\ops\4fdd7151a7973cad\segmentation\instances.json
+       （几何测量）--masks "E:\TCM_Fusion\运行结果\实测S02_11月22日23时03分05秒\runs\fusion_c9828ab385f646d9a9cc66ae8377a478\workflow\ops\4fdd7151a7973cad\segmentation\masks"

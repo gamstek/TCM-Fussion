@@ -1,0 +1,35 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","rankSpacing":32,"htmlLabels":true},"themeVariables":{"fontFamily":"Microsoft YaHei, sans-serif","fontSize":"16px","lineColor":"#4A6865"}}}%%
+flowchart LR
+    accTitle: 中药材显微鉴别流程与视觉工具调用
+    accDescr: Agent 一次授权局部目标，执行器按依赖连续执行，完成或受阻后回交。MCP 在同一视野内调度定位、裁剪、显微特征分类、按需复核、分割与带标定的几何测量。每次观察、实例身份或受阻原因均可回到规划。
+    input["输入校验"] --> prior["药材候选提名<br/>CNN预测识别"] --> plan["Agent 调查规划<br/>选择视野、实例与观察重点"]
+    plan -->|单项调查| mcp
+    plan -->|一次授权局部目标| bind["DAG 编排局部取证任务<br/>实例核验或单视野定量取证"] --> next["按依赖自动连续执行<br/>复用已有结果，前置满足即推进"] -->|按需调用| mcp
+    next -->|任务完成或受阻| plan
+    plan -->|选独立视野| parallel["并行调查多个视野"] -->|逐支派发| mcp
+    subgraph mcp["MCP 视觉工具执行 · 按需调用，已有合格工件可复用"]
+      direction LR
+      locate["特征定位<br/>YOLO 初检或 GLM 定向补扫"] -->|坐标框| crop["原图裁剪<br/>绑定视野与原图坐标"] -->|实例裁图| classifier["Stage2 分类器<br/>ResNet18 判断显微特征身份"]
+      classifier -->|身份通过且需测量| segment["实例分割<br/>火山方舟 IGM 生成掩码"]
+      classifier -->|低置信或其他类，可选| review["GLM 身份复核"]
+      review -->|身份通过且需测量| segment
+      segment -->|实例掩码| check["核验掩码与用途"]
+      scale["同视野比例尺标定"] -->|有效标定| check
+      check -->|资格满足| measure["本地几何测量<br/>按目标取得长度、宽度或面积"]
+      observe["GLM 原图观察<br/>回答存在性或形态问题"]
+      observe --> receipt["登记工具回执"]
+      classifier -->|仅核验身份| receipt
+      review -->|复核结果或受阻| receipt
+      measure -->|物理量与单位| receipt
+    end
+    mcp -->|实际回执| facts["登记回执与判据计分<br/>更新支持、反证与缺口"] -->|调查结束| finish["融合研判与交付"]
+    facts -->|结果、受阻原因与缺口| plan
+    facts -->|失败或停滞| reflect["生成反思建议"] -->|下轮规划决定是否采纳| plan
+
+    classDef primary fill:#f3f4ee,stroke:#78968b,color:#153e3c;
+    classDef action fill:#e5f3ea,stroke:#65a18b,color:#153e3c;
+    classDef attention fill:#fbf1d9,stroke:#b99a5d,color:#604820;
+    class input,prior,finish primary;
+    class plan,bind,next,parallel,locate,crop,classifier,review,segment,scale,check,measure,observe action;
+    class reflect,facts,receipt attention;
+    style mcp fill:#f8fbf7,stroke:#74A38F,color:#174A3E

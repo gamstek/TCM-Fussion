@@ -67,7 +67,7 @@ def presence_state(observation, kb, images=None):
     result = observation.get('result') or {}
     args = action.get('args') or {}
     fid = args.get('feature_id')
-    if (observation.get('accepted') and action.get('tool') == 'presence_check'
+    if (observation.get('accepted') and observation.get('status') in (None, 'done') and action.get('tool') == 'presence_check'
             and result.get('ok') is True and type(result.get('present')) is bool
             and (images is None or args.get('image_id') in images)
             and kb.tier(fid) in {'P1', 'C'}

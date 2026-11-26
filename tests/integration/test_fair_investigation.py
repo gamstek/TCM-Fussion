@@ -235,6 +235,62 @@ class FairInvestigationTests(fixtures.FairInvestigationFixture, unittest.TestCas
         self.assertEqual(first_offer['criterion_index'], sent[0]['criterion_index'])
 
 
+    def _review_with_unchecked_competitor(self, observe_first):
+        r = self.prepare()
+        r.a['fold_rankings'] = [[{'label': '香附', 'probability': .6}, {'label': '白芍', 'probability': .3},
+                                 {'label': '郁金', 'probability': .1}]] * 5
+        r.workflow.config.update(context_compact=observe_first, supporting_probe_scan_total=3,
+                                 protect_investigation_budget=False)
+        sent = []
+        claim = '香附分泌组织已完成定向补扫并排除'
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.client = SimpleNamespace(model='fixture', timeout_s=1)
+        planner.config = {}
+
+        def respond(payload, timeout):
+            context = json.loads(payload['messages'][1]['content'])
+            sent.append(context)
+            flow = context['evidence']['workflow']
+            audit = flow['candidate_audit']
+            receipts = audit['receipts_by_feature']['secretory_tissue']
+            state = next(c['required']['secretory_tissue'] for c in audit['candidates'] if c['candidate_id'] == '香附')
+            card = next(c for q in flow['comparison_problems']['questions'] if q['feature_id'] == 'secretory_tissue'
+                        for c in q['consumers'] if c['candidate_id'] == '香附')
+            self.assertEqual(card['investigation_state'], state)
+            if len(sent) == 1:
+                self.assertEqual((card['rule_state'], state, receipts), ('NOT_DETECTED', 'unchecked', []))
+                self.assertNotIn('state', card)
+            else:
+                self.assertEqual([receipt['tool'] for receipt in receipts], ['presence_check'])
+                self.assertNotEqual(state, 'unchecked')
+            choice = next(a for a in context['actions'] if a['tool'] == 'request_review')
+            if observe_first and len(sent) == 1:
+                choice = next(a for a in context['actions'] if a['tool'] == 'presence_check'
+                              and a['args']['feature_id'] == 'secretory_tissue')
+            reply = {'decision': {'kind': 'action', 'action_id': choice['action_id']}, 'decision_summary': claim}
+            return {'choices': [{'message': {'content': json.dumps(reply)}}]}
+
+        with patch('TCM_Fusion.lib.runtime.hard_calls.post', side_effect=respond) as post:
+            trace = self.run_agent(r, planner)
+        self.assertEqual(post.call_count, 1 + observe_first)
+        self.assertEqual(trace['observation_requests'], int(observe_first))
+        self.assertEqual(trace['stop_reason'], 'planner_request_review')
+        thought = [event for event in trace['events'] if event['phase'] == 'thought'][-1]
+        self.assertEqual(thought['decision_summary_source'], 'candidate_audit')
+        self.assertEqual(thought['proposed_decision_summary'], claim)
+        self.assertNotIn(claim, thought['decision_summary'])
+        self.assertEqual(thought['decision_summary'], sent[-1]['evidence']['workflow']['candidate_audit']['required_investigation_summary'])
+        if not observe_first:
+            self.assertIn('香附/secretory_tissue', thought['decision_summary'])
+            review = next(event for event in trace['events'] if event['phase'] == 'review_with_open_opportunities')
+            self.assertEqual(review['decision_summary'], thought['decision_summary'])
+
+    def test_model_can_review_with_unchecked_competitor_and_inaccurate_reason(self):
+        self._review_with_unchecked_competitor(observe_first=False)
+
+    def test_model_can_choose_to_observe_the_same_competitor_before_review(self):
+        self._review_with_unchecked_competitor(observe_first=True)
+
     def test_prior_fold_disagreement_survives_without_probability_averaging(self):
         r=self.prepare();prior=prior_summary(r.candidate_interest())
         self.assertEqual(prior['fold_top1_counts'],{'白芍':4})

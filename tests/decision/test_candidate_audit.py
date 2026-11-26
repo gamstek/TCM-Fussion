@@ -18,6 +18,7 @@ from TCM_Fusion.lib.tools.agent_tools import LocalToolbox,FixtureBackend
 from TCM_Fusion.lib.agent.react_graph import run_react
 from TCM_Fusion.lib.decision.final_assessment import finalize
 from TCM_Fusion.lib.decision.output_projection import project_output
+from TCM_Fusion.lib.runtime.storage import write_json
 
 
 class CandidateAuditTests(unittest.TestCase):
@@ -91,6 +92,36 @@ class CandidateAuditTests(unittest.TestCase):
         actions=r.workflow.propose();targets=r.workflow.targets()
         self.assertTrue(any(a['tool']=='feature_scan'and targets[a['args']['target_id']]['feature_id']=='cluster_crystal'for a in actions))
         self.assertFalse(any(a['tool']=='segment_instance'for a in actions))
+
+    def test_only_bound_terminal_receipts_advance_investigation(self):
+        r = self.prepare()
+        r.a['fold_rankings'][0] = [{'label': '香附', 'probability': 1}]
+        image = next(iter(r.images))
+        base = {'tool': 'feature_scan', 'image_id': image, 'target_id': 'scan-fixture',
+                'feature_id': 'single_crystal', 'status': 'done', 'accepted': True}
+        partial = {'status': 'partial', 'crop_count': 0, 'successful_tiles': [[0, 0, 10, 10]],
+                   'failed_tiles': [[10, 0, 20, 10]], 'unsearched_tiles': []}
+        entries = {
+            'partial-scan': {**base, 'scan_coverage': partial},
+            'later-failed': {**base, 'status': 'failed', 'accepted': False, 'error_code': 'TIMEOUT'},
+            'unreadable': {**base, 'feature_id': 'vessel', 'scan_coverage': {**partial, 'status': 'failed'}},
+            'reserved': {**base, 'feature_id': 'secretory_tissue', 'status': 'pending', 'accepted': False},
+            'wrong-view': {**base, 'feature_id': 'secretory_tissue', 'image_id': 'other', 'scan_coverage': partial},
+        }
+        write_json(r.workflow.operations, {'entries': entries})
+        pending = {**self.observation(r, 'secretory_tissue', False), 'status': 'pending'}
+        view = compact(build(r, r.score([]), [pending], actions=[]))
+        rows = {row['candidate_id']: row for row in view['candidates']}
+        self.assertEqual(rows['香附']['required']['secretory_tissue'], 'unchecked')
+        self.assertEqual(rows['G3']['required']['single_crystal'], 'investigated_unresolved')
+        self.assertEqual(rows['白芍']['supporting']['vessel'], 'failed_or_unknown')
+        receipts = view['receipts_by_feature']
+        self.assertEqual(receipts['secretory_tissue'], [])
+        self.assertEqual({(item['operation_key'], item['outcome']) for item in receipts['single_crystal']},
+                         {('partial-scan', 'no_crop'), ('later-failed', 'unknown')})
+        scan = next(item for item in receipts['single_crystal'] if item['operation_key'] == 'partial-scan')
+        self.assertEqual((scan['coverage'], scan['successful_tiles'], scan['crop_count']), ('partial', 1, 0))
+        self.assertFalse(view['complete'])
 
     def test_legacy_classification_gate_stays_unchanged(self):
         r=self.runtime(fast_recovery_selection='per_feature',targeted_recovery=True)

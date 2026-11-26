@@ -79,7 +79,7 @@ def _preview(job_id, spans):
         print(f"{'  ' * depth[span.key]}{span.name} · {state} · {body}")
 
 
-def observe(directory, *, follow, publisher=None, include_decision_summary=False):
+def observe(directory, *, follow, publisher=None, include_decision_summary=False, include_visual_observations=False):
     vocabulary = load_vocabulary(Path(paths.PROJECT_ROOT))
     run = None
     last_revision = None
@@ -102,7 +102,8 @@ def observe(directory, *, follow, publisher=None, include_decision_summary=False
             if run is not None:
                 revision = _revision(run)
                 if revision != last_revision:
-                    job_id, spans = project_trace(run, vocabulary, include_decision_summary=include_decision_summary)
+                    job_id, spans = project_trace(run, vocabulary, include_decision_summary=include_decision_summary,
+                                                  include_visual_observations=include_visual_observations)
                     last_revision = revision
         except (FileNotFoundError, PermissionError, json.JSONDecodeError) as exc:
             if not follow:
@@ -157,6 +158,7 @@ def main(argv=None):
     parser.add_argument("--follow", action="store_true", help="每两秒检查已指定任务的工件更新")
     parser.add_argument("--upload", action="store_true", help="将预览字段发送到已配置的 LangSmith 目的地")
     parser.add_argument("--include-decision-summary", action="store_true", help="附带已有工件中的模型选择简述")
+    parser.add_argument("--include-visual-observations", action="store_true", help="附带已记录的视觉委托与实见短答")
     args = parser.parse_args(argv)
     publisher = None
     try:
@@ -165,7 +167,8 @@ def main(argv=None):
             raise IntegrationError("TRACE_RUN_MISSING", "请输入可观察的目录路径。")
         publisher = _publisher() if args.upload else None
         observe(directory, follow=args.follow, publisher=publisher,
-                include_decision_summary=args.include_decision_summary)
+                include_decision_summary=args.include_decision_summary,
+                include_visual_observations=args.include_visual_observations)
     except KeyboardInterrupt:
         return 130
     except (IntegrationError, OSError, ValueError, ImportError) as exc:

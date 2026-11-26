@@ -28,8 +28,11 @@ GEOM_DIR = os.path.join(PROJECT_ROOT, "几何测量")
 JUDGE_DIR = os.path.join(PROJECT_ROOT, "Agent判药")
 JUDGE_SCRIPTS_DIR = os.path.join(JUDGE_DIR, "scripts")
 MICROSCOPE_DIR = os.path.join(PROJECT_ROOT, "MICROSCOPE-main")
-A_PREDICT = os.path.join(MICROSCOPE_DIR, "predictv3_resnet50.py")
-A_CHECKPOINT_DIR = os.path.join(MICROSCOPE_DIR, "v3_resnet50_full")
+A_PREDICT = os.path.join(MICROSCOPE_DIR, "predict_herb_resnet18.py")
+A_LEGACY_PREDICT = os.path.join(MICROSCOPE_DIR, "predictv3_resnet50.py")
+A_CHECKPOINT_DIR = os.path.join(PROJECT_ROOT, "分类器设计权重与CNN权重", "herb_cls_runs")
+A_MODEL_RUNS = tuple(f"v2_resnet18_448_lb_e40_ls10_mix10_s{seed}"
+                     for seed in (20261111, 20261112, 20261113))
 
 VENV_DIR = os.path.join(PROJECT_ROOT, ".venv")
 PYTHON_ENTRY = ("Scripts", "python.exe") if os.name == "nt" else ("bin", "python")

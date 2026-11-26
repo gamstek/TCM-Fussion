@@ -9,13 +9,118 @@
 
 关联：
 - 调用方 「lib/agent/react_graph.py」、「lib/decision/final_assessment.py」、「lib/workflow/workflow_runtime.py」、「tests/decision/test_candidate_audit.py」、「tests/decision/test_final_assessment.py」、「tests/integration/test_fair_investigation.py」。
-- 直接依赖 「lib/decision/comparison_problems.py」、「lib/evidence/evidence_projection.py」、「lib/runtime/storage.py」。
+- 直接依赖 「lib/decision/comparison_problems.py」、「lib/evidence/evidence_projection.py」、「lib/evidence/search_ledger.py」、「lib/runtime/storage.py」。
 """
+from pathlib import Path
+
 from TCM_Fusion.lib.decision.comparison_problems import _action_feature, evidence_paths
+from TCM_Fusion.lib.evidence.evidence_projection import presence_state
+from TCM_Fusion.lib.evidence.search_ledger import scan_coverage
 from TCM_Fusion.lib.runtime.storage import read_json
 
 
-def build(runtime, scored, observations, *, eligibility=None, actions=None):
+def _batch_outcomes(op, artifacts):
+    if 'batch_outcomes' in op:
+        return op['batch_outcomes']
+    # 旧账本中成功的父批次也可能拒收某项。用该项提交工件核对原回执。
+    bundle = op.get('bundle') or {}
+    outcomes = {row['crop_id']: 'unknown' for row in bundle.get('failures', [])}
+    for row in bundle.get('classifications', []):
+        cid = row['crop_id']
+        path = artifacts.get('classification:' + cid, {}).get('path')
+        committed = path and bundle.get('root') and row.get('classification') and (
+            Path(path) == Path(bundle['root']) / row['classification'] / 'classification.json')
+        outcomes[cid] = 'completed' if committed else 'unknown'
+    return outcomes
+
+
+def feature_receipts(runtime, observations, targets, *, operations=None):
+    """按特征汇集有结果的定向观察和操作。同一物理回执可由多个候选引用。"""
+    receipts = {}
+    for observation in observations:
+        action = observation.get('action') or {}
+        args = action.get('args') or {}
+        fid, image = args.get('feature_id'), args.get('image_id')
+        status = observation.get('status')
+        if (action.get('tool') != 'presence_check' or not fid or image not in runtime.images
+                or status not in (None, 'done', 'failed', 'cancelled', 'late')
+                or not observation.get('result') and status not in ('failed', 'cancelled', 'late')):
+            continue
+        outcome = presence_state(observation, runtime.kb, runtime.images) if status in (None, 'done') else 'unknown'
+        record = {'tool': 'presence_check', 'image_id': image, 'outcome': outcome,
+                  'action_id': action.get('action_id')}
+        if record not in receipts.setdefault(fid, []):
+            receipts[fid].append(record)
+
+    artifacts = None
+    if operations is None:
+        operations = read_json(runtime.workflow.operations)
+    for key, op in operations['entries'].items():
+        if op.get('status') not in ('done', 'failed', 'cancelled', 'late'):
+            continue
+        legacy_result = 'accepted' not in op and bool(op.get('bundle') or op.get('scan_coverage'))
+        accepted = op.get('accepted') is True or legacy_result
+        completed = op['status'] == 'done' and accepted
+        if op['tool'] == 'classify_crops_batch':
+            if artifacts is None:
+                artifacts = runtime.workflow.store.current()['artifacts']
+            for cid, outcome in _batch_outcomes(op, artifacts).items():
+                crop = artifacts.get(cid, {})
+                if crop.get('image_id') not in runtime.images:
+                    continue
+                fid = _action_feature({'args': {'target_id': cid}}, artifacts)
+                if fid:
+                    receipts.setdefault(fid, []).append({'tool': op['tool'], 'operation_key': key, 'crop_id': cid,
+                        'image_id': crop['image_id'], 'outcome': outcome if completed else 'unknown'})
+            continue
+        if op['tool'] not in {'feature_scan', 'locate_feature', 'classify_target', 'inspect_crop',
+                              'segment_instance', 'measure_instances'}:
+            continue
+        target = targets.get(op.get('target_id'), {})
+        fid = op.get('feature_id') or _action_feature({'args': {'target_id': op.get('target_id')}}, targets)
+        image = op.get('image_id') or target.get('image_id')
+        if not fid or image not in runtime.images:
+            continue
+        record = {'tool': op['tool'], 'operation_key': key, 'image_id': image,
+                  'outcome': 'completed' if completed else 'unknown'}
+        if completed and op['tool'] == 'feature_scan':
+            coverage, details = scan_coverage(op)
+            count = details.get('crop_count')
+            record['coverage'] = coverage
+            record['outcome'] = 'unknown'
+            if (coverage in ('shareable', 'partial') and type(count) is int and count >= 0
+                    and (count > 0 or details.get('successful_tiles'))):
+                record.update(outcome='crops_found' if count else 'no_crop', crop_count=count)
+                for field in ('successful_tiles', 'failed_tiles', 'unsearched_tiles'):
+                    if isinstance(details.get(field), list):
+                        record[field] = len(details[field])
+        if op.get('error_code'):
+            record['error_code'] = op['error_code']
+        receipts.setdefault(fid, []).append(record)
+    return receipts
+
+
+_INVESTIGATION_LABELS = {
+    'unchecked': '未查', 'investigated_unresolved': '已查仍未解决', 'failed_or_unknown': '回执失败或不可判',
+    'local_absent': '已提供视野均未见', 'local_absent_partial': '部分视野未见',
+    'present_pending': '已见结构、判据待核验', 'supported': '已有合格支持',
+    'quantitative_counter': '已有定量反证',
+}
+
+
+def required_investigation_summary(candidates, unmapped):
+    """供规划和收尾共用的必需判据事实摘要，输入为主机生成的候选审查行。"""
+    groups = {}
+    for candidate in candidates:
+        for criterion in candidate['required']:
+            groups.setdefault(criterion['state'], []).append(f"{candidate['candidate_id']}/{criterion['feature_id']}")
+    parts = [f"{_INVESTIGATION_LABELS[state]}（{'、'.join(items)}）" for state, items in groups.items()]
+    if unmapped:
+        parts.append(f"缺少知识库映射，未查（{'、'.join(row['label'] for row in unmapped)}）")
+    return '。'.join(parts) or '当前没有已绑定的候选必需判据'
+
+
+def build(runtime, scored, observations, *, eligibility=None, actions=None, operations=None):
     if eligibility is None:
         from TCM_Fusion.lib.evidence.evidence_projection import build as project
         eligibility=project(runtime,scored,observations)
@@ -28,27 +133,13 @@ def build(runtime, scored, observations, *, eligibility=None, actions=None):
     status={h['candidate_id']:h.get('status') for h in interest.get('hypotheses',[])}
     by_criterion={(f['data']['candidate_id'],f['data']['feature_id']):f
                   for f in eligibility['facts'] if f['kind']=='criterion'}
-    observed={};observed_views={}
-    for f in eligibility['facts']:
-        if f['kind']=='observation':
-            fid=(f['data'].get('action',{}).get('args')or{}).get('feature_id')
-            if fid:
-                state=f['data']['observation_state']
-                observed.setdefault(fid,[]).append(state)
-                image=(f['data']['action'].get('args')or{}).get('image_id')
-                observed_views.setdefault(fid,{}).setdefault(image,[]).append(state)
     provided=set(runtime.images)
     targets=runtime.workflow.targets()
     actions=actions if actions is not None else runtime.legal_actions({'observations':observations,'attempted':[]})
     paths=evidence_paths(runtime,actions,{c['feature'] for cid in requested if cid in catalog
                                          for c in catalog[cid]['criteria']})
     available={fid:[p['action_id'] for p in ps] for fid,ps in paths.items()}
-    ops=list(read_json(runtime.workflow.operations)['entries'].values())
-    attempted={}
-    for op in ops:
-        fid=op.get('feature_id') or _action_feature(
-            {'tool':op.get('tool','unknown'),'args':{'target_id':op.get('target_id')}},targets)
-        if fid:attempted.setdefault(fid,[]).append(op.get('status'))
+    receipts=feature_receipts(runtime, observations, targets, operations=operations)
     rows=[]
     for cid in requested:
         if cid not in catalog:continue
@@ -56,28 +147,32 @@ def build(runtime, scored, observations, *, eligibility=None, actions=None):
         for c in catalog[cid]['criteria']:
             fid=c['feature'];check=checks.get(cid,{}).get(fid,{})
             fact=by_criterion.get((cid,fid),{})
-            states=observed.get(fid,[])
+            issued=receipts.setdefault(fid,[])
+            observed_views={}
+            for receipt in issued:
+                if receipt['tool']=='presence_check':
+                    observed_views.setdefault(receipt['image_id'],[]).append(receipt['outcome'])
+            states={r['outcome'] for r in issued}
             supported=cid in fact.get('supports_candidate_ids',[])
             counter=cid in fact.get('counters_candidate_ids',[])
             seen_positive=bool(check.get('present')) or 'present' in states
             # 合格工件或阳性观察仍在时保留待核验状态。
             full_local_absence=not seen_positive and bool(provided) and all(
-                observed_views.get(fid,{}).get(image) and
-                all(s=='absent' for s in observed_views[fid][image]) for image in provided)
+                observed_views.get(image) and all(s=='absent' for s in observed_views[image]) for image in provided)
             partial_local_absence='absent' in states and not seen_positive
             assessed=supported or counter or full_local_absence
             state=('supported' if supported else 'quantitative_counter' if counter else
                    'local_absent' if full_local_absence else 'local_absent_partial' if partial_local_absence else
                    'present_pending' if seen_positive else
-                   'failed_or_unknown' if 'failed'in attempted.get(fid,[]) or 'unknown'in states else
-                   'investigated_unresolved' if attempted.get(fid) else 'unchecked')
+                   'investigated_unresolved' if states.intersection({'completed','crops_found','no_crop'}) else
+                   'failed_or_unknown' if 'unknown' in states else 'unchecked')
             item={'feature_id':fid,'state':state,'rule_state':check.get('state','NOT_DETECTED'),
                 'assessed':bool(assessed),'satisfies_criterion':supported,
-                'observed_fov_count':len(observed_views.get(fid,{})), 'provided_fov_count':len(provided),
+                'observed_fov_count':len(observed_views), 'provided_fov_count':len(provided),
                 'availability_reason':('reachable_via_prerequisite' if all(
                     p['kind']=='discovery_prerequisite' for p in paths[fid]) else 'available') if available.get(fid) else
                     'hypothesis_paused' if status.get(cid) in {'paused','withdrawn'} else
-                    'prior_tool_failure' if 'failed'in attempted.get(fid,[]) else 'no_current_legal_action',
+                    'prior_tool_failure' if state=='failed_or_unknown' else 'no_current_legal_action',
                 'action_ids':available.get(fid,[]),'entry_paths':paths.get(fid,[]),'fact_ref':fact.get('id')}
             (required if c['role']=='required' else supporting).append(item)
         missing=[x['feature_id'] for x in required+supporting if not x['assessed']]
@@ -93,6 +188,7 @@ def build(runtime, scored, observations, *, eligibility=None, actions=None):
     pending=[r['candidate_id']for r in rows if not r['review_complete']]
     actionable=any(x['action_ids'] for r in rows for x in r['required']+r['supporting'] if not x['assessed'])
     return {'schema':'candidate-audit/v1','candidates':rows,'unmapped':unmapped,
+        'receipts_by_feature':receipts,'required_investigation_summary':required_investigation_summary(rows, unmapped),
         'candidate_ids':requested,'complete':not pending and not unmapped,
         'incomplete_candidate_ids':pending,'actionable_gaps':actionable,
         'comparison_required':bool(requested or unmapped),
@@ -126,6 +222,8 @@ def compact(value):
     """每候选仅发状态与缺口，不重复判据全文；完整账本落盘/收尾可查。"""
     return {k:value[k] for k in ('schema','complete','candidate_ids','unmapped',
         'incomplete_candidate_ids','actionable_gaps','comparison_required','scope')} | {
+        'receipts_by_feature':value.get('receipts_by_feature', {}),
+        'required_investigation_summary':value.get('required_investigation_summary', ''),
         'candidates':[{'candidate_id':r['candidate_id'],'hypothesis_status':r['hypothesis_status'],
             'required':{x['feature_id']:x['state']for x in r['required']},
             'supporting':{x['feature_id']:x['state']for x in r['supporting']},

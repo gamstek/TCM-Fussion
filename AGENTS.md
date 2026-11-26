@@ -27,9 +27,9 @@ PRESENCE-002 补充：观察须在请求前、定位发布前及账本提交时�
 
 ## 2. A、B、C 的边界
 
-- 真实 A 只以各折 Top-K 为 Agent 候选输入，默认每折 3 个；平均榜属于路由及对照报告。验收注明实际 K、逐折榜单和映射失败。
+- 新任务的 A 使用 `herb_cls_runs` 的三个 `v2_resnet18_448` 模型。单图取三模型平均榜 Top 8。多图每视野、每模型各取 Top 5，跨模型和视野并集经原映射进入 Agent。保留未映射项、逐模型概率与资产指纹。A+B 继续使用完整样品平均榜。历史配置按当时的候选策略运行。
 - 药材种类来自 Plan A；YOLO 输出显微特征类别和框，不输出药材结论。
-- STAGE2-001（2026-11-16）：药材 A 仍保留 MICROSCOPE 五折；`分类器设计权重与CNN权重` 中的 ResNet18 是 crop 显微特征分类器。stage2 预处理复用训练侧 `cls_net.build_transforms`，不得重抄 letterbox；checkpoint/meta 不符必须失败。换权重/meta/变换/crop 内容后不可复用旧 CNN 预测；单任务工件绑定 stage2 指纹。低置信/other 与模型加载失败分别记录，不把后者当阴性。
+- STAGE2-001（2026-11-16）：`分类器设计权重与CNN权重/cls_runs` 中的 ResNet18 是 crop 显微特征分类器。stage2 预处理复用训练侧 `cls_net.build_transforms`，不得重抄 letterbox；checkpoint/meta 不符必须失败。换权重/meta/变换/crop 内容后不可复用旧 CNN 预测；单任务工件绑定 stage2 指纹。低置信/other 与模型加载失败分别记录，不把后者当阴性。
 - GLM `locate_feature` 是在指定 ROI 中找候选框；GLM `classify_target` 是对 crop 做身份复核；YOLO crop 复核是 classify 的辅助，不替代 GLM。
 - 当前真实 Agent 测试显式选择 `adaptive_v2 + llm + mcp + active`。复现旧运行时保留其策略和预算。
 - 规划器按当轮短编号选择注册动作；代码校验权限、前置条件、证据版本和资源预算，并可否决无充分证据的确认。不得用固定首项、参考答案或降级执行冒充真实模型决策。

@@ -1,0 +1,379 @@
+[info] resnet50 | 86 类 | train 3365 / val 830 / test 866 | device=cuda | imgsz=448 | mode=letterbox | ls=0.1 mixup=0.1
+[info] 补充药材图 254 张；holdout(test) 0 张不计入指标
+Corrupt JPEG data: premature end of data segment
+[001/60] train_loss 3.9368 val_loss 3.5599 val_acc 0.2831 val_macroF1 0.2233
+Corrupt JPEG data: premature end of data segment
+[002/60] train_loss 2.7497 val_loss 2.8884 val_acc 0.4120 val_macroF1 0.3372
+Corrupt JPEG data: premature end of data segment
+[003/60] train_loss 2.2429 val_loss 2.6839 val_acc 0.4940 val_macroF1 0.4483
+Corrupt JPEG data: premature end of data segment
+[004/60] train_loss 2.1574 val_loss 2.5961 val_acc 0.5205 val_macroF1 0.4735
+Corrupt JPEG data: premature end of data segment
+[005/60] train_loss 1.9463 val_loss 2.3250 val_acc 0.5855 val_macroF1 0.5293
+Corrupt JPEG data: premature end of data segment
+[006/60] train_loss 1.9434 val_loss 2.5002 val_acc 0.5265 val_macroF1 0.4653
+Corrupt JPEG data: premature end of data segment
+[007/60] train_loss 1.8440 val_loss 2.1366 val_acc 0.6446 val_macroF1 0.5632
+Corrupt JPEG data: premature end of data segment
+[008/60] train_loss 1.7033 val_loss 2.2514 val_acc 0.6145 val_macroF1 0.5530
+Corrupt JPEG data: premature end of data segment
+[009/60] train_loss 1.6101 val_loss 2.4118 val_acc 0.5928 val_macroF1 0.5374
+Corrupt JPEG data: premature end of data segment
+[010/60] train_loss 1.5746 val_loss 2.1660 val_acc 0.6361 val_macroF1 0.5677
+Corrupt JPEG data: premature end of data segment
+[011/60] train_loss 1.5901 val_loss 2.2346 val_acc 0.6530 val_macroF1 0.5922
+Corrupt JPEG data: premature end of data segment
+[012/60] train_loss 1.4847 val_loss 2.2601 val_acc 0.6639 val_macroF1 0.6185
+Corrupt JPEG data: premature end of data segment
+[013/60] train_loss 1.4835 val_loss 2.3139 val_acc 0.6072 val_macroF1 0.5741
+Corrupt JPEG data: premature end of data segment
+[014/60] train_loss 1.3978 val_loss 2.1159 val_acc 0.6651 val_macroF1 0.5967
+Corrupt JPEG data: premature end of data segment
+[015/60] train_loss 1.4520 val_loss 2.2270 val_acc 0.6494 val_macroF1 0.6089
+Corrupt JPEG data: premature end of data segment
+[016/60] train_loss 1.4621 val_loss 2.1709 val_acc 0.6602 val_macroF1 0.6164
+Corrupt JPEG data: premature end of data segment
+[017/60] train_loss 1.4583 val_loss 2.1519 val_acc 0.6723 val_macroF1 0.6237
+Corrupt JPEG data: premature end of data segment
+[018/60] train_loss 1.4618 val_loss 2.2449 val_acc 0.6361 val_macroF1 0.5850
+Corrupt JPEG data: premature end of data segment
+[019/60] train_loss 1.5075 val_loss 2.1686 val_acc 0.6783 val_macroF1 0.6160
+Corrupt JPEG data: premature end of data segment
+[020/60] train_loss 1.4474 val_loss 2.1110 val_acc 0.6627 val_macroF1 0.6098
+Corrupt JPEG data: premature end of data segment
+[021/60] train_loss 1.4829 val_loss 2.1078 val_acc 0.6627 val_macroF1 0.6067
+Corrupt JPEG data: premature end of data segment
+[022/60] train_loss 1.3696 val_loss 2.0225 val_acc 0.6928 val_macroF1 0.6380
+Corrupt JPEG data: premature end of data segment
+[023/60] train_loss 1.2900 val_loss 2.0442 val_acc 0.6904 val_macroF1 0.6322
+Corrupt JPEG data: premature end of data segment
+[024/60] train_loss 1.4372 val_loss 2.0116 val_acc 0.6976 val_macroF1 0.6394
+Corrupt JPEG data: premature end of data segment
+[025/60] train_loss 1.3614 val_loss 2.1587 val_acc 0.6627 val_macroF1 0.6282
+Corrupt JPEG data: premature end of data segment
+[026/60] train_loss 1.3958 val_loss 2.1007 val_acc 0.6759 val_macroF1 0.6271
+Corrupt JPEG data: premature end of data segment
+[027/60] train_loss 1.3291 val_loss 2.0813 val_acc 0.6843 val_macroF1 0.6412
+Corrupt JPEG data: premature end of data segment
+[028/60] train_loss 1.4003 val_loss 2.1253 val_acc 0.6916 val_macroF1 0.6435
+Corrupt JPEG data: premature end of data segment
+[029/60] train_loss 1.3479 val_loss 2.0324 val_acc 0.6904 val_macroF1 0.6460
+Corrupt JPEG data: premature end of data segment
+[030/60] train_loss 1.2986 val_loss 2.0522 val_acc 0.6904 val_macroF1 0.6385
+Corrupt JPEG data: premature end of data segment
+[031/60] train_loss 1.2965 val_loss 2.0756 val_acc 0.6675 val_macroF1 0.6247
+Corrupt JPEG data: premature end of data segment
+[032/60] train_loss 1.3531 val_loss 2.0639 val_acc 0.6904 val_macroF1 0.6513
+Corrupt JPEG data: premature end of data segment
+[033/60] train_loss 1.3371 val_loss 2.0118 val_acc 0.6976 val_macroF1 0.6527
+Corrupt JPEG data: premature end of data segment
+[034/60] train_loss 1.2595 val_loss 2.0397 val_acc 0.6916 val_macroF1 0.6390
+Corrupt JPEG data: premature end of data segment
+[035/60] train_loss 1.2955 val_loss 2.1114 val_acc 0.6771 val_macroF1 0.6195
+Corrupt JPEG data: premature end of data segment
+[036/60] train_loss 1.3500 val_loss 2.1171 val_acc 0.6807 val_macroF1 0.6260
+Corrupt JPEG data: premature end of data segment
+[037/60] train_loss 1.3433 val_loss 2.0000 val_acc 0.7048 val_macroF1 0.6386
+Corrupt JPEG data: premature end of data segment
+[038/60] train_loss 1.2466 val_loss 1.9612 val_acc 0.7084 val_macroF1 0.6465
+Corrupt JPEG data: premature end of data segment
+[039/60] train_loss 1.3325 val_loss 2.0246 val_acc 0.7000 val_macroF1 0.6448
+Corrupt JPEG data: premature end of data segment
+[040/60] train_loss 1.3561 val_loss 2.1119 val_acc 0.6976 val_macroF1 0.6553
+Corrupt JPEG data: premature end of data segment
+[041/60] train_loss 1.3489 val_loss 2.1314 val_acc 0.6843 val_macroF1 0.6277
+Corrupt JPEG data: premature end of data segment
+[042/60] train_loss 1.3304 val_loss 2.0001 val_acc 0.7072 val_macroF1 0.6474
+Corrupt JPEG data: premature end of data segment
+[043/60] train_loss 1.3532 val_loss 2.0318 val_acc 0.7120 val_macroF1 0.6624
+Corrupt JPEG data: premature end of data segment
+[044/60] train_loss 1.2415 val_loss 2.0311 val_acc 0.6988 val_macroF1 0.6410
+Corrupt JPEG data: premature end of data segment
+[045/60] train_loss 1.2352 val_loss 1.9810 val_acc 0.7120 val_macroF1 0.6488
+Corrupt JPEG data: premature end of data segment
+[046/60] train_loss 1.2779 val_loss 1.9809 val_acc 0.7096 val_macroF1 0.6529
+Corrupt JPEG data: premature end of data segment
+[047/60] train_loss 1.2365 val_loss 1.9611 val_acc 0.7217 val_macroF1 0.6611
+Corrupt JPEG data: premature end of data segment
+[048/60] train_loss 1.2795 val_loss 1.9640 val_acc 0.7120 val_macroF1 0.6482
+Corrupt JPEG data: premature end of data segment
+[049/60] train_loss 1.2768 val_loss 1.9700 val_acc 0.7120 val_macroF1 0.6586
+Corrupt JPEG data: premature end of data segment
+[050/60] train_loss 1.2927 val_loss 1.9560 val_acc 0.7120 val_macroF1 0.6544
+Corrupt JPEG data: premature end of data segment
+[051/60] train_loss 1.2885 val_loss 1.9984 val_acc 0.7060 val_macroF1 0.6359
+Corrupt JPEG data: premature end of data segment
+[052/60] train_loss 1.2777 val_loss 1.9705 val_acc 0.7157 val_macroF1 0.6628
+Corrupt JPEG data: premature end of data segment
+[053/60] train_loss 1.2425 val_loss 1.9700 val_acc 0.7133 val_macroF1 0.6553
+Corrupt JPEG data: premature end of data segment
+[054/60] train_loss 1.2862 val_loss 1.9533 val_acc 0.7205 val_macroF1 0.6670
+Corrupt JPEG data: premature end of data segment
+[055/60] train_loss 1.3344 val_loss 1.9625 val_acc 0.7169 val_macroF1 0.6604
+Corrupt JPEG data: premature end of data segment
+[056/60] train_loss 1.2650 val_loss 1.9651 val_acc 0.7133 val_macroF1 0.6543
+Corrupt JPEG data: premature end of data segment
+[057/60] train_loss 1.2256 val_loss 1.9438 val_acc 0.7217 val_macroF1 0.6634
+Corrupt JPEG data: premature end of data segment
+[058/60] train_loss 1.3268 val_loss 1.9625 val_acc 0.7193 val_macroF1 0.6578
+Corrupt JPEG data: premature end of data segment
+[059/60] train_loss 1.3415 val_loss 1.9872 val_acc 0.7169 val_macroF1 0.6573
+Corrupt JPEG data: premature end of data segment
+[060/60] train_loss 1.3048 val_loss 1.9601 val_acc 0.7145 val_macroF1 0.6540
+Corrupt JPEG data: premature end of data segment
+[done] best epoch 54 | val macroF1 0.6670 / acc 0.7205
+[done] test loss 2.0269 | acc 0.7148 | macro F1 0.6678 | macro P 0.7167 / R 0.7417
+[done] 产物目录：/workspace/TCM-Microscopic-Image-Recognition/results/detection/herb_cls_runs/v3_resnet50_448_lb_e60_ls10_mix10_s20261111
+[info] resnet50 | 86 类 | train 3365 / val 830 / test 866 | device=cuda | imgsz=448 | mode=letterbox | ls=0.1 mixup=0.1
+[info] 补充药材图 254 张；holdout(test) 0 张不计入指标
+Corrupt JPEG data: premature end of data segment
+[001/60] train_loss 4.0118 val_loss 3.8511 val_acc 0.2133 val_macroF1 0.1321
+Corrupt JPEG data: premature end of data segment
+[002/60] train_loss 2.9110 val_loss 3.0383 val_acc 0.3783 val_macroF1 0.3245
+Corrupt JPEG data: premature end of data segment
+[003/60] train_loss 2.3778 val_loss 2.8292 val_acc 0.4723 val_macroF1 0.3974
+Corrupt JPEG data: premature end of data segment
+[004/60] train_loss 2.0909 val_loss 2.4774 val_acc 0.5494 val_macroF1 0.4866
+Corrupt JPEG data: premature end of data segment
+[005/60] train_loss 2.0219 val_loss 2.6826 val_acc 0.4867 val_macroF1 0.4321
+Corrupt JPEG data: premature end of data segment
+[006/60] train_loss 1.7617 val_loss 2.4439 val_acc 0.5458 val_macroF1 0.4786
+Corrupt JPEG data: premature end of data segment
+[007/60] train_loss 1.6873 val_loss 2.3207 val_acc 0.5880 val_macroF1 0.5241
+Corrupt JPEG data: premature end of data segment
+[008/60] train_loss 1.6343 val_loss 2.3727 val_acc 0.5928 val_macroF1 0.5344
+Corrupt JPEG data: premature end of data segment
+[009/60] train_loss 1.6552 val_loss 2.3350 val_acc 0.6084 val_macroF1 0.5285
+Corrupt JPEG data: premature end of data segment
+[010/60] train_loss 1.5408 val_loss 2.2848 val_acc 0.6060 val_macroF1 0.5476
+Corrupt JPEG data: premature end of data segment
+[011/60] train_loss 1.5336 val_loss 2.4048 val_acc 0.6265 val_macroF1 0.5752
+Corrupt JPEG data: premature end of data segment
+[012/60] train_loss 1.3828 val_loss 2.2216 val_acc 0.6205 val_macroF1 0.5617
+Corrupt JPEG data: premature end of data segment
+[013/60] train_loss 1.4888 val_loss 2.1103 val_acc 0.6651 val_macroF1 0.6237
+Corrupt JPEG data: premature end of data segment
+[014/60] train_loss 1.4882 val_loss 2.1470 val_acc 0.6819 val_macroF1 0.6233
+Corrupt JPEG data: premature end of data segment
+[015/60] train_loss 1.4484 val_loss 2.0887 val_acc 0.6735 val_macroF1 0.6280
+Corrupt JPEG data: premature end of data segment
+[016/60] train_loss 1.4626 val_loss 2.1795 val_acc 0.6651 val_macroF1 0.6164
+Corrupt JPEG data: premature end of data segment
+[017/60] train_loss 1.4800 val_loss 2.1925 val_acc 0.6458 val_macroF1 0.5904
+Corrupt JPEG data: premature end of data segment
+[018/60] train_loss 1.4402 val_loss 2.1150 val_acc 0.6675 val_macroF1 0.6216
+Corrupt JPEG data: premature end of data segment
+[019/60] train_loss 1.4753 val_loss 2.0491 val_acc 0.6771 val_macroF1 0.6196
+Corrupt JPEG data: premature end of data segment
+[020/60] train_loss 1.3604 val_loss 2.0363 val_acc 0.7000 val_macroF1 0.6348
+Corrupt JPEG data: premature end of data segment
+[021/60] train_loss 1.3794 val_loss 2.0989 val_acc 0.6602 val_macroF1 0.6020
+Corrupt JPEG data: premature end of data segment
+[022/60] train_loss 1.3454 val_loss 2.0178 val_acc 0.7060 val_macroF1 0.6629
+Corrupt JPEG data: premature end of data segment
+[023/60] train_loss 1.4491 val_loss 2.0890 val_acc 0.6843 val_macroF1 0.6324
+Corrupt JPEG data: premature end of data segment
+[024/60] train_loss 1.3407 val_loss 2.0829 val_acc 0.6783 val_macroF1 0.6419
+Corrupt JPEG data: premature end of data segment
+[025/60] train_loss 1.4124 val_loss 2.1303 val_acc 0.6807 val_macroF1 0.6323
+Corrupt JPEG data: premature end of data segment
+[026/60] train_loss 1.3684 val_loss 2.0928 val_acc 0.6843 val_macroF1 0.6188
+Corrupt JPEG data: premature end of data segment
+[027/60] train_loss 1.3240 val_loss 2.0709 val_acc 0.6783 val_macroF1 0.6035
+Corrupt JPEG data: premature end of data segment
+[028/60] train_loss 1.4235 val_loss 2.0410 val_acc 0.7000 val_macroF1 0.6385
+Corrupt JPEG data: premature end of data segment
+[029/60] train_loss 1.3391 val_loss 2.0750 val_acc 0.6964 val_macroF1 0.6388
+Corrupt JPEG data: premature end of data segment
+[030/60] train_loss 1.3253 val_loss 2.0296 val_acc 0.6940 val_macroF1 0.6364
+Corrupt JPEG data: premature end of data segment
+[031/60] train_loss 1.3107 val_loss 2.0085 val_acc 0.7024 val_macroF1 0.6479
+Corrupt JPEG data: premature end of data segment
+[032/60] train_loss 1.3113 val_loss 1.9971 val_acc 0.7084 val_macroF1 0.6477
+Corrupt JPEG data: premature end of data segment
+[033/60] train_loss 1.2732 val_loss 1.9789 val_acc 0.7072 val_macroF1 0.6587
+Corrupt JPEG data: premature end of data segment
+[034/60] train_loss 1.3234 val_loss 1.9467 val_acc 0.7145 val_macroF1 0.6340
+Corrupt JPEG data: premature end of data segment
+[035/60] train_loss 1.2870 val_loss 1.9377 val_acc 0.7181 val_macroF1 0.6473
+Corrupt JPEG data: premature end of data segment
+[036/60] train_loss 1.3167 val_loss 2.0049 val_acc 0.7096 val_macroF1 0.6449
+Corrupt JPEG data: premature end of data segment
+[037/60] train_loss 1.2357 val_loss 1.9040 val_acc 0.7373 val_macroF1 0.6786
+Corrupt JPEG data: premature end of data segment
+[038/60] train_loss 1.3155 val_loss 1.9449 val_acc 0.7048 val_macroF1 0.6544
+Corrupt JPEG data: premature end of data segment
+[039/60] train_loss 1.2954 val_loss 1.9851 val_acc 0.7072 val_macroF1 0.6723
+Corrupt JPEG data: premature end of data segment
+[040/60] train_loss 1.3688 val_loss 1.9585 val_acc 0.7193 val_macroF1 0.6657
+Corrupt JPEG data: premature end of data segment
+[041/60] train_loss 1.3555 val_loss 1.9449 val_acc 0.7193 val_macroF1 0.6672
+Corrupt JPEG data: premature end of data segment
+[042/60] train_loss 1.3413 val_loss 1.9351 val_acc 0.7217 val_macroF1 0.6856
+Corrupt JPEG data: premature end of data segment
+[043/60] train_loss 1.2415 val_loss 1.9595 val_acc 0.7229 val_macroF1 0.6771
+Corrupt JPEG data: premature end of data segment
+[044/60] train_loss 1.2983 val_loss 1.9506 val_acc 0.7145 val_macroF1 0.6616
+Corrupt JPEG data: premature end of data segment
+[045/60] train_loss 1.2755 val_loss 1.9697 val_acc 0.7157 val_macroF1 0.6700
+Corrupt JPEG data: premature end of data segment
+[046/60] train_loss 1.3457 val_loss 1.9508 val_acc 0.7108 val_macroF1 0.6624
+Corrupt JPEG data: premature end of data segment
+[047/60] train_loss 1.2885 val_loss 1.9498 val_acc 0.7217 val_macroF1 0.6684
+Corrupt JPEG data: premature end of data segment
+[048/60] train_loss 1.3025 val_loss 1.9726 val_acc 0.7181 val_macroF1 0.6626
+Corrupt JPEG data: premature end of data segment
+[049/60] train_loss 1.2740 val_loss 1.9600 val_acc 0.7229 val_macroF1 0.6596
+Corrupt JPEG data: premature end of data segment
+[050/60] train_loss 1.2624 val_loss 1.9509 val_acc 0.7157 val_macroF1 0.6530
+Corrupt JPEG data: premature end of data segment
+[051/60] train_loss 1.2454 val_loss 1.9329 val_acc 0.7337 val_macroF1 0.6801
+Corrupt JPEG data: premature end of data segment
+[052/60] train_loss 1.2252 val_loss 1.9427 val_acc 0.7205 val_macroF1 0.6670
+Corrupt JPEG data: premature end of data segment
+[053/60] train_loss 1.3262 val_loss 1.9780 val_acc 0.7169 val_macroF1 0.6580
+Corrupt JPEG data: premature end of data segment
+[054/60] train_loss 1.2668 val_loss 1.9403 val_acc 0.7217 val_macroF1 0.6639
+Corrupt JPEG data: premature end of data segment
+[055/60] train_loss 1.3021 val_loss 1.9936 val_acc 0.7205 val_macroF1 0.6624
+Corrupt JPEG data: premature end of data segment
+[056/60] train_loss 1.3368 val_loss 1.9398 val_acc 0.7289 val_macroF1 0.6797
+Corrupt JPEG data: premature end of data segment
+[057/60] train_loss 1.3133 val_loss 1.9444 val_acc 0.7265 val_macroF1 0.6738
+Corrupt JPEG data: premature end of data segment
+[058/60] train_loss 1.3156 val_loss 1.9237 val_acc 0.7313 val_macroF1 0.6833
+Corrupt JPEG data: premature end of data segment
+[059/60] train_loss 1.2983 val_loss 1.9292 val_acc 0.7277 val_macroF1 0.6754
+Corrupt JPEG data: premature end of data segment
+[060/60] train_loss 1.2811 val_loss 1.9280 val_acc 0.7277 val_macroF1 0.6717
+Corrupt JPEG data: premature end of data segment
+[done] best epoch 42 | val macroF1 0.6856 / acc 0.7217
+[done] test loss 2.1153 | acc 0.6975 | macro F1 0.6627 | macro P 0.7164 / R 0.7117
+[done] 产物目录：/workspace/TCM-Microscopic-Image-Recognition/results/detection/herb_cls_runs/v3_resnet50_448_lb_e60_ls10_mix10_s20261112
+[info] resnet50 | 86 类 | train 3365 / val 830 / test 866 | device=cuda | imgsz=448 | mode=letterbox | ls=0.1 mixup=0.1
+[info] 补充药材图 254 张；holdout(test) 0 张不计入指标
+Corrupt JPEG data: premature end of data segment
+[001/60] train_loss 3.9637 val_loss 3.6165 val_acc 0.2277 val_macroF1 0.1673
+Corrupt JPEG data: premature end of data segment
+[002/60] train_loss 2.8176 val_loss 2.8755 val_acc 0.4398 val_macroF1 0.3622
+Corrupt JPEG data: premature end of data segment
+[003/60] train_loss 2.3689 val_loss 2.9149 val_acc 0.4133 val_macroF1 0.3541
+Corrupt JPEG data: premature end of data segment
+[004/60] train_loss 2.1153 val_loss 2.5510 val_acc 0.5361 val_macroF1 0.4788
+Corrupt JPEG data: premature end of data segment
+[005/60] train_loss 1.9913 val_loss 2.5148 val_acc 0.5578 val_macroF1 0.5044
+Corrupt JPEG data: premature end of data segment
+[006/60] train_loss 1.7894 val_loss 2.2023 val_acc 0.6120 val_macroF1 0.5170
+Corrupt JPEG data: premature end of data segment
+[007/60] train_loss 1.7101 val_loss 2.2372 val_acc 0.6217 val_macroF1 0.5705
+Corrupt JPEG data: premature end of data segment
+[008/60] train_loss 1.6848 val_loss 2.2953 val_acc 0.6133 val_macroF1 0.5815
+Corrupt JPEG data: premature end of data segment
+[009/60] train_loss 1.6482 val_loss 2.3275 val_acc 0.6145 val_macroF1 0.5832
+Corrupt JPEG data: premature end of data segment
+[010/60] train_loss 1.5671 val_loss 2.2076 val_acc 0.6470 val_macroF1 0.5790
+Corrupt JPEG data: premature end of data segment
+[011/60] train_loss 1.4283 val_loss 2.1974 val_acc 0.6518 val_macroF1 0.5991
+Corrupt JPEG data: premature end of data segment
+[012/60] train_loss 1.4723 val_loss 2.1704 val_acc 0.6434 val_macroF1 0.5827
+Corrupt JPEG data: premature end of data segment
+[013/60] train_loss 1.5011 val_loss 2.1022 val_acc 0.6639 val_macroF1 0.5825
+Corrupt JPEG data: premature end of data segment
+[014/60] train_loss 1.3853 val_loss 2.1319 val_acc 0.6880 val_macroF1 0.6459
+Corrupt JPEG data: premature end of data segment
+[015/60] train_loss 1.5733 val_loss 2.3395 val_acc 0.6096 val_macroF1 0.5528
+Corrupt JPEG data: premature end of data segment
+[016/60] train_loss 1.4534 val_loss 2.1049 val_acc 0.6747 val_macroF1 0.6211
+Corrupt JPEG data: premature end of data segment
+[017/60] train_loss 1.4365 val_loss 2.0529 val_acc 0.6831 val_macroF1 0.6312
+Corrupt JPEG data: premature end of data segment
+[018/60] train_loss 1.5172 val_loss 2.0868 val_acc 0.6940 val_macroF1 0.6358
+Corrupt JPEG data: premature end of data segment
+[019/60] train_loss 1.4493 val_loss 2.0857 val_acc 0.6699 val_macroF1 0.6066
+Corrupt JPEG data: premature end of data segment
+[020/60] train_loss 1.4275 val_loss 2.1357 val_acc 0.6795 val_macroF1 0.6245
+Corrupt JPEG data: premature end of data segment
+[021/60] train_loss 1.4045 val_loss 2.0445 val_acc 0.6867 val_macroF1 0.6169
+Corrupt JPEG data: premature end of data segment
+[022/60] train_loss 1.4341 val_loss 2.0676 val_acc 0.6880 val_macroF1 0.6298
+Corrupt JPEG data: premature end of data segment
+[023/60] train_loss 1.4482 val_loss 1.9777 val_acc 0.6976 val_macroF1 0.6337
+Corrupt JPEG data: premature end of data segment
+[024/60] train_loss 1.3469 val_loss 2.0193 val_acc 0.6807 val_macroF1 0.6233
+Corrupt JPEG data: premature end of data segment
+[025/60] train_loss 1.3203 val_loss 2.1156 val_acc 0.6639 val_macroF1 0.6163
+Corrupt JPEG data: premature end of data segment
+[026/60] train_loss 1.3438 val_loss 2.0981 val_acc 0.6916 val_macroF1 0.6606
+Corrupt JPEG data: premature end of data segment
+[027/60] train_loss 1.3370 val_loss 1.9970 val_acc 0.7000 val_macroF1 0.6534
+Corrupt JPEG data: premature end of data segment
+[028/60] train_loss 1.3550 val_loss 2.0220 val_acc 0.7133 val_macroF1 0.6521
+Corrupt JPEG data: premature end of data segment
+[029/60] train_loss 1.3040 val_loss 2.0974 val_acc 0.6964 val_macroF1 0.6489
+Corrupt JPEG data: premature end of data segment
+[030/60] train_loss 1.3018 val_loss 1.9257 val_acc 0.7325 val_macroF1 0.6672
+Corrupt JPEG data: premature end of data segment
+[031/60] train_loss 1.3253 val_loss 2.0104 val_acc 0.7060 val_macroF1 0.6404
+Corrupt JPEG data: premature end of data segment
+[032/60] train_loss 1.3709 val_loss 2.0107 val_acc 0.7060 val_macroF1 0.6399
+Corrupt JPEG data: premature end of data segment
+[033/60] train_loss 1.3209 val_loss 2.0413 val_acc 0.7133 val_macroF1 0.6612
+Corrupt JPEG data: premature end of data segment
+[034/60] train_loss 1.3072 val_loss 2.0439 val_acc 0.7048 val_macroF1 0.6657
+Corrupt JPEG data: premature end of data segment
+[035/60] train_loss 1.3391 val_loss 2.0007 val_acc 0.7145 val_macroF1 0.6488
+Corrupt JPEG data: premature end of data segment
+[036/60] train_loss 1.2902 val_loss 2.0237 val_acc 0.7108 val_macroF1 0.6524
+Corrupt JPEG data: premature end of data segment
+[037/60] train_loss 1.2617 val_loss 1.9951 val_acc 0.7205 val_macroF1 0.6690
+Corrupt JPEG data: premature end of data segment
+[038/60] train_loss 1.3051 val_loss 2.0112 val_acc 0.7181 val_macroF1 0.6628
+Corrupt JPEG data: premature end of data segment
+[039/60] train_loss 1.2704 val_loss 1.9828 val_acc 0.7193 val_macroF1 0.6722
+Corrupt JPEG data: premature end of data segment
+[040/60] train_loss 1.2616 val_loss 1.9879 val_acc 0.7181 val_macroF1 0.6756
+Corrupt JPEG data: premature end of data segment
+[041/60] train_loss 1.2832 val_loss 1.9759 val_acc 0.7265 val_macroF1 0.6637
+Corrupt JPEG data: premature end of data segment
+[042/60] train_loss 1.2790 val_loss 1.9729 val_acc 0.7157 val_macroF1 0.6637
+Corrupt JPEG data: premature end of data segment
+[043/60] train_loss 1.2315 val_loss 1.9895 val_acc 0.7253 val_macroF1 0.6871
+Corrupt JPEG data: premature end of data segment
+[044/60] train_loss 1.3295 val_loss 2.0264 val_acc 0.7181 val_macroF1 0.6757
+Corrupt JPEG data: premature end of data segment
+[045/60] train_loss 1.3135 val_loss 2.0099 val_acc 0.7145 val_macroF1 0.6702
+Corrupt JPEG data: premature end of data segment
+[046/60] train_loss 1.3146 val_loss 2.0180 val_acc 0.7145 val_macroF1 0.6854
+Corrupt JPEG data: premature end of data segment
+[047/60] train_loss 1.2762 val_loss 1.9761 val_acc 0.7241 val_macroF1 0.6786
+Corrupt JPEG data: premature end of data segment
+[048/60] train_loss 1.2685 val_loss 1.9728 val_acc 0.7193 val_macroF1 0.6750
+Corrupt JPEG data: premature end of data segment
+[049/60] train_loss 1.3115 val_loss 2.0013 val_acc 0.7157 val_macroF1 0.6798
+Corrupt JPEG data: premature end of data segment
+[050/60] train_loss 1.2670 val_loss 1.9983 val_acc 0.7108 val_macroF1 0.6577
+Corrupt JPEG data: premature end of data segment
+[051/60] train_loss 1.3035 val_loss 1.9786 val_acc 0.7145 val_macroF1 0.6668
+Corrupt JPEG data: premature end of data segment
+[052/60] train_loss 1.1954 val_loss 1.9742 val_acc 0.7181 val_macroF1 0.6763
+Corrupt JPEG data: premature end of data segment
+[053/60] train_loss 1.2658 val_loss 1.9761 val_acc 0.7145 val_macroF1 0.6685
+Corrupt JPEG data: premature end of data segment
+[054/60] train_loss 1.2881 val_loss 1.9605 val_acc 0.7217 val_macroF1 0.6741
+Corrupt JPEG data: premature end of data segment
+[055/60] train_loss 1.2687 val_loss 1.9757 val_acc 0.7181 val_macroF1 0.6804
+Corrupt JPEG data: premature end of data segment
+[056/60] train_loss 1.2770 val_loss 1.9740 val_acc 0.7205 val_macroF1 0.6751
+Corrupt JPEG data: premature end of data segment
+[057/60] train_loss 1.2658 val_loss 1.9580 val_acc 0.7181 val_macroF1 0.6688
+Corrupt JPEG data: premature end of data segment
+[058/60] train_loss 1.2283 val_loss 1.9624 val_acc 0.7217 val_macroF1 0.6643
+Corrupt JPEG data: premature end of data segment
+[059/60] train_loss 1.2613 val_loss 1.9808 val_acc 0.7193 val_macroF1 0.6666
+Corrupt JPEG data: premature end of data segment
+[060/60] train_loss 1.2889 val_loss 1.9704 val_acc 0.7169 val_macroF1 0.6659
+Corrupt JPEG data: premature end of data segment
+[done] best epoch 43 | val macroF1 0.6871 / acc 0.7253
+[done] test loss 1.9868 | acc 0.7217 | macro F1 0.6665 | macro P 0.7261 / R 0.7154
+[done] 产物目录：/workspace/TCM-Microscopic-Image-Recognition/results/detection/herb_cls_runs/v3_resnet50_448_lb_e60_ls10_mix10_s20261113
+[ALL-DONE]

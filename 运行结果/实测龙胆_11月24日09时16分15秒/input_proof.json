@@ -1,0 +1,13 @@
+{
+  "views": [
+    {
+      "source": "E:\\TCM_Fusion\\dataset\\龙胆5图\\6.jpg",
+      "sha256": "74add6c007dd442093430c91dbdcac579bbeb957773534a4e479dc2b7b6503d3",
+      "view": "view_01.jpg"
+    }
+  ],
+  "reference_excluded_from_agent": true,
+  "previous_visual_artifacts_reused": false,
+  "a_cache_reused": false,
+  "same_physical_specimen_verified": false
+}

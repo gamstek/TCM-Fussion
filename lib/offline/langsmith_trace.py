@@ -8,7 +8,7 @@ LangSmithPublisher 汇总实时反馈后提交一次结束，也可从完整工�
 """
 
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import re
 from uuid import NAMESPACE_URL, uuid5
 
@@ -35,7 +35,7 @@ _AUDIT_STATES = {
 }
 _TOOLS = frozenset("""
     detect_fov_initial calibrate_fov detect_region locate_feature feature_scan hybrid_scan
-    classify_target classify_crops_batch segment_instance measure_instances image_exemplar_audit
+    classify_target inspect_crop classify_crops_batch segment_instance measure_instances image_exemplar_audit
     presence_check scene_check read_evidence read_evidence_detail read_scale list_fovs
     list_features list_artifacts read_artifact_status read_quality read_action_catalog
     query_criteria criteria_diff request_review finish
@@ -115,7 +115,33 @@ def _feature_name(feature, features):
     return features.get(feature, feature) if isinstance(features, dict) else feature
 
 
-def _observation_receipts(rows, image_views, features):
+def _can_show_visual_text(value, limit=None):
+    return (isinstance(value, str) and bool(value) and (limit is None or len(value) <= limit)
+            and value.isprintable() and not _SENSITIVE_TEXT.search(value))
+
+
+def _visual_reading(value, include_text):
+    if not isinstance(value, dict) or value.get('status') not in ('reported', 'unreported', 'cnn_only'):
+        return {}
+    def fields(report):
+        result = {'status': report['status']}
+        if report.get('readability') in ('clear', 'partial', 'unreadable'):
+            result['readability'] = report['readability']
+        if include_text:
+            for key, limit in (('brief', None), ('finding', 320), ('location', 100)):
+                text = report.get(key)
+                if _can_show_visual_text(text, limit):
+                    result[key] = text
+        return result
+    reading = {**fields(value), 'guided': bool(value.get('brief'))}
+    if isinstance(value.get('tiles'), list):
+        reading['tiles'] = [{'tile': row['tile'], **fields(row)} for row in value['tiles']
+                            if isinstance(row, dict) and type(row.get('tile')) is int
+                            and row.get('status') in ('reported', 'unreported')]
+    return {'visual_observation': reading}
+
+
+def _observation_receipts(rows, image_views, features, *, include_text=False):
     """按动作关联真实回执。存在性观察的范围是实际下发的单个视野。"""
     receipts = {}
     for row in rows:
@@ -126,6 +152,10 @@ def _observation_receipts(rows, image_views, features):
         args, result = action.get("args") or {}, row.get("result") or {}
         accepted = row.get("accepted") is True and result.get("ok") is True
         receipt = {"tool": tool, "accepted": accepted, "scope": "current_view"}
+        if row.get('cache_hit'):
+            receipt['cache_hit'] = True
+        if accepted:
+            receipt.update(_visual_reading(row.get('visual_observation'), include_text))
         if view := _view(args, image_views):
             receipt["view"] = view
         confidence = result.get("conf")
@@ -215,8 +245,13 @@ def _usage(row):
     usage = row.get("usage") or {}
     keys = {"input_tokens": "prompt_tokens", "output_tokens": "completion_tokens",
             "total_tokens": "total_tokens"}
-    return {key: usage[source] for key, source in keys.items()
-            if type(usage.get(source)) is int and usage[source] >= 0}
+    counts = {key: usage[source] for key, source in keys.items()
+              if type(usage.get(source)) is int and usage[source] >= 0}
+    details = usage.get('completion_tokens_details')
+    reasoning = details.get('reasoning_tokens') if isinstance(details, dict) else None
+    if type(reasoning) is int and reasoning >= 0:
+        counts['output_token_details'] = {'reasoning': reasoning}
+    return counts
 
 
 def _events(events):
@@ -277,6 +312,11 @@ def _menu_target(fields, views, features):
     return target
 
 
+def _source_box(value):
+    return (isinstance(value, list) and len(value) == 4 and all(type(n) is int for n in value)
+            and 0 <= value[0] < value[2] and 0 <= value[1] < value[3])
+
+
 def _menu_options(menu, views, vocabulary):
     """展开本轮短编号，参数只保留可读的视野、特征和目标。"""
     candidates, features = vocabulary
@@ -295,8 +335,15 @@ def _menu_options(menu, views, vocabulary):
                 continue
             linked = options.get(row.get("args_from_action"), {})
             target = {key: linked[key] for key in ("view", "feature") if key in linked}
-            target.update(_menu_target({**(row.get("args") or {}), **action_states.get(alias, {})},
+            state = action_states.get(alias, {})
+            target.update(_menu_target({**(row.get("args") or {}), **state},
                                        views, features))
+            for field in ('target_source_px', 'roi_source_px'):
+                if _source_box(state.get(field)):
+                    target[field] = state[field]
+            regions = state.get('candidate_regions_px')
+            if isinstance(regions, list) and regions and all(_source_box(box) for box in regions):
+                target['candidate_regions_px'] = regions
             options[alias] = {"id": alias, "tool": tool, **target}
 
     choices = menu.get("execution_options") or {}
@@ -327,7 +374,7 @@ def _menu_options(menu, views, vocabulary):
     return options
 
 
-def _planning_inputs(number, menu, options, vocabulary):
+def _planning_inputs(number, menu, options, vocabulary, *, include_visual_observations=False):
     inputs = {"planning_request": number}
     if not menu:
         return inputs
@@ -336,6 +383,14 @@ def _planning_inputs(number, menu, options, vocabulary):
     comparison = investigation.get("comparison_problems") or {}
     focus = investigation.get("investigation_focus") or {}
     inputs["menu_source"] = "planner_offer"
+    if include_visual_observations:
+        hints = {fid: hint for fid, hint in (menu.get('scan_feature_hints') or {}).items()
+                 if fid in features and _can_show_visual_text(hint)}
+        if hints:
+            inputs['scan_feature_hints'] = hints
+    readings = [_visual_reading(v, include_visual_observations) for v in menu.get('previous_visual_observations', ())]
+    if readings:
+        inputs['previous_visual_observations'] = [r['visual_observation'] for r in readings if r]
     budget = menu.get("remaining_budget") or {}
     quota = {key: budget[key] for key in ("planning", "observation", "network", "recompute", "total", "finalization")
              if type(budget.get(key)) is int and budget[key] >= 0}
@@ -355,6 +410,9 @@ def _planning_inputs(number, menu, options, vocabulary):
                 required[row["candidate_id"]] = checks
     if required:
         inputs["required_criteria_at_request"] = required
+    if 'receipts_by_feature' in audit:
+        inputs['feature_receipt_counts'] = {fid: len(rows) for fid, rows in audit['receipts_by_feature'].items()
+                                          if fid in features and isinstance(rows, list)}
 
     questions = []
     for row in comparison.get("questions", []):
@@ -381,7 +439,7 @@ def _planning_inputs(number, menu, options, vocabulary):
     return inputs
 
 
-def _plan_choice(rows, options, *, include_decision_summary):
+def _plan_choice(rows, options, *, include_decision_summary, include_visual_observations=False, view_names=None):
     thought = rows.get("thought", {})
     choice = thought.get("execution_choice") or {}
     selected = choice.get("requested") or {}
@@ -391,6 +449,22 @@ def _plan_choice(rows, options, *, include_decision_summary):
     requested = [options[alias] for alias in aliases if alias in options]
     tool = thought.get("tool") or (requested[0].get("tool") if requested else None)
     outputs = {"selected_tool": tool} if tool in _TOOLS else {}
+    for alias, item in (thought.get('visual_guidance_choices') or {}).items():
+        if alias not in options or not isinstance(item, dict):
+            continue
+        mode = item.get('mode')
+        if mode not in {'agent_brief', 'explicit_preset', 'unspecified', 'invalid'}:
+            continue
+        entry = {'mode': mode}
+        brief = (thought.get('visual_briefs') or {}).get(item.get('action_id'))
+        if include_visual_observations and mode == 'agent_brief' and _can_show_visual_text(brief):
+            entry['question'] = brief
+        outputs.setdefault('visual_guidance_choices', {})[alias] = entry
+    if isinstance(thought.get('visual_briefs'), dict):
+        outputs['requested_visual_briefs'] = len(thought['visual_briefs'])
+        if include_visual_observations:
+            outputs['planned_visual_questions'] = [text for text in thought['visual_briefs'].values()
+                                                  if _can_show_visual_text(text)]
     if aliases:
         outputs["menu_ids"] = aliases
     if requested:
@@ -398,18 +472,87 @@ def _plan_choice(rows, options, *, include_decision_summary):
     if choice.get("kind") in {"action", "instance_goal", "problem_goal", "observe_questions",
                               "physical_pair", "physical_group", "identity_group"}:
         outputs["decision_kind"] = choice["kind"]
-    note = thought.get("decision_summary")
-    if include_decision_summary and thought.get("decision_source") == "model" and isinstance(note, str):
-        note = " ".join(note.split())
-        if 0 < len(note) <= 240 and not _SENSITIVE_TEXT.search(note):
-            outputs["model_decision_summary"] = note
+    if include_decision_summary:
+        notes = {}
+        if thought.get('decision_summary_source') == 'candidate_audit':
+            notes['required_investigation_summary'] = thought.get('decision_summary')
+        if thought.get('decision_source') == 'model':
+            notes['model_decision_summary'] = (thought.get('proposed_decision_summary')
+                if 'required_investigation_summary' in notes else thought.get('decision_summary'))
+        for name, note in notes.items():
+            if isinstance(note, str):
+                if name == 'model_decision_summary':
+                    if thought.get('decision_summary_capture') == 'complete':
+                        outputs['model_summary_capture'] = 'complete'
+                    elif len(note) == 240:
+                        outputs['model_summary_capture'] = 'legacy_240_char_boundary'
+                if view_names:
+                    note = _IMAGE_ID.sub(lambda m: view_names.get(m[0], m[0]), note)
+                note = ' '.join(note.split())
+                if note and not _SENSITIVE_TEXT.search(note):
+                    outputs[name] = note
+                elif note and name == 'model_decision_summary':
+                    outputs['model_summary_visibility'] = 'withheld_by_text_filter'
     usage = _usage(thought or rows.get("planning_error", {}))
     if usage:
         outputs["usage_metadata"] = usage
     return outputs
 
 
-def _tool_span(key, row, start, parent, views, choices, results, vocabulary, observations, *, completed_actions=None):
+def _scan_requests(run, operations, features, include_text):
+    """按操作目录核对实际准备的局部参数和对应的定位回执。未返回的图块只登记已准备。"""
+    scans = {}
+    root = run.resolve()
+    for key, op in operations.items():
+        if op.get('tool') != 'feature_scan' or not re.fullmatch(r'[0-9a-f]{64}', key):
+            continue
+        fid = op.get('feature_id') or (op.get('target') or {}).get('feature_id')
+        if fid not in features or not op.get('action_id'):
+            continue
+        folder = root / 'workflow' / 'ops' / key[:16] / 'scan'
+        if not folder.resolve().is_relative_to(root):
+            continue
+        tiles = []
+        for path in sorted(folder.glob('tile_*/locate.json')):
+            match = re.fullmatch(r'tile_([0-9]+)', path.parent.name)
+            returned = path.parent / 'detection' / 'region_result.json'
+            if not match or not all(p.resolve().is_relative_to(root) for p in (path, returned)):
+                continue
+            try:
+                ctx = optional_json(path)
+            except (OSError, ValueError):
+                continue
+            if not isinstance(ctx, dict):
+                continue
+            roi = ctx.get('roi')
+            if ctx.get('tool') != 'locate_feature' or ctx.get('feature_id') != fid or not _source_box(roi):
+                continue
+            brief = ctx.get('visual_brief')
+            source = 'project_preset'
+            if brief:
+                source = 'project_preset_and_agent' if brief == op.get('visual_brief') else 'additional_brief_unattributed'
+            tile = {'tile': int(match[1]), 'roi_source_px': roi, 'guidance_source': source, 'status': 'prepared'}
+            try:
+                receipt = optional_json(returned)
+            except (OSError, ValueError):
+                receipt = {}
+            if not isinstance(receipt, dict):
+                receipt = {}
+            count = receipt.get('count')
+            if receipt.get('feature_id') == fid and receipt.get('roi') == roi and type(count) is int and count >= 0:
+                tile.update(status='worker_returned', crop_count=count)
+            if include_text:
+                for name, value in (('feature_hint', ctx.get('feature_hint')), ('visual_brief', brief)):
+                    if _can_show_visual_text(value):
+                        tile[name] = value
+            tiles.append(tile)
+        if tiles:
+            scans[op['action_id']] = {'feature': fid, 'tiles': tiles}
+    return scans
+
+
+def _tool_span(key, row, start, parent, views, choices, results, vocabulary, observations, *,
+               completed_actions=None, include_text=False, scans=None):
     tool = row.get("tool")
     if tool not in _TOOLS:
         tool = "workflow_tool"
@@ -421,6 +564,13 @@ def _tool_span(key, row, start, parent, views, choices, results, vocabulary, obs
     if action in choices:
         inputs["planning_request"] = choices[action][0]
     outputs = _feedback(results.get(action, {}), vocabulary)
+    if tool == 'feature_scan' and action in (scans or {}):
+        outputs['scan_requests'] = scans[action]
+    result = results.get(action, {}).get('result') or row
+    if result.get('accepted') and result.get('status') == 'done':
+        outputs.update(_visual_reading(result.get('visual_observation'), include_text))
+        if result.get('cache_hit'):
+            outputs['cache_hit'] = True
     if "accepted" not in outputs and type(row.get("accepted")) is bool:
         outputs["accepted"] = row["accepted"]
     if action in observations:
@@ -434,7 +584,7 @@ def _tool_span(key, row, start, parent, views, choices, results, vocabulary, obs
                 "tool", parent, inputs, outputs, error, awaiting_feedback=action not in feedback_receipts)
 
 
-def _plan_a_views(prediction, candidates):
+def _plan_a_summary(prediction, candidates):
     def labelled(row):
         label, probability = row.get("label"), row.get("probability")
         result = {"label": label} if label in candidates else {"label_available": False}
@@ -443,13 +593,37 @@ def _plan_a_views(prediction, candidates):
         return result
 
     views = []
-    for index, row in enumerate(prediction.get("view_predictions", []), 1):
+    ensemble = prediction.get("ensemble_method") == "mean_softmax"
+    predictions = prediction.get("view_predictions") or []
+    policy = prediction.get("candidate_policy") or {}
+    per_model = policy.get("multiview_per_model_top_k") if ensemble and len(predictions) > 1 else None
+    if type(per_model) is not int or not 1 <= per_model <= 86:
+        per_model = None
+    for index, row in enumerate(predictions, 1):
         folds = [{"fold": n, **labelled(ranking[0])} for n, ranking in enumerate(row.get("fold_rankings") or [], 1)
                  if isinstance(ranking, list) and ranking and isinstance(ranking[0], dict)]
         average = [labelled(item) for item in (row.get("ranking") or [])[:3] if isinstance(item, dict)]
         if folds or average:
-            views.append({"view": f"view_{index:02d}", "fold_top1": folds, "average_top3": average})
-    return views
+            view = {"view": f"view_{index:02d}", "average_top3": average}
+            if not ensemble:
+                view["fold_top1"] = folds
+            elif per_model is not None:
+                view["model_top_k"] = [{"model": n, "ranking": [
+                    labelled(item) for item in (model.get("ranking") or [])[:per_model]
+                    if isinstance(item, dict)]}
+                    for n, model in enumerate(row.get("model_predictions") or [], 1)]
+            views.append(view)
+    result = {"views": views} if views else {}
+    if ensemble:
+        result["ensemble_method"] = "mean_softmax"
+        if per_model is not None:
+            result.update(candidate_source="multiview_model_top_k", per_model_top_k=per_model)
+        else:
+            k = policy.get("top_k", 8)
+            if type(k) is int and 1 <= k <= 68:
+                result[f"candidate_top{k}"] = [
+                    labelled(item) for item in (prediction.get("ranking") or [])[:k] if isinstance(item, dict)]
+    return result
 
 
 def _criterion_measurements(rows, vocabulary):
@@ -545,7 +719,7 @@ def _final_details(root_outputs, output, assessment, trace, spans, elapsed, voca
     return details
 
 
-def project_trace(run, vocabulary, *, include_decision_summary=False):
+def project_trace(run, vocabulary, *, include_decision_summary=False, include_visual_observations=False):
     """返回一个可更新的父子调用快照，缺少可证实的开始时间时等待下一次写盘。"""
     job_file = run / "job.json"
     job = read_json(job_file)
@@ -570,7 +744,8 @@ def project_trace(run, vocabulary, *, include_decision_summary=False):
     hashes = [view.get("sha256") for view in views] or [row.get("input_sha256") for row in a.get("view_predictions", [])]
     image_views = {f"img_{sha}": f"view_{i:02d}" for i, sha in enumerate(hashes, 1)
                    if isinstance(sha, str) and re.fullmatch(r"[0-9a-f]{64}", sha)}
-    observations = _observation_receipts(trace.get("observations", []), image_views, vocabulary[1])
+    observations = _observation_receipts(trace.get("observations", []), image_views, vocabulary[1],
+                                         include_text=include_visual_observations)
     view_count = interface.get("view_count") or len(hashes)
     if type(view_count) is int and view_count > 0:
         root.inputs["view_count"] = view_count
@@ -580,8 +755,7 @@ def project_trace(run, vocabulary, *, include_decision_summary=False):
     a_end = _end(start, optional_json(run / "code_signature_before_agent.json").get("at"))
     if pipeline and (job.get("stage") == "a" or a_end is not None):
         a_outputs = {"status": "done"} if a_end is not None else {}
-        if views_summary := _plan_a_views(a, vocabulary[0]):
-            a_outputs["views"] = views_summary
+        a_outputs.update(_plan_a_summary(a, vocabulary[0]))
         spans.append(Span("plan-a", "Plan A · 候选提名及入口检查", start, a_end, outputs=a_outputs))
 
     for number, rows in sorted(plans.items()):
@@ -594,11 +768,16 @@ def project_trace(run, vocabulary, *, include_decision_summary=False):
         menu = offer.get("menu") if offer.get("actual_llm_short_ids") is True else None
         options = _menu_options(menu, image_views, vocabulary) if menu else {}
         spans.append(Span(f"plan-{number}", f"规划请求 {number}", began, _end(began, timing.get("ended_at")),
-                          "llm", inputs=_planning_inputs(number, menu, options, vocabulary),
-                          outputs=_plan_choice(rows, options, include_decision_summary=include_decision_summary),
+                          "llm", inputs=_planning_inputs(number, menu, options, vocabulary,
+                                                        include_visual_observations=include_visual_observations),
+                          outputs=_plan_choice(rows, options, include_decision_summary=include_decision_summary,
+                                               include_visual_observations=include_visual_observations,
+                                               view_names={v: image_views[v] for v in ((menu or {}).get('view_id_map') or {}).values()
+                                                           if isinstance(v, str) and v in image_views}),
                           error=error, awaiting_feedback="thought" not in rows and error is None))
 
     operations = optional_json(run / "workflow" / "operations.json").get("entries", {})
+    scans = _scan_requests(run, operations, vocabulary[1], include_visual_observations)
     groups = {}
     for key, row in operations.items():
         if row.get("epoch") and _stamp(row.get("selected_at")) is not None:
@@ -613,7 +792,8 @@ def project_trace(run, vocabulary, *, include_decision_summary=False):
             if worker_start is None and row.get("status") not in _TERMINAL:
                 continue
             child = _tool_span(f"{group_key}-{key}", row, worker_start or _stamp(row["selected_at"]),
-                               group_key, image_views, choices, results, vocabulary, observations)
+                               group_key, image_views, choices, results, vocabulary, observations,
+                               include_text=include_visual_observations, scans=scans)
             if worker_start is None:
                 child.inputs["timing"] = "reservation_without_worker_start"
             children.append(child)
@@ -633,7 +813,8 @@ def project_trace(run, vocabulary, *, include_decision_summary=False):
         action = row.get("selected_action_id") or row.get("action_id")
         if began is not None and action not in staged_ids:
             spans.append(_tool_span(f"tool-{key}-{began}", row, began, "case", image_views,
-                                    choices, results, vocabulary, observations, completed_actions=completed_actions))
+                                    choices, results, vocabulary, observations, completed_actions=completed_actions,
+                                    include_text=include_visual_observations, scans=scans))
             staged_ids.add(action)
     for row in execution:
         action = row.get("action_id")
@@ -645,6 +826,11 @@ def project_trace(run, vocabulary, *, include_decision_summary=False):
         name = "并行观察" if row.get("parallel") is True else (tool if tool in _TOOLS else "Agent 执行动作")
         observed = [observations[key] for key in parallel.get(action, [action]) if key in observations]
         feedback = _add_observations(_feedback(results.get(action, {}), vocabulary), observed)
+        if action in scans:
+            feedback['scan_requests'] = scans[action]
+        result = results.get(action, {}).get('result') or {}
+        if result.get('accepted') and result.get('status') == 'done':
+            feedback.update(_visual_reading(result.get('visual_observation'), include_visual_observations))
         spans.append(Span(f"exec-{action}-{began}", name, began,
                           _end(began, row.get("ended_at")), "tool", inputs={"planning_request": request},
                           outputs=feedback))
@@ -698,20 +884,26 @@ class LangSmithPublisher:
         self.replay_needed = set()
 
     @staticmethod
-    def _finish(tree, span):
+    def _finish(tree, span, offset=timedelta()):
         usage = span.outputs.get("usage_metadata")
         tree.end(outputs=span.outputs, error=span.error,
-                 end_time=datetime.fromtimestamp(span.end, timezone.utc),
+                 end_time=datetime.fromtimestamp(span.end, timezone.utc) + offset,
                  metadata={"usage_metadata": usage} if usage else None)
 
-    def _post_spans(self, trace_id, spans, *, replay=False):
+    def _post_spans(self, trace_id, spans, *, replay=False, offset=timedelta()):
         from langsmith.run_trees import RunTree
         from langsmith.utils import LangSmithConflictError
 
         trees = {}
         for span in spans:
+            start = datetime.fromtimestamp(span.start, timezone.utc)
             args = {"name": span.name, "run_type": span.kind, "inputs": span.inputs,
-                    "start_time": datetime.fromtimestamp(span.start, timezone.utc)}
+                    "start_time": start + offset}
+            if offset:
+                original_end = None if span.end is None else datetime.fromtimestamp(span.end, timezone.utc)
+                args["extra"] = {"metadata": {"replay_time_shifted": True,
+                                             "original_start_time": start.isoformat(),
+                                             "original_end_time": original_end.isoformat() if original_end else None}}
             if span.parent is None:
                 if replay:
                     args["name"] = "TCM_Fusion · 样品鉴别回放"
@@ -722,7 +914,7 @@ class LangSmithPublisher:
             trees[span.key] = tree
             if tree.id not in self.sent:
                 if replay and span.end is not None:
-                    self._finish(tree, span)
+                    self._finish(tree, span, offset)
                 try:
                     tree.post()
                 except LangSmithConflictError:
@@ -733,7 +925,18 @@ class LangSmithPublisher:
     def _publish_replay(self, original_id, spans):
         snapshot = digest([asdict(span) for span in spans])
         trace_id = uuid5(original_id, f"archive-replay/v1/{snapshot}")
-        self._post_spans(trace_id, spans, replay=True)
+        now = datetime.now(timezone.utc)
+        earliest = datetime.fromtimestamp(min(span.start for span in spans), timezone.utc)
+        latest_start = datetime.fromtimestamp(max(span.start for span in spans), timezone.utc)
+        # Leave room for clock skew and the time it takes to submit the whole tree.
+        window = timedelta(hours=23, minutes=55)
+        offset = timedelta()
+        if earliest < now - window or latest_start > now + window:
+            if latest_start - earliest > window * 2:
+                raise IntegrationError("TRACE_REPLAY_TIME_RANGE", "归档跨度过长，无法在同一次回放中保留所有调用的时间间隔。")
+            latest_end = datetime.fromtimestamp(max(span.end or span.start for span in spans), timezone.utc)
+            offset = max(now - latest_end, now - window - earliest)
+        self._post_spans(trace_id, spans, replay=True, offset=offset)
         return trace_id
 
     def sync(self, job_id, spans):

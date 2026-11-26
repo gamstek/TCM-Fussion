@@ -5,6 +5,7 @@
 """
 
 from contextlib import redirect_stderr, redirect_stdout
+from datetime import datetime, timedelta, timezone
 from io import StringIO
 import json
 import os
@@ -12,12 +13,12 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
-from uuid import NAMESPACE_URL, uuid5
+from uuid import NAMESPACE_URL, UUID, uuid5
 
 import paths
 import requests
 from TCM_Fusion.cli import langsmith_trace as cli
-from TCM_Fusion.lib.offline.langsmith_trace import LangSmithPublisher, find_run, project_trace
+from TCM_Fusion.lib.offline.langsmith_trace import LangSmithPublisher, Span, find_run, project_trace
 from TCM_Fusion.lib.runtime.storage import write_json
 
 
@@ -153,6 +154,38 @@ class TraceTests(unittest.TestCase):
             },
         }}
 
+    def test_visual_question_tool_receipt_and_next_menu_have_opt_in_text(self):
+        brief = '请沿图中清晰的边缘跟踪纹理。' * 20 + '末尾请指出最清楚的一段。'
+        self.assertGreater(len(brief), 240)
+        receipt = {'status':'reported','brief':brief,'tiles':[
+            {'tile':0,'status':'reported','brief':brief,'finding':'边缘有横纹','location':'右侧','readability':'partial'},
+            {'tile':1,'status':'unreported','brief':brief+' D:/private/sample.png','finding':'D:/private/secret'}]}
+        for row in self.events:
+            if row['phase'] == 'thought':
+                row['visual_briefs'] = {'action-1':brief}
+            if row['phase'] == 'recompute':
+                row['result'] = {'accepted':True,'status':'done','visual_observation':receipt}
+        self.rows['1']['tool'] = 'feature_scan'
+        offer = self.planner_offer()
+        offer['request_number'] = 2
+        offer['menu']['previous_visual_observations'] = [receipt]
+        self.events.append(offer)
+        self.save_snapshots()
+        compact = {s.key:s for s in self.snapshot()}
+        expanded = {s.key:s for s in self.snapshot(include_visual_observations=True)}
+        self.assertEqual(compact['plan-1'].outputs['requested_visual_briefs'], 1)
+        self.assertNotIn('planned_visual_questions', compact['plan-1'].outputs)
+        self.assertEqual(expanded['plan-1'].outputs['planned_visual_questions'], [brief])
+        next_input = expanded['plan-2'].inputs['previous_visual_observations'][0]
+        actual = next(s for s in expanded.values() if s.inputs.get('tool') == 'feature_scan')
+        self.assertEqual(actual.outputs['visual_observation'], next_input)
+        self.assertEqual(next_input['brief'], brief)
+        self.assertEqual(next_input['tiles'][0]['brief'], brief)
+        self.assertNotIn('brief', next_input['tiles'][1])
+        self.assertEqual(next_input['tiles'][0]['finding'], '边缘有横纹')
+        self.assertNotIn('finding', next_input['tiles'][1])
+        self.assertNotIn('brief', compact['plan-2'].inputs['previous_visual_observations'][0])
+
     def test_live_group_carries_views_and_qualified_feedback(self):
         self.assertEqual(find_run(self.case), self.run)
         projected = {span.key: span for span in self.snapshot()}
@@ -278,6 +311,89 @@ class TraceTests(unittest.TestCase):
             self.save_snapshots()
             plan = next(span for span in self.snapshot(include_decision_summary=True) if span.key == "plan-1")
             self.assertNotIn("model_decision_summary", plan.outputs)
+
+    def test_whole_public_summary_is_opt_in_and_sensitive_tail_is_checked(self):
+        thought = next(row for row in self.events if row['phase'] == 'thought')
+        reason = '现有视野的簇晶身份已确认。' * 24 + '下一轮可检查可用的尺寸。'
+        self.assertGreater(len(reason), 240)
+        thought.update(decision_source='model', decision_summary=reason, decision_summary_capture='complete')
+        thought['usage']['completion_tokens_details'] = {'reasoning_tokens': 3}
+        self.save_snapshots()
+
+        def output(enabled):
+            return next(s.outputs for s in self.snapshot(include_decision_summary=enabled) if s.key == 'plan-1')
+
+        self.assertNotIn('model_decision_summary', output(False))
+        expanded = output(True)
+        self.assertEqual((expanded['model_decision_summary'], expanded['model_summary_capture']), (reason, 'complete'))
+        self.assertEqual(expanded['usage_metadata']['output_token_details'], {'reasoning': 3})
+        self.assertEqual(expanded['usage_metadata']['total_tokens'], 38)
+        thought['decision_summary'] = reason + ' D:/private/sensitive.jpg'
+        self.save_snapshots()
+        filtered = output(True)
+        self.assertNotIn('model_decision_summary', filtered)
+        self.assertEqual(filtered['model_summary_visibility'], 'withheld_by_text_filter')
+        thought['decision_summary'] = reason[:240]
+        self.save_snapshots()
+        self.assertEqual(output(True)['model_summary_capture'], 'complete')
+        del thought['decision_summary_capture']
+        self.save_snapshots()
+        self.assertEqual(output(True)['model_summary_capture'], 'legacy_240_char_boundary')
+
+    def test_feature_scan_reports_each_dispatched_brief_and_checks_corresponding_receipt(self):
+        key = 'c' * 64
+        brief = '沿清晰的部分观察颗粒轮廓。' * 20 + '右侧边缘与周边纹理如何相接？'
+        self.assertGreater(len(brief), 240)
+        preset = '观察外缘和几何轮廓。'
+        self.rows[key] = self.rows.pop('1')
+        self.rows[key].update(tool='feature_scan', feature_id='cluster_crystal', visual_brief=brief)
+        thought = next(r for r in self.events if r['phase'] == 'thought')
+        thought.update(tool='feature_scan', visual_briefs={'action-1':brief},
+                       visual_guidance_choices={'A1':{'mode':'agent_brief','action_id':'action-1'}})
+        offer = self.planner_offer()
+        offer['menu']['actions'][0]['tool'] = 'feature_scan'
+        offer['menu']['action_state']['A1'] = {'feature_id':'cluster_crystal','candidate_regions_px':[[0,0,100,100]]}
+        offer['menu']['scan_feature_hints'] = {'cluster_crystal':preset}
+        self.events.insert(1, offer)
+        self.save_snapshots()
+        folder = self.run/'workflow'/'ops'/key[:16]/'scan'
+        for index, extra in enumerate(({'visual_brief':brief}, {}, {'visual_brief':'来源未确认的文字'})):
+            tile = folder / f'tile_{index:02d}'
+            roi = [index*100, 0, (index+1)*100, 100]
+            self.write(tile/'locate.json', {'tool':'locate_feature', 'feature_id':'cluster_crystal',
+                                            'roi':roi, 'feature_hint':preset, **extra})
+            if index < 2:
+                self.write(tile/'detection'/'region_result.json', {'feature_id':'cluster_crystal', 'count':0,
+                           'roi':roi if index == 0 else [0,0,1,1]})
+        (folder/'tile_02'/'detection').mkdir()
+        (folder/'tile_02'/'detection'/'region_result.json').write_text('{', encoding='utf-8')
+        for expanded in (False, True):
+            spans = self.snapshot(include_visual_observations=expanded)
+            plan = next(s for s in spans if s.key == 'plan-1')
+            first = next(a for a in plan.inputs['available_choices'] if a['id'] == 'A1')
+            self.assertEqual(first['candidate_regions_px'], [[0,0,100,100]])
+            self.assertEqual(plan.inputs.get('scan_feature_hints'), {'cluster_crystal':preset} if expanded else None)
+            choice = plan.outputs['visual_guidance_choices']['A1']
+            self.assertEqual(choice['mode'], 'agent_brief')
+            self.assertEqual(choice.get('question'), brief if expanded else None)
+            scan = next(s.outputs['scan_requests'] for s in spans if 'scan_requests' in s.outputs)
+            tiles = scan['tiles']
+            self.assertEqual([t['guidance_source'] for t in tiles],
+                             ['project_preset_and_agent','project_preset','additional_brief_unattributed'])
+            self.assertEqual([t['status'] for t in tiles], ['worker_returned','prepared','prepared'])
+            self.assertEqual(tiles[0]['crop_count'], 0)
+            self.assertNotIn('crop_count', tiles[1])
+            self.assertEqual(tiles[0].get('visual_brief'), brief if expanded else None)
+            self.assertEqual(tiles[1].get('feature_hint'), preset if expanded else None)
+
+    def test_trace_distinguishes_model_proposal_from_receipt_based_stop(self):
+        from TCM_Fusion.lib.offline.langsmith_trace import _plan_choice
+        thought = {'decision_source': 'model', 'decision_summary_source': 'candidate_audit',
+                   'proposed_decision_summary': '所有候选均已核验', 'decision_summary': '未查（香附/secretory_tissue）'}
+        self.assertEqual(_plan_choice({'thought': thought}, {}, include_decision_summary=True),
+                         {'model_decision_summary': '所有候选均已核验',
+                          'required_investigation_summary': '未查（香附/secretory_tissue）'})
+        self.assertEqual(_plan_choice({'thought': thought}, {}, include_decision_summary=False), {})
 
     def test_live_plan_waits_for_outcome_then_uploads_rich_input_once(self):
         thought = self.events.pop(2)
@@ -529,12 +645,14 @@ class TraceTests(unittest.TestCase):
         original_id = str(uuid5(NAMESPACE_URL, f"TCM_Fusion:{destination}:{self.job_id}"))
         received = {original_id: {"outputs": {"status": "completed"}}}
         calls = []
+        now = datetime.now(timezone.utc)
 
         def capture_http(method, url, *args, **kwargs):
             self.assertTrue(url.startswith("https://trace-test.invalid/runs"))
             body = kwargs.get("json") or json.loads(kwargs.get("data") or "{}")
             response = requests.Response()
             response.url = url
+            self.assertLess(abs(datetime.fromisoformat(body["start_time"]) - now), timedelta(hours=24))
             if method == "POST" and body["id"] not in received:
                 received[body["id"]] = body
                 response.status_code, response._content = 202, b"{}"
@@ -569,4 +687,29 @@ class TraceTests(unittest.TestCase):
         self.assertEqual(plan["outputs"]["model_decision_summary"], "先定位簇晶实例。")
         self.assertEqual(plan["extra"]["metadata"]["usage_metadata"]["total_tokens"], 38)
         self.assertIn("end_time", plan)
+        offset = datetime.fromisoformat(root["start_time"]) - datetime.fromtimestamp(spans[0].start, timezone.utc)
+        self.assertGreater(offset, timedelta(hours=24))
+        for span in spans:
+            row = root if span.parent is None else received[str(uuid5(UUID(replay_id), span.key))]
+            meta = row["extra"]["metadata"]
+            original_start = datetime.fromtimestamp(span.start, timezone.utc)
+            self.assertTrue(meta["replay_time_shifted"])
+            self.assertEqual(datetime.fromisoformat(meta["original_start_time"]), original_start)
+            self.assertEqual(datetime.fromisoformat(row["start_time"]), original_start + offset)
+            if span.end is not None:
+                original_end = datetime.fromtimestamp(span.end, timezone.utc)
+                self.assertEqual(datetime.fromisoformat(meta["original_end_time"]), original_end)
+                self.assertEqual(datetime.fromisoformat(row["end_time"]), original_end + offset)
         self.assertNotIn(self.secret, repr(received))
+
+    def test_recent_replay_keeps_original_times(self):
+        client = CaptureClient()
+        start = datetime.now(timezone.utc).replace(microsecond=0) - timedelta(minutes=4)
+        end = start + timedelta(seconds=30)
+        span = Span("case", "样品", start.timestamp(), end.timestamp(), parent=None)
+        publisher = LangSmithPublisher(client, "trace-test", project_name="TCM-Fusion")
+        trace_id = publisher.sync(self.job_id, [span])
+        row = client.created[trace_id]
+        self.assertEqual(row["start_time"], start)
+        self.assertEqual(row["end_time"], end)
+        self.assertNotIn("replay_time_shifted", row.get("extra", {}).get("metadata", {}))

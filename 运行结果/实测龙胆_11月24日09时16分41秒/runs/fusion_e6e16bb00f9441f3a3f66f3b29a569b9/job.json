@@ -1,0 +1,11 @@
+{
+  "job_id": "fusion_e6e16bb00f9441f3a3f66f3b29a569b9",
+  "sample_id": "case_73a870e1",
+  "status": "failed",
+  "stage": "a",
+  "config_sha256": "73b96a6b5eaa5eaea1f1cb0a5384929e465f06693e105e6037b5d963fbfc9c32",
+  "result": "E:\\TCM_Fusion\\运行结果\\实测龙胆_11月24日09时16分41秒\\runs\\fusion_e6e16bb00f9441f3a3f66f3b29a569b9\\fusion.json",
+  "error_code": "WINDOWS_ASYNCIO_LOOPBACK_TIMEOUT",
+  "error_type": "IntegrationError",
+  "elapsed_seconds": 10.875093500000048
+}

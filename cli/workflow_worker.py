@@ -72,11 +72,18 @@ def main(argv=None):
                   '坐标相对所给局部归一化到0至1000。'
                   f'仅输出JSON：{{"objects":[{{"label":"{label}","bbox_2d":[x1,y1,x2,y2],'
                   '"confidence":"high 或 medium","morphology":"可见判别特征"}]}')
+        brief = ctx.get('visual_brief')
+        if brief:
+            from TCM_Fusion.lib.vision.visual_observation import prompt_suffix, receipt, record
+            prompt += prompt_suffix(brief)
         cfg = load_config()
         response, error = detect_once(img, cfg['vlm'], resolve_key(cfg), prompt, {label},
                                       region=[rx1, ry1, rx2, ry2], max_side=1024, upscale=True)
         if error:
             raise IntegrationError('DETECTION_FAILED', 'GLM 定向定位请求失败')
+        if brief:
+            from vlm_api import parse_vlm_json
+            detail = receipt(brief, parse_vlm_json(response['text']))
         dets = []
         for det in response['dets']:
             left, top, right, bottom = map(round, det['tight_bbox'])
@@ -188,6 +195,8 @@ def main(argv=None):
     else:
         write_json(out/'region_result.json',{**result,'engine':'glm_targeted' if targeted else 'yolo','count':count,
                                           'replacements':replacements,'coordinate_system':'original_pixels'})
+        if targeted and brief:
+            record(out, detail)
     return 0
 
 

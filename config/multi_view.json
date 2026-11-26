@@ -3,7 +3,12 @@
   "a": {
     "mode": "cli",
     "required": true,
-    "checkpoint_dir": "MICROSCOPE-main/v3_resnet50_full",
+    "checkpoint_dir": "分类器设计权重与CNN权重/herb_cls_runs",
+    "model_runs": [
+      "v2_resnet18_448_lb_e40_ls10_mix10_s20261111",
+      "v2_resnet18_448_lb_e40_ls10_mix10_s20261112",
+      "v2_resnet18_448_lb_e40_ls10_mix10_s20261113"
+    ],
     "timeout_seconds": 180
   },
   "b": {
@@ -17,7 +22,8 @@
     "transport": "mcp",
     "max_steps": 60,
     "candidate_policy": {
-      "top_k": 3
+      "top_k": 8,
+      "multiview_per_model_top_k": 5
     },
     "workflow": {
       "execution": "active",
@@ -153,6 +159,7 @@
         "calibrate_fov",
         "segment_instance",
         "classify_target",
+        "inspect_crop",
         "classify_crops_batch",
         "measure_instances",
         "detect_region",

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "E:\\TCM_Fusion\\.venv\\vision\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "E:\\TCM_Fusion\\图像分割\\cli\\igm_segment_batch.py",
+    "--crops",
+    "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\4fdd7151a7973cad\\crops",
+    "--out-dir",
+    "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\4fdd7151a7973cad\\segmentation",
+    "--box-association",
+    "region_component",
+    "--size",
+    "2048x2048"
+  ],
+  "timeout_seconds": 180.0
+}

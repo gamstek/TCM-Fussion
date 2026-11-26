@@ -12,7 +12,7 @@ TCM_Fusion 接收**同一待鉴别样品的一张或多张显微图**。交付�
 
 ```mermaid
 flowchart TD
-    I["同一样品的视野与输入清单"] --> A["A · 五折 ResNet50 提名药材"]
+    I["同一样品的视野与输入清单"] --> A["A · 三模型整图候选"]
     A --> R["ReAct · 比较候选，选择下一步"]
     K["药材知识库 · 必需判据与辅助判据"] --> R
     I --> W["工具与 worker · 原图观察、定位、身份核验、分割、测量"]
@@ -40,7 +40,7 @@ flowchart TD
 | 环节 | 读入什么，产生什么 | 数据交给谁 |
 | --- | --- | --- |
 | 1. 绑定样品 | 入口按输入清单的 `views` 顺序逐图核对路径和 SHA256，排除重复图像，复制为 `case/view_01.jpg` 等中性名称，保留原扩展名。 | `case/input_proof.json` 对应原图与副本，`case/config.json` 绑定本次视野。预检结果写入 `case/doctor.json`，实跑通过后才启动 A。[输入准备](lib/application/multi_view.py) |
-| 2. 从整图提名药材 | A 的五折 ResNet50 分别对每个视野预测。完整逐折概率存入 `run/a_prediction.json` 的 `view_predictions[].fold_rankings`。 | 每折取 Top-3，药材标签映射到单味药或药材组 ID，跨折、跨视野取并集供 Agent 调查。未映射标签留待复核，完整逐折概率留给收尾计算 A 分。[A 预测适配](lib/workflow/adapters.py) · [候选映射](lib/decision/candidate_policy.py) |
+| 2. 从整图提名药材 | A 的三个 448 px ResNet18 模型对每个视野分别输出完整 softmax。逐模型概率在 `run/a_prediction.json` 的 `view_predictions[].model_predictions`，按视野和模型等权所得样品平均榜在顶层 `ranking`。 | 单图取三模型平均榜 Top 8。多图每个视野的三个模型各取 Top 5，再跨模型、跨图取并集。标签映射为单味药或药材组 ID，合并重复组并保留未映射标签。完整平均榜用于计算 A 分。[A 预测适配](lib/workflow/adapters.py) · [候选映射](lib/decision/candidate_policy.py) |
 | 3. 选择下一步调查 | ReAct 读取候选的必需项与辅助项、已取得的观察、可操作实例和剩余预算，形成当轮菜单。实际展示的选择及模型所选动作可在 `run/agent_trace.json` 的 `planner_offer` 和 `thought` 事件中对照。 | MCP 把选中的请求送入绑定本次样品的工具服务，工作流校验目标、依赖和额度。选 C 时跟进同一实例，选 D4 时可并发处理独立视野，选复核则转入收尾。[调查循环](lib/agent/react_graph.py) · [MCP 工具调用](lib/mcp/mcp_bridge.py) |
 | 4. 从视野发现特征 | 原图存在性观察回答“这个视野有没有某类结构”。需要具体实例时，YOLO 初检或按特征定向补扫产生原图坐标框和裁图（crop）。 | 观察结果带视野来源。裁图连同原图路径、坐标和初步类别交给身份核验。比例尺读取失败时仍可保留检测框，微米尺寸待标定。[工作流会话](lib/workflow/workflow_session.py) · [裁图数据契约](contracts.py) |
 | 5. 从实例取得尺寸 | Stage2 的 ResNet18 判断裁图中的显微特征类别。低置信或 `other` 的实例可交给 GLM 复核。需要尺寸时，对通过身份核验的实例分割得到掩码（mask），再用合格掩码和标定计算所需的长度、宽度或面积。 | 测量记录带视野名和实例号。某项尺寸缺少合格结果时，该判据继续留作缺口，Agent 可换实例、换视野或收尾。[身份分类](lib/vision/stage2_classifier.py) · [分割与测量调度](lib/workflow/workflow_backend.py) |
@@ -81,10 +81,10 @@ TCM_Fusion/
 │   ├── evidence/                  # evidence_store.py 存版本，evidence_projection.py 判断证据可用于哪些判据
 │   ├── decision/                  # rule_scoring.py 算 B 分，ab_fusion.py 排序，final_assessment.py 形成研判
 │   └── offline/                   # workflow_replay.py 等模块用录制工件回放、评估
-├── MICROSCOPE-main/               # predictv3_resnet50.py 对整图做五折药材预测
+├── MICROSCOPE-main/               # 三个 ResNet18 的整图药材预测入口及历史五折入口
 ├── 目标检测/                      # 视觉定位、裁图分类所需的底层接口和模型变换
 ├── yolo-results/                  # YOLO 初检权重与类别表的部署位置
-├── 分类器设计权重与CNN权重/       # Stage2 裁图分类权重、模型元信息及实验记录
+├── 分类器设计权重与CNN权重/       # Plan A 整图药材模型和 Stage2 裁图特征模型
 ├── 图像分割/                      # IGM 分割及掩码处理
 ├── 几何测量/                      # measure.py 根据掩码与标定输出实例尺寸
 ├── Agent判药/
@@ -197,15 +197,15 @@ A 是模型输出的先验，融合分、B 分和暂定分都有各自的排序�
 
 ### A 先验与融合分
 
-设 `N` 为所有视野提供的逐折结果数量。一个候选可能对应多个标签，例如药材组。先在每一折把映射到该候选的概率相加，再按全部折取平均。
+每个视野有三个模型的完整类别概率，先平均三个模型，再等权平均同一样品的各视野。一个候选可能对应多个药材标签，A 分取这些标签在完整样品平均榜中的概率之和。
 
 ```text
-A(c) = 各视野、各折中映射到候选 c 的概率之和 ÷ N
+A(c) = 所有映射到候选 c 的样品平均概率之和
 F(c) = (A 权重 × A(c) + B 权重 × B(c)) ÷ (A 权重 + B 权重)
 默认 F(c) = 0.50 × A(c) + 0.50 × B(c)
 ```
 
-**逐折 Top-3 用来生成调查候选（平均有8~10候选组成员），A 分从完整逐折排名取值。** 例如四图、每图五折时，A 分的分母为 20。候选在某一折的原始记录没有对应条目时，该折对它的贡献为 0。融合首位发生变化时，程序撤销与原首位绑定的结论并交由收尾复核。[候选生成](lib/decision/candidate_policy.py) · [A 预测适配](lib/workflow/adapters.py) · [A＋B 计算](lib/decision/ab_fusion.py)
+单图从三模型平均榜取前八个标签。多图对每个视野的每个模型先取前五个标签，再取并集。药材组映射按候选 ID 去重，未映射项留在审计中。融合首位发生变化时，程序撤销与原首位绑定的结论并交由收尾复核。历史运行仍按原配置解释。[候选生成](lib/decision/candidate_policy.py) · [A＋B 计算](lib/decision/ab_fusion.py)
 
 ### B 规则分（b-rule/4）
 

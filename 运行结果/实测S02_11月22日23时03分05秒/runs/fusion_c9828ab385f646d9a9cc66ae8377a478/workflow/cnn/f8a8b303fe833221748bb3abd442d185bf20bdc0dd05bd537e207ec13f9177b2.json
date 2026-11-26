@@ -1,0 +1,147 @@
+{
+  "schema": "cnn-classifier/v2",
+  "model": "E:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+  "imgsz": 320,
+  "input_mode": "letterbox",
+  "classes": [
+    "00_cluster_crystal",
+    "01_single_crystal",
+    "02_needle_crystal",
+    "03_vessel",
+    "04_stone_cell",
+    "05_starch_grain",
+    "06_non_glandular_hair",
+    "07_secretory_tissue",
+    "08_stoma",
+    "09_epidermis_cell",
+    "10_hypha",
+    "11_fiber",
+    "12_pollen_grain",
+    "13_other"
+  ],
+  "preprocessing": "目标检测.lib.cls_net.build_transforms",
+  "cache_key": "f8a8b303fe833221748bb3abd442d185bf20bdc0dd05bd537e207ec13f9177b2",
+  "signature": {
+    "schema": "stage2-request/v2",
+    "profile": {
+      "weights": "E:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+      "meta": "E:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+      "metadata": {
+        "arch": "resnet18",
+        "imgsz": 320,
+        "input_mode": "letterbox",
+        "classes": [
+          "00_cluster_crystal",
+          "01_single_crystal",
+          "02_needle_crystal",
+          "03_vessel",
+          "04_stone_cell",
+          "05_starch_grain",
+          "06_non_glandular_hair",
+          "07_secretory_tissue",
+          "08_stoma",
+          "09_epidermis_cell",
+          "10_hypha",
+          "11_fiber",
+          "12_pollen_grain",
+          "13_other"
+        ],
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ],
+        "checkpoint": "best.pt"
+      },
+      "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+      "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+      "preprocessor_sha256": "e5c5c2e271a14d6c329b3164a1f4ae4407947317dee2c6c8cbe732fa1ec294f5",
+      "adapter_sha256": "57c317c6cea5522fe6a60e23aeb3b44e69497801958da9bd164f1dd5404dc948"
+    },
+    "crops": [
+      {
+        "id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01",
+        "png": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\crops\\cluster_crystal_view_01_01.png",
+        "sha256": "7fa110168862e500c83959c169bd154cf8555ca728055da4050023e00f6f46c2",
+        "box_local": [
+          40,
+          40,
+          455,
+          443
+        ]
+      },
+      {
+        "id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_02",
+        "png": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\crops\\cluster_crystal_view_01_02.png",
+        "sha256": "c99c5f60bcd2b0204eb74eb87bb76e3597adeb8e6de67f8b56612582c878a320",
+        "box_local": [
+          35,
+          34,
+          407,
+          430
+        ]
+      }
+    ],
+    "python": "E:\\TCM_Fusion\\.venv\\yolo\\Scripts\\python.exe",
+    "python_sha256": "3470f7919170d235d7e6079691462c4b217745ec67ee612e745730e46d98f238"
+  },
+  "rows": [
+    {
+      "id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "00_cluster_crystal",
+          "feature_id": "cluster_crystal",
+          "prob": 0.9069982171058655
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.0170967485755682
+        },
+        {
+          "class": "08_stoma",
+          "feature_id": "stoma",
+          "prob": 0.011051733046770096
+        }
+      ],
+      "top1": "cluster_crystal",
+      "top1_class": "00_cluster_crystal",
+      "top1_prob": 0.9069982171058655,
+      "margin": 0.8899014685302973,
+      "entropy": 0.2034405978184371
+    },
+    {
+      "id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_02",
+      "source": "cnn",
+      "topk": [
+        {
+          "class": "00_cluster_crystal",
+          "feature_id": "cluster_crystal",
+          "prob": 0.891700267791748
+        },
+        {
+          "class": "01_single_crystal",
+          "feature_id": "single_crystal",
+          "prob": 0.018662389367818832
+        },
+        {
+          "class": "03_vessel",
+          "feature_id": "vessel",
+          "prob": 0.017613377422094345
+        }
+      ],
+      "top1": "cluster_crystal",
+      "top1_class": "00_cluster_crystal",
+      "top1_prob": 0.891700267791748,
+      "margin": 0.8730378784239292,
+      "entropy": 0.22708081319499085
+    }
+  ]
+}

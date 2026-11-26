@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" xml:lang="zh-CN" width="2096" height="844" viewBox="0 0 2096 844" role="img" aria-labelledby="h d">
+<title id="h">中药材显微鉴别流程</title><desc id="d">主线从输入校验经候选提名、Agent 调查规划、视觉工具执行、回执计分，到融合交付。规划可选择单项调查、实例目标或多视野并行，后两种选择通过主线节点的分支进入工具。回执更新后，结果与缺口、失败或停滞触发的反思建议经同一条反馈线回到同一个 Agent。</desc>
+<defs><marker id="ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#3C6062"/></marker><marker id="green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#2C7669"/></marker><marker id="gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#98702E"/></marker></defs>
+<style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#183F41}.title{font-size:44px;font-weight:700}.sub{font-size:18px;fill:#4B6768}.head{font-size:24px;font-weight:700}.body{font-size:16px;fill:#3C5859}.branch{font-size:23px;font-weight:700}.lbl{font-size:16px;fill:#315C57;font-weight:600;paint-order:stroke;stroke:#FCFBF7;stroke-width:6;stroke-linejoin:round}.gld{fill:#835F26}.edge{fill:none;stroke-width:2.8;stroke-linejoin:round;stroke-linecap:round}.glyph{fill:none;stroke:#477673;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}</style>
+<rect width="2096" height="844" fill="#FCFBF7"/>
+<text x="42" y="67" class="title" >中药材显微鉴别流程</text>
+<text x="44" y="104" class="sub" >沿主线看鉴别过程，沿分支看 Agent 如何委托调查、接收结果并调整下一步。</text>
+<path id="main-0" d="M237 417 H286" class="edge" stroke="#3C6062" marker-end="url(#ink)"/>
+<path id="main-1" d="M519 417 H587" class="edge" stroke="#3C6062" marker-end="url(#ink)"/>
+<path id="main-2" d="M836 417 H1083" class="edge" stroke="#3C6062" marker-end="url(#ink)"/>
+<text x="959.5" y="400" class="lbl" text-anchor="middle">单项调查</text>
+<path id="main-3" d="M1352 417 H1453" class="edge" stroke="#3C6062" marker-end="url(#ink)"/>
+<text x="1402.5" y="400" class="lbl" text-anchor="middle">实际回执</text>
+<path id="main-4" d="M1726 417 H1845" class="edge" stroke="#3C6062" marker-end="url(#ink)"/>
+<text x="1785.5" y="400" class="lbl" text-anchor="middle">调查收尾</text>
+<path id="select-goal" d="M708 341 V207 H806" class="edge" stroke="#2C7669" marker-end="url(#green)"/>
+<path id="call-in-order" d="M1136 207 H1217 V339" class="edge" stroke="#2C7669" marker-end="url(#green)"/>
+<text x="699" y="280" class="lbl" text-anchor="end">选定实例目标</text>
+<text x="1232" y="280" class="lbl" >逐步调用</text>
+<path id="select-views" d="M785 499 V619 H806" class="edge" stroke="#2C7669" marker-end="url(#green)"/>
+<path id="dispatch-parallel" d="M1136 619 H1200 V501" class="edge" stroke="#2C7669" marker-end="url(#green)"/>
+<text x="778" y="546" class="lbl" text-anchor="end">选多个独立视野</text>
+<text x="1215" y="548" class="lbl" >并发派发</text>
+<path id="receive" d="M1486 499 V776" class="edge" stroke="#2C7669"/>
+<text x="1473" y="692" class="lbl" text-anchor="end">结果、受阻原因与缺口</text>
+<path id="trigger-reflect" d="M1660 499 V569" class="edge" stroke="#98702E" marker-end="url(#gold)"/>
+<text x="1676" y="544" class="lbl gld" >失败或停滞</text>
+<path id="feedback-suggestion" d="M1730 670 V776 H1486" class="edge" stroke="#98702E"/>
+<text x="1744" y="729" class="lbl gld" >随下轮规划提交建议</text>
+<path id="return-to-agent" d="M1486 776 H643 V501" class="edge" stroke="#2C7669" marker-end="url(#green)"/>
+<circle cx="1486" cy="776" r="5.5" fill="#2C7669"/>
+<text x="658" y="705" class="lbl" >回到下一轮 Agent 规划</text>
+<text x="1074" y="810" class="sub" text-anchor="middle">并行分支取得合格进展时，可提前反馈。</text>
+<g id="node-goal">
+<rect x="808" y="158" width="328" height="98" rx="14" fill="#EBF4EE" stroke="#85AD9F" stroke-width="1.6"/>
+<text x="972" y="197" class="branch" text-anchor="middle">按依赖拆解目标</text>
+<text x="972" y="228" class="body" text-anchor="middle">测量须先核验身份、掩码与标定</text>
+</g>
+<g id="node-parallel">
+<rect x="808" y="571" width="328" height="99" rx="14" fill="#EBF4EE" stroke="#85AD9F" stroke-width="1.6"/>
+<text x="972" y="610" class="branch" text-anchor="middle">并行调查多个视野</text>
+<text x="972" y="641" class="body" text-anchor="middle">各视野独立初检或核验身份</text>
+</g>
+<g id="node-reflection">
+<rect x="1532" y="571" width="389" height="99" rx="14" fill="#FBF1DE" stroke="#C7A46C" stroke-width="1.6"/>
+<text x="1726.5" y="610" class="branch" text-anchor="middle">生成反思建议</text>
+<text x="1726.5" y="641" class="body" text-anchor="middle">建议换问题、视野或方法</text>
+</g>
+<g id="stage-input">
+<rect x="40" y="341" width="196" height="158" rx="14" fill="#FFFFFF" stroke="#A1B7B0" stroke-width="1.6"/>
+<g class="glyph" transform="translate(138,374)"><rect x="-16" y="-12" width="32" height="24" rx="3"/><circle cx="-4" cy="-2" r="4"/><path d="m0 9 6-7 7 6"/></g>
+<text x="138" y="425" class="head" text-anchor="middle">输入校验</text>
+<text x="138" y="464" class="body" text-anchor="middle">核对图像与清单</text>
+</g>
+<g id="stage-prior">
+<rect x="288" y="341" width="230" height="158" rx="14" fill="#FFFFFF" stroke="#A1B7B0" stroke-width="1.6"/>
+<g class="glyph" transform="translate(403,374)"><path d="M-9-11h20v23H-9zM-13-7h-3v24H6v-1"/><path d="M-4-5h10M-4 0h10M-4 5h7"/></g>
+<text x="403" y="425" class="head" text-anchor="middle">药材候选提名</text>
+<text x="403" y="464" class="body" text-anchor="middle">五折整图预测</text>
+</g>
+<g id="stage-agent">
+<rect x="589" y="341" width="246" height="158" rx="14" fill="#DDEEE4" stroke="#428578" stroke-width="1.6"/>
+<g class="glyph" transform="translate(712,374)"><circle cx="0" cy="-9" r="5"/><path d="M0-4v5M-11 7V2h22v5"/><circle cx="-11" cy="11" r="4"/><circle cx="11" cy="11" r="4"/></g>
+<text x="712" y="425" class="head" text-anchor="middle">Agent 调查规划</text>
+<text x="712" y="464" class="body" text-anchor="middle">选视野、实例和观察重点</text>
+</g>
+<g id="stage-tools">
+<rect x="1085" y="341" width="266" height="158" rx="14" fill="#FFFFFF" stroke="#A1B7B0" stroke-width="1.6"/>
+<g class="glyph" transform="translate(1218,374)"><path d="M-9 16h26M-3 10h15M-3-11l5-5 9 8-5 6zM7-2c9 4 10 13 3 17M-9 6h14"/></g>
+<text x="1218" y="425" class="head" text-anchor="middle">视觉工具执行</text>
+<text x="1218" y="464" class="body" text-anchor="middle">检测、读图、分割与测量</text>
+</g>
+<g id="stage-facts">
+<rect x="1455" y="341" width="270" height="158" rx="14" fill="#FCF3DF" stroke="#B69C68" stroke-width="1.6"/>
+<g class="glyph" transform="translate(1590,374)"><rect x="-12" y="-14" width="26" height="30" rx="3"/><path d="m-8-5 3 3 5-6m3 5h7M-7 6h3m4 0h10"/></g>
+<text x="1590" y="425" class="head" text-anchor="middle">登记回执与判据计分</text>
+<text x="1590" y="464" class="body" text-anchor="middle">核验依据，更新缺口</text>
+</g>
+<g id="stage-finish">
+<rect x="1847" y="341" width="214" height="158" rx="14" fill="#FFFFFF" stroke="#A1B7B0" stroke-width="1.6"/>
+<g class="glyph" transform="translate(1954,374)"><path d="M-12-15H5l8 8v23h-25zM4-14v8h8M-6 8h12M-6 3h9M-6-2h4"/></g>
+<text x="1954" y="425" class="head" text-anchor="middle">融合研判与交付</text>
+<text x="1954" y="464" class="body" text-anchor="middle">给出候选、依据与复核状态</text>
+</g>
+</svg>

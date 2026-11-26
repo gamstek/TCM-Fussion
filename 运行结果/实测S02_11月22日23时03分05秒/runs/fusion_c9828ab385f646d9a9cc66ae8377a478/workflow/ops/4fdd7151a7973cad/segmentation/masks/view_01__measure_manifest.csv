@@ -1,0 +1,2 @@
+﻿instance_id,inst_mask,crop_id,source_image_path,feature_id,object_label,herb,tight_bbox,px_per_um,igm_status,igm_area_ratio,granularity,feature_window_schema,igm_associated_clipped_px
+1,view_01__cluster_crystal__inst01.png,cluster_crystal_view_01_01,E:\TCM_Fusion\运行结果\实测S02_11月22日23时03分05秒\view_01.jpg,cluster_crystal,草酸钙簇晶,,"[64, 64, 431, 420]",11.65,ok,0.321119,instance,feature-window/v1,0

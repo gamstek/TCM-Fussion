@@ -47,6 +47,7 @@
       "measure_instances",
       "detect_region",
       "classify_target",
+      "inspect_crop",
       "locate_feature",
       "feature_scan",
       "hybrid_scan",

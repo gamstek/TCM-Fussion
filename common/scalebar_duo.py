@@ -10,6 +10,7 @@ import argparse
 import os
 import csv
 import re
+import unicodedata
 
 import cv2
 import numpy as np
@@ -55,48 +56,96 @@ def _get_ocr():
     return _OCR
 
 
-_DIGIT = re.compile(r"(\d+(?:\.\d+)?)")
+# 只取紧挨单位的完整数值。旧相机的 “20.00” 偶被 OCR 读成 “20:00”。
+_NUMBER = r"(?<![0-9A-Za-z.,/+−-])(?<![0-9]:)([0-9]+(?:\.[0-9]+|:00)?)"
+_UM_CAPTION = re.compile(_NUMBER + r"\s*[uμ]\s*m[.。]?$", re.IGNORECASE)
+_NUMBER_END = re.compile(_NUMBER + r"$")
+_UNIT_FRAGMENT = re.compile(r"[uμw][mn]", re.IGNORECASE)
+_AMBIGUOUS_CAPTION = re.compile(_NUMBER + r"\s*(?:w[mn]|[uμ]n)$", re.IGNORECASE)
+
+
+def _caption_value(pattern, text):
+    match = pattern.search(text)
+    if match:
+        value = float(match[1].replace(":", "."))
+        if 1.0 <= value <= 1000.0:
+            return value
+    return None
+
+
+def _read_um_labels(img):
+    """读带单位的标注。字形不清或数值与单位分框时，对原始像素做一次整行重读。"""
+    ocr = _get_ocr()
+    rows, _ = ocr(img)
+    labels, numbers, units, reread = [], [], [], []
+    for box, raw, conf in rows or ():
+        text = unicodedata.normalize("NFKC", raw).strip()
+        xs, ys = zip(*box)
+        bbox = [int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))]
+        value = _caption_value(_UM_CAPTION, text)
+        if value is not None:
+            labels.append(dict(um=value, bbox=bbox, text=raw, conf=float(conf)))
+        elif _UNIT_FRAGMENT.fullmatch(text):
+            units.append((bbox, conf))
+        else:
+            number = _caption_value(_NUMBER_END, text)
+            if number is not None:
+                numbers.append((bbox, number, conf))
+            else:
+                number = _caption_value(_AMBIGUOUS_CAPTION, text)
+                if number is not None:
+                    reread.append((bbox, number, conf))
+
+    for (nx1, ny1, nx2, ny2), number, num_conf in numbers:
+        for (ux1, uy1, ux2, uy2), unit_conf in units:
+            height = min(ny2 - ny1, uy2 - uy1)
+            overlap = min(ny2, uy2) - max(ny1, uy1)
+            gap = ux1 - nx2
+            if (height <= 0 or ux2 <= nx2 or overlap < height / 2
+                    or not -height / 4 <= gap <= height):
+                continue
+            reread.append(([nx1, min(ny1, uy1), ux2, max(ny2, uy2)], number,
+                           min(num_conf, unit_conf)))
+
+    for (x1, y1, x2, y2), number, first_conf in reread:
+        x1, y1 = max(0, x1), max(0, y1)
+        x2, y2 = min(img.shape[1] - 1, x2), min(img.shape[0] - 1, y2)
+        if x2 <= x1 or y2 <= y1:
+            continue
+        line, _ = ocr(img[y1:y2 + 1, x1:x2 + 1], use_det=False, use_cls=False)
+        if not line:
+            continue
+        raw, conf = line[0]
+        value = _caption_value(_UM_CAPTION, unicodedata.normalize("NFKC", raw).strip())
+        if value == number and conf >= ocr.text_score:
+            labels.append(dict(um=value, bbox=[x1, y1, x2, y2], text=raw,
+                               conf=float(min(conf, first_conf))))
+    return labels
+
+
+def _nearby_um(labels, bar_bbox, scale=1.0):
+    """在原图比例尺的近邻窗中，选置信度最高的完整微米标注。"""
+    x1, y1, x2, y2 = bar_bbox
+    cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+    half_x = max(x2 - x1 + 1, 600) * 0.9
+    half_y = max((y2 - y1 + 1) * 5, 150)
+    nearby = []
+    for label in labels:
+        lx1, ly1, lx2, ly2 = label["bbox"]
+        if (abs((lx1 + lx2) / (2 * scale) - cx) <= half_x
+                and abs((ly1 + ly2) / (2 * scale) - cy) <= half_y):
+            nearby.append(label)
+    best = max(nearby, key=lambda label: label["conf"], default=None)
+    return best["um"] if best else None
 
 
 def ocr_read_um(img_bgr, bar_bbox, max_side=_OCR_MAX_SIDE):
-    """全图下采样做一次 OCR，取『靠近比例尺 bbox』的文字框，解析其中 μm 数值。
-
-    返回临近比例尺的数字（能跟'μm'关联优先）；找不到返回 None。
-    bar_bbox = [x1,y1,x2,y2] 原图坐标。
-    """
+    """在原图比例尺 bbox 附近读取有明确微米单位的标注，读不到返回 None。"""
     h, w = img_bgr.shape[:2]
     scale = min(1.0, max_side / max(h, w))
     small = img_bgr if scale >= 1.0 else \
         cv2.resize(img_bgr, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
-    res, _ = _get_ocr()(small)
-    if not res:
-        return None
-    # 以比例尺 bbox 为中心放大做近邻窗
-    cx = (bar_bbox[0] + bar_bbox[2]) / 2.0
-    cy = (bar_bbox[1] + bar_bbox[3]) / 2.0
-    bw = bar_bbox[2] - bar_bbox[0] + 1
-    half_x = max(bw, 600) * 0.9
-    half_y = max((bar_bbox[3] - bar_bbox[1] + 1) * 5, 150)
-    best = None
-    best_text = None
-    for box, text, conf in res:
-        xs = [p[0] for p in box]; ys = [p[1] for p in box]
-        tx = np.mean(xs) / scale; ty = np.mean(ys) / scale
-        if abs(tx - cx) > half_x or abs(ty - cy) > half_y:
-            continue
-        if abs(ty - cy) > half_y:   # 位置过滤：通常文字就在尺旁
-            continue
-        m = _DIGIT.search(text)
-        if not m:
-            continue
-        val = float(m.group(1))
-        if not (1.0 <= val <= 1000):   # μm 数值合理窗
-            continue
-        # 倾向与 'μm'/'um' 直接关联的文本
-        boosted = 0.0 if re.search(r"[μµm]m?", text, re.I) else 0.5
-        if best is None or (conf - boosted) > (best_conf - best_boost):
-            best, best_text, best_conf, best_boost = val, text, conf, boosted
-    return best
+    return _nearby_um(_read_um_labels(small), bar_bbox, scale)
 
 
 # ---------------- A 引擎：形态学量长 + 本地OCR读μm ----------------
@@ -281,35 +330,6 @@ def _scan_bar_lines(gray, y0, y1, x0, x1):
     return None
 
 
-def _find_um_text(img_bgr):
-    """全分辨率 OCR 找烧录的 μm 文字 → {um, bbox, text, conf} / None。
-
-    文字优先（text-first）：97 张实测样本里 95 张带这段文字，锚点几乎永远可用，
-    比"先瞎找线段候选、再回头拿候选框去配文字"稳得多 —— 旧版正是后者翻的车
-    （候选被图上方红色杂散物抢走，真正的文字落在距离窗之外 → bar_um=None）。
-    兼容两种烧录风格：2048 图族"长度：20.00um"、3840 图族"20μm"。
-    """
-    res, _ = _get_ocr()(img_bgr)
-    if not res:
-        return None
-    best = None
-    for box, text, conf in res:
-        if not re.search(r"(?:[μµ]|u)m", text, re.I):   # 必须带 μm/um 单位，否则只是普通数字
-            continue
-        m = _DIGIT.search(text)
-        if not m:
-            continue
-        val = float(m.group(1))
-        if not (1.0 <= val <= 1000):                    # μm 数值合理窗
-            continue
-        xs = [p[0] for p in box]
-        ys = [p[1] for p in box]
-        bb = [int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))]
-        if best is None or conf > best["conf"]:
-            best = {"um": val, "bbox": bb, "text": text, "conf": float(conf)}
-    return best
-
-
 # 文字窄带的横向放宽（倍字宽）。实测（2026-09-20）：绝大多数图线段与文字左对齐、右端还略短于
 # 文字（右溢出 −0.20~0.03 倍字宽），但 um=50 图族的尺长 579px、比文字宽得多，会向文字右侧多
 # 伸出 1.06 倍字宽（蝉蜕 1.jpg：文字 x[1321,1597] 宽 276、尺 x[1311,1889]）——原 0.4 倍系数
@@ -338,7 +358,7 @@ def engine_a(img_bgr, read_um=True):
     返回 {bar_px, scale_type, bbox, bar_um, picked_by}。
 
     选序（2026-09-20 二次实测驱动）：
-      ① **文字锚定**（`_find_um_text` 拿 μm+锚点，`_scan_bar_lines` 扫文字邻域窄带）→ 采用：
+      ① **文字锚定**（`_read_um_labels` 拿 μm+锚点，`_scan_bar_lines` 扫文字邻域窄带）→ 采用：
          97 张样本 95 张有烧录文字，锚点最稳；且同一趟 OCR 就给出 μm，不再依赖
          "候选框附近找文字"那套脆弱逻辑；
       ② 否则 **合格红尺**（红全图候选且满足 `RED_SOLID` + `RED_MIN_RATIO`）→ 采用红尺：
@@ -365,11 +385,15 @@ def engine_a(img_bgr, read_um=True):
         out = {"bar_px": bar_px, "scale_type": _bbox_color(img_bgr, bbox),
                "bbox": bbox, "bar_um": um, "picked_by": picked}
         if read_um and out["bar_um"] is None:
-            out["bar_um"] = ocr_read_um(img_bgr, bbox)
+            if max(h, w) <= _OCR_MAX_SIDE:
+                out["bar_um"] = _nearby_um(labels, bbox)
+            else:
+                out["bar_um"] = ocr_read_um(img_bgr, bbox)
         return out
 
     # ① 文字锚定：OCR 先给 μm 与锚点，再在锚点邻域用严格阈值 + 端帽定线长
-    tb = _find_um_text(img_bgr)
+    labels = _read_um_labels(img_bgr)
+    tb = max(labels, key=lambda label: label["conf"], default=None)
     if tb:
         for (zy0, zy1, zx0, zx1) in _bar_zones(tb):
             hit = _scan_bar_lines(gray, zy0, zy1, zx0, zx1)

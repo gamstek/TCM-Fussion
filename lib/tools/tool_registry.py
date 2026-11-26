@@ -112,6 +112,8 @@ class ToolRegistry:
         return mandatory or result
 
     def validate(self,action,runtime,state=None):
+        from TCM_Fusion.lib.vision.visual_observation import validate_brief
+        validate_brief(action, getattr(runtime, 'kb', None))
         spec=self.get(action.get('tool'));validate_arguments(spec.input_schema,action.get('args'))
         skills={s['id'] for s in runtime.skills.registry if spec.name in s['tools']}
         if action.get('skill') not in skills or action['skill'] not in spec.skill_ids:

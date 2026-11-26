@@ -1,6 +1,8 @@
 # 植物显微图分类（ResNet50 全量微调）
 
-> 本目录随独立版提供 `predictv3_resnet50.py` 和五折权重。下文保留原工程训练、OOF 和评估说明，相关脚本在 `D:\TCM-Microscopic-Image-Recognition-main\MICROSCOPE-main` 使用。正式入口及环境见 [独立部署](../独立部署.md)。
+新任务由 `predict_herb_resnet18.py` 读取一个完整视野和三个配置中的权重子目录，严格核对 448 px letterbox、类别顺序和归一化参数后输出完整的逐模型 softmax。主进程用完整概率计算平均榜。单图调查候选取平均榜 Top 8，多图调查候选取各视野各模型 Top 5 的并集。历史五折任务使用 `predictv3_resnet50.py`。正式入口及环境见 [独立部署](../独立部署.md)。
+
+下文保留原五折工程的训练、OOF 和评估说明。相关脚本在 `D:\TCM-Microscopic-Image-Recognition-main\MICROSCOPE-main` 使用。
 
 基于 **ResNet50（ImageNet 预训练）全量微调** 的植物显微图像多分类项目，
 包含 **K 折交叉验证训练** 与 **K 折模型集成（soft-voting）单图推理** 两个脚本。

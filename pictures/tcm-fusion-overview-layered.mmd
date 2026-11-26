@@ -1,0 +1,26 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","rankSpacing":30,"wrappingWidth":270,"htmlLabels":true},"themeVariables":{"fontFamily":"Microsoft YaHei, sans-serif","fontSize":"16px","lineColor":"#45676A","edgeLabelBackground":"#FFFFFF"}}}%%
+flowchart LR
+    accTitle: TCM Fusion 中药材显微鉴别流程与实现组件
+    accDescr: 六个节点从左到右。每个节点从上至下依次列出职责、两组实现组件、产出与文件。中间三列构成可重复的 ReAct 调查。
+    %% 使用节点内的换行保持每个技术组件和产物在所属节点的正下方。
+    I["<b>输入校验</b><br/>绑定同一样品的视野<br/><br/><b>清单校验</b><br/>逐图核对路径与 SHA256，<br/>检查路径和图像内容是否重复。<br/><br/><b>视野绑定与预检</b><br/>为原图副本分配中性视野编号，<br/>检查运行环境与模型是否就绪。<br/><br/><b>数据与产物</b><br/>原图与视野编号的对应关系<br/>input_proof.json<br/>doctor.json"]
+    A["<b>A · 药材候选</b><br/>从整图提名药材<br/><br/><b>五折 ResNet50</b><br/>每张整图分别推理，<br/>保留各折完整的药材概率。<br/><br/><b>候选映射</b><br/>跨折、跨视野合并 Top-K，<br/>映射药材或药材组 ID。<br/><br/><b>数据与产物</b><br/>候选并集供调查，逐折概率供融合<br/>a_prediction.json"]
+    subgraph R["ReAct 调查 · 按真实回执决定继续或收尾"]
+        direction LR
+    P["<b>Agent 调查规划</b><br/>决定查哪里、看什么<br/><br/><b>智谱 GLM 文本规划</b><br/>结合药材判据、既有回执、<br/>证据缺口与剩余额度选动作。<br/><br/><b>动作与视觉委托</b><br/>可自拟观察部位与形态细节。<br/>实例目标按依赖编排，独立<br/>视野任务可按需并发。<br/><br/><b>数据与产物</b><br/>当轮可选动作、实际选择与委托<br/>agent_trace.json"]
+    T["<b>MCP 工具执行</b><br/>把委托变成可核验的回执<br/><br/><b>MCP 服务与主机校验</b><br/>检查工具资格、工件依赖与预算。<br/><br/><b>按需调用视觉工具</b><br/>YOLO 检测，ResNet18 核验身份。<br/>智谱 GLM 观察、定位或复核。<br/>身份合格后可用火山方舟分割，<br/>合格掩码与标定用于本地测量。<br/><br/><b>数据与产物</b><br/>观察结果、裁图、掩码或实测量<br/>agent_tool_ledger.json"]
+    B["<b>回执与 B 计分</b><br/>核对实际查到的证据<br/><br/><b>回执登记与证据版本</b><br/>按视野、实例追溯工具结果，<br/>区分未查、失败与本视野未见。<br/><br/><b>药材知识库与 B 规则</b><br/>按用途核验形态和尺寸资格，<br/>逐候选比对必需与佐证判据，<br/>形成正式 B 分 rule_score。<br/><br/><b>数据与产物</b><br/>支持、反证与缺口供下一轮规划<br/>workflow/evidence/"]
+        P -->|动作与委托| T
+        T -->|回执与工件| B
+    end
+    F["<b>融合研判与交付</b><br/>给出判断及复核依据<br/><br/><b>证据冻结与候选融合</b><br/>按候选 ID 对齐 A 先验与 B 分，<br/>固定终审可引用的证据版本。<br/><br/><b>只读终审</b><br/>核对证据引用与候选审查缺口，<br/>确定交付候选、结论强度<br/>及是否需要人工复核。<br/><br/><b>数据与产物</b><br/>结构化结果与可读报告<br/>output.json<br/>report.md"]
+    I -->|整图| A
+    A -->|候选集| R
+    R -->|调查结束| F
+    style R fill:#F2F7F2,stroke:#95B6AB,color:#24574E
+    classDef io fill:#F0F4F2,stroke:#73908B,color:#173D42;
+    classDef investigate fill:#E6F2EB,stroke:#4E8A7C,color:#173D42;
+    classDef evidence fill:#FCF2D8,stroke:#B39659,color:#513D22;
+    class I,A,F io;
+    class P,T investigate;
+    class B evidence;

@@ -27,6 +27,10 @@ from unittest.mock import patch
 
 import paths
 from rule_engine import KnowledgeBase
+from TCM_Fusion.lib.workflow.adapters import combine_a_views
+from TCM_Fusion.lib.decision.ab_fusion import a_probabilities
+from TCM_Fusion.lib.decision.comparison_problems import prior_summary
+from TCM_Fusion.lib.offline.langsmith_trace import _plan_a_summary
 from TCM_Fusion.lib.workflow.adapters import (execute_b, parse_a_stdout, predict_a, read_b_verdict,
                                       run_process)
 from TCM_Fusion.lib.decision.collaboration import fuse, knowledge_base, propose_actions, select_shadow
@@ -180,6 +184,102 @@ class IntegrationTests(unittest.TestCase):
         with self.assertRaises(IntegrationError) as ctx:
             predict_a(cfg, self.root/"cache")
         self.assertEqual(ctx.exception.code, "A_CHECKPOINT_MISSING")
+
+    def test_three_model_mean_nominates_one_top_eight_for_the_sample(self):
+        cfg = self._a_config()
+        cfg['model_runs'] = ['seed1', 'seed2', 'seed3']
+        for name in cfg['model_runs']:
+            folder = Path(cfg['checkpoint_dir']) / name
+            folder.mkdir()
+            (folder / 'best.pt').write_bytes(name.encode())
+            (folder / 'model_meta.json').write_text('{}', encoding='utf-8')
+        labels = ['白芍', '秦皮', '甘草', '猪苓', '龙胆', '大青叶', '郁金', '未映射标签', '知母', '柴胡']
+        first = [[0.35, 0.25, 0.08, 0.065, 0.06, 0.055, 0.05, 0.04, 0.035, 0.015],
+                 [0.10, 0.70, 0.03, 0.03, 0.03, 0.025, 0.025, 0.025, 0.02, 0.015],
+                 [0.36, 0.24, 0.08, 0.065, 0.06, 0.055, 0.05, 0.04, 0.035, 0.015]]
+        second = [[0.66, 0.05, 0.071, 0.06, 0.05, 0.04, 0.03, 0.028, 0.007, 0.004]] * 3
+
+        def output(vecs):
+            return json.dumps({'classes': labels, 'model_predictions': [
+                {'model_id': name, 'probabilities': vector} for name, vector in zip(cfg['model_runs'], vecs)]})
+
+        other = self.root / 'other.jpg'
+        other.write_bytes(b'other input')
+        with patch('TCM_Fusion.lib.workflow.adapters.run_process',
+                   side_effect=[output(first), output(second)]) as run:
+            one = predict_a(cfg, self.root / 'cache')
+            two = predict_a({**cfg, 'image': str(other)}, self.root / 'cache')
+            self.assertTrue(predict_a(cfg, self.root / 'cache')['cache_hit'])
+            self.assertEqual(run.call_count, 2)
+        self.assertEqual(one['ranking'][0]['label'], '秦皮')
+        self.assertEqual([model['ranking'][0]['label'] for model in one['model_predictions']],
+                         ['白芍', '秦皮', '白芍'])
+        self.assertNotIn('fold_rankings', one)
+        prediction = combine_a_views([one, two])
+        kb = KnowledgeBase(Path(paths.JUDGE_DIR) / 'data' / 'herb_criteria.json')
+        interest = candidates(prediction, kb)
+        self.assertEqual([row['label'] for row in interest['ensemble_top_k']], labels[:8])
+        self.assertEqual(interest['unmapped'], ['未映射标签'])
+        self.assertNotIn('知母', interest['ids'])
+        self.assertEqual(prior_summary(interest)['a_leads'], ['白芍'])
+        probs, _ = a_probabilities(prediction, kb)
+        self.assertAlmostEqual(probs['白芍'], ((0.35 + 0.10 + 0.36) / 3 + 0.66) / 2)
+        self.assertGreater(probs['知母'], 0)
+        two['signature']['transforms'] = 'changed'
+        with self.assertRaisesRegex(IntegrationError, '不一致'):
+            combine_a_views([one, two])
+
+        # Reject incomplete worker output without writing an A result.
+        with patch('TCM_Fusion.lib.workflow.adapters.run_process', return_value=output(first[:2])):
+            with self.assertRaises(IntegrationError) as error:
+                predict_a(cfg, self.root / 'bad')
+        self.assertEqual(error.exception.code, 'A_OUTPUT_FORMAT')
+        self.assertFalse((self.root / 'bad').exists())
+
+    def test_multiview_takes_a_union_of_top_five_from_each_seed(self):
+        regular = ['白芍', '秦皮', '甘草', '猪苓', '龙胆', '大青叶', '郁金', '茯苓',
+                   '知母', '别名甲', '别名乙', '未映射标签', '柴胡']
+        distinct = ['白芍', '知母', '别名甲', '别名乙', '未映射标签', *regular[1:8], '柴胡']
+
+        def ranking(labels, probabilities):
+            return [{'rank': rank, 'label': label, 'probability': probability}
+                    for rank, (label, probability) in enumerate(zip(labels, probabilities), 1)]
+
+        base = ranking(regular, [.32, .20, .14, .10, .08, .06, .04, .03, .01, .007, .006, .004, .003])
+        outlier = ranking(distinct, [.82, .04, .035, .03, .025, .017, .012, .008, .005, .003, .0025, .0015, .001])
+        scores = {row['label']: row['probability'] for row in outlier}
+        second = sorted(((row['label'], (2 * row['probability'] + scores[row['label']]) / 3)
+                         for row in base), key=lambda row: (-row[1], row[0]))
+        views = [
+            {'status': 'ok', 'ensemble_method': 'mean_softmax', 'image': f'view_{index}.jpg',
+             'signature': {'image': f'input_{index}'}, 'ranking': average,
+             'model_predictions': [{'model_id': f'seed_{i}', 'ranking': rows}
+                                   for i, rows in enumerate(model_ranks, 1)]}
+            for index, (average, model_ranks) in enumerate([
+                (base, [base, base, base]), (ranking(*zip(*second)), [base, base, outlier])], 1)]
+        prediction = combine_a_views(views)
+        kb = KnowledgeBase(Path(paths.JUDGE_DIR) / 'data' / 'herb_criteria.json')
+        aliases = {'别名甲': '赤芍', '别名乙': '牡丹皮'}
+        policy = {'top_k': 8, 'multiview_per_model_top_k': 5}
+        result = candidates(prediction, kb, aliases, policy)
+        self.assertEqual(result['source'], 'multiview_model_top_k')
+        self.assertEqual(result['ids'], [*regular[:5], '知母', 'G1'])
+        self.assertEqual(result['unmapped'], ['未映射标签'])
+        self.assertEqual(result['views'][1]['model_top_k'][-1]['model_id'], 'seed_3')
+        self.assertEqual([r['label'] for r in result['views'][1]['model_top_k'][-1]['ranking']], distinct[:5])
+        self.assertEqual(prior_summary(result)['model_observations'], 6)
+        self.assertEqual(prior_summary(result)['a_leads'], ['白芍'])
+        self.assertNotIn('知母', candidates(prediction, kb, aliases, {'top_k': 8})['ids'])
+        for single in (views[0], combine_a_views(views[:1])):
+            self.assertEqual(candidates(single, kb, aliases, policy)['ids'], regular[:8])
+        self.assertAlmostEqual(a_probabilities(prediction, kb)[0]['知母'], (5 * .01 + .04) / 6)
+
+        trace = _plan_a_summary({**prediction, 'candidate_policy': policy}, set(regular))
+        self.assertNotIn('candidate_top8', trace)
+        self.assertEqual(trace['views'][1]['model_top_k'][2]['ranking'][1]['label'], '知母')
+        with self.assertRaises(IntegrationError):
+            invalid_view = {**views[0], 'model_predictions': views[0]['model_predictions'][:2]}
+            candidates({**prediction, 'view_predictions': [invalid_view, views[1]]}, kb, aliases, policy)
 
     def test_conflict_never_mutates_b(self):
         original = copy.deepcopy(self.b)

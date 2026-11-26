@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "E:\\TCM_Fusion\\.venv\\vision\\Scripts\\python.exe",
+    "-X",
+    "utf8",
+    "E:\\TCM_Fusion\\几何测量\\measure.py",
+    "--masks",
+    "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\4fdd7151a7973cad\\auto_measure\\delivery",
+    "--out-prefix",
+    "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\4fdd7151a7973cad\\auto_measure\\measurement\\result",
+    "--split-policy",
+    "all"
+  ],
+  "timeout_seconds": 180.0
+}

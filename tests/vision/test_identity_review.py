@@ -94,7 +94,7 @@ class IdentityReviewTests(unittest.TestCase):
                            set(), margin_limit=.15)
         self.assertEqual([r['id'] for r in plan['references']], ['vessel_changshan_8', 'fiber_muxiang_w20170172'])
 
-    def run_worker(self, crop, plan, reply):
+    def run_worker(self, crop, plan, reply, *, brief=None):
         path = self.root / 'target.png'
         ok, encoded = cv2.imencode('.png', crop)
         self.assertTrue(ok)
@@ -102,13 +102,25 @@ class IdentityReviewTests(unittest.TestCase):
         ctx = self.root / 'worker.json'
         result = self.root / 'out'
         write_json(ctx, {'crop_png': str(path), 'source': str(path), 'crop_id': 'fixture',
-                         'tight_box': None, 'output': str(result), 'identity_review': plan})
+                         'tight_box': None, 'output': str(result), 'identity_review': plan,
+                         **({'visual_brief':brief} if brief else {})})
         with patch('classify_crop.call_vlm', return_value=(json.dumps(reply, ensure_ascii=False), None)) as call:
             self.assertEqual(classify_main(['--context', str(ctx)]), 0)
         call.assert_called_once()
         _cfg, _key, encoded, prompt = call.call_args.args
         image = cv2.imdecode(np.frombuffer(base64.b64decode(encoded), np.uint8), cv2.IMREAD_COLOR)
         return read_json(result / 'classification.json'), image, prompt
+
+    def test_free_question_reaches_target_with_examples_and_preserves_identity_gate(self):
+        brief = '目标下方能看清哪些纹理？'
+        report = {'finding':'只见局部轮廓', 'location':'下方', 'readability':'partial'}
+        reply = {'label':'导管','confidence':'high','target_part':'中央','visible_cue':'invalid',
+                 'visual_observation':report}
+        crop = np.full((146, 180, 3), 75, dtype=np.uint8)
+        doc, _, prompt = self.run_worker(crop, self.plan(), reply, brief=brief)
+        self.assertIn(brief, prompt)
+        self.assertEqual(doc['visual_observation']['finding'], report['finding'])
+        self.assertEqual(doc['visual_identity']['status'], 'pending')
 
     def test_worker_accepts_all_seven_reviewed_pairs_in_both_orders(self):
         groups = [

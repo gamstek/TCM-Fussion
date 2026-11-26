@@ -1,0 +1,79 @@
+{
+  "label": "草酸钙簇晶",
+  "raw_label": "00_cluster_crystal",
+  "feature_id": "cluster_crystal",
+  "second": "",
+  "confidence": "high",
+  "reason": "CNN 高置信初判",
+  "source": "cnn",
+  "focus": null,
+  "sent_hw": null,
+  "granularity": "instance",
+  "confidence_score": 0.906998,
+  "confidence_scale": "cnn_prob",
+  "crop_id": "cluster_crystal_view_01_01",
+  "crop_png": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\crops\\cluster_crystal_view_01_01.png",
+  "glm_confidence": null,
+  "yolo_confidence": null,
+  "yolo_checked": false,
+  "confidence_source": "cnn",
+  "cnn_score": 0.906998,
+  "cnn_entropy": 0.203441,
+  "cnn_topk": [
+    {
+      "class": "00_cluster_crystal",
+      "feature_id": "cluster_crystal",
+      "prob": 0.9069982171058655
+    },
+    {
+      "class": "03_vessel",
+      "feature_id": "vessel",
+      "prob": 0.0170967485755682
+    },
+    {
+      "class": "08_stoma",
+      "feature_id": "stoma",
+      "prob": 0.011051733046770096
+    }
+  ],
+  "cnn_model_signature": {
+    "weights": "E:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\best.pt",
+    "meta": "E:\\TCM_Fusion\\分类器设计权重与CNN权重\\cls_runs\\abl_320_lb_e40_ls01_mix01_s20261031\\model_meta.json",
+    "metadata": {
+      "arch": "resnet18",
+      "imgsz": 320,
+      "input_mode": "letterbox",
+      "classes": [
+        "00_cluster_crystal",
+        "01_single_crystal",
+        "02_needle_crystal",
+        "03_vessel",
+        "04_stone_cell",
+        "05_starch_grain",
+        "06_non_glandular_hair",
+        "07_secretory_tissue",
+        "08_stoma",
+        "09_epidermis_cell",
+        "10_hypha",
+        "11_fiber",
+        "12_pollen_grain",
+        "13_other"
+      ],
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ],
+      "checkpoint": "best.pt"
+    },
+    "weights_sha256": "3ef6f03ea766fdbc22f743144083ee9f6379398e947b9b875aead971c886459c",
+    "meta_sha256": "a05d5d19a10c27071f6ea18827734d645eb9952ed208b685d6029c697ebd9d94",
+    "preprocessor_sha256": "e5c5c2e271a14d6c329b3164a1f4ae4407947317dee2c6c8cbe732fa1ec294f5",
+    "adapter_sha256": "57c317c6cea5522fe6a60e23aeb3b44e69497801958da9bd164f1dd5404dc948"
+  }
+}

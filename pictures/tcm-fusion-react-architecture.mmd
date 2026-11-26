@@ -1,0 +1,57 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","rankSpacing":28,"nodeSpacing":20,"htmlLabels":true},"themeVariables":{"fontFamily":"Microsoft YaHei, sans-serif","fontSize":"15px","lineColor":"#456766","edgeLabelBackground":"#FFFFFF"}}}%%
+flowchart LR
+  accTitle: TCM Fusion 显微鉴别主流程与调查机制
+  accDescr: 主流程保持六个横向节点。其余三个具名子图分别展开局部语义 DAG、跨视野 D4 并发、从回执进入下轮规划的任务内 Reflection。
+  %% 三项机制按相应条件触发。各图内箭头表示该局部机制的依赖或回交流程。
+  subgraph R["Reflection · 任务内反思 ｜ 来自回执，进入下轮规划"]
+    direction LR
+    RF["实际回执与判据变化"] -->|失败或无进展| RC["生成问题级反思卡"]
+    RC --> RN["下轮正常 ReAct 规划<br/>采纳、维持、推迟或拒绝"]
+    RN -->|采纳策略| RA["执行所选行动"] --> RP["以后续回执核对效果<br/>新证据、已解判据或新能力"]
+  end
+  subgraph D["D4 · 跨视野并发 ｜ 主机预约与分支提交"]
+    direction LR
+    D0["选择独立视野与同类工具<br/>当前模板最多四路"] --> DS["预约分支资源"]
+    DS --> DA["视野 A · 初检"]
+    DS --> DB["视野 B · 初检"]
+    DA --> DP["逐支验收与提交"]
+    DB --> DP
+    DP -->|有效进展且有分支在运行| DH["可提前回交 ReAct"]
+    DP -->|本组收齐| DJ["汇合结果"]
+  end
+  subgraph C["C · 局部语义 DAG ｜ 规划授权至 MCP 执行"]
+    direction LR
+    CQ["ReAct 授权单视野定量问题"] --> CB["解析唯一实例"]
+    CB -->|已绑定| C1
+    CB -->|实例不确定| CX
+    C0["ReAct 授权实例目标"] --> C1["核验身份"]
+    C1 -->|测量目标| C2["取得掩码"] --> C3["核验用途与标定"] --> C4["取得实测量"] --> C5["更新判据"]
+    C1 -->|仅核验身份| CX["回交 ReAct"]
+    C5 --> CX
+    CG["逐节点读取工件与资格"] -.->|资格不足或依赖失效| CX
+  end
+  subgraph MAIN["中药材显微鉴别 · 从输入到交付"]
+    direction LR
+      I["<b>输入校验</b><br/>样品与视野绑定<br/>按清单核对路径与 SHA256，<br/>去重后赋予中性视野编号。<br/>预检运行环境与模型权重。<br/>input_proof.json"]
+      A["<b>A · 药材候选</b><br/>五折 ResNet50<br/>每张整图做五折预测。<br/>各折 Top-K 合并并映射药材 ID，<br/>完整逐折概率留给最终融合。<br/>a_prediction.json"]
+    subgraph LOOP["ReAct 调查 · 每轮可继续取证或收尾"]
+      direction LR
+      P["<b>Agent 调查规划</b><br/>ReAct 与智谱 GLM<br/>读取候选判据、已有回执与额度。<br/>从合法菜单选择动作、目标或复核。<br/>自拟或沿用观察部位与形态提示。<br/>agent_trace.json"]
+      T["<b>MCP 工具执行</b><br/>主机校验与视觉工具<br/>校验预算、资格与当前工件。<br/>YOLO 检测，CNN 分类，GLM 读图。<br/>方舟 IGM 按需分割，本地标定测量。<br/>agent_tool_ledger.json"]
+      B["<b>回执与 B 计分</b><br/>证据资格与候选审查<br/>用版本化证据关联视野、实例与回执。<br/>区分未查、失败、本视野未见。<br/>对照必需与佐证判据计算 rule_score。<br/>workflow/evidence/"]
+      P -->|动作与委托| T
+      T -->|回执与工件| B
+    end
+      F["<b>融合研判与交付</b><br/>冻结证据与只读终审<br/>按候选 ID 融合 A 先验与 B 分。<br/>智谱 GLM 只读终审，主机核对引用。<br/>必要时按规则生成解释与复核原因。<br/>output.json · report.md"]
+    I -->|整图| A
+    A -->|候选集| LOOP
+    LOOP -->|调查结束| F
+  end
+  %% 白芍校对：R2 五个测长 DAG 节点完成。R5 采纳 switch_question，额外规划调用 0。R6、R7 为同图观察组，跨视野 D4 未触发。
+  style MAIN fill:#F8FAF7,stroke:#B1C1B9
+  style LOOP fill:#E8F2EB,stroke:#76A496
+  style C fill:#EDF6F2,stroke:#77A79C
+  style D fill:#EFF4FA,stroke:#95AECB
+  style R fill:#FAF4E8,stroke:#BD9C60
+  classDef main fill:#FFFFFF,stroke:#65837F,color:#163E3D;
+  class I,A,P,T,B,F main;

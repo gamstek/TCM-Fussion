@@ -1,0 +1,13 @@
+{
+  "schema": "multi-view-interface/v1",
+  "dry_run": false,
+  "kind": "实测",
+  "subject": "龙胆",
+  "purpose": "单图链路",
+  "view_count": 1,
+  "started_at": "2026-11-24T09:16:01.801888+08:00",
+  "base": "E:\\TCM_Fusion\\运行结果\\实测龙胆_11月24日09时16分01秒",
+  "stage": "pipeline",
+  "status": "failed",
+  "error_code": "WINDOWS_ASYNCIO_LOOPBACK_TIMEOUT"
+}

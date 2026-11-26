@@ -206,9 +206,13 @@ def _supporting_candidates(ranking, feature_id):
 
 def project_output(sample_id, verdict, result, a, *, artifacts=None):
     ranking = list(verdict.get("ranking") or [])
-    a_label, a_count, a_total = _a_majority(a)
-    tie_break = {"applied": False, "a_majority": a_label,
-                 "a_fold_top1": a_count, "total_folds": a_total}
+    if a.get("ensemble_method") == "mean_softmax":
+        a_label = a["ranking"][0]["label"]
+        tie_break = {"applied": False, "a_ensemble_top1": a_label}
+    else:
+        a_label, a_count, a_total = _a_majority(a)
+        tie_break = {"applied": False, "a_majority": a_label,
+                     "a_fold_top1": a_count, "total_folds": a_total}
     if ranking:
         top_score = ranking[0].get("score", 0)
         ties = [r for r in ranking if abs((r.get("score") or 0) - (top_score or 0)) <= TIE_EPS]

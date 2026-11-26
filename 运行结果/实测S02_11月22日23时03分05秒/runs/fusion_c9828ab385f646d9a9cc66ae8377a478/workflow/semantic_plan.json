@@ -1,0 +1,106 @@
+{
+  "schema": "serial-semantic-plan/d3",
+  "plan_id": "plan:d5c65e0a2cd270244accb31f",
+  "goal": {
+    "semantic_task": "measure_length",
+    "instance_ref": "inst:36da71c4f2a09903e478ba64eb6771b22e775aed8a42afc723974ca7c06aed11",
+    "problem_id": "instance-question:de68bc352357e2de0bde"
+  },
+  "dimension": "length",
+  "bound_input": "f020e1a431828329d50cf463816c25b1aa43a4f7817b3f65b72f16b6c59b77cd",
+  "bound_crop_id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01",
+  "nodes": [
+    {
+      "node_id": "verify_identity",
+      "semantic_task": "verify_identity",
+      "instance_ref": "inst:36da71c4f2a09903e478ba64eb6771b22e775aed8a42afc723974ca7c06aed11",
+      "depends_on": [],
+      "status": "succeeded",
+      "required_facts": [
+        "instance_exists"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "obtain_mask",
+      "semantic_task": "obtain_mask",
+      "instance_ref": "inst:36da71c4f2a09903e478ba64eb6771b22e775aed8a42afc723974ca7c06aed11",
+      "depends_on": [
+        "verify_identity"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "calibration_trusted"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "check_use",
+      "semantic_task": "check_use",
+      "instance_ref": "inst:36da71c4f2a09903e478ba64eb6771b22e775aed8a42afc723974ca7c06aed11",
+      "depends_on": [
+        "obtain_mask"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "mask_valid",
+        "calibration_trusted",
+        "dimension_eligible"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "measure",
+      "semantic_task": "measure",
+      "instance_ref": "inst:36da71c4f2a09903e478ba64eb6771b22e775aed8a42afc723974ca7c06aed11",
+      "depends_on": [
+        "check_use"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "identity_eligible",
+        "mask_valid",
+        "calibration_trusted",
+        "dimension_eligible"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    },
+    {
+      "node_id": "update_criteria",
+      "semantic_task": "update_criteria",
+      "instance_ref": "inst:36da71c4f2a09903e478ba64eb6771b22e775aed8a42afc723974ca7c06aed11",
+      "depends_on": [
+        "measure"
+      ],
+      "status": "succeeded",
+      "required_facts": [
+        "measurement_available"
+      ],
+      "invalid_if": [
+        "bound_input_changed",
+        "qualification_revoked",
+        "task_closed"
+      ]
+    }
+  ],
+  "status": "completed",
+  "return_reason": "local_goal_satisfied"
+}

@@ -13,11 +13,13 @@
 import shutil
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import cv2
 import numpy as np
 
 from TCM_Fusion.lib.runtime.storage import read_json, write_json
+from TCM_Fusion.lib.decision.candidate_audit import feature_receipts
 from TCM_Fusion.lib.vision.feature_audit import build_feature_audit, split_mask
 from TCM_Fusion.tests.support.workflow_fixtures import WorkflowFixture
 
@@ -96,6 +98,29 @@ class FeatureAuditTests(WorkflowFixture, unittest.TestCase):
         self.assertEqual({p: p.read_bytes() for p in workflow.root.rglob('*.json')}, before)
         subset = build_feature_audit(snapshot, out_dir=self.root/'subset', feature_ids=['fiber'])
         self.assertEqual([row['crop_id'] for row in subset['candidates']], [scan['id']])
+
+    def test_batch_audit_only_credits_individual_receipts(self):
+        workflow, initial, scan = self._crops()
+        action = next(a for a in workflow.propose() if a['tool'] == 'classify_crops_batch')
+
+        def batch_reply(session, tool, target, work, context):
+            write_json(work/'good'/'classification.json',
+                       {'label': '方晶', 'feature_id': 'single_crystal', 'confidence': 'high'})
+            return {'classifications': [{'crop_id': initial['id'], 'status': 'done', 'classification': str(work/'good')}],
+                    'failures': [{'crop_id': scan['id'], 'status': 'failed', 'error_code': 'CLASSIFY_FAILED'}]}
+
+        with patch.object(workflow.backend, 'execute', side_effect=batch_reply):
+            op = workflow.execute(action)
+        self.assertEqual(op['batch_outcomes'], {initial['id']: 'completed', scan['id']: 'unknown'})
+        for legacy in (False, True):
+            if legacy:
+                entries = read_json(workflow.operations)
+                del entries['entries'][op['operation_key']]['batch_outcomes']
+                write_json(workflow.operations, entries)
+            rows = feature_receipts(workflow.runtime, [], workflow.targets())
+            self.assertEqual([(r['crop_id'],r['outcome']) for r in rows['single_crystal']], [(initial['id'],'completed')])
+            self.assertEqual([(r['crop_id'],r['outcome']) for r in rows['fiber']], [(scan['id'],'unknown')])
+            self.assertNotIn('secretory_tissue', rows)
 
     def test_excludes_stale_classification_and_reports_rejected_or_changed_results(self):
         workflow, initial, scan = self._crops()

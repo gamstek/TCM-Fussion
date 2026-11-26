@@ -20,7 +20,7 @@ import contracts
 from TCM_Fusion.lib.runtime.storage import digest, file_hash
 
 
-INSTANCE_TOOLS = frozenset({'classify_target', 'segment_instance', 'measure_instances'})
+INSTANCE_TOOLS = frozenset({'classify_target', 'inspect_crop', 'segment_instance', 'measure_instances'})
 
 
 def describe(target, snapshot):
@@ -62,8 +62,12 @@ def attempt(tool, target, snapshot, method, parameters=None):
         return None
     inputs = {'pixels': bound['crop_sha256'], 'geometry': bound['geometry'],
               'feature': bound['feature_id'], 'granularity': bound['granularity']}
+    if tool == 'inspect_crop':
+        meta = contracts.CropMeta.from_json(target['path'])
+        frame = meta.raw.get('feature_window') or {}
+        inputs = {'pixels': bound['crop_sha256'], 'local_box': frame.get('identity_box_local') or meta.tight_box_local}
     arts = snapshot['artifacts']
-    if tool != 'classify_target':
+    if tool in {'segment_instance', 'measure_instances'}:
         inputs['scale'] = arts.get('scale:' + target['image_id'], {}).get('sha256')
         inputs['px_per_um'] = bound['px_per_um']
         identity = arts.get('classification:' + bound['crop_id'], {})
@@ -77,6 +81,7 @@ def attempt(tool, target, snapshot, method, parameters=None):
         assessment = arts.get(target.get('assessment_id'), {})
         inputs['assessment'] = assessment.get('sha256')
     return {'instance_id': bound['instance_id'],
+            'feature_id': bound['feature_id'], 'image_id': target.get('image_id'),
             'semantic_key': digest({'instance': bound['instance_id'], 'purpose': tool,
                                     'method': method, 'inputs': inputs,
                                     'parameters': parameters or {}})}

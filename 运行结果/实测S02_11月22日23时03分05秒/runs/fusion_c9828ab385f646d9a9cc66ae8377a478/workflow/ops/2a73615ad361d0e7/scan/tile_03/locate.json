@@ -1,0 +1,19 @@
+{
+  "tool": "locate_feature",
+  "source": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\view_01.jpg",
+  "output": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\2a73615ad361d0e7\\scan\\tile_03\\detection",
+  "roi": [
+    1024,
+    768,
+    2048,
+    1536
+  ],
+  "feature_id": "needle_crystal",
+  "px_per_um": 11.65,
+  "locate_expand": 1.5,
+  "locate_min_box_side": 90,
+  "locate_min_roi_side": 256,
+  "feature_crop_policy": "structure_v1",
+  "feature_hint": "目标正例：针晶可散在，也常多根成束、密集、相邻或连续分布；优先框可分辨的针状结晶及其集合，不因成簇、堆叠或相邻出现而排除。 易混负例（不要当目标）：纤维：连续细胞壁/胞腔；表皮细胞：片状/多边形边界；导管：管腔/环纹/网纹；石细胞：厚壁/胞腔；分泌组织：油室/油管/腔隙内容物；簇晶/方晶/花粉粒仅作软负例",
+  "existing_boxes": []
+}

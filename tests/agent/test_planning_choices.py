@@ -30,6 +30,23 @@ class PlanningChoicesTests(unittest.TestCase):
     setUp=fixtures.WorkflowFixture.setUp
     runtime=fixtures.WorkflowFixture.runtime
 
+    def test_question_group_binds_each_brief_and_discards_conflicting_aliases(self):
+        planner = LLMPlanner.__new__(LLMPlanner)
+        planner.config = {}
+        planner.client = SimpleNamespace(model='fixture',timeout_s=1)
+        actions = [{'action_id':key, 'tool':'presence_check', 'args':{}} for key in ('a','b','c')]
+        context = {'stop_advisory':{}, 'actions':actions, 'parallel_observations':[actions[0]],
+                   'execution_options':{'questions':[{'question_id':'physical-'+a['action_id'], 'action_id':a['action_id']}
+                                                     for a in actions], 'max_questions':2, 'observation_wave_size':1}}
+        response = {'decision':{'kind':'observe_questions', 'question_ids':['Q1','Q2']},
+                    'visual_briefs':{'Q1':'检查边缘', 'O1':'不同委托', 'Q2':'核对中央', 'Q3':'未选问题'}}
+        with patch('TCM_Fusion.lib.runtime.hard_calls.post', return_value={
+                'choices':[{'message':{'content':json.dumps(response)}}]}):
+            reply, _ = planner.choose(context)
+        from TCM_Fusion.lib.vision.visual_observation import selected_briefs
+        actual = [a for a in actions if a['action_id'] in reply['observation_ids']]
+        self.assertEqual(selected_briefs(reply['visual_briefs'], actual), ({'b':'核对中央'},2))
+
     def detected(self, **kw):
         r=self.runtime(agent_policy='adaptive_v2',semantic_execution=True,max_resource_units=200,**kw)
         r.workflow.execute(next(a for a in r.workflow.propose() if a['tool']=='detect_fov_initial'))
@@ -206,9 +223,11 @@ class PlanningChoicesTests(unittest.TestCase):
                 result=super().execute(session,tool,target,work,context)
                 if tool=='detect_fov_initial':
                     from PIL import Image
+                    from TCM_Fusion.lib.runtime.storage import read_json, write_json
                     pixels=Image.new('L',(8,8))
                     pixels.putdata([255 if (i + i//8)%2 else 0 for i in range(64)])
                     pixels.save(Path(result['crops_dir'])/'crop.png')
+                    write_json(result['completion'], {**read_json(result['completion']), 'image_size':[2048,1536]})
                 return result
 
         r=self.runtime(backend=ReadableCrop(),agent_policy='adaptive_v2',
@@ -225,6 +244,12 @@ class PlanningChoicesTests(unittest.TestCase):
         self.assertEqual(hint['presence_states'],[])
         view,ids=model_view(c)
         short=lambda action: next(k for k,v in ids.items() if v==action['action_id'])
+        from TCM_Fusion.lib.vision.feature_profiles import hint_text, profile_for
+        from TCM_Fusion.lib.vision.image_tiling import scan_tiles
+        offered = view['action_state'][short(scan)]
+        self.assertEqual(offered['candidate_regions_px'], scan_tiles(2048,1536,offered['tile_limit']))
+        self.assertEqual(view['scan_feature_hints']['single_crystal'], hint_text(profile_for('single_crystal')))
+        self.assertEqual(view['action_state'][short(crop)]['target_source_px'], [0,0,8,8])
         self.assertIn(short(crop),view['action_state'][short(scan)]['existing_crop_actions'])
         # A legal entry hidden by menu compaction must not show up as an offered choice.
         actions=[a for a in c['actions'] if a['action_id']!=crop['action_id']]
@@ -357,16 +382,20 @@ class PlanningChoicesTests(unittest.TestCase):
                         self.assertEqual(len(qs), 3)
                         first_wave.extend(q['action_id'] for q in qs[:2])
                         return {'decision':{'kind':'observe_questions',
-                                            'question_ids':[q['question_id'] for q in qs]}}, None
+                                            'question_ids':[q['question_id'] for q in qs]},
+                                'visual_briefs':{q['action_id']:'查看当前部位 '+q['feature_id'] for q in qs}}, None
                 class Backend:
                     def call(inner, runtime, action, path):
+                        self.assertEqual(action['visual_brief'], '查看当前部位 '+action['args']['feature_id'])
                         if action['action_id'] in first_wave:
                             pair.wait(timeout=5)
                         first = action['action_id'] == first_wave[0]
                         if first and outcome=='failed':
                             raise TimeoutError()
                         return {'ok':True, 'present':first and outcome=='positive',
-                                'conf':.3 if first and outcome=='uncertain' else .9, 'reason':'offline'}, None
+                                'conf':.3 if first and outcome=='uncertain' else .9, 'reason':'offline',
+                                'visual_observation':{'finding':action['args']['feature_id']+' 局部模糊',
+                                                      'readability':'partial', 'location':'中央'}}, None
                 ledger = root/'obs.json'
                 box = LocalToolbox(r, ledger_path=ledger, backend=Backend())
                 trace = asyncio.run(run_react(r,box,planner=Planner(),planner_mode='scripted',max_steps=8))
@@ -378,6 +407,9 @@ class PlanningChoicesTests(unittest.TestCase):
                 self.assertEqual(set(read_json(ledger)['entries']), set(summary['issued']))
                 self.assertEqual(read_json(r.workflow.budget_path)['used']['observation'], expected)
                 self.assertEqual(sum(o['accepted'] for o in trace['observations']), expected-int(outcome=='failed'))
+                for row in trace['observations']:
+                    if row['accepted']:
+                        self.assertEqual(row['visual_observation']['finding'],row['action']['args']['feature_id']+' 局部模糊')
 
     def test_unknown_duplicate_or_mixed_selector_never_guesses_first(self):
         c={'actions':[],'execution_options':{'questions':[{'question_id':'q','action_id':'a'}],'max_questions':2}}

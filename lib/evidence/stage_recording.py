@@ -33,6 +33,8 @@ def bundle(result, work):
     fields = ('crops_dir', 'completion', 'regions', 'scale', 'segmentation', 'classification',
               'measurements', 'delivery')
     paths = {key: record_path(result[key]) for key in fields if key in result}
+    if 'visual_observation_file' in result:
+        paths['visual_observation_file'] = record_path(result['visual_observation_file'], required_file=True)
     value = {'root': str(root), 'paths': paths, 'files': files, 'quality': result.get('quality')}
     if 'classifications' in result:
         rows = []

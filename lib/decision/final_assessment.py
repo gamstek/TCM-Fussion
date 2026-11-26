@@ -84,7 +84,13 @@ def build_packet(runtime, verdict, result):
     considered=set(eligibility['considered'])
     catalog={r['id']:copy.deepcopy(r) for r in eligibility['candidates']}
     views=interest.get('views') or [{'image_stem':'single','fold_top_k':interest.get('fold_top_k',[])}]
+    if interest.get('source') == 'ensemble_top_k':
+        add('a_prior', {'source': 'ensemble_top_k', 'ranking': interest['ensemble_top_k'],
+                        'is_microscopic_evidence': False})
     for view in views:
+        for model in view.get('model_top_k', []):
+            add('a_prior', {'view': view['image_stem'], 'model_id': model['model_id'],
+                            'ranking': model['ranking'], 'is_microscopic_evidence': False})
         for fold in view.get('fold_top_k',[]):
             add('a_prior',{'view':view.get('image_stem'),'fold':fold['fold'],
                            'ranking':fold['ranking'],'is_microscopic_evidence':False})
@@ -334,7 +340,7 @@ def request_model(runtime, packet):
          '先选候选，再按其索引填写。support_refs仅取该候选eligible_support_refs，一条合格即够；'
          '区分判据满足与仅在本视野看到特征。无合格支持可引时选null，支持和反证均留空。'
          'counter_refs仅取同一候选eligible_counter_refs。unresolved_refs列有事实ID的未决项。'
-         'A各折先验、其他候选的判据仅在解释中按归属比较，不填入本候选支持或反证。'
+         'A候选先验、其他候选的判据仅在解释中按归属比较，不填入本候选支持或反证。'
          '局部未见、未查、失败各自注明；同一实例仅计一次，是否确认仍按正式裁决及复核要求。'
          'feature_presence仅说明该视野的结构存在性。具体形态和尺寸以已采信判据为准。'
          'explanation只分析证据、冲突和缺口，不复述任何分数、概率或数值；数值由程序按候选ID输出。'

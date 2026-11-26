@@ -226,8 +226,12 @@ def inspect_run(run):
     head = read_json(run / 'workflow/evidence/head.json')['version']
     require(head == trace['evidence_version'] == packet['evidence_version'], '终态证据头不一致')
     output = read_json(run / 'output.json')
+    if a.get('ensemble_method') == 'mean_softmax':
+        result['a_ensemble_sha256'] = digest({'ranking': a['ranking'],
+            'views': [v['model_predictions'] for v in a['view_predictions']]})
+    else:
+        result['a_folds_sha256'] = digest([v['fold_rankings'] for v in a['view_predictions']])
     result.update(cold=fresh, code=(job.get('code_signature') or {}).get('current'),
-                  a_folds_sha256=digest([v['fold_rankings'] for v in a['view_predictions']]),
                   head=head, delivery=output['status'], candidate=(output['top_candidate'] or {}).get('id'),
                   review=output['review_required'], final_method=final.get('method'), stop_reason=trace['stop_reason'],
                   planning_calls=trace['planning_requests'], phase_counts=dict(phases),
@@ -285,7 +289,8 @@ def compare(serial, parallel, historical=None, *, semantic_serial=None, semantic
     codes = [row.get('code') for arm,row in rows.items() if arm!='historical' and
              (row['job']=='completed' or row.get('code'))]
     require(not codes or (all(codes) and len(set(codes))==1), '当前各组代码签名不同')
-    folds = {row['a_folds_sha256'] for arm,row in rows.items() if arm!='historical' and row['job']=='completed'}
-    require(len(folds) <= 1, '当前各组实际五折候选不同')
+    a_outputs = {row.get('a_ensemble_sha256') or row['a_folds_sha256']
+                 for arm, row in rows.items() if arm != 'historical' and row['job'] == 'completed'}
+    require(len(a_outputs) <= 1, '当前各组实际 A 预测不同')
     return {'schema':'schedule-comparison/v1','controlled_config':configs[0],
             'cases':rows}

@@ -41,8 +41,9 @@ class WorkflowRuntime(EvidenceRuntime):
         self._admission_decisions={}
         config_file=Path(paths.DETECTION_CONFIG_DIR)/'vlm_config.json'
         identity=file_hash(config_file) if config_file.exists() else 'unconfigured'
+        default_k = 8 if (a or {}).get('ensemble_method') == 'mean_softmax' else 3
         super().__init__([],images,sample_id=sample_id,a=a,aliases=aliases,simulation=simulation,
-                         config_identity=identity,candidate_policy=workflow_config.get('candidate_policy',{'top_k':3}))
+                         config_identity=identity,candidate_policy=workflow_config.get('candidate_policy',{'top_k':default_k}))
         self.workflow=WorkflowSession(self,root,workflow_config,allow_network=allow_network,backend=backend)
         if source_run:self.workflow.seed(source_run)
         self.artifact_roots=[self.workflow.root]+([Path(source_run)] if source_run else [])
@@ -52,12 +53,15 @@ class WorkflowRuntime(EvidenceRuntime):
         self.tools.register_proposer('workflow_actions',lambda r,s:r.workflow.propose())
         for tool in TOOLS:
             self.tools.register_handler(tool,lambda r,a,s:r.workflow.execute(s['action']))
-            self.tools.register(ToolSpec(tool,'recompute','1',object_schema({'target_id':'string','evidence_version':'string'}),
+            args = object_schema({'target_id':'string','evidence_version':'string'})
+            if tool == 'inspect_crop':
+                args['properties']['observation_basis'] = {'type':'string', 'pattern':'^[a-f0-9]{64}$'}
+            self.tools.register(ToolSpec(tool,'recompute','1',args,
                 {'type':'object','required':['accepted','status','action_id'],
                  'properties':{'accepted':{'type':'boolean'},'status':{'enum':['pending','done','failed']},
-                               'action_id':{'type':'string'}}},('workflow_repair',),'recompute',True,
+                               'action_id':{'type':'string'}}},('workflow_repair',),'recompute',tool != 'inspect_crop',
                 tool,'workflow_target',proposal_id='workflow_actions',
-                default_allow=tool in workflow_config.get('enabled_tools',TOOLS)))
+                default_allow=(tool in workflow_config.get('enabled_tools', () if tool == 'inspect_crop' else TOOLS))))
 
     def score(self, observations):
         # 支持性特征只要被 GLM 审查过（无论 present/absent）就记入 observed，
@@ -635,11 +639,11 @@ class WorkflowRuntime(EvidenceRuntime):
         if cached and cached[0] == key:
             return cached[1]
         view = eligibility(self, scored, observations)
-        result = {'eligibility': view, 'comparison': comparison(self, scored, view, actions),
-                  'instances': instances(snapshot, operations)}
         from TCM_Fusion.lib.decision.candidate_audit import build as audit_candidates
-        result['candidate_audit']=audit_candidates(self,scored,observations,
-                                                  eligibility=view,actions=actions)
+        audit = audit_candidates(self, scored, observations, eligibility=view, actions=actions, operations=operations)
+        result = {'eligibility': view, 'candidate_audit': audit,
+                  'comparison': comparison(self, scored, view, actions, candidate_audit=audit),
+                  'instances': instances(snapshot, operations)}
         from TCM_Fusion.lib.decision.comparison_problems import investigation_focus
         result['investigation_focus']=investigation_focus(self,scored,result['candidate_audit'])
         self._decision_view_cache = (key, result)
@@ -739,7 +743,9 @@ def from_task(config, a, directory):
     if config['b'].get('mode')=='recorded':raise IntegrationError('CONFIG_INVALID','真实workflow禁止录制B冒充部分工件')
     if source and not project_path(source).is_dir():
         raise IntegrationError('B_PARTIAL_MISSING','指定B部分工件目录不存在')
-    options={**agent['workflow'],'candidate_policy':agent.get('candidate_policy',{'top_k':3})}
+    options={**agent['workflow']}
+    if 'candidate_policy' in agent:
+        options['candidate_policy'] = agent['candidate_policy']
     return WorkflowRuntime(images,root=Path(directory)/'workflow',workflow_config=options,
                            sample_id=config.get('sample_id','sample'),a=a,aliases=config.get('aliases'),
                            allow_network=config.get('allow_network',False),source_run=project_path(source) if source else None)

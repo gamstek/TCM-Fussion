@@ -50,10 +50,12 @@ class Stage2Tests(unittest.TestCase):
                 {'class':'00_fiber','feature_id':'fiber','prob':.99},
                 {'class':'01_other','feature_id':'other','prob':.01}]}]}
 
-    def test_template_preserves_herb_folds_and_uses_requested_stage2_root(self):
+    def test_template_separates_herb_ensemble_from_stage2(self):
         cfg=read_json(Path(paths.PROJECT_ROOT)/'config/multi_view.json')
-        self.assertEqual(cfg['a']['checkpoint_dir'],'MICROSCOPE-main/v3_resnet50_full')
-        self.assertEqual(cfg['agent']['candidate_policy']['top_k'],3)
+        self.assertEqual(Path(paths.PROJECT_ROOT)/cfg['a']['checkpoint_dir'],Path(paths.A_CHECKPOINT_DIR))
+        self.assertEqual(tuple(cfg['a']['model_runs']), paths.A_MODEL_RUNS)
+        self.assertEqual(cfg['agent']['candidate_policy']['top_k'],8)
+        self.assertEqual(cfg['agent']['candidate_policy']['multiview_per_model_top_k'],5)
         self.assertTrue(cfg['agent']['workflow']['cnn_weights'].startswith('分类器设计权重与CNN权重/'))
         self.assertNotIn('image_exemplar_audit', cfg['agent']['workflow'])
         self.assertTrue(cfg['agent']['workflow']['identity_review_bank'])

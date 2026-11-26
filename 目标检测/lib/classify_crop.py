@@ -76,7 +76,7 @@ def focus_score(crop_bgr):
 
 def classify_crop(crop_bgr, cfg_vlm, api_key, ctx="", impl="vlm",
                   target_side=CLASSIFY_TARGET_SIDE, focus_gate=False,
-                  weights=None, device="auto", review_input=None):
+                  weights=None, device="auto", review_input=None, visual_brief=None):
     """单张 crop → dict；失败时返回 `{"error": ...}`（不抛，便于批量继续）。
 
     返回键：
@@ -133,6 +133,9 @@ def classify_crop(crop_bgr, cfg_vlm, api_key, ctx="", impl="vlm",
         if img.shape != base_shape:
             raise ValueError("身份复核图幅必须匹配原分类请求")
         audit["visual_input"] = metadata
+    if visual_brief:
+        from TCM_Fusion.lib.vision.visual_observation import prompt_suffix, receipt
+        prompt += prompt_suffix(visual_brief)
     b64, _ = encode_jpeg_b64(img, max_side=None, quality=CLASSIFY_QUALITY)
     text, err = call_vlm(cfg_vlm, api_key, b64, prompt)
     if text is None:
@@ -142,6 +145,8 @@ def classify_crop(crop_bgr, cfg_vlm, api_key, ctx="", impl="vlm",
     except Exception as e:
         return {"error": f"解析: {e}", "focus": round(focus, 1), "granularity": GRANULARITY_DEFAULT, **audit}
     raw = str(parsed.get("label") or "").strip()
+    if visual_brief:
+        audit['visual_observation'] = receipt(visual_brief, parsed)
     known = raw in VALID_LABELS or raw in REFUSE_LABELS
     label = raw if known else None
     reject = {"not_feature": NOT_FEATURE_LABEL, "unreadable": UNREADABLE_LABEL}

@@ -1,0 +1,83 @@
+{
+  "identity": "ca58cd994d9fcdd297d2874c27b43eaff0a235785d6ec5cab8effbb72fee7151",
+  "requests": 1,
+  "entries": {
+    "e30f4a7b6ebe2ad5390a9223d843bc4db1cb32ab1da160051b769e8609408ef9": {
+      "action_id": "e30f4a7b6ebe2ad5390a9223d843bc4db1cb32ab1da160051b769e8609408ef9",
+      "accepted": true,
+      "result": {
+        "present": false,
+        "conf": 0.85,
+        "reason": "视野中主要可见草酸钙簇晶及放射状晶束、不规则薄壁碎片段，未见两端渐尖、壁厚、细长梭形且带纵裂纹的纤维或纤维束结构。",
+        "ok": true
+      },
+      "action": {
+        "tool": "presence_check",
+        "args": {
+          "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+          "feature_id": "fiber",
+          "morph_hint": "仅核验这类显微特征是否可见，不判药材或物理尺寸。纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离"
+        },
+        "skill": "differential_presence",
+        "config_identity": "2ebf76dea50016c057cfddcb25a712291fbd115ce2ef5abffb6bdb8e7e86f9f3",
+        "kb_sha256": "c969c4db9e17899d3ab0f8d53233868f1837295998c632b1ad8edbf48da3948c",
+        "action_id": "e30f4a7b6ebe2ad5390a9223d843bc4db1cb32ab1da160051b769e8609408ef9",
+        "mandatory": false,
+        "priority": [
+          false,
+          false,
+          3,
+          "fiber",
+          "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+          "仅核验这类显微特征是否可见，不判药材或物理尺寸。纤维：细长的梭形细胞，两端渐尖，壁厚，表面可见纵裂纹，常多根成束或散离"
+        ]
+      },
+      "status": "done",
+      "cache_hit": false,
+      "new_requests": 1,
+      "usage": {
+        "prompt_tokens": 2529,
+        "completion_tokens": 529,
+        "total_tokens": 3058
+      },
+      "diagnostics": {
+        "stage": "field_validation",
+        "attempts": 1,
+        "http_status": 200,
+        "send_to_headers_seconds": 14.344,
+        "worker_elapsed_seconds": 14.563,
+        "http_timing": {
+          "send_to_completion_seconds": 14.344,
+          "send_to_headers_seconds": 14.344,
+          "headers_to_completion_seconds": 0.0,
+          "scope": "HTTP call and parse; send-to-headers includes connect/upload/server wait"
+        },
+        "finish_reason": "stop"
+      },
+      "presence_localization": {
+        "policy_version": "presence_localization_shadow_v1",
+        "mode": "shadow",
+        "source_image_sha256": "a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+        "feature_id": "fiber",
+        "localization": "unlocalized",
+        "quality": "not_assessed",
+        "identity": "pending",
+        "verification_basis": [],
+        "findings": [],
+        "usage_eligibility": {
+          "presence": false,
+          "morphology": false,
+          "length": false,
+          "width": false,
+          "area": false
+        },
+        "legacy_presence_unchanged": true,
+        "state": "not_observed_local",
+        "observation_scope": {
+          "kind": "sent_full_fov",
+          "exhaustive": false
+        }
+      }
+    }
+  }
+}

@@ -106,7 +106,7 @@ WORKFLOW_SCHEMA={'type':'object','additionalProperties':False,'properties':{
     'igm_size':{'type':'string','pattern':'^[0-9]{3,4}x[0-9]{3,4}$'},
     'box_quality_retry':{'type':'boolean'},
     'enabled_tools':{'type':'array','uniqueItems':True,'items':{'enum':[
-        'detect_fov_initial','calibrate_fov','segment_instance','classify_target','classify_crops_batch','measure_instances','detect_region',
+        'detect_fov_initial','calibrate_fov','segment_instance','classify_target','inspect_crop','classify_crops_batch','measure_instances','detect_region',
         'locate_feature','feature_scan','hybrid_scan']}},
     **{k:{'type':'integer','minimum':0,'maximum':10000} for k in
        ('max_initializations','max_recompute','max_api_calls','max_planning','max_observations','max_resource_units')},
@@ -309,6 +309,7 @@ async def _run_bound_workflow(runtime, config, a, directory, *, routing, start,
         f"- 候选组审查完成：{assessment['candidate_review_complete']}；未完成候选："
         f"{assessment['candidate_audit']['incomplete_candidate_ids']}；未映射："
         f"{[x['label'] for x in assessment['candidate_audit']['unmapped']]}\n"
+        f"- 各候选必需判据的实际调查情况　{assessment['candidate_audit']['required_investigation_summary']}\n"
           f"- 判定充分性影子结果：{assessment['decision_readiness_shadow']}（不提升生产确认资格）\n"
         '- 上述未解决引用不等于全部候选缺口清零；完整required/supporting状态见candidate_audit。\n'
         '- 全部证据及采信边界：final_evidence.json；结论与依据：final_assessment.json。\n\n'

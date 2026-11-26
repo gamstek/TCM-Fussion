@@ -15,6 +15,12 @@ LangSmith Tracing 接收调用摘要并提供网页调用树。观察命令读�
 
 脚本自动读取本机 `config/langsmith.local.json` 的密钥与目的地，附上原记录中的模型选择简述。加 `-Preview` 可做本地预览。更换密钥时更新该文件中的 `api_key`。
 
+要查看 Agent 给视觉模型的具体问题，可加 `-IncludeVisualObservations`。规划节点的 `planned_visual_questions` 展示本轮选择的委托，工具节点的 `visual_observation` 展示实际回执，下一轮规划输入的 `previous_visual_observations` 展示送回模型的内容。分块补扫逐块记录。`cnn_only` 表示分类由 CNN 完成，该步没有发送 GLM 图像请求。`unreported` 表示缺少合格的附加描述。默认展示数量、状态和可读性；开启选项后投影会过滤含路径、密钥等敏感模式的文字。历史记录只能展示当时保存的字段。
+
+```powershell
+.\Observe-LangSmith.ps1 -Preview -IncludeVisualObservations
+```
+
 ## 准备网页目的地
 
 1. 登录 LangSmith，选定工作区。若左侧是 **Tracing Projects**，新建一个名为 `TCM-Fusion` 的项目或选择已有项目。
@@ -73,7 +79,9 @@ $env:LANGSMITH_AGENT_ENVIRONMENT = 'local'
 | **并行观察** | 逐项显示视野、特征、观察置信度及可见／本视野未见／未能判读。这里的结果范围是单个视野。 |
 | **样品根节点** | 交付结论、正式 B 裁决、B 分和融合排名、审查覆盖、合格实测中位数及参考界限。规划用量与终审用量分别显示，按已有回执汇总。 |
 
-如需阅读模型随选择返回的简述，先用下列第一条命令检查内容，再用第二条命令发送。LangSmith 对同一调用只接受一次结束更新。归档回放直接提交完整的 Input、Output 和原始时间，使用独立的 trace ID。在同一目的地重复上传同一份回放会复用该 ID。[LangSmith 维护者说明](https://github.com/langchain-ai/langsmith-sdk/issues/2111)
+如需阅读模型随选择返回的简述，先用下列第一条命令检查内容，再用第二条命令发送。LangSmith 对同一调用只接受一次结束更新。归档回放直接提交完整的 Input、Output，使用独立的 trace ID。在同一目的地重复上传同一份回放会复用该 ID。[LangSmith 维护者说明](https://github.com/langchain-ai/langsmith-sdk/issues/2111)
+
+LangSmith Cloud 要求上传的调用开始时间在当前时间前后 24 小时内。超出窗口的归档调用树整体平移，保留调用间隔、耗时和父子关系。此时网页时间线显示平移后的时间，各调用的 Metadata 包含 `replay_time_shifted`、`original_start_time` 和 `original_end_time`，原始时间为 UTC。本地预览使用归档原始时间。[LangSmith 历史上传说明](https://github.com/langchain-ai/langsmith-data-migration-tool#destination-configuration-checklist)
 
 ```powershell
 & $python -X utf8 -m TCM_Fusion.cli.langsmith_trace $case --include-decision-summary
@@ -92,7 +100,9 @@ $env:LANGSMITH_AGENT_ENVIRONMENT = 'local'
 
 网页调用树包含 Plan A 的候选提名阶段、实际规划请求、工具及 D4 分支。多图工具显示 `view_01`、`view_02` 等序号。具有原始记录的规划附回传 token，工具输出可包含新支持、定量反证和逐候选判据状态变化。最终结论与复核原因在样品根调用下。时间线使用工件时间，缺少独立起止的子步骤留在已有调用摘要中。
 
-默认上传运行 ID、时间、视野序号、工具及状态、实际报量与结构化判据摘要。源码、模型权重、图像、完整 Prompt、凭据和本机路径保存在本地。`--include-decision-summary` 单独开启最多 240 字符的模型选择简述，跳过带有常见路径或凭据特征的简述。
+默认投影运行 ID、时间、视野序号、工具及状态、实际报量与结构化判据摘要。规划器在 `decision_summary` 中给出供人审查的公开选择理由。新版完整保存这个字段。`--include-decision-summary` 开启理由正文。追踪器按当轮菜单替换已绑定的视野编号并检查整段文字，命中路径或凭据特征时整段略过。新版标记 `model_summary_capture=complete`，旧记录恰在 240 字符时标记 `legacy_240_char_boundary`。PowerShell 观察入口默认开启选择理由。私有推理正文不进入追踪。服务实际返回的 reasoning token 数可在该轮 `usage_metadata.output_token_details.reasoning` 中查看，属于输出 token 的子集。
+
+规划输出 `visual_guidance_choices` 记录模型自拟、明确沿用预设、未表态或无效委托。`feature_scan` 工具输出中的 `scan_requests.tiles` 来自各块实际定位参数及对应回执，列出请求的原图区域和委托来源。`prepared` 表示只核对到参数，区域及特征匹配的返回才标为 `worker_returned`。PowerShell 的 `-IncludeVisualObservations` 或命令行的 `--include-visual-observations` 可显示通过过滤的实际形态提示、自拟问题及阅图回执。观察问题在规划、图块、工具回执及下一轮规划输入中均可按全文核对。没有模型选择记录的历史案例只能据工具参数判断实际下发内容。
 
 ## 源码入口
 

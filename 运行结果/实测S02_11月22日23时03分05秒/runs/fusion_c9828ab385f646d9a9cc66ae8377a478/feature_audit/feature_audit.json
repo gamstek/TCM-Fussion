@@ -1,0 +1,122 @@
+{
+  "schema": "feature-audit/v2",
+  "evidence_version": "db6a079b933c0c6823ac4420e892e01984a04be1effc24cd683810eb081fce23",
+  "non_blocking": true,
+  "feature_ids": [
+    "cluster_crystal",
+    "epidermis_cell",
+    "fiber",
+    "hypha",
+    "needle_crystal",
+    "non_glandular_hair",
+    "other",
+    "pollen_grain",
+    "secretory_tissue",
+    "single_crystal",
+    "starch_grain",
+    "stoma",
+    "stone_cell",
+    "vessel"
+  ],
+  "summary": {
+    "feature_ids": [
+      "cluster_crystal",
+      "epidermis_cell",
+      "fiber",
+      "hypha",
+      "needle_crystal",
+      "non_glandular_hair",
+      "other",
+      "pollen_grain",
+      "secretory_tissue",
+      "single_crystal",
+      "starch_grain",
+      "stoma",
+      "stone_cell",
+      "vessel"
+    ],
+    "n_candidates": 2,
+    "n_input_views": 1,
+    "views_with_candidates": 1,
+    "n_target_only": 0,
+    "n_with_examples": 0,
+    "classified_target": 1,
+    "classified_non_target": 0,
+    "classification_unresolved": 0,
+    "high_score_unclassified": 1,
+    "low_score_unclassified": 0,
+    "n_masks": 1,
+    "n_instances": 1,
+    "merged_masks": 1
+  },
+  "candidates": [
+    {
+      "crop_id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01",
+      "crop_name": "cluster_crystal_view_01_01",
+      "view": "view_01",
+      "source": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\view_01.jpg",
+      "feature_id": "cluster_crystal",
+      "box_source": "yolo",
+      "det_score": 0.9122,
+      "audit_label": "草酸钙簇晶",
+      "classified_feature_id": "cluster_crystal",
+      "confidence_source": "cnn",
+      "classification_id": "classification:crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01",
+      "target_score": 0.906998,
+      "negative_margin": 0.906998,
+      "status": "classified_target",
+      "non_blocking": true,
+      "reject": null,
+      "review_input_mode": null,
+      "review_fallback": null
+    },
+    {
+      "crop_id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_02",
+      "crop_name": "cluster_crystal_view_01_02",
+      "view": "view_01",
+      "source": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\view_01.jpg",
+      "feature_id": "cluster_crystal",
+      "box_source": "yolo",
+      "det_score": 0.8958,
+      "audit_label": "unknown",
+      "classified_feature_id": null,
+      "confidence_source": null,
+      "classification_id": null,
+      "target_score": null,
+      "negative_margin": null,
+      "status": "high_score_unclassified",
+      "non_blocking": true,
+      "reject": null,
+      "review_input_mode": null,
+      "review_fallback": null
+    }
+  ],
+  "instances": [
+    {
+      "mask": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\4fdd7151a7973cad\\segmentation\\masks\\view_01__cluster_crystal__inst01.png",
+      "n_components": 1,
+      "n_instances": 1,
+      "merged": true,
+      "status": "merged",
+      "instances": [
+        {
+          "instance_index": 1,
+          "area_px": 77089,
+          "skeleton_px": 6960,
+          "endpoints": 4,
+          "branch_points": 6834,
+          "length_px": 6960.0,
+          "major_axis_px": 100.88,
+          "width_px": 266.18,
+          "merged": true,
+          "mask": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\feature_audit\\instances\\0001\\view_01__cluster_crystal__inst01__inst01.png"
+        }
+      ],
+      "artifact_id": "segfile:crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01:masks/view_01__cluster_crystal__inst01.png",
+      "crop_id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01",
+      "feature_id": "cluster_crystal",
+      "segmentation_quality": "valid"
+    }
+  ],
+  "issues": []
+}

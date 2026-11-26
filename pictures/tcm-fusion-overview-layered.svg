@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2198" height="827" viewBox="0 0 2198 827" role="img" aria-labelledby="title desc" xml:lang="zh-CN">
+<title id="title">TCM Fusion 中药材显微鉴别流程与实现组件</title>
+<desc id="desc">从左至右为输入校验、A 药材候选、Agent 调查规划、MCP 工具执行、回执与 B 计分、融合研判与交付。三列 ReAct 调查按真实回执重复。每列下方依次列出实现组件与数据产物，纵向虚线表示归属。</desc>
+<defs><marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.6" markerHeight="6.6" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#385E61"/></marker></defs>
+<style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif} .display{font-size:42px;font-weight:700;fill:#123D42}.subtitle{font-size:18px;fill:#455E60}.stage{font-size:24px;font-weight:700}.stageNote{font-size:16px}.group{font-size:18px;font-weight:700;fill:#1C655A}.layer{font-size:16px;font-weight:700;fill:#506868}.sub{font-size:20px;font-weight:700;fill:#203F42}.body{font-size:17px;fill:#2D494E}.out{font-size:15.5px;font-weight:600;fill:#233F44}.file{font-family:Consolas,"Courier New",monospace;font-size:16px;fill:#395B60}.edgeText{font-size:12px;fill:#2C5557;font-weight:700}.small{font-size:15px;fill:#516B6C}</style>
+<rect x="0" y="0" width="2198" height="827" rx="0" fill="#FAFAF6" stroke="none"/>
+<text x="36" y="63" class="display" >TCM Fusion 中药材显微鉴别流程</text>
+<text x="37" y="102" class="subtitle" >沿实线从左到右读主流程，沿虚线向下查看每一步的实现与产物。</text>
+<line x1="36" y1="129" x2="2163" y2="129" stroke="#C8D5D0"/>
+<rect x="780" y="146" width="1048" height="151" rx="12" fill="#E9F3ED" stroke="none"/>
+<text x="797" y="176" class="group" >ReAct 调查</text>
+<text x="918" y="176" class="small" >Agent 根据最新工具回执，决定继续调查或请求复核。</text>
+<text x="35" y="246" class="layer" >主流程</text>
+<text x="31" y="367" class="layer" >实现组件</text>
+<text x="24" y="712" class="layer" >数据与产物</text>
+<g id="stage-I">
+<rect x="111" y="193" width="271" height="91" rx="8" fill="#E8EFED" stroke="#42636B"/>
+<text x="246.5" y="231" class="stage" fill="#153F42" text-anchor="middle">输入校验</text>
+<text x="246.5" y="260" class="stageNote" fill="#355E5C" text-anchor="middle">绑定同一样品的视野</text>
+<line x1="246.5" y1="284" x2="246.5" y2="325" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="111" y="325" width="271" height="318" rx="8" fill="#FFFFFF" stroke="#CDD8D3"/>
+<rect x="127" y="343" width="34" height="3" rx="0" fill="#42636B" stroke="none"/>
+<text x="127" y="379" class="sub" >清单校验</text>
+<text x="127" y="415" class="body" >逐图核对路径与 SHA256，</text>
+<text x="127" y="441" class="body" >检查路径和图像内容是否重复。</text>
+<line x1="127" y1="471" x2="366" y2="471" stroke="#D7DFDB"/>
+<text x="127" y="508" class="sub" >视野绑定与预检</text>
+<text x="127" y="543" class="body" >为原图副本分配中性视野编号，</text>
+<text x="127" y="569" class="body" >检查运行环境与模型是否就绪。</text>
+<line x1="246.5" y1="643" x2="246.5" y2="673" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="111" y="673" width="271" height="105" rx="8" fill="#F1F5F2" stroke="#CBD8D2"/>
+<text x="125" y="709" class="out" >原图与视野编号的对应关系</text>
+<text x="125" y="738" class="file" >input_proof.json</text>
+<text x="125" y="761" class="file" >doctor.json</text>
+</g>
+<line x1="386" y1="240" x2="446" y2="240" stroke="#385E61" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="416" y="229" class="edgeText" text-anchor="middle">整图</text>
+<g id="stage-A">
+<rect x="451" y="193" width="272" height="91" rx="8" fill="#E8EFED" stroke="#42636B"/>
+<text x="587" y="231" class="stage" fill="#153F42" text-anchor="middle">A · 药材候选</text>
+<text x="587" y="260" class="stageNote" fill="#355E5C" text-anchor="middle">从整图提名药材</text>
+<line x1="587" y1="284" x2="587" y2="325" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="451" y="325" width="272" height="318" rx="8" fill="#FFFFFF" stroke="#CDD8D3"/>
+<rect x="467" y="343" width="34" height="3" rx="0" fill="#42636B" stroke="none"/>
+<text x="467" y="379" class="sub" >五折 ResNet50</text>
+<text x="467" y="415" class="body" >每张整图分别推理，</text>
+<text x="467" y="441" class="body" >保留各折完整的药材概率。</text>
+<line x1="467" y1="471" x2="707" y2="471" stroke="#D7DFDB"/>
+<text x="467" y="508" class="sub" >候选映射</text>
+<text x="467" y="543" class="body" >跨折、跨视野合并 Top-K，</text>
+<text x="467" y="569" class="body" >映射药材或药材组 ID。</text>
+<line x1="587" y1="643" x2="587" y2="673" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="451" y="673" width="272" height="105" rx="8" fill="#F1F5F2" stroke="#CBD8D2"/>
+<text x="465" y="709" class="out" >候选并集供调查，逐折概率供融合</text>
+<text x="465" y="738" class="file" >a_prediction.json</text>
+</g>
+<line x1="727" y1="240" x2="787" y2="240" stroke="#385E61" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="757" y="229" class="edgeText" text-anchor="middle">候选集</text>
+<g id="stage-P">
+<rect x="792" y="193" width="281" height="91" rx="8" fill="#D5ECE2" stroke="#196B61"/>
+<text x="932.5" y="231" class="stage" fill="#153F42" text-anchor="middle">Agent 调查规划</text>
+<text x="932.5" y="260" class="stageNote" fill="#355E5C" text-anchor="middle">决定查哪里、看什么</text>
+<line x1="932.5" y1="284" x2="932.5" y2="325" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="792" y="325" width="281" height="318" rx="8" fill="#FFFFFF" stroke="#CDD8D3"/>
+<rect x="808" y="343" width="34" height="3" rx="0" fill="#196B61" stroke="none"/>
+<text x="808" y="379" class="sub" >智谱 GLM 文本规划</text>
+<text x="808" y="415" class="body" >结合药材判据、既有回执、</text>
+<text x="808" y="441" class="body" >证据缺口与剩余额度选动作。</text>
+<line x1="808" y1="471" x2="1057" y2="471" stroke="#D7DFDB"/>
+<text x="808" y="508" class="sub" >动作与视觉委托</text>
+<text x="808" y="543" class="body" >可自拟观察部位与形态细节。</text>
+<text x="808" y="569" class="body" >实例目标按依赖编排，独立</text>
+<text x="808" y="595" class="body" >视野任务可按需并发。</text>
+<line x1="932.5" y1="643" x2="932.5" y2="673" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="792" y="673" width="281" height="105" rx="8" fill="#F1F5F2" stroke="#CBD8D2"/>
+<text x="806" y="709" class="out" >当轮可选动作、实际选择与委托</text>
+<text x="806" y="738" class="file" >agent_trace.json</text>
+</g>
+<line x1="1077" y1="240" x2="1137" y2="240" stroke="#385E61" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="1107" y="229" class="edgeText" text-anchor="middle">动作与委托</text>
+<g id="stage-T">
+<rect x="1142" y="193" width="317" height="91" rx="8" fill="#D5ECE2" stroke="#196B61"/>
+<text x="1300.5" y="231" class="stage" fill="#153F42" text-anchor="middle">MCP 工具执行</text>
+<text x="1300.5" y="260" class="stageNote" fill="#355E5C" text-anchor="middle">把委托变成可核验的回执</text>
+<line x1="1300.5" y1="284" x2="1300.5" y2="325" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="1142" y="325" width="317" height="318" rx="8" fill="#FFFFFF" stroke="#CDD8D3"/>
+<rect x="1158" y="343" width="34" height="3" rx="0" fill="#196B61" stroke="none"/>
+<text x="1158" y="379" class="sub" >MCP 服务与主机校验</text>
+<text x="1158" y="415" class="body" >检查工具资格、工件依赖与预算。</text>
+<line x1="1158" y1="471" x2="1443" y2="471" stroke="#D7DFDB"/>
+<text x="1158" y="508" class="sub" >按需调用视觉工具</text>
+<text x="1158" y="543" class="body" >YOLO 检测，ResNet18 核验身份。</text>
+<text x="1158" y="569" class="body" >智谱 GLM 观察、定位或复核。</text>
+<text x="1158" y="595" class="body" >身份合格后可用火山方舟分割，</text>
+<text x="1158" y="621" class="body" >合格掩码与标定用于本地测量。</text>
+<line x1="1300.5" y1="643" x2="1300.5" y2="673" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="1142" y="673" width="317" height="105" rx="8" fill="#F1F5F2" stroke="#CBD8D2"/>
+<text x="1156" y="709" class="out" >观察结果、裁图、掩码或实测量</text>
+<text x="1156" y="738" class="file" >agent_tool_ledger.json</text>
+</g>
+<line x1="1463" y1="240" x2="1523" y2="240" stroke="#385E61" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="1493" y="229" class="edgeText" text-anchor="middle">回执与工件</text>
+<g id="stage-B">
+<rect x="1528" y="193" width="288" height="91" rx="8" fill="#FFEFCA" stroke="#957026"/>
+<text x="1672" y="231" class="stage" fill="#614A1A" text-anchor="middle">回执与 B 计分</text>
+<text x="1672" y="260" class="stageNote" fill="#5F522F" text-anchor="middle">核对实际查到的证据</text>
+<line x1="1672" y1="284" x2="1672" y2="325" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="1528" y="325" width="288" height="318" rx="8" fill="#FFFFFF" stroke="#CDD8D3"/>
+<rect x="1544" y="343" width="34" height="3" rx="0" fill="#957026" stroke="none"/>
+<text x="1544" y="379" class="sub" >回执登记与证据版本</text>
+<text x="1544" y="415" class="body" >按视野、实例追溯工具结果，</text>
+<text x="1544" y="441" class="body" >区分未查、失败与本视野未见。</text>
+<line x1="1544" y1="471" x2="1800" y2="471" stroke="#D7DFDB"/>
+<text x="1544" y="508" class="sub" >药材知识库与 B 规则</text>
+<text x="1544" y="543" class="body" >按用途核验形态和尺寸资格，</text>
+<text x="1544" y="569" class="body" >逐候选比对必需与佐证判据，</text>
+<text x="1544" y="595" class="body" >形成正式 B 分 rule_score。</text>
+<line x1="1672" y1="643" x2="1672" y2="673" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="1528" y="673" width="288" height="105" rx="8" fill="#F1F5F2" stroke="#CBD8D2"/>
+<text x="1542" y="709" class="out" >支持、反证与缺口供下一轮规划</text>
+<text x="1542" y="738" class="file" >workflow/evidence/</text>
+</g>
+<line x1="1820" y1="240" x2="1880" y2="240" stroke="#385E61" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="1850" y="229" class="edgeText" text-anchor="middle">调查结束</text>
+<g id="stage-F">
+<rect x="1885" y="193" width="278" height="91" rx="8" fill="#E8EFED" stroke="#42636B"/>
+<text x="2024" y="231" class="stage" fill="#153F42" text-anchor="middle">融合研判与交付</text>
+<text x="2024" y="260" class="stageNote" fill="#355E5C" text-anchor="middle">给出判断及复核依据</text>
+<line x1="2024" y1="284" x2="2024" y2="325" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="1885" y="325" width="278" height="318" rx="8" fill="#FFFFFF" stroke="#CDD8D3"/>
+<rect x="1901" y="343" width="34" height="3" rx="0" fill="#42636B" stroke="none"/>
+<text x="1901" y="379" class="sub" >证据冻结与候选融合</text>
+<text x="1901" y="415" class="body" >按候选 ID 对齐 A 先验与 B 分，</text>
+<text x="1901" y="441" class="body" >固定终审可引用的证据版本。</text>
+<line x1="1901" y1="471" x2="2147" y2="471" stroke="#D7DFDB"/>
+<text x="1901" y="508" class="sub" >只读终审</text>
+<text x="1901" y="543" class="body" >核对证据引用与候选审查缺口，</text>
+<text x="1901" y="569" class="body" >确定交付候选、结论强度</text>
+<text x="1901" y="595" class="body" >及是否需要人工复核。</text>
+<line x1="2024" y1="643" x2="2024" y2="673" stroke="#8DA8A3" stroke-width="1.5" stroke-dasharray="4 4"/>
+<rect x="1885" y="673" width="278" height="105" rx="8" fill="#F1F5F2" stroke="#CBD8D2"/>
+<text x="1899" y="709" class="out" >结构化结果与可读报告</text>
+<text x="1899" y="738" class="file" >output.json</text>
+<text x="1899" y="761" class="file" >report.md</text>
+</g>
+</svg>

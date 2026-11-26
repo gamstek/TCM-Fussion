@@ -29,6 +29,8 @@ class RecordedStages:
         matches = [
             row for row in self.operations
             if row.get('tool') == tool and row.get('target_id') == target['id']
+            and row.get('visual_brief') == target.get('visual_brief')
+            and row.get('observation_basis') == target.get('observation_basis')
             and row.get('dependency_fingerprint') == fingerprint
             and row.get('status') == 'done' and row.get('bundle')
         ]
@@ -64,9 +66,9 @@ class RecordedStages:
 
         restored = {key: str(within(copy, name)) for key, name in paths.items()}
         restored['quality'] = record.get('quality')
-        for key in ('audit', 'contact_sheet'):
+        for key in ('audit', 'contact_sheet', 'visual_observation_file'):
             if key in paths and Path(paths[key]).as_posix() not in files:
-                raise IntegrationError('REPLAY_ARTIFACT', '示例审计文件缺少录制摘要')
+                raise IntegrationError('REPLAY_ARTIFACT', '阶段文件缺少录制摘要')
         if 'classifications' in record:
             restored['classifications'] = []
             for row in record['classifications']:
@@ -99,10 +101,15 @@ class RecordedStages:
 class RecordedObservations:
     def __init__(self,rows):self.rows=rows;self.misses=0
     def call(self,runtime,action,path):
-        matches=[r for r in self.rows if r['action']['action_id']==action['action_id']]
+        matches=[r for r in self.rows if r['action']['action_id']==action['action_id']
+                 and r['action'].get('visual_brief') == action.get('visual_brief')]
         if len(matches)!=1:
             self.misses+=1;raise IntegrationError('REPLAY_MISS','没有唯一录制视觉观察')
-        return matches[0]['result'],matches[0].get('usage')
+        row = matches[0]
+        value = row['result']
+        if row.get('accepted') and row.get('visual_observation'):
+            value = {**value, 'visual_observation': row['visual_observation']}
+        return value, row.get('usage')
 
 
 async def replay_report(report,directory,planner=None,planning_instruction=None):

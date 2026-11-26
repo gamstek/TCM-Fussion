@@ -23,6 +23,7 @@ import paths
 
 from TCM_Fusion.lib.runtime.storage import IntegrationError, digest, read_json, write_json
 from TCM_Fusion.lib.tools.simulation import FixtureBackend
+from TCM_Fusion.lib.vision.visual_observation import prompt_suffix, receipt
 
 
 class LiveBackend:
@@ -55,6 +56,10 @@ class LiveBackend:
                         '无法定位则省略box；定位不能替代present/conf/reason，也不要生成尺寸或标定。'})
                 if client.expected_tool == "scene_check" and client.scene_reasoning_effort:
                     payload = {**payload, "reasoning_effort": client.scene_reasoning_effort}
+                brief = getattr(client, 'visual_brief', None)
+                if brief:
+                    payload = copy.deepcopy(payload)
+                    payload['messages'][0]['content'].append({'type': 'text', 'text': prompt_suffix(brief)})
                 client.diagnostics["stage"] = "http_request"
                 try:
                     body = post(payload, client.timeout_s, diagnostics=client.diagnostics)
@@ -95,6 +100,8 @@ class LiveBackend:
                     if client.expected_tool == 'presence_check':
                         from TCM_Fusion.lib.vision.presence_localization import sanitize_proposal
                         client.presence_proposal = sanitize_proposal(obj.get('box'))
+                    if brief:
+                        client.visual_observation = receipt(brief, obj)
                     return body
                 except json.JSONDecodeError:
                     client.failure = IntegrationError("MODEL_JSON_INVALID", "视觉模型 JSON 无法解析")
@@ -117,6 +124,8 @@ class LiveBackend:
 
         self.client.last_usage = None
         self.client.expected_tool = action["tool"]
+        self.client.visual_brief = action.get('visual_brief')
+        self.client.visual_observation = None
         self.client.failure = None
         self.client.presence_proposal = None
         self.client.observation_context = {}
@@ -135,6 +144,8 @@ class LiveBackend:
                 self.client.diagnostics["attempts"] = attempt
                 try:
                     value = runtime.tools.invoke(runtime, action, {"backend": self, "path": path})
+                    if self.client.visual_observation is not None:
+                        value = {**value, 'visual_observation': self.client.visual_observation}
                     return value, self.client.last_usage
                 except IntegrationError as exc:
                     failure = (self.client.failure or exc) if exc.code == "TOOL_OUTPUT_INVALID" else exc
@@ -240,6 +251,7 @@ class LocalToolbox:
                     except (IntegrationError, OSError):
                         record.update(accepted=False, status='failed', error_code='INPUT_CHANGED',
                                       result={'ok': False, 'error_code': 'INPUT_CHANGED'})
+                        record.pop('visual_observation', None)
                         if 'presence_localization' in record:
                             record['presence_localization'].update(state='unknown', localization='invalid',
                                                                    ineligible_reason='INPUT_CHANGED')
@@ -296,11 +308,17 @@ class LocalToolbox:
                                           workflow.config.get("max_call_seconds", 600))
                 backend.client.timeout_s = min(workflow.remaining_seconds(), float(cap))
             result, usage = await asyncio.to_thread(backend.call, self.runtime, action, path)
+            detail = None
+            if isinstance(result, dict) and 'visual_observation' in result:
+                result = dict(result)
+                detail = result.pop('visual_observation')
             # 失败reason可能含HTTP body/凭据；只保留结构化成功观察。
             accepted = self.runtime.validate_observation(action, result)
             record = {**pending, "status": "done", "accepted": accepted,
                       "result": result if accepted else {"ok": False, "error": "INVALID_OR_FAILED_OBSERVATION"},
                       "usage": usage}
+            if accepted and action.get('visual_brief'):
+                record['visual_observation'] = receipt(action['visual_brief'], {'visual_observation': detail})
         except Exception as exc:
             record = {**pending, "status": "failed", "error_type": type(exc).__name__}
             record['error_code']=getattr(exc,'code','OBSERVATION_FAILED')
@@ -314,6 +332,7 @@ class LocalToolbox:
             self.runtime.validate_action(action)  # 观察期间改图，结果不可用
         except (IntegrationError, OSError):
             record.update(accepted=False, result={"ok": False, "error": "INPUT_CHANGED"})
+            record.pop('visual_observation', None)
         self._invalidate_closed_observation(record, workflow)
         if action['tool'] == 'presence_check' and record.get('accepted'):
             from TCM_Fusion.lib.vision.presence_localization import assess_presence
@@ -359,6 +378,7 @@ class LocalToolbox:
     def _invalidate_closed_observation(self, record, workflow):
         code = self._observation_stop_code(workflow)
         if code:
+            record.pop('visual_observation', None)
             record.update(accepted=False, status='late', error_code=code,
                           result={'ok': False, 'error_code': code})
             if 'presence_localization' in record:

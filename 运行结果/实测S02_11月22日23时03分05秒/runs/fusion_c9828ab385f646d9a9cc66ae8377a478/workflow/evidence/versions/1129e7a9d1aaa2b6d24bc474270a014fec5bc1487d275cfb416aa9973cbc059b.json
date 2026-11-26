@@ -1,0 +1,124 @@
+{
+  "identity": "ca58cd994d9fcdd297d2874c27b43eaff0a235785d6ec5cab8effbb72fee7151",
+  "parent": "c1fd19e7608115d42281b8d864a3ea150dc51c92c543076a8305e1a43fbe7a00",
+  "artifacts": {
+    "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710": {
+      "id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "kind": "image",
+      "path": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\view_01.jpg",
+      "sha256": "a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "parents": [],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "valid": true
+    },
+    "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01:pixels": {
+      "id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01:pixels",
+      "kind": "crop_pixels",
+      "path": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\crops\\cluster_crystal_view_01_01.png",
+      "sha256": "7fa110168862e500c83959c169bd154cf8555ca728055da4050023e00f6f46c2",
+      "parents": [
+        "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710"
+      ],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "valid": true
+    },
+    "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01": {
+      "id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01",
+      "kind": "crop",
+      "path": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\crops\\cluster_crystal_view_01_01.json",
+      "sha256": "ff1005eb8e8ad5b48c7f17530028a77477d36b678bbe5e71df4d1ab4a157e04a",
+      "parents": [
+        "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+        "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_01:pixels"
+      ],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "box_source": "yolo",
+      "box_quality": "low_detail",
+      "box_quality_score": 0.2917,
+      "box_quality_flags": [
+        "low_detail"
+      ],
+      "box_quality_metrics": {
+        "std": 0.0601,
+        "edge": 0.00505,
+        "width": 415,
+        "height": 403,
+        "area_ratio": 0.0415
+      },
+      "box_quality_retry": false,
+      "det_score": 0.9122,
+      "det_confidence": "high",
+      "detection_tool": "detect_fov_initial",
+      "valid": true
+    },
+    "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_02:pixels": {
+      "id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_02:pixels",
+      "kind": "crop_pixels",
+      "path": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\crops\\cluster_crystal_view_01_02.png",
+      "sha256": "c99c5f60bcd2b0204eb74eb87bb76e3597adeb8e6de67f8b56612582c878a320",
+      "parents": [
+        "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710"
+      ],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "valid": true
+    },
+    "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_02": {
+      "id": "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_02",
+      "kind": "crop",
+      "path": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\crops\\cluster_crystal_view_01_02.json",
+      "sha256": "5a8acca2f0fd87cafbd435812654879637301a24d9b9b497f4b76150b0c2d33f",
+      "parents": [
+        "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+        "crop:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710:cluster_crystal_view_01_02:pixels"
+      ],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "box_source": "yolo",
+      "box_quality": "low_detail",
+      "box_quality_score": 0.299,
+      "box_quality_flags": [
+        "low_detail"
+      ],
+      "box_quality_metrics": {
+        "std": 0.0629,
+        "edge": 0.00505,
+        "width": 372,
+        "height": 396,
+        "area_ratio": 0.0358
+      },
+      "box_quality_retry": false,
+      "det_score": 0.8958,
+      "det_confidence": "high",
+      "detection_tool": "detect_fov_initial",
+      "valid": true
+    },
+    "detected:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710": {
+      "id": "detected:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "kind": "detection",
+      "path": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\crops.json",
+      "sha256": "ba9709b34d6e630c520f4a3508b015ef680c6e55fe178defde7561ee011de039",
+      "parents": [
+        "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710"
+      ],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "source_size_wh": [
+        2048,
+        1536
+      ],
+      "valid": true
+    },
+    "scale:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710": {
+      "id": "scale:img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "kind": "scale",
+      "path": "E:\\TCM_Fusion\\运行结果\\实测S02_11月22日23时03分05秒\\runs\\fusion_c9828ab385f646d9a9cc66ae8377a478\\workflow\\ops\\23f7f27153ea82a8\\detection\\accepted_scale.json",
+      "sha256": "3f2bc270f374e5c1af6c5c7836cd58de44349e598d54c02f41e69415575e3122",
+      "parents": [
+        "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710"
+      ],
+      "image_id": "img_a85fe9455e0c52ca35ad7ac7fded2f649868aa3ed5788e01a38d1a3272750710",
+      "px_per_um": 11.65,
+      "valid": true
+    }
+  },
+  "records": [],
+  "version": "1129e7a9d1aaa2b6d24bc474270a014fec5bc1487d275cfb416aa9973cbc059b"
+}

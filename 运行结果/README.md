@@ -1,6 +1,6 @@
 # 融合运行结果
 
-本目录接收新任务。历史实测、回放、评估、原目录名和逐案证据入口见 [测试运行总报告](../测试运行总报告.md)。
+本目录接收新任务。历史实测、回放、评估、原目录名和逐案证据入口见 [测试运行总报告](测试运行总报告.md)。
 
 ## 目录名
 
@@ -34,6 +34,6 @@
 
 从 `input_proof.json` 核对视野，从 `runs/<run_id>/agent_trace.json` 查真实工具顺序，结合 `output.json`、`final_assessment.json`、`final_evidence.json` 区分暂定、正式裁决和复核。归档时将原目录名和运行摘要登记到总报告。用户确认清理旧工件时，先合并逐案文字摘要。
 
-CRITERION-GAIN-001 · [连翘四图判据收益冻结回放](../测试运行总报告.md#recent-150344) · [逐轮菜单和证据对照（见摘要）](../测试运行总报告.md#recent-150344)
+CRITERION-GAIN-001 · [连翘四图判据收益冻结回放](测试运行总报告.md#recent-150344) · [逐轮菜单和证据对照（见摘要）](测试运行总报告.md#recent-150344)
 
-ARCH-PERF-002 · [架构对照归档摘要](../测试运行总报告.md#architecture-comparison)
+ARCH-PERF-002 · [架构对照归档摘要](测试运行总报告.md#architecture-comparison)

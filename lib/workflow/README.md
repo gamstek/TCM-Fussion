@@ -8,7 +8,7 @@ CNN 批量预测按裁图复用。同一任务内，模型、预处理、解释�
 
 | 文件 | 阅读指引 |
 | --- | --- |
-| [adapters.py](adapters.py) | 通过子进程调用原 A/原 B 入口，绝不 import 入口模块或复制其预处理算法。 |
+| [adapters.py](adapters.py) | 通过子进程执行 Plan A 和原 B。校验并缓存三个整图模型的完整概率，按视野平均。兼容历史五折输出。 |
 | [evidence_runtime.py](evidence_runtime.py) | 构造 Agent 领域运行时：原测量→规则卡池→动作/观察→原 decide，只读原图、不修改原 B 工件。 |
 | [workflow_backend.py](workflow_backend.py) | 接收会话授权的单视野或单裁图目标并分派实际阶段。 |
 | [workflow_runtime.py](workflow_runtime.py) | 以原图、A 候选与工作流配置创建调查运行时。 |
